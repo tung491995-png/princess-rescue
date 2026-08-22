@@ -571,3 +571,36 @@ V7.5 MOBILE START + PROJECTILE/SKILL VISIBILITY
   into a low-resolution buffer.
 
 All Redis/WebSocket/reconnect/lagcomp/combat-feel systems are retained.
+
+
+V7.6 TOUCH UI LAYOUT
+====================
+
+MOBILE CONTROL LAYOUT
+- Bên trái: chỉ còn joystick kéo/trượt để di chuyển nhân vật.
+- Bên phải góc màn hình: cụm 3 nút ATTACK / DASH / SKILL.
+- Cả Hero và Princess đều dùng cùng một layout, không còn lệch theo role.
+
+TECHNICAL NOTES
+- showGameUI() luôn hiện cả ctl1 (move) và ctl2 (actions).
+- bind() được sửa để hoạt động ngay cả khi một panel chỉ có joystick hoặc chỉ có buttons.
+- Kích thước touch target được tăng để bấm dễ hơn trên điện thoại.
+
+
+V7.7 AUTO DESKTOP / TOUCH
+=========================
+
+AUTO CONTROL MODE
+- Mobile / touch devices: hiện joystick bên trái + cụm ATTACK / DASH / SKILL bên phải.
+- Desktop / laptop: tự động ẩn touch HUD và chuyển sang điều khiển keyboard/mouse.
+
+DESKTOP CONTROLS
+- WASD hoặc Arrow Keys: di chuyển
+- Chuột trái hoặc F/J: Attack
+- Chuột phải hoặc Shift: Dash
+- Space hoặc E: Skill
+- Q: Royal Feast khi thanh TRUST đủ 100%
+
+NOTES
+- Khi resize / đổi orientation, giao diện tự cập nhật mode.
+- Khi blur window, input desktop được reset để tránh kẹt phím.
