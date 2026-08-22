@@ -88,9 +88,9 @@ function freshState(){
     trust:0,tick:0,
     players:{hero:player('hero'),princess:player('princess')},
     boss:{x:0,z:-4.7,hp:2200,max:2200,phase:1,skillIndex:-1,skillT:1.8,lastEl:null,lastElT:0},
-    projectiles:[],pickups:[],darkPool:null,
+    projectiles:[],pickups:[],darkPool:null,summons:[],
     activeCast:null,
-    nextProj:1,nextPickup:1,nextHit:1,nextTask:1,nextCast:1,
+    nextProj:1,nextPickup:1,nextHit:1,nextTask:1,nextCast:1,nextSummon:1,
     pendingHits:[],
     tasks:[]
   };
@@ -134,7 +134,9 @@ function deserializeRoom(raw){
   room.state.nextHit ||= 1;
   room.state.nextTask ||= 1;
   room.state.nextCast ||= 1;
+  room.state.nextSummon ||= 1;
   room.state.activeCast ||= null;
+  room.state.summons ||= [];
   room.state.players.hero.lastDashTs ||= 0;
   room.state.players.princess.lastDashTs ||= 0;
 
@@ -150,6 +152,30 @@ function deserializeRoom(raw){
   return ephemeralRoomFields(room);
 }
 function markDirty(room){ room.dirty=true; }
+function dialogue(room,speaker,text,duration=2200){
+  if(!text)return;
+  broadcast(room,{type:'event',e:'dialogue',p:{speaker,text,duration,ts:Date.now()}});
+}
+function castDialogue(room,i,phase){
+  const bossLines={
+    0:['Bóng tối luôn tìm được kẻ đang mệt nhất.'],
+    1:['Giấc mơ đẹp nhất… thường là thứ dễ vỡ nhất.'],
+    2:['02:59… 03:00. Giờ đẹp để nghĩ linh tinh.'],
+    3:['Đừng nghĩ đứng xa là an toàn.'],
+    4:['Đủ rồi. Đêm nay… sẽ không kết thúc.']
+  };
+  const playerLines={
+    0:['Ra khỏi vòng đi, lát muốn đứng gần anh thì tính sau.','Né đi! Đừng để đêm ôm trọn mình.'],
+    1:['Trên đầu! Em né trước đi.','Mảnh vỡ trên cao!'],
+    2:['Khung giờ mất ngủ quốc dân tới rồi.','03:00 rồi… tập trung nào.'],
+    3:['Đừng đứng yên, boss sắp áp sát.','Ra khỏi đường chém!'],
+    4:['Qua đợt này rồi dồn damage!','Đứng gần anh, qua ulti này đã.']
+  };
+  dialogue(room,'boss',bossLines[i]?.[0]||'Ngủ đi… trong đêm của ta.',2400);
+  const role=phase%2?'hero':'princess';
+  const line=playerLines[i]?.[phase%2]||playerLines[i]?.[0];
+  scheduleTask(room,260,'dialogue',{speaker:role,text:line,duration:1900});
+}
 
 async function initRedis(){
   if(!REDIS_URL){
@@ -480,13 +506,13 @@ function healFavorite(room,from,food){
   markDirty(room);
 }
 
-function radial(room,n,speed,dmg,kind){
+function radial(room,n,speed,dmg,kind,angleOffset=0,y=2.65){
   const s=room.state,b=s.boss;
   for(let i=0;i<n;i++){
-    const a=i/n*Math.PI*2;
+    const a=angleOffset+i/n*Math.PI*2;
     s.projectiles.push({
       id:s.nextProj++,owner:null,enemy:true,kind,food:2,
-      x:b.x,z:b.z,y:2.65,vx:Math.cos(a)*speed,vz:Math.sin(a)*speed,dmg,t:3
+      x:b.x,z:b.z,y,vx:Math.cos(a)*speed,vz:Math.sin(a)*speed,dmg,t:3
     });
   }
   markDirty(room);
@@ -503,7 +529,33 @@ function runTask(room,task){
     const b=s.boss;
     s.darkPool={x:b.x,z:b.z,r:.5,t:1.6};
   }else if(task.type==='boss_radial'){
-    radial(room,task.data.n,task.data.speed,task.data.dmg,task.data.kind);
+    radial(room,task.data.n,task.data.speed,task.data.dmg,task.data.kind,task.data.angleOffset||0,task.data.y||2.65);
+  }else if(task.type==='dream_slash'){
+    const p=s.players[task.data.role||'hero'];
+    if(p&&!p.down){
+      const dx=p.x-s.boss.x,dz=p.z-s.boss.z,l=Math.hypot(dx,dz)||1;
+      const base=Math.atan2(dz,dx);
+      for(let j=-2;j<=2;j++){
+        const a=base+j*.12;
+        s.projectiles.push({id:s.nextProj++,owner:null,enemy:true,kind:'slash',food:2,x:s.boss.x,z:s.boss.z,y:1.25,vx:Math.cos(a)*8.4,vz:Math.sin(a)*8.4,dmg:12+s.boss.phase,t:1.45});
+      }
+    }
+  }else if(task.type==='summon_dreams'){
+    const count=Math.min(3,task.data.count||2);
+    for(let i=0;i<count;i++){
+      const a=(i/count)*Math.PI*2+Math.random()*.5;
+      const r=5.7+Math.random()*1.6;
+      s.summons.push({id:s.nextSummon++,x:s.boss.x+Math.cos(a)*r,z:s.boss.z+Math.sin(a)*r,y:1.15,hp:45,max:45,t:24,atkT:.8});
+    }
+    dialogue(room,'boss','Ra đây… những giấc mộng lạc lối.',2100);
+  }else if(task.type==='dream_move'){
+    for(const m of s.summons){
+      const p=s.players[task.data.role||'hero'];
+      const dx=p.x-m.x,dz=p.z-m.z,l=Math.hypot(dx,dz)||1;
+      m.x+=dx/l*.7;m.z+=dz/l*.7;
+    }
+  }else if(task.type==='dialogue'){
+    dialogue(room,task.data.speaker,task.data.text,task.data.duration||1900);
   }else if(task.type==='three_am_edges'){
     for(let side=0;side<4;side++)for(let j=0;j<4;j++){
       let x,z,vx,vz;
@@ -528,44 +580,45 @@ function processTasks(room,now){
 }
 function bossSkill(room){
   const s=room.state,b=s.boss;
-  b.skillIndex=(b.skillIndex+1)%4;
-  const i=b.skillIndex;
+  const allowed=b.phase===1?[0,1,3]:b.phase===2?[0,1,2,3]:[0,1,2,3,4];
+  const nextPos=(b.skillIndex+1)%allowed.length;
+  const i=allowed[nextPos];
+  b.skillIndex=nextPos;
   const now=Date.now();
-
-  // First damaging/major impact timing for synchronized telegraph playback.
-  const telegraphMs=[480,650,950,620][i];
-  const endMs=[2050,1550,1700,2250][i];
-  const cast={
-    id:s.nextCast++,
-    i,
-    startAt:now,
-    impactAt:now+telegraphMs,
-    endAt:now+endMs
-  };
+  const telegraphMs={0:800,1:1050,2:1200,3:620,4:1500}[i]||800;
+  const endMs={0:2600,1:3100,2:4400,3:2300,4:7200}[i]||2600;
+  const cast={id:s.nextCast++,i,startAt:now,impactAt:now+telegraphMs,endAt:now+endMs,phase:b.phase,targetRole:i===3?(b.phase%2?'hero':'princess'):null};
   s.activeCast=cast;
   broadcast(room,{type:'event',e:'bossCast',p:cast});
+  castDialogue(room,i,b.phase);
 
   if(i===0){
-    // Unlike V5, the damage pool starts only after the synchronized telegraph.
     scheduleTask(room,telegraphMs,'start_dark_pool');
   }else if(i===1){
-    scheduleTask(room,telegraphMs,'boss_radial',{n:20,speed:6.5+b.phase*.7,dmg:9+b.phase,kind:'shard'});
+    scheduleTask(room,telegraphMs,'boss_radial',{n:12,speed:6.1+b.phase*.55,dmg:9+b.phase,kind:'shard',angleOffset:Math.random()*.3,y:2.7});
+    if(b.phase>=2)scheduleTask(room,telegraphMs+520,'boss_radial',{n:10,speed:6.6,dmg:10+b.phase,kind:'shard',angleOffset:.26,y:2.5});
   }else if(i===2){
     scheduleTask(room,telegraphMs,'three_am_edges');
-  }else{
+    scheduleTask(room,telegraphMs+820,'boss_radial',{n:8,speed:5.7,dmg:9+b.phase,kind:'thought',angleOffset:.2,y:1.4});
+  }else if(i===3){
+    // Mộng Du Truy Kích: targeted moon slash represented by a short fan of thought/shard projectiles.
+    scheduleTask(room,telegraphMs,'dream_slash',{role:b.phase%2?'hero':'princess'});
+  }else if(i===4){
+    // Vĩnh Dạ: three broad night waves + shard pressure + dream summons.
     for(let w=0;w<3;w++){
-      scheduleTask(room,telegraphMs+w*260,'boss_radial',{
-        n:14,speed:5.8+w*1.4,dmg:10+b.phase,kind:w%2?'thought':'shard'
-      });
+      scheduleTask(room,telegraphMs+w*1000,'boss_radial',{n:10,speed:4.6+w*.7,dmg:11+b.phase,kind:w===1?'thought':'night',angleOffset:w*.38,y:1.55});
+      scheduleTask(room,telegraphMs+w*1000+260,'boss_radial',{n:7,speed:6.3+w*.45,dmg:10+b.phase,kind:'shard',angleOffset:.2+w*.38,y:2.55});
     }
+    scheduleTask(room,telegraphMs+4200,'summon_dreams',{count:2});
   }
   markDirty(room);
 }
+
 function royal(room){
   const s=room.state;
   if(s.trust<100)return;
   s.trust=0;s.boss.hp-=160;s.players.hero.score+=80;s.players.princess.score+=80;
-  broadcast(room,{type:'event',e:'royal',p:{}});
+  broadcast(room,{type:'event',e:'royal',p:{ts:Date.now(),name:'ROYAL FEAST — BÌNH MINH ĐẠI TIỆC'}});
   markDirty(room);
 }
 function reset(room){
@@ -597,6 +650,7 @@ function tick(room,dt){
   processPendingHits(room,now);
   if(s.activeCast && now>s.activeCast.endAt+120){
     s.activeCast=null;
+    if(s.boss.skillT<.65)s.boss.skillT=.65;
     markDirty(room);
   }
 
@@ -635,11 +689,33 @@ function tick(room,dt){
   const ratio=b.hp/b.max,next=ratio>.66?1:ratio>.33?2:3;
   if(next!==b.phase){
     b.phase=next;broadcast(room,{type:'event',e:'phase',p:{phase:next}});
+    if(next===2){
+      dialogue(room,'boss','Các ngươi vẫn chưa chịu mệt sao?',2200);
+      scheduleTask(room,340,'dialogue',{speaker:'hero',text:'Khung giờ 3 giờ sáng tới rồi. Tập trung!',duration:1900});
+    }else if(next===3){
+      dialogue(room,'boss','Tình cảm mong manh ấy… ta muốn xem nó chịu được đêm dài bao lâu.',2600);
+      scheduleTask(room,380,'dialogue',{speaker:'princess',text:'Boss nói nhiều ghê. Đánh thôi!',duration:1800});
+    }
   }
   b.skillT-=dt;
-  if(b.skillT<=0){
-    b.skillT=b.phase===1?2.15:b.phase===2?1.78:1.45;
+  if(b.skillT<=0&&!s.activeCast){
+    b.skillT=b.phase===1?4.0:b.phase===2?3.35:3.05;
     bossSkill(room);
+  }
+
+  if(s.summons?.length){
+    for(const m of s.summons){
+      m.t-=dt;m.atkT-=dt;
+      const target=H.down?P:P.down?H:(d2(m.x,m.z,H.x,H.z)<d2(m.x,m.z,P.x,P.z)?H:P);
+      const dx=target.x-m.x,dz=target.z-m.z,l=Math.hypot(dx,dz)||1;
+      if(l>1.65){m.x+=dx/l*.85*dt;m.z+=dz/l*.85*dt}
+      if(m.atkT<=0&&!target.down&&l<6){
+        const a=Math.atan2(dz,dx);
+        s.projectiles.push({id:s.nextProj++,owner:null,enemy:true,kind:'thought',food:2,x:m.x,z:m.z,y:m.y,vx:Math.cos(a)*5.4,vz:Math.sin(a)*5.4,dmg:7+s.boss.phase,t:2.4});
+        m.atkT=2.2;
+      }
+    }
+    s.summons=s.summons.filter(m=>m.t>0&&m.hp>0);
   }
 
   if(s.darkPool){
@@ -667,8 +743,22 @@ function tick(room,dt){
           pr.t=0;
         }
       }
-    }else if(pr.t>0&&segmentCircleHit(x1,z1,pr.x,pr.z,b.x,b.z,1.55)){
-      hitBoss(room,pr);pr.t=0;
+    }else if(pr.t>0){
+      let hitSummon=null;
+      for(const m of s.summons||[]){
+        if(m.hp>0&&segmentCircleHit(x1,z1,pr.x,pr.z,m.x,m.z,.62)){hitSummon=m;break}
+      }
+      if(hitSummon){
+        hitSummon.hp-=pr.dmg||8;
+        broadcast(room,{type:'event',e:'summonHit',p:{id:hitSummon.id,dmg:Math.round(pr.dmg||8),hp:Math.max(0,hitSummon.hp)}});
+        if(hitSummon.hp<=0){
+          broadcast(room,{type:'event',e:'summonDefeated',p:{id:hitSummon.id}});
+          s.trust=Math.min(100,s.trust+4);
+        }
+        pr.t=0;
+      }else if(segmentCircleHit(x1,z1,pr.x,pr.z,b.x,b.z,1.55)){
+        hitBoss(room,pr);pr.t=0;
+      }
     }
   }
   s.projectiles=s.projectiles.filter(p=>p.t>0&&Math.abs(p.x)<12&&Math.abs(p.z)<12);
@@ -714,6 +804,7 @@ function snapshot(room){
     })),
     pickups:s.pickups.map(p=>({...p})),
     darkPool:s.darkPool?{...s.darkPool}:null,
+    summons:(s.summons||[]).map(m=>({...m})),
     cast:s.activeCast?{...s.activeCast}:null
   };
 }
@@ -726,7 +817,7 @@ app.get('/healthz',(_req,res)=>res.json({
   network:{
     tickHz:TICK_HZ,
     snapshotHz:SNAPSHOT_HZ,
-    renderOptimization:'V7-single-enemy-shader-batch',
+    renderOptimization:'V8.1-single-enemy-shader-batch-plus-lightweight-dream-summons',
     combatFeel:'sync-cast-hitstop-action-prediction',
     rewindMs:MAX_REWIND_MS,
     hitConfirmMs:HIT_CONFIRM_DELAY_MS,
@@ -924,5 +1015,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,()=>console.log(`Princess Rescue V7.9 server on :${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,()=>console.log(`Princess Rescue V8.0 server on :${PORT} | redis=${redisReady} | ws=/ws`));
 })();

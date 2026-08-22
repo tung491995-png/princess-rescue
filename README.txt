@@ -1,3 +1,5 @@
+PRINCESS RESCUE 3D — V8.1 MA VUONG MAT NGU FULL COMBAT / VFX
+
 PRINCESS RESCUE 3D — SERVER MULTIPLAYER V3
 
 V3 ADDS TWO PRODUCTION NETWORK LAYERS
@@ -610,3 +612,57 @@ IMPORTANT STABILITY CHANGE
 - Có query override để test:
     ?controls=desktop
     ?controls=touch
+
+
+V8.0 ROYAL MOBILE VFX
+=====================
+
+ROYAL FEAST — BÌNH MINH ĐẠI TIỆC
+- Full-screen 1.58s cinematic overlay.
+- 10 canonical food sigils orbit around the duo.
+- Cyan/pink crossing beams.
+- Golden core rings.
+- Gold/pink/cyan staged flashes.
+- Screen edge glow.
+- Stronger camera punch.
+- Mobile vibration feedback when supported.
+- Mobile-specific scaling / larger text and food icons.
+- Extra compact landscape tuning for phones with low screen height.
+- Royal button itself is brighter and more readable at 100% Trust.
+
+PERFORMANCE
+-----------
+Royal FX uses pre-existing DOM elements and CSS transform/opacity animations.
+No new Three.js geometry/material/projectile allocations are created during activation.
+
+Canonical final name:
+ROYAL FEAST — BÌNH MINH ĐẠI TIỆC
+
+V8.1 — MA VƯƠNG MẤT NGỦ FULL COMBAT PASS
+=========================================
+
+ADDED BOSS TIMELINE
+-------------------
+1. Bóng Đêm Lan Ra — synchronized moon rune telegraph + galaxy dark pool.
+2. Giấc Mơ Vỡ — silver moon shatter + radial glass shards + dream crack screen FX.
+3. Ba Giờ Sáng — 02:59 -> 03:00 visual freeze + edge projectile pattern.
+4. Mộng Du Truy Kích — target cone telegraph + directional dream slash fan.
+5. Vĩnh Dạ — Đêm Không Kết Thúc — phase 3 ultimate with night-wave/projectile layers and dream summons.
+
+DIALOGUE
+--------
+Server-synchronized dialogue events show boss / hero / princess subtitles during casts and phase changes.
+Lines are intentionally short during combat to avoid blocking the mobile controls.
+
+SUMMON
+------
+Tiểu Mộng Ảnh is persisted in room state and restored through Redis snapshots.
+Up to three lightweight 3D summon meshes are preallocated on the client.
+Summons chase the nearer player, fire thought projectiles, and can be damaged by player projectiles.
+
+MOBILE PERFORMANCE
+------------------
+- Enemy projectiles remain a single InstancedMesh shader batch.
+- Dream summons are capped at three and use low-poly geometry.
+- Boss outline is disabled during heavy projectile phases.
+- Telegraph meshes are preallocated once.
