@@ -523,3 +523,51 @@ A single cached frame timestamp now drives both:
 - pickup instance rotation
 
 No network/gameplay behavior changed.
+
+V7.4 LEAVE ROOM HOTFIX
+======================
+Fixes the result-screen RỜI PHÒNG button.
+
+Root cause:
+V4 used remoteProj / remotePick Maps.
+V5+ moved projectiles and pickups to InstancedMesh and removed those Maps,
+but leaveRoom() still called:
+  remoteProj.clear()
+  remotePick.clear()
+
+That caused a ReferenceError before navigation ran.
+
+V7.4:
+- removes stale Map cleanup
+- clears V7 InstancedMesh counts safely
+- clears prediction/input state
+- closes WebSocket
+- clears local session
+- uses location.replace(pathname) so invite query params are removed
+- cleanup is guarded, so a visual cleanup error cannot prevent leaving the room
+
+V7.5 MOBILE START + PROJECTILE/SKILL VISIBILITY
+===============================================
+
+1. MOBILE START RACE FIX
+- One idempotent enterGameFromState() handles start/resume/state repair.
+- WebGL scene creation and lobby->game swap are separated across animation frames.
+- If THREE is not ready, client retries instead of silently remaining in lobby.
+- If `start` event is missed/races with scene initialization, the next authoritative
+  `state.started=true` snapshot automatically enters the match.
+- Reload is no longer required to enter an already-started match.
+
+2. PROJECTILE TRAILS
+- One additional GPU InstancedMesh batch for ALL projectile trails.
+- Boss projectiles, authoritative player shots, and predicted local shots get trails.
+- Mobile trails are longer/brighter to remain visible under reduced render resolution.
+- No per-projectile Mesh/Geometry/Material creation.
+
+3. MOBILE SKILL VISIBILITY
+- Boss projectiles slightly larger/brighter on mobile.
+- Boss telegraph opacity and scale increased on mobile.
+- Giấc Mơ Vỡ moon telegraph increased on mobile.
+- Minimum dynamic render scale raised from 0.82 -> 0.92 on mobile so VFX do not disappear
+  into a low-resolution buffer.
+
+All Redis/WebSocket/reconnect/lagcomp/combat-feel systems are retained.

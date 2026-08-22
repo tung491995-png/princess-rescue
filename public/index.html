@@ -79,7 +79,7 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 <div class="controls right hidden" id="ctl2"><div class="joy"><div class="stick"></div></div><div class="btn attack" data-act="attack">⚔️<span>ATTACK</span></div><div class="btn small dash" data-act="dash">💨<span>DASH</span><div class="cover"></div></div><div class="btn small skill" data-act="skill">✨<span>SKILL</span><div class="cover"></div></div></div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">3D HEAVY RENDERER V7.3</span></h1><p style="margin-top:7px">Single-draw boss projectile shader + automatic heavy-combat boss outline culling.</p><div class="logoMoon"></div><div class="badges"><span class="badge">1 enemy projectile draw call</span><span class="badge">GPU projectile shader</span><span class="badge">Boss outline culling</span><span class="badge">Combat Feel V6</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">3D HEAVY RENDERER V7.5</span></h1><p style="margin-top:7px">Single-draw boss projectile shader + automatic heavy-combat boss outline culling.</p><div class="logoMoon"></div><div class="badges"><span class="badge">1 enemy projectile draw call</span><span class="badge">GPU projectile shader</span><span class="badge">Boss outline culling</span><span class="badge">Combat Feel V6</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -105,9 +105,10 @@ let localReady=false,gameInitialized=false;
 
 // V5 renderer: all combat bullets/pickups are preallocated GPU instances.
 const MAX_VIS_PROJECTILES=128,MAX_VIS_PICKUPS=24;
-let projectileInst={food:null,enemy:null},pickupInst=null,darkPoolMesh=null;
+let projectileInst={food:null,enemy:null,trail:null},pickupInst=null,darkPoolMesh=null;
 let sharedGeo={},sharedMat={},dummy3D=null,tempColor3D=null;
 let enemyKindAttr=null,enemyColorAttr=null,enemyPulseAttr=null;
+let trailColorAttr=null,trailAlphaAttr=null;
 let bossOutlineVisible=true,heavyCombat=false,heavyQuietSince=0;
 let eyeEls=[];
 let uiLast=0;
@@ -116,11 +117,14 @@ let uiLast=0;
 let actionId=0,predictedShots=[],hitStopUntil=0,cameraKick=0,bossHitPulseUntil=0;
 const combatAnim={hero:{type:null,start:0,dur:0},princess:{type:null,start:0,dur:0}};
 let bossCastVisual={cast:null,impactShown:false};
+
+// V7.5: mobile-safe scene transition.
+let enteringGame=false,enterRetry=0,enterStateQueued=null,enterSource='',enterTimer=null;
 let bossTelegraphRing=null,bossTelegraphMoon=null;
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
-const renderScaleMin=mobileDevice?.82:1.0;
+const renderScaleMin=mobileDevice?.92:1.0;
 let frameEma=16.7,slowFrames=0,fastFrames=0,lastScaleChange=0;
 const bootQuery=new URLSearchParams(location.search);
 const netTest={
@@ -358,7 +362,37 @@ function scheduleReconnect(){
  reconnectTimer=setTimeout(()=>connect(),d);
 }
 function leaveRoom(){
- intentionalClose=true;send({type:'leave'});clearSession();try{ws&&ws.close()}catch{};connected=false;running=false;gameInitialized=false;snapshotBuffer=[];remoteProj.clear();remotePick.clear();location.href=location.pathname;
+ // V7.4: leave must never be blocked by renderer-cleanup errors.
+ intentionalClose=true;
+
+ try{send({type:'leave'})}catch(err){console.warn('[leave send]',err)}
+ try{clearSession()}catch(err){console.warn('[leave session]',err)}
+
+ connected=false;
+ running=false;
+ gameInitialized=false;
+ snapshotBuffer=[];
+ pendingInputs=[];
+ predictedShots=[];
+ localInput.x=0;
+ localInput.y=0;
+
+ // Clear the V7 InstancedMesh renderer instead of removed V4 remoteProj/remotePick Maps.
+ try{
+   if(projectileInst?.food)projectileInst.food.count=0;
+   if(projectileInst?.enemy)projectileInst.enemy.count=0;
+   if(projectileInst?.trail)projectileInst.trail.count=0;
+   if(pickupInst)pickupInst.count=0;
+   if(darkPoolMesh)darkPoolMesh.visible=false;
+   hideBossCastVisual();
+ }catch(err){
+   console.warn('[leave render cleanup]',err);
+ }
+
+ try{ws&&ws.close(1000,'Leave room')}catch(err){console.warn('[leave socket]',err)}
+
+ // Replace removes ?room=...&join=1 from history too.
+ window.location.replace(location.pathname);
 }
 function createRoom(){
  clearSession();role='hero';showScreen('hostLobby');$('hostStart').classList.add('hidden');$('hostStatus').className='status warn';$('hostStatus').textContent='Đang kết nối server…';
@@ -404,7 +438,7 @@ function onMessage(m){
    roomCode=m.code;role=m.role;sessionToken=m.token;saveSession();reconnectOverlay(false);
    resetLossStats();acceptInitialState(m.state);finishPendingTest(m.state,'resumed');
    if(m.state.started){
-     ensureGame();running=true;showGameUI();banner('ĐÃ KẾT NỐI LẠI ✓');
+     enterGameFromState(m.state,'resumed');
    }else{
      if(role==='hero'){
        showScreen('hostLobby');$('roomCode').textContent=roomCode;$('inviteLink').textContent=inviteFor(roomCode);
@@ -424,20 +458,7 @@ function onMessage(m){
    return;
  }
  if(m.type==='start'){
-   try{
-     acceptInitialState(m.state);
-     ensureGame();
-     running=true;
-     showGameUI();
-     $('hostStart').disabled=false;
-     $('hostStart').textContent='BẮT ĐẦU TRẬN';
-     banner('ONLINE CO-OP — START');
-   }catch(err){
-     console.error('[game boot]',err);
-     $('hostStart').disabled=false;
-     $('hostStart').textContent='THỬ LẠI';
-     showConnectionError('Lỗi khởi tạo game: '+(err?.message||err));
-   }
+   enterGameFromState(m.state,'start');
    return;
  }
  if(m.type==='startAck'){
@@ -461,7 +482,14 @@ function onMessage(m){
    pushSnapshot(m.state);latestState=m.state;
    syncBossCastFromSnapshot(m.state.cast);
    reconcilePredictedShotsFromSnapshot(m.state);
-   if(running)reconcileLocal(m.state);
+
+   // If `start` raced with mobile scene creation or UI lifecycle, the next authoritative
+   // state snapshot repairs the transition automatically. No manual reload required.
+   if(m.state.started && !running && !enteringGame){
+     enterGameFromState(m.state,'state-repair');
+   }else if(running){
+     reconcileLocal(m.state);
+   }
    return;
  }
  if(m.type==='actionAck'){
@@ -473,7 +501,9 @@ function onMessage(m){
    return;
  }
  if(m.type==='resumePlay'){
-   resetLossStats();acceptInitialState(m.state);finishPendingTest(m.state,'resumePlay');if(!gameInitialized)ensureGame();running=true;showGameUI();reconnectOverlay(false);banner('ĐỒNG ĐỘI ĐÃ QUAY LẠI ✓');
+   resetLossStats();
+   finishPendingTest(m.state,'resumePlay');
+   enterGameFromState(m.state,'resumePlay');
    return;
  }
  if(m.type==='peerLeft'){banner('ĐỒNG ĐỘI ĐÃ RỜI PHÒNG');running=false;reconnectOverlay(false);return}
@@ -543,6 +573,52 @@ function initSharedRenderAssets(){
  enemyGeo.setAttribute('aColor',enemyColorAttr);
  enemyGeo.setAttribute('aPulse',enemyPulseAttr);
  sharedGeo.enemy=enemyGeo;
+
+ // V7.5: one GPU batch for projectile trails. This keeps trails visible on mobile
+ // even when render resolution is reduced.
+ const trailGeo=new THREE.PlaneGeometry(1.0,.16,1,1);
+ trailColorAttr=new THREE.InstancedBufferAttribute(new Float32Array(MAX_VIS_PROJECTILES*3),3);
+ trailAlphaAttr=new THREE.InstancedBufferAttribute(new Float32Array(MAX_VIS_PROJECTILES),1);
+ trailGeo.setAttribute('aColor',trailColorAttr);
+ trailGeo.setAttribute('aAlpha',trailAlphaAttr);
+ sharedGeo.trail=trailGeo;
+
+ sharedMat.trail=new THREE.RawShaderMaterial({
+   transparent:true,
+   depthWrite:false,
+   blending:THREE.AdditiveBlending,
+   side:THREE.DoubleSide,
+   vertexShader:`
+     precision highp float;
+     attribute vec3 position;
+     attribute vec2 uv;
+     attribute mat4 instanceMatrix;
+     attribute vec3 aColor;
+     attribute float aAlpha;
+     uniform mat4 modelViewMatrix;
+     uniform mat4 projectionMatrix;
+     varying vec2 vUv;
+     varying vec3 vColor;
+     varying float vAlpha;
+     void main(){
+       vUv=uv;vColor=aColor;vAlpha=aAlpha;
+       gl_Position=projectionMatrix*modelViewMatrix*instanceMatrix*vec4(position,1.0);
+     }
+   `,
+   fragmentShader:`
+     precision highp float;
+     varying vec2 vUv;
+     varying vec3 vColor;
+     varying float vAlpha;
+     void main(){
+       float longitudinal=smoothstep(0.0,.10,vUv.x)*(1.0-smoothstep(.32,1.0,vUv.x));
+       float center=1.0-smoothstep(.10,.50,abs(vUv.y-.5));
+       float a=longitudinal*center*vAlpha;
+       if(a<.018)discard;
+       gl_FragColor=vec4(vColor,a);
+     }
+   `
+ });
 
  sharedMat.enemy=new THREE.RawShaderMaterial({
    transparent:true,
@@ -629,6 +705,7 @@ function initCombatInstances(){
 
  projectileInst.food=makeInstanceMesh(sharedGeo.food,sharedMat.food,MAX_VIS_PROJECTILES);
  projectileInst.enemy=makeInstanceMesh(sharedGeo.enemy,sharedMat.enemy,MAX_VIS_PROJECTILES);
+ projectileInst.trail=makeInstanceMesh(sharedGeo.trail,sharedMat.trail,MAX_VIS_PROJECTILES);
  pickupInst=makeInstanceMesh(sharedGeo.pickup,sharedMat.pickup,MAX_VIS_PICKUPS);
 
  darkPoolMesh=new THREE.Mesh(sharedGeo.darkPool,sharedMat.darkPool);
@@ -652,11 +729,15 @@ function initCombatInstances(){
  enemyKindAttr.setX(0,1);enemyColorAttr.setXYZ(0,.72,.61,1.0);enemyPulseAttr.setX(0,0);
  enemyKindAttr.needsUpdate=enemyColorAttr.needsUpdate=enemyPulseAttr.needsUpdate=true;
 
+ projectileInst.trail.setMatrixAt(0,dummy3D.matrix);projectileInst.trail.count=1;
+ trailColorAttr.setXYZ(0,.72,.61,1.0);trailAlphaAttr.setX(0,.8);
+ trailColorAttr.needsUpdate=trailAlphaAttr.needsUpdate=true;
+
  pickupInst.setMatrixAt(0,dummy3D.matrix);pickupInst.setColorAt(0,tempColor3D.setHex(0xff85bf));pickupInst.count=1;
 
  renderer.compile(scene,camera);
 
- projectileInst.food.count=0;projectileInst.enemy.count=0;pickupInst.count=0;
+ projectileInst.food.count=0;projectileInst.enemy.count=0;projectileInst.trail.count=0;pickupInst.count=0;
 }
 function prepareSkillDom(){
  const eyes=$('eyes');if(eyeEls.length)return;
@@ -713,6 +794,27 @@ function kindValue(k){
  if(k==='thought')return 2;
  return 0;
 }
+
+function setTrailInst(index,x,y,z,vx,vz,colorHex,alpha=.75){
+ if(index>=MAX_VIS_PROJECTILES)return false;
+ const speed=Math.hypot(vx||0,vz||0);
+ if(speed<.05)return false;
+
+ // Flat arena trail, rotated in XZ to face the projectile direction.
+ const angle=Math.atan2(-(vz||0),vx||0);
+ dummy3D.position.set(x-(vx||0)*.032,y-.03,z-(vz||0)*.032);
+ dummy3D.rotation.set(-Math.PI/2,0,angle);
+ const len=clamp(speed*.15,.72,1.85)*(mobileDevice?1.18:1);
+ dummy3D.scale.set(len,1,1);
+ dummy3D.updateMatrix();
+ projectileInst.trail.setMatrixAt(index,dummy3D.matrix);
+
+ tempColor3D.setHex(colorHex);
+ trailColorAttr.setXYZ(index,tempColor3D.r,tempColor3D.g,tempColor3D.b);
+ trailAlphaAttr.setX(index,mobileDevice?Math.min(1,alpha*1.28):alpha);
+ return true;
+}
+
 function setEnemyInst(index,x,y,z,colorHex,kind,pulse,size){
  if(index>=MAX_VIS_PROJECTILES)return false;
  // Billboard: copy camera rotation, only position/scale differ per instance.
@@ -758,7 +860,7 @@ function setup3D(){
  window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false)})
 }
 function clearDynamic(){
- if(projectileInst.food)projectileInst.food.count=0;if(projectileInst.enemy)projectileInst.enemy.count=0;
+ if(projectileInst.food)projectileInst.food.count=0;if(projectileInst.enemy)projectileInst.enemy.count=0;if(projectileInst.trail)projectileInst.trail.count=0;
  if(pickupInst)pickupInst.count=0;if(darkPoolMesh)darkPoolMesh.visible=false;
  if(A?.parent)scene.remove(A);if(B?.parent)scene.remove(B);if(boss?.parent)scene.remove(boss);
  predictedShots=[];hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false};
@@ -770,6 +872,75 @@ function ensureGame(){
  const s=latestState||snapshotBuffer.at(-1)?.s;
  if(s)applyImmediateState(s);
 }
+
+function enterGameFromState(state,source='server'){
+ if(!state)return;
+ enterStateQueued=state;
+ enterSource=source;
+ latestState=state;
+
+ if(enteringGame)return;
+ enteringGame=true;
+ enterRetry=0;
+
+ const attempt=()=>{
+   const s=enterStateQueued;
+   if(!s){enteringGame=false;return}
+
+   try{
+     // CDN may technically finish after the websocket start event on some mobile browsers.
+     if(!window.THREE)throw new Error('THREE_NOT_READY');
+
+     acceptInitialState(s);
+     ensureGame();
+
+     // Defer the actual UI swap to the next paint. This avoids a mobile Safari/Chrome
+     // race where the start event and WebGL canvas creation happen in one event turn.
+     requestAnimationFrame(()=>{
+       requestAnimationFrame(()=>{
+         try{
+           running=true;
+           reconnectOverlay(false);
+           showGameUI();
+           if(role==='hero'){
+             $('hostStart').disabled=false;
+             $('hostStart').textContent='BẮT ĐẦU TRẬN';
+           }
+           enteringGame=false;
+           enterRetry=0;
+           clearTimeout(enterTimer);
+           banner(source==='start'?'ONLINE CO-OP — START':'ĐÃ VÀO LẠI TRẬN ✓');
+         }catch(err){
+           enteringGame=false;
+           console.error('[enter game paint]',err);
+           showConnectionError('Lỗi chuyển vào trận: '+(err?.message||err));
+         }
+       });
+     });
+   }catch(err){
+     enterRetry++;
+     if(String(err?.message||err)==='THREE_NOT_READY' && enterRetry<30){
+       // Retry for ~3s while the external Three.js CDN finishes.
+       enterTimer=setTimeout(attempt,100);
+       return;
+     }
+     if(enterRetry<8){
+       // Generic mobile WebGL/layout transient retry.
+       enterTimer=setTimeout(attempt,80+enterRetry*35);
+       return;
+     }
+     enteringGame=false;
+     console.error('[enter game]',err);
+     if(role==='hero'){
+       $('hostStart').disabled=false;
+       $('hostStart').textContent='THỬ LẠI';
+     }
+     showConnectionError('Lỗi khởi tạo game: '+(err?.message||err));
+   }
+ };
+ attempt();
+}
+
 function showGameUI(){
  ['hud','bossHud','phase','trustHud','netBadge'].forEach(id=>$(id).classList.remove('hidden'));
  if(role==='hero'){$('ctl1').classList.remove('hidden');$('ctl2').classList.add('hidden')}
@@ -953,8 +1124,10 @@ function updateBossCastVisual(){
  const pre=clamp((now-c.startAt)/Math.max(1,c.impactAt-c.startAt),0,1);
  const after=clamp((now-c.impactAt)/Math.max(1,c.endAt-c.impactAt),0,1);
  bossTelegraphRing.visible=true;bossTelegraphRing.position.set(boss.position.x,.06,boss.position.z);
- bossTelegraphRing.material.opacity=now<c.impactAt?.25+.65*pre:.72*(1-after);
- bossTelegraphRing.scale.setScalar(1+.9*pre+.25*Math.sin(performance.now()*.018));
+ bossTelegraphRing.material.opacity=now<c.impactAt
+   ?(mobileDevice?.42:.25)+(mobileDevice?.58:.65)*pre
+   :(mobileDevice?.88:.72)*(1-after);
+ bossTelegraphRing.scale.setScalar((mobileDevice?1.16:1)*(1+.9*pre+.25*Math.sin(performance.now()*.018)));
 
  bossTelegraphMoon.visible=false;
  $('clockFx').style.opacity=0;
@@ -966,7 +1139,7 @@ function updateBossCastVisual(){
  }else if(c.i===1){
    bossTelegraphRing.material.color.setHex(0xe2ddff);
    bossTelegraphMoon.visible=true;bossTelegraphMoon.position.set(boss.position.x,5.0,boss.position.z);
-   bossTelegraphMoon.material.opacity=.25+.70*pre;bossTelegraphMoon.scale.setScalar(.65+.55*pre);
+   bossTelegraphMoon.material.opacity=(mobileDevice?.42:.25)+(mobileDevice?.58:.70)*pre;bossTelegraphMoon.scale.setScalar((mobileDevice?1.18:1)*(.65+.55*pre));
  }else if(c.i===2){
    bossTelegraphRing.material.color.setHex(0x8e74e8);
    const el=$('clockFx');el.style.opacity=1;el.style.color=now<c.impactAt?'#eee5ff':'#ff6d98';
@@ -1018,7 +1191,7 @@ function syncEntities(sa,sb,t){
 
  // V7: player projectiles use one batch; ALL enemy projectiles use one shader InstancedMesh.
  const aMap=cachedProjectileMap(sa);
- let foodCount=0,enemyCount=0;
+ let foodCount=0,enemyCount=0,trailCount=0;
  const nowVisual=performance.now();
  const pulseBase=nowVisual*.009;
  const spin=nowVisual*.0025;
@@ -1026,15 +1199,19 @@ function syncEntities(sa,sb,t){
  for(const pb of sb.projectiles){
    const pa=aMap.get(pb.id)||pb;
    const x=lerp(pa.x,pb.x,t),y=lerp(pa.y,pb.y,t),z=lerp(pa.z,pb.z,t);
+   const snapDt=Math.max(.016,((sb.ts||0)-(sa.ts||0))/1000||.067);
+   const vx=(pb.x-pa.x)/snapDt,vz=(pb.z-pa.z)/snapDt;
 
    if(pb.e){
      const kind=kindValue(pb.k);
-     const color=pb.k==='shard'?0xe8e2ff:pb.k==='thought'?0x9d7ee8:0xb79cff;
-     const size=pb.k==='shard'?.88:pb.k==='thought'?1.05:.82;
+     const color=pb.k==='shard'?0xf1ecff:pb.k==='thought'?0xb494ff:0xc9afff;
+     const size=(pb.k==='shard'?.94:pb.k==='thought'?1.12:.90)*(mobileDevice?1.12:1);
      if(setEnemyInst(enemyCount,x,y,z,color,kind,pulseBase+pb.id*.31,size))enemyCount++;
+     if(setTrailInst(trailCount,x,y,z,vx,vz,color,.76))trailCount++;
    }else{
      const color=foods[pb.f]?.[2]??0xffffff;
-     if(setInst(projectileInst.food,foodCount,x,y,z,color,0,1))foodCount++;
+     if(setInst(projectileInst.food,foodCount,x,y,z,color,0,mobileDevice?1.18:1))foodCount++;
+     if(setTrailInst(trailCount,x,y,z,vx,vz,color,.68))trailCount++;
    }
  }
 
@@ -1042,17 +1219,24 @@ function syncEntities(sa,sb,t){
  for(const p of predictedShots){
    if(foodCount>=MAX_VIS_PROJECTILES)break;
    const color=foods[p.food]?.[2]??0xffffff;
-   if(setInst(projectileInst.food,foodCount,p.x,p.y,p.z,color,0,p.acked?1.0:1.12))foodCount++;
+   const ps=(p.acked?1.0:1.12)*(mobileDevice?1.18:1);
+   if(setInst(projectileInst.food,foodCount,p.x,p.y,p.z,color,0,ps))foodCount++;
+   if(setTrailInst(trailCount,p.x,p.y,p.z,p.vx,p.vz,color,.72))trailCount++;
  }
 
  projectileInst.food.count=foodCount;
  projectileInst.enemy.count=enemyCount;
+ projectileInst.trail.count=trailCount;
 
  projectileInst.food.instanceMatrix.needsUpdate=true;
  if(projectileInst.food.instanceColor)projectileInst.food.instanceColor.needsUpdate=true;
 
  projectileInst.enemy.instanceMatrix.needsUpdate=true;
  enemyKindAttr.needsUpdate=true;enemyColorAttr.needsUpdate=true;enemyPulseAttr.needsUpdate=true;
+
+ projectileInst.trail.instanceMatrix.needsUpdate=true;
+ trailColorAttr.needsUpdate=true;trailAlphaAttr.needsUpdate=true;
+
  sharedMat.enemy.uniforms.uTime.value=performance.now()*.001;
 
  updateHeavyCombatMode(sb);
@@ -1183,7 +1367,12 @@ $('hostStart').onclick=()=>{
  $('hostStart').textContent='ĐANG VÀO TRẬN…';
  $('hostStatus').className='status warn';
  $('hostStatus').textContent='Đang gửi lệnh bắt đầu tới server…';
- send({type:'start'});
+
+ if(latestState?.started){
+   enterGameFromState(latestState,'button-repair');
+ }else{
+   send({type:'start'});
+ }
  // Safety reset if neither startAck nor start arrives.
  setTimeout(()=>{
    if(!running&&$('hostStart').disabled){
@@ -1194,7 +1383,9 @@ $('hostStart').onclick=()=>{
  },8000);
 };
 $('hostCancel').onclick=leaveRoom;$('joinCancel').onclick=()=>{if(sessionToken)leaveRoom();else showScreen('home')};
-$('joinGo').onclick=()=>joinRoom($('roomInput').value);$('backLobby').onclick=leaveRoom;
+$('joinGo').onclick=()=>joinRoom($('roomInput').value);
+$('backLobby').onclick=leaveRoom;
+$('backLobby').onpointerup=e=>{e.preventDefault();leaveRoom()};
 $('duoBtn').onpointerdown=e=>{send({type:'action',a:'duo',st:Date.now()+serverOffset});e.preventDefault()};
 $('roomInput').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6));
 

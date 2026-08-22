@@ -924,5 +924,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,()=>console.log(`Princess Rescue V7.3 server on :${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,()=>console.log(`Princess Rescue V7.5 server on :${PORT} | redis=${redisReady} | ws=/ws`));
 })();
