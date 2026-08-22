@@ -1,12 +1,11 @@
 {
+  "version": "9.4",
   "asset": "ma_vuong_mat_ngu.glb",
-  "version": "V9.3",
   "format": "glTF Binary 2.0",
-  "size_bytes": 360112,
-  "sha256": "3173e6f88ad1507b5239c231279f748074ccb8aa14d5400551c3790dfc26e1a3",
-  "skin_count": 1,
-  "joint_count": 20,
-  "animation_count": 11,
+  "size_bytes": 947944,
+  "sha256": "d78276df3193847c7722fa834c793e0220e449e497c2eb85d2a234eac94b48c2",
+  "skins": 1,
+  "joints": 20,
   "animations": [
     "Idle",
     "Move",
@@ -20,7 +19,7 @@
     "PhaseChange",
     "Death"
   ],
-  "material_count": 8,
+  "animation_count": 11,
   "materials": [
     "Skin",
     "HairSilverLavender",
@@ -29,15 +28,26 @@
     "MoonGlow",
     "EyeDark",
     "LipRose",
-    "CrownGold"
+    "CrownGold",
+    "FacePorcelain",
+    "IrisAmethyst",
+    "EyeHighlight",
+    "HairMoonHighlight",
+    "DressVelvet",
+    "DressPlum",
+    "PearlSilver",
+    "AmethystJewel",
+    "StarSilver"
   ],
-  "visual_identity": [
-    "silver-lavender long hair",
-    "deep night royal layered dress",
-    "crescent crown + glowing jewel",
-    "eclipse moon halo with rune spokes",
-    "purple emissive eyes/orb/stars",
-    "anime-fantasy female boss silhouette"
-  ],
-  "provenance": "Original boss asset generated specifically for this Princess Rescue project; no third-party model geometry is bundled in this GLB."
+  "material_count": 17,
+  "mesh_primitives": 90,
+  "approx_vertices": 12966,
+  "art_pass": {
+    "face": "new porcelain anime face volume, eye whites, amethyst iris, pupils, highlights, brows, lips, forehead jewel",
+    "hair": "layered silver-lavender back strands, side locks, short front bangs, vertex-color gradient",
+    "costume": "velvet/plum bodice, shoulder forms, sleeves, cuffs, segmented layered skirt, cape, silver hem/belt",
+    "crown": "crescent crown, amethyst jewel, star ornaments",
+    "halo": "three concentric eclipse rings plus twelve orbiting star/jewel markers",
+    "materials": "17 PBR material groups with emissive moon/jewel/iris treatment"
+  }
 }

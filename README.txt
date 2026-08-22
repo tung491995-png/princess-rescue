@@ -743,3 +743,237 @@ MA VƯƠNG GLB — RIG READY ✓
 
 Hero/Princess GLB vẫn là optional ở bản này; nếu thiếu thì dùng procedural
 character fallback như V9.2.
+
+
+============================================================
+V9.4 — MA VƯƠNG BOSS ART POLISH
+============================================================
+
+BUNDLED PRODUCTION GLB
+public/assets/characters/ma_vuong_mat_ngu.glb
+
+TECH
+- glTF Binary 2.0
+- 20 bones/joints
+- 11 embedded animation clips
+- 90 mesh primitives
+- ~12,966 vertices
+- 17 PBR materials
+- compact GLB size: 925.7 KB
+
+ART PASS
+1. FACE
+- anime porcelain face volume
+- separate eye whites
+- amethyst emissive irises
+- pupils + highlights
+- eyebrows
+- lips
+- forehead jewel
+
+2. HAIR
+- silver/lavender layered long hair
+- individual back strands
+- side locks
+- short front bangs that keep the face readable
+- root-to-tip vertex color gradient
+- HairRoot bone animation retained
+
+3. COSTUME
+- dark velvet / plum bodice
+- shoulder volumes
+- sleeves + cuffs
+- layered segmented royal skirt over a solid inner skirt
+- rear cape panels
+- pearl/silver belt + hem
+- moon chest emblem
+
+4. CROWN / HALO
+- crescent crown
+- amethyst center jewel
+- star accents
+- triple eclipse halo rings
+- twelve orbiting rune/star/jewel markers
+- HaloRoot animation retained
+
+5. COMBAT ANIMATION
+- all V9.3 skill mappings retained
+- boss Hit animation is now wired to combatHit with a 280ms throttle
+- Summon / Ultimate / PhaseChange / Death remain wired
+
+MOBILE
+The polished boss asset is still under 1 MB.
+Procedural model remains fallback if GLB loading fails.
+
+Load confirmation:
+MA VƯƠNG V9.4 — ART + RIG READY ✓
+
+
+============================================================
+V9.5 — ANIMATION POLISH + BOSS INTRO CINEMATIC
+============================================================
+
+BOSS INTRO
+- Server-authoritative 4.4s intro grace.
+- Both clients cannot move / attack / dash during the reveal.
+- Boss AI and boss skill timers are held during the cinematic.
+- Cinematic 4-stage camera:
+  1) low 3/4 silhouette reveal
+  2) close face / crown / eye reveal
+  3) orbit to full-body + halo reveal
+  4) smooth pull-back into normal gameplay camera
+- Letterbox bars.
+- rotating moon sigil.
+- crescent/eclipse reveal.
+- lower-third boss title:
+  MA VƯƠNG MẤT NGỦ
+  THE SLEEPLESS MOON
+- intro dialogue remains small at the bottom through V9.1 dialogue overlay.
+- mobile landscape receives compact title/sigil sizing.
+
+ANIMATION POLISH
+- Boss cast animation timing profiles:
+  Bóng Đêm Lan Ra -> heavier anticipation
+  Giấc Mơ Vỡ -> slower dramatic release
+  Ba Giờ Sáng -> longest anticipation
+  Mộng Du Truy Kích -> fast/snappy teleport
+  Vĩnh Dạ -> slow ultimate presentation
+- crossfade profiles tuned per cast.
+- SkirtRoot secondary sway layer.
+- HaloRoot intro pulse.
+- PhaseChange animation is reused for the cinematic reveal.
+- Hit / Summon / Ultimate / Death mapping from V9.4 retained.
+
+NETWORK SAFETY
+- introUntil is included in authoritative state snapshots.
+- input/action handlers reject gameplay during intro.
+- mobile start/reconnect logic remains.
+- Redis persistence and WebSocket /ws remain.
+
+
+============================================================
+V9.6 — BOSS COMBAT PRESENTATION POLISH
+============================================================
+
+SKILL-SPECIFIC IMPACT PRESENTATION
+- Bóng Đêm Lan Ra:
+  purple radial pulse + low trauma + chest magic pulse.
+- Giấc Mơ Vỡ:
+  white-violet slash/shatter flash + stronger camera response.
+- Ba Giờ Sáng:
+  violet chromatic split + clock impact response.
+- Mộng Du Truy Kích:
+  fast diagonal slash + short zoom punch + high-frequency camera trauma.
+- Vĩnh Dạ:
+  dark edge compression + large halo/chest pulse + deep camera trauma.
+
+SCREEN FX
+- One reusable DOM impact overlay.
+- No per-hit DOM creation.
+- radial shock ring
+- slash streak
+- edge light/dark compression
+- pseudo chromatic split
+- tuned separately for mobile.
+
+CAMERA
+- Replaced raw random shake with trauma-based deterministic shake.
+- Amplitude decays smoothly.
+- Skill-specific trauma strengths.
+- Small roll, X/Y/Z displacement.
+- Existing legacy cameraKick events feed into trauma instead of raw jitter.
+
+BOSS BODY / SOCKET VFX
+- One reusable Three.js impact aura.
+- Automatically attaches to VFXSocket (Chest/Spine) on the rigged GLB.
+- Procedural fallback uses world-space boss position.
+- Player damage on boss produces chest/torso magic pulses.
+- Strong hits use warmer highlight.
+
+ANIMATION / RECOVERY
+- Dash now correctly uses Dash animation rather than Attack animation.
+- Attack / Dash / Skill each have their own duration / crossfade / speed profile.
+- Dash gets its own squash/stretch fallback presentation.
+- Small hit reactions DO NOT cancel telegraphed boss casts.
+- Boss Hit only interrupts when no boss cast is active.
+
+DEATH CINEMATIC
+- Victory no longer immediately opens the result modal.
+- 3.8s boss defeat presentation:
+  close-up -> moon/full-body orbit -> sunrise pullback.
+- Death animation continues through AnimationMixer.
+- Halo collapses during defeat.
+- GLB material fades into stardust-like disappearance.
+- cracked moon overlay + sunrise screen wash.
+- small bottom dialogue remains non-blocking:
+  Boss -> Princess -> Hero.
+- Result screen appears only after the cinematic completes.
+
+V9.5 intro cinematic, V9.4 rigged GLB art, dialogue overlay,
+mobile controls, Redis and WebSocket multiplayer are retained.
+
+
+============================================================
+V9.7 — MA VƯƠNG SKILL VFX ART PASS
+============================================================
+
+1. BÓNG ĐÊM LAN RA
+- Flat purple cylinder material replaced by animated galaxy-ink shader.
+- rotating/swirl ink structure
+- blue/violet nebula variation
+- tiny star flecks
+- illuminated galaxy rim
+- one existing dark-pool draw call retained
+- moon/rune procedural ground telegraph added
+
+2. GIẤC MƠ VỠ
+- silver shard GPU projectile shader redesigned
+- asymmetric glass silhouette
+- animated white spine/glint
+- floating moon has synchronized 3D crack lines
+- stronger crack overlay on impact
+- rune telegraph includes radial fracture/spoke language
+
+3. BA GIỜ SÁNG
+- clock receives outer rune/tick circles
+- ground telegraph uses twelve clock-like marks
+- synchronized 02:59 -> 03:00 scale tension
+- impact creates clock fracture ring
+- thought glyphs: “…”, “?”, crescent
+- lateral thought streaks
+- thought projectiles gain hollow memory ring + orbiting dots
+
+4. MỘNG DU TRUY KÍCH
+- GPU projectile is now a crescent slash rather than generic line
+- one reusable world-space double crescent arc at impact
+- crescent/rune telegraph art
+- no runtime geometry allocation per cast
+
+5. VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC
+- rotating void-vortex overlay
+- three synchronized visual night waves
+- drifting void-star field
+- red eye-beam accents
+- night projectile shader gains black core + violet corona + red eye slit
+- multi-ring/rune ground telegraph remains synchronized with server cast
+- all decoration pointer-events:none and mobile-scaled
+
+6. TIỂU MỘNG ẢNH
+- server summonSpawn now includes authoritative spawn positions
+- 3 pooled world-space summon glyph/column effects
+- summon death sends authoritative position
+- 3 pooled crystal/star death bursts
+- no per-summon geometry allocation
+- Summon rig animation from V9.6 retained
+
+PERFORMANCE
+- existing enemy projectile InstancedMesh remains ONE projectile batch
+- telegraph rune art is ONE shader plane
+- galaxy pool remains ONE mesh
+- crescent slash is preallocated
+- summon spawn/death effects are pooled
+- no shader/geometry creation when a skill is cast
+- mobile-specific CSS scaling retained
+
+V9.6 combat presentation, V9.5 intro cinematic, V9.4 rigged boss,
+dialogue overlay, stable controls, Redis and WebSocket are retained.

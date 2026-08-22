@@ -84,7 +84,7 @@ function player(role){
 }
 function freshState(){
   return {
-    started:false,paused:false,pauseRole:null,
+    started:false,paused:false,pauseRole:null,introUntil:0,
     trust:0,tick:0,
     players:{hero:player('hero'),princess:player('princess')},
     boss:{x:0,z:-4.7,hp:2200,max:2200,phase:1,skillIndex:-1,skillT:1.8,lastEl:null,lastElT:0},
@@ -541,13 +541,14 @@ function runTask(room,task){
       }
     }
   }else if(task.type==='summon_dreams'){
-    const count=Math.min(3,task.data.count||2);
-    broadcast(room,{type:'event',e:'summonSpawn',p:{count}});
+    const count=Math.min(3,task.data.count||2),spawned=[];
     for(let i=0;i<count;i++){
       const a=(i/count)*Math.PI*2+Math.random()*.5;
       const r=5.7+Math.random()*1.6;
-      s.summons.push({id:s.nextSummon++,x:s.boss.x+Math.cos(a)*r,z:s.boss.z+Math.sin(a)*r,y:1.15,hp:45,max:45,t:24,atkT:.8});
+      const m={id:s.nextSummon++,x:s.boss.x+Math.cos(a)*r,z:s.boss.z+Math.sin(a)*r,y:1.15,hp:45,max:45,t:24,atkT:.8};
+      s.summons.push(m);spawned.push({id:m.id,x:m.x,z:m.z,y:m.y});
     }
+    broadcast(room,{type:'event',e:'summonSpawn',p:{count,points:spawned}});
     dialogue(room,'boss','Ra đây… những giấc mộng lạc lối.',2100);
   }else if(task.type==='dream_move'){
     for(const m of s.summons){
@@ -630,6 +631,7 @@ function reset(room){
 }
 function startMatch(room){
   reset(room);room.state.started=true;room.state.paused=false;room.state.pauseRole=null;
+  room.state.introUntil=Date.now()+4400;
   markDirty(room);
 
   // Start gameplay immediately. Persistence must never block the match transition.
@@ -647,6 +649,11 @@ function tick(room,dt){
   const now=Date.now();
   s.tick++;
   recordHistory(room,now);
+
+  // V9.5 cinematic grace: both clients see the reveal while the authoritative
+  // server holds movement, attacks, boss AI and timers.
+  if(s.introUntil&&now<s.introUntil)return;
+
   processTasks(room,now);
   processPendingHits(room,now);
   if(s.activeCast && now>s.activeCast.endAt+120){
@@ -753,7 +760,7 @@ function tick(room,dt){
         hitSummon.hp-=pr.dmg||8;
         broadcast(room,{type:'event',e:'summonHit',p:{id:hitSummon.id,dmg:Math.round(pr.dmg||8),hp:Math.max(0,hitSummon.hp)}});
         if(hitSummon.hp<=0){
-          broadcast(room,{type:'event',e:'summonDefeated',p:{id:hitSummon.id}});
+          broadcast(room,{type:'event',e:'summonDefeated',p:{id:hitSummon.id,x:hitSummon.x,z:hitSummon.z,y:hitSummon.y}});
           s.trust=Math.min(100,s.trust+4);
         }
         pr.t=0;
@@ -794,7 +801,7 @@ function tick(room,dt){
 function snapshot(room){
   const s=room.state;
   return {
-    ts:Date.now(),tick:s.tick,trust:s.trust,started:s.started,paused:s.paused,pauseRole:s.pauseRole,
+    ts:Date.now(),tick:s.tick,trust:s.trust,started:s.started,paused:s.paused,pauseRole:s.pauseRole,introUntil:s.introUntil||0,
     players:{
       hero:{...s.players.hero,input:undefined},
       princess:{...s.players.princess,input:undefined}
@@ -929,6 +936,10 @@ wss.on('connection',(ws,req)=>{
 
     if(m.type==='input'&&room.state.started&&!room.state.paused){
       const p=room.state.players[role];
+      if(room.state.introUntil&&Date.now()<room.state.introUntil){
+        p.input.x=0;p.input.y=0;p.ack=Math.max(p.ack,Number(m.seq)||0);
+        return;
+      }
       p.input.x=Math.max(-1,Math.min(1,Number(m.x)||0));
       p.input.y=Math.max(-1,Math.min(1,Number(m.y)||0));
       p.ack=Math.max(p.ack,Number(m.seq)||0);
@@ -938,6 +949,10 @@ wss.on('connection',(ws,req)=>{
 
     if(m.type==='action'&&room.state.started&&!room.state.paused){
       const actionTs=clampActionTs(m.st),aid=m.aid||null;
+      if(room.state.introUntil&&Date.now()<room.state.introUntil){
+        if(m.a==='attack'||m.a==='skill')send(ws,{type:'actionAck',a:m.a,aid,accepted:false,projectiles:[],serverTs:Date.now(),reason:'INTRO'});
+        return;
+      }
       if(m.a==='attack'||m.a==='skill'){
         const result=spawnShot(room,role,m.a==='skill',actionTs,aid);
         send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,serverTs:Date.now()});

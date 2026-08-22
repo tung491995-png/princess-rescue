@@ -1,5 +1,5 @@
 {
-  "version": "9.3",
+  "version": "9.4",
   "files": {
     "hero": "hero.glb",
     "princess": "princess.glb",
@@ -49,6 +49,7 @@
   },
   "bossAssetSpec": {
     "joints": 20,
+    "animationCount": 11,
     "animations": [
       "Idle",
       "Move",
@@ -62,6 +63,7 @@
       "PhaseChange",
       "Death"
     ],
+    "materialCount": 17,
     "materials": [
       "Skin",
       "HairSilverLavender",
@@ -70,7 +72,19 @@
       "MoonGlow",
       "EyeDark",
       "LipRose",
-      "CrownGold"
-    ]
+      "CrownGold",
+      "FacePorcelain",
+      "IrisAmethyst",
+      "EyeHighlight",
+      "HairMoonHighlight",
+      "DressVelvet",
+      "DressPlum",
+      "PearlSilver",
+      "AmethystJewel",
+      "StarSilver"
+    ],
+    "meshPrimitives": 90,
+    "approxVertices": 12966,
+    "sizeKB": 925.7
   }
 }
