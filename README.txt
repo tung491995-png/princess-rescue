@@ -587,28 +587,26 @@ TECHNICAL NOTES
 - Kích thước touch target được tăng để bấm dễ hơn trên điện thoại.
 
 
-V7.7 AUTO DESKTOP / TOUCH
-=========================
+V7.9 STABLE MOBILE + DESKTOP CONTROLS
+====================================
 
-AUTO CONTROL MODE
-- Mobile / touch devices: hiện joystick bên trái + cụm ATTACK / DASH / SKILL bên phải.
-- Desktop / laptop: tự động ẩn touch HUD và chuyển sang điều khiển keyboard/mouse.
+MOBILE / TOUCH
+- Joystick duy nhất ở góc trái.
+- ATTACK / DASH / SKILL ở góc phải.
+- Tự nhận diện pointer coarse / maxTouchPoints.
 
-DESKTOP CONTROLS
-- WASD hoặc Arrow Keys: di chuyển
-- Chuột trái hoặc F/J: Attack
-- Chuột phải hoặc Shift: Dash
-- Space hoặc E: Skill
-- Q: Royal Feast khi thanh TRUST đủ 100%
+DESKTOP
+- Touch HUD tự ẩn.
+- WASD / Arrow Keys: di chuyển.
+- Mouse Left / F / J: Attack.
+- Mouse Right / Shift: Dash.
+- Space / E: Skill.
+- Q: Royal Duo khi đủ Trust.
 
-NOTES
-- Khi resize / đổi orientation, giao diện tự cập nhật mode.
-- Khi blur window, input desktop được reset để tránh kẹt phím.
-
-
-V7.8 DESKTOP INPUT HOTFIX
-=========================
-- Fixes missing controlMode / keyState / usingGameUI declarations from V7.7.
-- Fixes desktop pointer events throwing ReferenceError and making lobby buttons appear dead.
-- Adds the missing desktop keyboard/mouse hint DOM.
-- Desktop/touch mode initialization is guarded so a control-mode error cannot block lobby/game UI.
+IMPORTANT STABILITY CHANGE
+- KHÔNG còn window-level pointerdown/mousedown combat listener.
+- Mouse Attack/Dash chỉ bind trực tiếp lên renderer.domElement (WebGL canvas).
+- Lobby/menu HTML nằm z-index cao hơn canvas nên Create Room / Join Room không thể bị desktop combat listener chặn.
+- Có query override để test:
+    ?controls=desktop
+    ?controls=touch

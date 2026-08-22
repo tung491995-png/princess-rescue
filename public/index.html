@@ -63,8 +63,9 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 #duoWrap{position:fixed;z-index:27;left:50%;bottom:calc(20px + var(--sb));transform:translateX(-50%);display:none}
 #duoBtn{width:92px;height:92px;border-radius:50%;border:2px solid #fff;color:#fff;background:radial-gradient(circle,#fff9,#bd9cff66 42%,#69e9ff44);box-shadow:0 0 42px #c9abffaa,0 0 90px #76e9ff88;font-weight:1000;font-size:10px;animation:pulse .7s infinite alternate}
 @keyframes pulse{to{transform:scale(1.08);box-shadow:0 0 60px #fff,0 0 110px #c6aaff}}
-#desktopHint{position:fixed;z-index:28;left:50%;bottom:calc(18px + var(--sb));transform:translateX(-50%);padding:10px 16px;border-radius:999px;background:#050611d8;border:1px solid #ffffff22;color:#eef1ff;font-size:12px;font-weight:900;letter-spacing:.3px;box-shadow:0 12px 30px #0007;backdrop-filter:blur(8px);text-align:center;max-width:min(92vw,760px)}
-#desktopHint b{color:#ffd88e}
+#desktopHint{position:fixed;z-index:27;left:50%;bottom:calc(12px + var(--sb));transform:translateX(-50%);max-width:min(92vw,760px);padding:8px 14px;border-radius:999px;background:#050611d8;border:1px solid #ffffff22;color:#eef1ff;font-size:11px;font-weight:850;text-align:center;box-shadow:0 10px 28px #0007;backdrop-filter:blur(8px);pointer-events:none}
+#desktopHint b{color:#ffe08a}
+
 @media (max-width:860px){
  .controls.left{width:190px;height:198px}
  .controls.right{width:226px;height:198px}
@@ -109,10 +110,10 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 
 <div class="controls left hidden" id="ctl1"><div class="ctlLabel">MOVE</div><div class="joy"><div class="stick"></div></div></div>
 <div class="controls right hidden" id="ctl2"><div class="ctlLabel">ACTION</div><div class="btn attack" data-act="attack">⚔️<span>ATTACK</span></div><div class="btn small dash" data-act="dash">💨<span>DASH</span><div class="cover"></div></div><div class="btn small skill" data-act="skill">✨<span>SKILL</span><div class="cover"></div></div></div>
-<div id="desktopHint" class="hidden"><b>DESKTOP:</b> WASD / ←↑↓→ di chuyển · Chuột trái <b>ATTACK</b> · Chuột phải / Shift <b>DASH</b> · Space / E <b>SKILL</b> · Q <b>ROYAL</b></div>
+<div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">AUTO DESKTOP / TOUCH V7.8</span></h1><p style="margin-top:7px">Tự động nhận diện: mobile dùng joystick + nút cảm ứng, desktop dùng keyboard/mouse.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Auto touch/desktop</span><span class="badge">WASD + mouse</span><span class="badge">Touch joystick</span><span class="badge">Attack · Dash · Skill</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">STABLE CONTROLS V7.9</span></h1><p style="margin-top:7px">Tự động: điện thoại dùng joystick trái + nút phải; máy tính dùng WASD + chuột.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Mobile: joystick trái</span><span class="badge">Mobile: nút phải</span><span class="badge">Desktop: WASD + mouse</span><span class="badge">Stable lobby clicks</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -136,6 +137,12 @@ let latestState=null,snapshotBuffer=[];
 let localInput={x:0,y:0},inputSeq=0,lastInputSend=0,pendingInputs=[],pred={x:0,z:0,rot:0,dashT:0,dashVX:0,dashVZ:0};
 let localReady=false,gameInitialized=false;
 
+// V7.9 stable input mode. Lobby remains ordinary clickable HTML.
+// Mouse combat handlers are attached only to the WebGL canvas.
+const keyState={up:false,down:false,left:false,right:false};
+let controlMode='touch';
+let desktopCanvasBound=false;
+
 // V5 renderer: all combat bullets/pickups are preallocated GPU instances.
 const MAX_VIS_PROJECTILES=128,MAX_VIS_PICKUPS=24;
 let projectileInst={food:null,enemy:null,trail:null},pickupInst=null,darkPoolMesh=null;
@@ -155,27 +162,6 @@ let bossCastVisual={cast:null,impactShown:false};
 let enteringGame=false,enterRetry=0,enterStateQueued=null,enterSource='',enterTimer=null;
 let bossTelegraphRing=null,bossTelegraphMoon=null;
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-const keyState={up:false,down:false,left:false,right:false};
-let controlMode='touch';
-function isTouchPreferred(){
- const coarse=!!(window.matchMedia&&window.matchMedia('(pointer: coarse)').matches);
- return coarse||navigator.maxTouchPoints>0||('ontouchstart' in window);
-}
-function syncDesktopMove(){
- if(controlMode!=='desktop')return;
- let x=(keyState.right?1:0)-(keyState.left?1:0);
- let y=(keyState.down?1:0)-(keyState.up?1:0);
- const l=Math.hypot(x,y);if(l>1){x/=l;y/=l}
- localInput.x=x;localInput.y=y;
-}
-function clearDesktopMove(){
- keyState.up=keyState.down=keyState.left=keyState.right=false;
- if(controlMode==='desktop'){localInput.x=0;localInput.y=0}
-}
-function usingGameUI(target){
- const el=target&&target.nodeType===1?target:null;
- return !!el?.closest?.('button,input,.btn,.controls,#duoBtn,.screen,.panel');
-}
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
 const renderScaleMin=mobileDevice?.92:1.0;
@@ -425,6 +411,8 @@ function leaveRoom(){
  connected=false;
  running=false;
  gameInitialized=false;
+ clearKeyboardMove();
+ $('desktopHint')?.classList.add('hidden');
  snapshotBuffer=[];
  pendingInputs=[];
  predictedShots=[];
@@ -995,22 +983,74 @@ function enterGameFromState(state,source='server'){
  attempt();
 }
 
-function updateControlMode(){
- controlMode=isTouchPreferred()?'touch':'desktop';
- const touch=controlMode==='touch';
- const hint=$('desktopHint');
- if(running){
-   ['ctl1','ctl2'].forEach(id=>$(id)?.classList.toggle('hidden',!touch));
-   hint?.classList.toggle('hidden',touch);
- }else{
-   ['ctl1','ctl2'].forEach(id=>$(id)?.classList.add('hidden'));
-   hint?.classList.add('hidden');
- }
- if(controlMode!=='desktop')clearDesktopMove(); else syncDesktopMove();
+
+function preferredControlMode(){
+ const forced=bootQuery.get('controls');
+ if(forced==='touch'||forced==='desktop')return forced;
+ const coarse=window.matchMedia?.('(pointer: coarse)').matches;
+ return (coarse||navigator.maxTouchPoints>0||'ontouchstart' in window)?'touch':'desktop';
 }
+function syncKeyboardMove(){
+ if(controlMode!=='desktop'){return}
+ let x=(keyState.right?1:0)-(keyState.left?1:0);
+ let y=(keyState.down?1:0)-(keyState.up?1:0);
+ const l=Math.hypot(x,y);
+ if(l>1){x/=l;y/=l}
+ localInput.x=x;localInput.y=y;
+}
+function clearKeyboardMove(){
+ keyState.up=keyState.down=keyState.left=keyState.right=false;
+ if(controlMode==='desktop'){localInput.x=0;localInput.y=0}
+}
+function updateControlMode(){
+ controlMode=preferredControlMode();
+ if(!running)return;
+ const touch=controlMode==='touch';
+ $('ctl1').classList.toggle('hidden',!touch);
+ $('ctl2').classList.toggle('hidden',!touch);
+ $('desktopHint').classList.toggle('hidden',touch);
+ if(!touch)syncKeyboardMove();
+}
+function triggerPlayerAction(act){
+ if(!running||!connected||!role)return;
+ if(act==='dash'){
+   let x=localInput.x,z=localInput.y,l=Math.hypot(x,z);
+   if(l<.1){x=Math.sin(pred.rot);z=Math.cos(pred.rot);l=1}
+   x/=l;z/=l;
+   pred.dashT=.25;pred.dashVX=x*13;pred.dashVZ=z*13;
+   triggerCombatAnim(role,'attack');
+   send({type:'action',a:'dash',st:Date.now()+serverOffset});
+   return;
+ }
+ const aid=`${role}-${++actionId}`;
+ predictPlayerProjectiles(act,aid);
+ send({type:'action',a:act,aid,st:Date.now()+serverOffset});
+}
+function bindDesktopCanvas(){
+ if(!renderer?.domElement||desktopCanvasBound)return;
+ desktopCanvasBound=true;
+ const canvas=renderer.domElement;
+
+ // These handlers exist only on the game canvas. The lobby is a higher-z HTML screen,
+ // so desktop combat input cannot steal clicks from TẠO PHÒNG / VÀO PHÒNG.
+ canvas.addEventListener('contextmenu',e=>{
+   if(running&&controlMode==='desktop')e.preventDefault();
+ });
+ canvas.addEventListener('pointerdown',e=>{
+   if(!running||controlMode!=='desktop')return;
+   if(e.pointerType&&e.pointerType!=='mouse')return;
+   if(e.button===0){triggerPlayerAction('attack');e.preventDefault()}
+   else if(e.button===2){triggerPlayerAction('dash');e.preventDefault()}
+ });
+}
+
 function showGameUI(){
  ['hud','bossHud','phase','trustHud','netBadge'].forEach(id=>$(id).classList.remove('hidden'));
- showScreen('home');$('home').classList.add('hidden');rebind();try{updateControlMode()}catch(err){console.error('[control mode]',err);controlMode='touch';['ctl1','ctl2'].forEach(id=>$(id)?.classList.remove('hidden'))}netLabel();
+ showScreen('home');$('home').classList.add('hidden');
+ rebind();
+ bindDesktopCanvas();
+ updateControlMode();
+ netLabel();
 }
 function acceptInitialState(s){
  if(!s)return;
@@ -1388,21 +1428,6 @@ function frame(now){
 }
 requestAnimationFrame(frame);
 
-function triggerAction(act){
- if(!connected||!role||!gameInitialized)return;
- if(act==='dash'){
-   let x=localInput.x,z=localInput.y,l=Math.hypot(x,z);
-   if(l<.1){x=Math.sin(pred.rot);z=Math.cos(pred.rot);l=1}
-   x/=l;z/=l;pred.dashT=.25;pred.dashVX=x*13;pred.dashVZ=z*13;
-   triggerCombatAnim(role,'attack');
-   send({type:'action',a:act,st:Date.now()+serverOffset});
- }else{
-   const aid=`${role}-${++actionId}`;
-   predictPlayerProjectiles(act,aid);
-   send({type:'action',a:act,aid,st:Date.now()+serverOffset});
- }
-}
-
 function bind(root){
  let joy=root.querySelector('.joy'),stick=root.querySelector('.stick'),pid=null,cx=0,cy=0;
 
@@ -1436,7 +1461,7 @@ function bind(root){
  root.querySelectorAll('.btn').forEach(b=>{
    b.onpointerdown=e=>{
      b.classList.add('on');
-     triggerAction(b.dataset.act);
+     triggerPlayerAction(b.dataset.act);
      e.preventDefault();
    };
    b.onpointerup=()=>b.classList.remove('on');
@@ -1451,45 +1476,45 @@ function rebind(){
  });
 }
 function finish(win,stats){
- running=false;['hud','bossHud','phase','trustHud','netBadge','ctl1','ctl2','desktopHint'].forEach(id=>$(id).classList.add('hidden'));$('duoWrap').style.display='none';
+ running=false;['hud','bossHud','phase','trustHud','netBadge','ctl1','ctl2','desktopHint'].forEach(id=>$(id).classList.add('hidden'));$('duoWrap').style.display='none';clearKeyboardMove();
  $('resultTitle').textContent=win?'VICTORY — BÌNH MINH ✨':'VĨNH DẠ NUỐT CHỬNG 💀';
  $('resultText').innerHTML=win?`Hai người đã cùng hạ Ma Vương Mất Ngủ.<br>Damage: Hero ${stats.hero} · Princess ${stats.princess}<br>Perfect Dash: ${stats.perfect} · Rescue: ${stats.saves}`:'Hai người bị hạ. Room/session nằm trong Redis nên refresh hoặc server restart vẫn có thể reconnect trong thời hạn session.';
  showScreen('result');
 }
 
-window.addEventListener('resize',updateControlMode);
-window.addEventListener('orientationchange',updateControlMode);
-window.addEventListener('blur',clearDesktopMove);
+
 window.addEventListener('keydown',e=>{
- if(controlMode!=='desktop'||!running)return;
- if(e.repeat&&(e.code==='Space'||e.code==='ShiftLeft'||e.code==='ShiftRight'||e.code==='KeyE'||e.code==='KeyF'))return;
- const t=e.target; if(t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable))return;
- if(e.code==='KeyW'||e.code==='ArrowUp'){keyState.up=true;syncDesktopMove();e.preventDefault();}
- else if(e.code==='KeyS'||e.code==='ArrowDown'){keyState.down=true;syncDesktopMove();e.preventDefault();}
- else if(e.code==='KeyA'||e.code==='ArrowLeft'){keyState.left=true;syncDesktopMove();e.preventDefault();}
- else if(e.code==='KeyD'||e.code==='ArrowRight'){keyState.right=true;syncDesktopMove();e.preventDefault();}
- else if(e.code==='Space'||e.code==='KeyE'){triggerAction('skill');e.preventDefault();}
- else if(e.code==='ShiftLeft'||e.code==='ShiftRight'){triggerAction('dash');e.preventDefault();}
- else if(e.code==='KeyF'||e.code==='KeyJ'){triggerAction('attack');e.preventDefault();}
- else if(e.code==='KeyQ'&&$('duoWrap').style.display!=='none'){send({type:'action',a:'duo',st:Date.now()+serverOffset});e.preventDefault();}
+ if(!running||controlMode!=='desktop')return;
+ const t=e.target;
+ if(t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable))return;
+
+ if(e.code==='KeyW'||e.code==='ArrowUp'){keyState.up=true;syncKeyboardMove();e.preventDefault();return}
+ if(e.code==='KeyS'||e.code==='ArrowDown'){keyState.down=true;syncKeyboardMove();e.preventDefault();return}
+ if(e.code==='KeyA'||e.code==='ArrowLeft'){keyState.left=true;syncKeyboardMove();e.preventDefault();return}
+ if(e.code==='KeyD'||e.code==='ArrowRight'){keyState.right=true;syncKeyboardMove();e.preventDefault();return}
+
+ if(e.repeat)return;
+ if(e.code==='Space'||e.code==='KeyE'){triggerPlayerAction('skill');e.preventDefault();return}
+ if(e.code==='ShiftLeft'||e.code==='ShiftRight'){triggerPlayerAction('dash');e.preventDefault();return}
+ if(e.code==='KeyF'||e.code==='KeyJ'){triggerPlayerAction('attack');e.preventDefault();return}
+ if(e.code==='KeyQ'&&$('duoWrap').style.display!=='none'){
+   send({type:'action',a:'duo',st:Date.now()+serverOffset});e.preventDefault();
+ }
 });
 window.addEventListener('keyup',e=>{
  if(controlMode!=='desktop')return;
+ let changed=true;
  if(e.code==='KeyW'||e.code==='ArrowUp')keyState.up=false;
  else if(e.code==='KeyS'||e.code==='ArrowDown')keyState.down=false;
  else if(e.code==='KeyA'||e.code==='ArrowLeft')keyState.left=false;
  else if(e.code==='KeyD'||e.code==='ArrowRight')keyState.right=false;
- else return;
- syncDesktopMove();
+ else changed=false;
+ if(changed)syncKeyboardMove();
 });
-window.addEventListener('contextmenu',e=>{if(!running||controlMode!=='desktop')return;if(!usingGameUI(e.target))e.preventDefault();});
-window.addEventListener('pointerdown',e=>{
- if(controlMode!=='desktop'||!running)return;
- if(usingGameUI(e.target))return;
- if(e.pointerType&&e.pointerType!=='mouse')return;
- if(e.button===0){triggerAction('attack');e.preventDefault();}
- else if(e.button===2){triggerAction('dash');e.preventDefault();}
-});
+window.addEventListener('blur',clearKeyboardMove);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)clearKeyboardMove()});
+window.addEventListener('resize',()=>{if(running)updateControlMode()});
+window.addEventListener('orientationchange',()=>{if(running)updateControlMode()});
 
 $('createRoom').onclick=createRoom;
 $('joinRoom').onclick=()=>showScreen('joinLobby');
@@ -1521,7 +1546,6 @@ $('backLobby').onclick=leaveRoom;
 $('backLobby').onpointerup=e=>{e.preventDefault();leaveRoom()};
 $('duoBtn').onpointerdown=e=>{send({type:'action',a:'duo',st:Date.now()+serverOffset});e.preventDefault()};
 $('roomInput').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6));
-updateControlMode();
 
 const inviteRoom=bootQuery.get('room')?.toUpperCase();
 initNetLab();
