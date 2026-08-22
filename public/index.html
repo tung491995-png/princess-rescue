@@ -109,9 +109,10 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 
 <div class="controls left hidden" id="ctl1"><div class="ctlLabel">MOVE</div><div class="joy"><div class="stick"></div></div></div>
 <div class="controls right hidden" id="ctl2"><div class="ctlLabel">ACTION</div><div class="btn attack" data-act="attack">⚔️<span>ATTACK</span></div><div class="btn small dash" data-act="dash">💨<span>DASH</span><div class="cover"></div></div><div class="btn small skill" data-act="skill">✨<span>SKILL</span><div class="cover"></div></div></div>
+<div id="desktopHint" class="hidden"><b>DESKTOP:</b> WASD / ←↑↓→ di chuyển · Chuột trái <b>ATTACK</b> · Chuột phải / Shift <b>DASH</b> · Space / E <b>SKILL</b> · Q <b>ROYAL</b></div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">AUTO DESKTOP / TOUCH V7.7</span></h1><p style="margin-top:7px">Tự động nhận diện: mobile dùng joystick + nút cảm ứng, desktop dùng keyboard/mouse.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Auto touch/desktop</span><span class="badge">WASD + mouse</span><span class="badge">Touch joystick</span><span class="badge">Attack · Dash · Skill</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">AUTO DESKTOP / TOUCH V7.8</span></h1><p style="margin-top:7px">Tự động nhận diện: mobile dùng joystick + nút cảm ứng, desktop dùng keyboard/mouse.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Auto touch/desktop</span><span class="badge">WASD + mouse</span><span class="badge">Touch joystick</span><span class="badge">Attack · Dash · Skill</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -154,6 +155,27 @@ let bossCastVisual={cast:null,impactShown:false};
 let enteringGame=false,enterRetry=0,enterStateQueued=null,enterSource='',enterTimer=null;
 let bossTelegraphRing=null,bossTelegraphMoon=null;
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+const keyState={up:false,down:false,left:false,right:false};
+let controlMode='touch';
+function isTouchPreferred(){
+ const coarse=!!(window.matchMedia&&window.matchMedia('(pointer: coarse)').matches);
+ return coarse||navigator.maxTouchPoints>0||('ontouchstart' in window);
+}
+function syncDesktopMove(){
+ if(controlMode!=='desktop')return;
+ let x=(keyState.right?1:0)-(keyState.left?1:0);
+ let y=(keyState.down?1:0)-(keyState.up?1:0);
+ const l=Math.hypot(x,y);if(l>1){x/=l;y/=l}
+ localInput.x=x;localInput.y=y;
+}
+function clearDesktopMove(){
+ keyState.up=keyState.down=keyState.left=keyState.right=false;
+ if(controlMode==='desktop'){localInput.x=0;localInput.y=0}
+}
+function usingGameUI(target){
+ const el=target&&target.nodeType===1?target:null;
+ return !!el?.closest?.('button,input,.btn,.controls,#duoBtn,.screen,.panel');
+}
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
 const renderScaleMin=mobileDevice?.92:1.0;
@@ -976,17 +998,19 @@ function enterGameFromState(state,source='server'){
 function updateControlMode(){
  controlMode=isTouchPreferred()?'touch':'desktop';
  const touch=controlMode==='touch';
+ const hint=$('desktopHint');
  if(running){
-   ['ctl1','ctl2'].forEach(id=>$(id).classList.toggle('hidden',!touch));
-   $('desktopHint').classList.toggle('hidden',touch);
+   ['ctl1','ctl2'].forEach(id=>$(id)?.classList.toggle('hidden',!touch));
+   hint?.classList.toggle('hidden',touch);
  }else{
-   ['ctl1','ctl2','desktopHint'].forEach(id=>$(id).classList.add('hidden'));
+   ['ctl1','ctl2'].forEach(id=>$(id)?.classList.add('hidden'));
+   hint?.classList.add('hidden');
  }
  if(controlMode!=='desktop')clearDesktopMove(); else syncDesktopMove();
 }
 function showGameUI(){
  ['hud','bossHud','phase','trustHud','netBadge'].forEach(id=>$(id).classList.remove('hidden'));
- showScreen('home');$('home').classList.add('hidden');rebind();updateControlMode();netLabel();
+ showScreen('home');$('home').classList.add('hidden');rebind();try{updateControlMode()}catch(err){console.error('[control mode]',err);controlMode='touch';['ctl1','ctl2'].forEach(id=>$(id)?.classList.remove('hidden'))}netLabel();
 }
 function acceptInitialState(s){
  if(!s)return;
@@ -1458,7 +1482,7 @@ window.addEventListener('keyup',e=>{
  else return;
  syncDesktopMove();
 });
-window.addEventListener('contextmenu',e=>{if(controlMode==='desktop'&&running&&!usingGameUI(e.target))e.preventDefault();});
+window.addEventListener('contextmenu',e=>{if(!running||controlMode!=='desktop')return;if(!usingGameUI(e.target))e.preventDefault();});
 window.addEventListener('pointerdown',e=>{
  if(controlMode!=='desktop'||!running)return;
  if(usingGameUI(e.target))return;
@@ -1497,6 +1521,7 @@ $('backLobby').onclick=leaveRoom;
 $('backLobby').onpointerup=e=>{e.preventDefault();leaveRoom()};
 $('duoBtn').onpointerdown=e=>{send({type:'action',a:'duo',st:Date.now()+serverOffset});e.preventDefault()};
 $('roomInput').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6));
+updateControlMode();
 
 const inviteRoom=bootQuery.get('room')?.toUpperCase();
 initNetLab();

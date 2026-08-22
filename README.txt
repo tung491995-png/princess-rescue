@@ -604,3 +604,11 @@ DESKTOP CONTROLS
 NOTES
 - Khi resize / đổi orientation, giao diện tự cập nhật mode.
 - Khi blur window, input desktop được reset để tránh kẹt phím.
+
+
+V7.8 DESKTOP INPUT HOTFIX
+=========================
+- Fixes missing controlMode / keyState / usingGameUI declarations from V7.7.
+- Fixes desktop pointer events throwing ReferenceError and making lobby buttons appear dead.
+- Adds the missing desktop keyboard/mouse hint DOM.
+- Desktop/touch mode initialization is guarded so a control-mode error cannot block lobby/game UI.
