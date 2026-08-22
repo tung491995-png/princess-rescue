@@ -631,7 +631,9 @@ function reset(room){
 }
 function startMatch(room){
   reset(room);room.state.started=true;room.state.paused=false;room.state.pauseRole=null;
-  room.state.introUntil=Date.now()+4400;
+  // V10.8 gives prewarmed clients enough synchronized grace to finish the
+  // complete 4.25s reveal before the server unlocks gameplay.
+  room.state.introUntil=Date.now()+5000;
   markDirty(room);
 
   // Start gameplay immediately. Persistence must never block the match transition.

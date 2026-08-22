@@ -1,4 +1,4 @@
-PRINCESS RESCUE 3D — V9 CHARACTER ART + FULL COMBAT / VFX
+PRINCESS RESCUE 3D — V10.8 SMOOTH INTRO + RIGGED BOSS RELIABILITY
 
 PRINCESS RESCUE 3D — SERVER MULTIPLAYER V3
 
@@ -1548,3 +1548,48 @@ Confirmed source-level faults fixed:
 9. Repeated visual errors switch to LOW + procedural boss instead of freezing gameplay.
 
 GLB SHA256: bd87670e8caecde8383b59af5b03e235b8a746f70545ede0416aee5bb70761d4
+
+
+============================================================
+V10.8 — SMOOTH INTRO + REAL RIG BOSS FIX
+============================================================
+
+LATEST USER-REPORTED STATE ADDRESSED
+- Boss intro camera felt laggy / jerky.
+- The visible boss was the blocky procedural emergency fallback, not the
+  bundled 20-bone / 11-animation GLB.
+- Controls must remain functional after the authoritative intro lock.
+
+RIG RELIABILITY
+- The bundled boss GLB is decoded and compiled behind the lobby before battle.
+- Two missing optional Hero/Princess GLB requests were removed from startup.
+- The fragile custom MeshStandardMaterial GLSL injections are disabled in the
+  shipped path. Stable Three.js PBR materials retain the actual GLB colors,
+  metal/roughness, emissive eyes/gems and V10 silhouette attachments.
+- Procedural boss remains only as an emergency fallback when the GLB genuinely
+  cannot load or has invalid bounds.
+- The real rig is made visible only after one-time program compilation, so the
+  intro does not hot-swap from fallback to GLB in shot one.
+
+INTRO SMOOTHNESS
+- The cinematic camera captures one boss anchor at intro start. Network
+  snapshot interpolation can no longer move the camera origin every 67 ms.
+- Camera position and look target use frame-rate-independent damping.
+- Dynamic resolution and quality-tier changes are frozen during the reveal.
+- Mobile uses one conservative pixel ratio for the whole intro, then restores
+  normal adaptive quality after the cinematic.
+- Intro overlay layers use paint containment and compositor hints.
+- Server intro grace is 5.0 seconds; the client reveals controls only after the
+  authoritative lock ends, preventing the first joystick/key press feeling dead.
+
+VALIDATION
+- server.js syntax: PASS
+- inline browser JavaScript syntax: PASS
+- bundled GLB header / size: PASS (954,052 bytes)
+- two-client WebSocket create -> join -> start: PASS
+- authoritative intro window: PASS (5,000 ms)
+- post-intro movement: PASS (3.00 world units in protocol test)
+- boss state present: PASS (2,200 HP)
+
+GLB SHA256
+bd87670e8caecde8383b59af5b03e235b8a746f70545ede0416aee5bb70761d4

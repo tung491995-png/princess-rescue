@@ -1,0 +1,20 @@
+{
+  "version": "10.8.0",
+  "name": "Smooth Intro + Real Rig Boss Fix",
+  "boss_asset": "/assets/characters/ma_vuong_mat_ngu.glb",
+  "boss_asset_sha256": "bd87670e8caecde8383b59af5b03e235b8a746f70545ede0416aee5bb70761d4",
+  "boss_runtime": {
+    "stable_pbr": true,
+    "lobby_prewarm": true,
+    "procedural_emergency_fallback": true,
+    "bones": 20,
+    "animations": 11
+  },
+  "intro": {
+    "authoritative_lock_ms": 5000,
+    "max_visual_duration_ms": 4250,
+    "fixed_boss_anchor": true,
+    "frame_rate_independent_camera_damping": true,
+    "dynamic_resolution_locked_during_intro": true
+  }
+}

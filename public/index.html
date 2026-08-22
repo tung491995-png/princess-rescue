@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.7.1 — Controls + Boss Visibility Hotfix</title>
+<title>Princess Rescue V10.8 — Smooth Intro + Rigged Boss</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -105,14 +105,14 @@ body.envPhase3 #bossPortraitWrap{box-shadow:0 0 18px rgba(219,75,204,.32),inset 
 #dialogueSpeaker{font-size:7px;font-weight:1000;letter-spacing:1px;color:#cbbaff;text-transform:uppercase;margin-bottom:2px;opacity:.9}
 #dialogueText{font-size:clamp(10px,1.25vw,12px);font-weight:800;line-height:1.22;text-shadow:0 1px 5px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #dialogueBoss #dialogueSpeaker{color:#d8c2ff}
-#bossIntroV9{position:fixed;z-index:58;inset:0;display:none;pointer-events:none;overflow:hidden;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(109,70,192,.10),rgba(2,2,11,.24) 46%,rgba(1,1,7,.58) 100%);transition:opacity .22s}
+#bossIntroV9{position:fixed;z-index:58;inset:0;display:none;pointer-events:none;overflow:hidden;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(109,70,192,.10),rgba(2,2,11,.24) 46%,rgba(1,1,7,.58) 100%);transition:opacity .22s;contain:layout paint;transform:translateZ(0)}
 #bossIntroV9.show{display:block;opacity:1}
 #bossIntroV9 .introBar{position:absolute;left:0;right:0;height:10.5%;background:linear-gradient(180deg,#010107,#050517f4);box-shadow:0 0 28px #000;transform:scaleY(0);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 #bossIntroV9 .introBar.top{top:0;transform-origin:top}
 #bossIntroV9 .introBar.bottom{bottom:0;transform-origin:bottom}
 #bossIntroV9.show .introBar{transform:scaleY(1)}
-#bossIntroV9 .introVeil{position:absolute;inset:0;background:radial-gradient(circle at 52% 48%,transparent 16%,rgba(7,3,20,.17) 42%,rgba(1,1,7,.62) 100%);opacity:0;animation:introVeilV95 4.25s ease both}
-#bossIntroV9 .sig{position:absolute;left:50%;top:45%;width:min(47vw,420px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.58);border:1px solid rgba(227,218,255,.28);box-shadow:0 0 52px rgba(172,127,255,.24),0 0 130px rgba(91,58,180,.26),inset 0 0 70px rgba(204,181,255,.09);opacity:0}
+#bossIntroV9 .introVeil{position:absolute;inset:0;background:radial-gradient(circle at 52% 48%,transparent 16%,rgba(7,3,20,.17) 42%,rgba(1,1,7,.62) 100%);opacity:0;animation:introVeilV95 4.25s ease both;will-change:opacity}
+#bossIntroV9 .sig{position:absolute;left:50%;top:45%;width:min(47vw,420px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.58);border:1px solid rgba(227,218,255,.28);box-shadow:0 0 52px rgba(172,127,255,.24),0 0 130px rgba(91,58,180,.26),inset 0 0 70px rgba(204,181,255,.09);opacity:0;will-change:transform,opacity}
 #bossIntroV9.show .sig{animation:introSigV95 4.15s cubic-bezier(.16,.8,.22,1) both}
 #bossIntroV9 .sig:before,#bossIntroV9 .sig:after{content:"";position:absolute;border-radius:50%;inset:13%;border:1px dashed rgba(238,231,255,.27)}
 #bossIntroV9 .sig:before{animation:bossSigSpin 9s linear infinite}
@@ -120,7 +120,7 @@ body.envPhase3 #bossPortraitWrap{box-shadow:0 0 18px rgba(219,75,204,.32),inset 
 #bossIntroV9 .moonCrescent{position:absolute;left:50%;top:45%;width:min(26vw,235px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.68);background:radial-gradient(circle at 37% 36%,#fffdec 0 18%,#dcd4ff 46%,#7768bd 74%,#332750 100%);box-shadow:0 0 45px rgba(221,209,255,.48),0 0 105px rgba(125,83,220,.32);opacity:0}
 #bossIntroV9 .moonCrescent:after{content:"";position:absolute;width:82%;height:82%;border-radius:50%;left:30%;top:5%;background:#070718}
 #bossIntroV9.show .moonCrescent{animation:introMoonV95 4.0s ease both}
-#bossIntroV9 .introCard{position:absolute;left:50%;bottom:13%;width:min(92vw,860px);transform:translateX(-50%) translateY(14px);text-align:center;text-shadow:0 4px 20px #000;opacity:0}
+#bossIntroV9 .introCard{position:absolute;left:50%;bottom:13%;width:min(92vw,860px);transform:translateX(-50%) translateY(14px);text-align:center;text-shadow:0 4px 20px #000;opacity:0;will-change:transform,opacity}
 #bossIntroV9.show .introCard{animation:introCardV95 4.15s cubic-bezier(.16,.8,.22,1) both}
 #bossIntroV9 .kicker{font-size:clamp(8px,1.1vw,11px);font-weight:1000;color:#cdbbff;letter-spacing:5px}
 #bossIntroV9 .title{margin-top:6px;font-family:Georgia,serif;font-size:clamp(30px,5.4vw,64px);font-weight:950;color:#f5efff;letter-spacing:.5px;text-shadow:0 0 20px rgba(224,207,255,.50),0 5px 28px #000}
@@ -522,7 +522,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.7.1 STABILITY HOTFIX</span></h1><p style="margin-top:7px">Royal Duo cinematic rõ hơn trên mobile + stable joystick trái / action phải.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Royal cinematic</span><span class="badge">10 food sigils</span><span class="badge">Mobile visibility+</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.8 CINEMATIC + RIG FIX</span></h1><p style="margin-top:7px">Intro mượt hơn trên iPhone · boss rigged thật được ưu tiên · controls giữ ổn định.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Prewarmed boss rig</span><span class="badge">Smooth fixed-anchor intro</span><span class="badge">Stable PBR</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -620,6 +620,10 @@ let v107Quality='medium',v107LastCheck=0,v107StableGood=0,v107StableBad=0;
 let v107CamFocusX=0,v107CamFocusZ=-1.5,v107CamFocusVelX=0,v107CamFocusVelZ=0;
 // V10.7.1 stability watchdog.
 let v1071VisualErrors=0,v1071LastVisualError='',v1071SafeMode=false,v1071BossCheckAt=0;
+// V10.8 — reliable rig + prewarmed, fixed-anchor intro camera.
+const V108_STABLE_PBR=true;
+let v108PrewarmStarted=false,v108BossReady=false,v108IntroRestoreScale=0;
+const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
@@ -1755,7 +1759,9 @@ function polishRig(model,roleName=''){
      }
 
      // Cheap anime rim response without a separate postprocess pass.
-     if(roleName==='boss'&&m.isMeshStandardMaterial){
+     // V10.8 ships the stable built-in PBR path. The older custom GLSL rim
+     // injection could make a valid rig fail compilation and trigger fallback.
+     if(roleName==='boss'&&m.isMeshStandardMaterial&&!V108_STABLE_PBR){
        m.onBeforeCompile=shader=>{
          shader.uniforms.uV10Rim={value:/hair/.test(n)?0.24:/dress/.test(n)?.10:.06};
          shader.uniforms.uV10RimColor={value:new THREE.Color(/hair/.test(n)?0xb8a9ff:0x7650bf)};
@@ -1926,8 +1932,8 @@ function loadRigAsset(roleName){
        const model=gltf.scene||gltf.scenes?.[0];if(!model)throw new Error('GLB has no scene');
        rec.model=model;model.name=roleName+'_RiggedVisual';
        polishRig(model,roleName);normalizeRig(model,cfg);root.add(model);makeRigSockets(rec);buildRigActions(rec,gltf.animations||[]);
-       rec.ready=true;rigRuntime.status[roleName]='ready';model.visible=true;
-       if(roleName==='boss'){setFallback(root,true,model);setTimeout(()=>ensureBossVisualSafety(performance.now()),180)}
+       rec.ready=true;rigRuntime.status[roleName]='ready';model.visible=roleName!=='boss';
+       if(roleName==='boss')setFallback(root,true,model);
        else setFallback(root,false,model);
        if(roleName==='boss'&&bossSocketFx&&rec.vfxSocket){
          rec.vfxSocket.add(bossSocketFx);bossSocketFx.position.set(0,0,0);
@@ -1936,10 +1942,19 @@ function loadRigAsset(roleName){
        if(roleName==='boss')createBossV103Refinement(rec);
        if(roleName==='boss')createBossV104ShaderPass(rec);
        if(roleName==='boss')createBossV106Acting(rec);
+       if(roleName==='boss'){
+         // Compile while the lobby still covers the canvas so shot one never
+         // pays the GLB/PBR program creation cost.
+         model.visible=true;
+         try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.8 precompile]',e)}
+         setFallback(root,false,model);
+         rigRuntime.status.boss='ready';v108BossReady=true;
+         setTimeout(()=>ensureBossVisualSafety(performance.now()),180);
+       }
        playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:0});
        console.info('[rig]',roleName,'ready',rec.clipNames);
        if(roleName==='boss')setTimeout(()=>{
-         if(!bossIntroActive())banner('🛠 V10.7.1 — CONTROLS + BOSS HOTFIX READY ✓');
+         if(!bossIntroActive())banner('🌙 V10.8 — RIGGED BOSS READY ✓');
        },4700);
        resolve(true);
      }catch(e){
@@ -1953,7 +1968,9 @@ function loadRigAsset(roleName){
 }
 function loadAllRiggedCharacters(){
  if(rigRuntime.loading)return;rigRuntime.loading=true;
- Promise.allSettled(['hero','princess','boss'].map(loadRigAsset)).finally(()=>{rigRuntime.loading=false;console.info('[rig] status',rigRuntime.status)});
+ // Hero/Princess GLBs are not bundled yet. Avoid two guaranteed 404 requests
+ // competing with the boss model during startup.
+ Promise.allSettled(['boss'].map(loadRigAsset)).finally(()=>{rigRuntime.loading=false;console.info('[rig] status',rigRuntime.status)});
 }
 function bossIntroActive(){return bossIntroV9Until>performance.now()}
 function updateRiggedAnimations(dt){
@@ -2735,7 +2752,9 @@ function createBossV104ShaderPass(rec){
      if(!m)return;
      const kind=v104ClassifyMaterial(m.name||o.name);
      if(kind){
-       v104PatchMaterialShader(m,kind);
+       if(!V108_STABLE_PBR)v104PatchMaterialShader(m,kind);
+       m.toneMapped=true;
+       m.dithering=true;
        materials.push(m);byKind[kind].push(m);
      }
    });
@@ -3090,6 +3109,7 @@ function v107ChooseQuality(){
  return 'medium';
 }
 function updateV107Performance(now){
+ if(bossIntroActive())return;
  if(now-v107LastCheck<1100)return;
  v107LastCheck=now;
  v107ApplyQuality(v107ChooseQuality(),false);
@@ -3177,9 +3197,9 @@ function playBossIntroV9(wait=0){
  }
 
  // Give the bundled GLB a short chance to hot-swap before the reveal.
- if(!rigRuntime.records.boss?.ready&&wait<4&&remaining>3200){
+ if(!rigRuntime.records.boss?.ready&&wait<12&&remaining>3200){
    bossIntroWaits=wait+1;
-   setTimeout(()=>playBossIntroV9(wait+1),90);
+   setTimeout(()=>playBossIntroV9(wait+1),100);
    return;
  }
 
@@ -3188,6 +3208,18 @@ function playBossIntroV9(wait=0){
  bossIntroV9Duration=Math.min(4250,Math.max(2700,remaining-100));
  bossIntroV9Start=performance.now();
  bossIntroV9Until=bossIntroV9Start+bossIntroV9Duration;
+ v108IntroAnchor.copy(boss.position);
+ v108IntroLook.copy(v108IntroAnchor).setY(3.0);
+
+ // Pick one conservative framebuffer size before the reveal and hold it.
+ // Backbuffer resizing during the camera move was a visible iPhone hitch.
+ v108IntroRestoreScale=renderScale;
+ if(renderer&&mobileDevice){
+   const introScale=Math.min(renderScale,.94);
+   if(Math.abs(introScale-renderScale)>.025){
+     renderScale=introScale;renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false);
+   }
+ }
 
  lockBossIntroUI(true);
  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
@@ -3211,8 +3243,16 @@ function playBossIntroV9(wait=0){
      br.secondary.halo.scale.copy(br.secondaryBase.halo.scale);
    }
    playRigAnimation('boss','boss_idle',{fade:.22});
-   lockBossIntroUI(false);
+   if(renderer&&v108IntroRestoreScale>0&&Math.abs(renderScale-v108IntroRestoreScale)>.025){
+     const restore=v108IntroRestoreScale;
+     setTimeout(()=>{renderScale=restore;renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false)},180);
+   }
  },finishAt);
+
+ // Reveal controls only after the authoritative server lock ends, so the
+ // first visible joystick/key press can never feel dead.
+ const unlockAt=serverEnd?Math.max(finishAt,remaining+45):finishAt;
+ setTimeout(()=>lockBossIntroUI(false),unlockAt);
 }
 
 function enterGameFromState(state,source='server'){
@@ -4069,37 +4109,43 @@ function updateCam(dt){
  if(bossIntroActive()&&boss){
    const t=clamp((performance.now()-bossIntroV9Start)/Math.max(1,bossIntroV9Duration),0,1);
    const sm=x=>x*x*(3-2*x);
-   let px,py,pz,lx=boss.position.x,ly=3.0,lz=boss.position.z;
+   const bx=v108IntroAnchor.x,bz=v108IntroAnchor.z;
+   let px,py,pz,lx=bx,ly=3.0,lz=bz;
 
    if(t<.24){
      const u=sm(t/.24);
-     px=lerp(boss.position.x-4.4,boss.position.x-2.2,u);
+     px=lerp(bx-4.4,bx-2.2,u);
      py=lerp(3.8,4.25,u);
-     pz=lerp(boss.position.z+5.8,boss.position.z+4.25,u);
+     pz=lerp(bz+5.8,bz+4.25,u);
      ly=lerp(2.55,3.35,u);
    }else if(t<.53){
      const u=sm((t-.24)/.29);
-     px=lerp(boss.position.x-2.2,boss.position.x+.72,u);
+     px=lerp(bx-2.2,bx+.72,u);
      py=lerp(4.25,3.75,u);
-     pz=lerp(boss.position.z+4.25,boss.position.z+3.35,u);
+     pz=lerp(bz+4.25,bz+3.35,u);
      ly=lerp(3.35,3.65,u);
    }else if(t<.78){
      const u=sm((t-.53)/.25);
-     px=lerp(boss.position.x+.72,boss.position.x+3.2,u);
+     px=lerp(bx+.72,bx+3.2,u);
      py=lerp(3.75,4.65,u);
-     pz=lerp(boss.position.z+3.35,boss.position.z+5.45,u);
+     pz=lerp(bz+3.35,bz+5.45,u);
      ly=lerp(3.65,2.65,u);
    }else{
      const u=sm((t-.78)/.22);
      const gx=(A.position.x+B.position.x)*.12;
      const gz=(A.position.z+B.position.z)*.06-1.3;
-     px=lerp(boss.position.x+3.2,gx,u);
+     px=lerp(bx+3.2,gx,u);
      py=lerp(4.65,8.2,u);
-     pz=lerp(boss.position.z+5.45,14,u);
-     lx=lerp(boss.position.x,0,u);ly=lerp(2.65,1.5,u);lz=lerp(boss.position.z,gz,u);
+     pz=lerp(bz+5.45,14,u);
+     lx=lerp(bx,0,u);ly=lerp(2.65,1.5,u);lz=lerp(bz,gz,u);
    }
-   camera.position.set(px,py,pz);
-   camera.lookAt(lx,ly,lz);
+   // Frame-rate independent damping hides uneven 30/60 Hz mobile delivery
+   // without changing the authoritative cinematic clock.
+   const follow=1-Math.exp(-dt*18);
+   v108IntroCamTarget.set(px,py,pz);v108IntroLookTarget.set(lx,ly,lz);
+   camera.position.lerp(v108IntroCamTarget,follow);
+   v108IntroLook.lerp(v108IntroLookTarget,follow);
+   camera.lookAt(v108IntroLook);
    return;
  }
  cameraZoom+=(cameraZoomTarget-cameraZoom)*Math.min(1,dt*4);
@@ -4176,7 +4222,7 @@ function frame(now){
    }
    if(renderer){
      try{renderer.render(scene,camera)}catch(err){v1071VisualFailure(err,'renderer')}
-     try{updateDynamicResolution(rawDt,now)}catch(err){console.error('[dynamic resolution]',err)}
+     if(!bossIntroActive())try{updateDynamicResolution(rawDt,now)}catch(err){console.error('[dynamic resolution]',err)}
    }
  }finally{requestAnimationFrame(frame)}
 }
@@ -4306,6 +4352,20 @@ $('roomInput').addEventListener('input',e=>e.target.value=e.target.value.toUpper
 
 const inviteRoom=bootQuery.get('room')?.toUpperCase();
 initNetLab();
+function prewarmV108Client(attempt=0){
+ if(gameInitialized||v108PrewarmStarted)return;
+ if(!window.THREE){if(attempt<20)setTimeout(()=>prewarmV108Client(attempt+1),100);return}
+ v108PrewarmStarted=true;
+ try{
+   ensureGame();
+   renderer?.render?.(scene,camera);
+ }catch(e){
+   v108PrewarmStarted=false;
+   if(attempt<8)setTimeout(()=>prewarmV108Client(attempt+1),120+attempt*40);
+ }
+}
+// Decode and compile the bundled boss behind the lobby, not during shot one.
+setTimeout(()=>prewarmV108Client(),180);
 const sess=loadSession();
 if(inviteRoom&&(!sess||sess.room!==inviteRoom)){
  clearSession();$('roomInput').value=inviteRoom.slice(0,6);showScreen('joinLobby');
