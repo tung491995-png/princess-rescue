@@ -1,0 +1,69 @@
+{
+  "version": "10.6",
+  "boss": "Ma Vương Mất Ngủ",
+  "pass": "Animation Acting + Secondary Motion",
+  "sourceClipsPreserved": [
+    "Idle",
+    "Move",
+    "Cast_AOE",
+    "Cast_Shatter",
+    "Cast_3AM",
+    "Teleport",
+    "Summon",
+    "Ultimate",
+    "Hit",
+    "PhaseChange",
+    "Death"
+  ],
+  "additiveBones": [
+    "Hips",
+    "Spine",
+    "Chest",
+    "Neck",
+    "Head",
+    "LeftUpperArm",
+    "LeftForeArm",
+    "LeftHand",
+    "RightUpperArm",
+    "RightForeArm",
+    "RightHand"
+  ],
+  "skillActing": {
+    "Bóng Đêm Lan Ra": "queenly arm sweep + torso release",
+    "Giấc Mơ Vỡ": "moon lift + open shatter pose",
+    "Ba Giờ Sáng": "eerie stillness + 03:00 head snap",
+    "Mộng Du Truy Kích": "forward body line + slash arm extension",
+    "Vĩnh Dạ": "open throne silhouette + sovereign chest/head performance"
+  },
+  "timing": {
+    "serverSynchronized": true,
+    "dynamicTimeWarp": [
+      "anticipation",
+      "release",
+      "recovery"
+    ],
+    "castEndPoseHold": true,
+    "idleRecoveryCrossfade": true
+  },
+  "secondaryMotion": {
+    "system": "damped angular springs",
+    "bones": [
+      "HairRoot",
+      "SkirtRoot",
+      "HaloRoot"
+    ],
+    "reactsTo": [
+      "cast impact",
+      "teleport",
+      "ultimate",
+      "phase change",
+      "idle"
+    ]
+  },
+  "mobile": {
+    "high": "full additive arms/forearms/hands",
+    "medium": "full acting with normal spring update",
+    "low": "skip forearm/hand additive offsets; preserve head/chest/spine acting"
+  },
+  "glbSha256": "321658c08653489a6c518126de1ddc23964bf79eec2061416a5603c10a97866d"
+}

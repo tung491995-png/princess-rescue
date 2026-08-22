@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+<defs>
+ <radialGradient id="bg" cx=".45" cy=".28" r=".78"><stop offset="0" stop-color="#7f61c8"/><stop offset=".48" stop-color="#281a50"/><stop offset="1" stop-color="#080915"/></radialGradient>
+ <linearGradient id="hair" x1=".2" y1=".1" x2=".8" y2=".9"><stop stop-color="#f1edff"/><stop offset=".48" stop-color="#c5bee9"/><stop offset="1" stop-color="#8b7dc3"/></linearGradient>
+ <linearGradient id="cloth" x1=".2" y1=".1" x2=".8" y2=".9"><stop stop-color="#542376"/><stop offset=".55" stop-color="#1a1234"/><stop offset="1" stop-color="#090b19"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe0a0"/><stop offset=".42" stop-color="#c89745"/><stop offset="1" stop-color="#6c3e15"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="128" cy="128" r="124" fill="url(#bg)"/>
+<circle cx="128" cy="128" r="117" fill="none" stroke="#b69be8" stroke-opacity=".35" stroke-width="2"/>
+<path d="M25 169C45 76 61 35 128 25c67 10 84 52 103 144-21-37-42-49-62-54l-41 92-42-92c-21 6-41 18-61 54Z" fill="#0a0a18" opacity=".62"/>
+<!-- moon halo -->
+<circle cx="128" cy="93" r="78" fill="none" stroke="#d3b76c" stroke-width="3" stroke-opacity=".58"/>
+<circle cx="128" cy="93" r="67" fill="none" stroke="#a98af1" stroke-width="2" stroke-opacity=".5" stroke-dasharray="5 7"/>
+<path d="M81 75a53 53 0 1 0 58-42A43 43 0 1 1 81 75Z" fill="#ded4ff" opacity=".22" filter="url(#glow)"/>
+<!-- hair back -->
+<path d="M71 85C63 110 56 164 66 231l31-44 14 54 17-66 23 65 12-54 28 43c12-64 4-119-8-145-21-37-91-40-112 1Z" fill="url(#hair)"/>
+<!-- face -->
+<path d="M91 78c11-25 63-27 75 0 6 15 4 54-5 72-9 19-24 31-35 31-12 0-27-12-36-32-8-18-8-55 1-71Z" fill="#f1c8ce"/>
+<!-- front hair -->
+<path d="M83 91c4-48 75-54 88-7-10-10-23-18-35-19l-8 43-13-38-15 44-4-38c-7 3-10 8-13 15Z" fill="url(#hair)"/>
+<path d="M84 92c-7 34-1 78 16 101l-22 26c-15-51-8-101 6-127Zm86-1c9 35 3 79-13 102l21 26c16-49 8-102-8-128Z" fill="url(#hair)"/>
+<!-- eyes -->
+<path d="M99 119q13-10 26 0-14 12-26 0Z" fill="#241534"/>
+<ellipse cx="113" cy="119" rx="6.2" ry="7.5" fill="#914cff"/>
+<circle cx="115" cy="116" r="2.2" fill="#fff"/>
+<path d="M132 119q13-10 26 0-14 12-26 0Z" fill="#241534"/>
+<ellipse cx="144" cy="119" rx="6.2" ry="7.5" fill="#914cff"/>
+<circle cx="146" cy="116" r="2.2" fill="#fff"/>
+<path d="M101 107q11-7 23-1M133 106q13-6 23 1" fill="none" stroke="#3b2446" stroke-width="4" stroke-linecap="round"/>
+<path d="M123 145q6 4 12 0" fill="none" stroke="#a45f77" stroke-width="3" stroke-linecap="round"/>
+<!-- costume -->
+<path d="M91 168 64 239h128l-28-72-27 31-9-18-9 18-28-30Z" fill="url(#cloth)"/>
+<path d="M103 171 128 207l25-36-12 46h-26Z" fill="#160e2b"/>
+<path d="M106 170q22 13 44 0" fill="none" stroke="url(#gold)" stroke-width="5"/>
+<!-- chest gem -->
+<path d="m128 175 9 13-9 16-9-16Z" fill="#9a52ff" stroke="#e7c477" stroke-width="3" filter="url(#glow)"/>
+<!-- crown -->
+<path d="M92 69 105 39l16 19 7-36 9 36 16-19 12 30-23-12-14 17-14-17Z" fill="url(#gold)" stroke="#f7dda1" stroke-width="2"/>
+<path d="m128 42 8 10-8 12-8-12Z" fill="#a052ff" filter="url(#glow)"/>
+</svg>

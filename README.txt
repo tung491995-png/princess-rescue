@@ -977,3 +977,556 @@ PERFORMANCE
 
 V9.6 combat presentation, V9.5 intro cinematic, V9.4 rigged boss,
 dialogue overlay, stable controls, Redis and WebSocket are retained.
+
+
+============================================================
+V10.1 — BOSS MODEL / MATERIAL TARGET PASS
+============================================================
+
+THIS PASS CHANGES THE ACTUAL BUNDLED BOSS GLB
+- 15 GLB material definitions patched.
+- Skin / Face / Hair / Velvet / Plum cloth / Silver / Gold / Iris / Gem /
+  Moon / Stars receive dedicated PBR targets.
+- GLB SHA256:
+  0177b5ad4c947f800f7d648851908b85ec4868d8b5e6199da0ab0671d182cdd8
+
+PBR TARGET
+- skin / face: softer high-roughness porcelain
+- hair: silver-lavender, lower roughness, moon rim
+- dark velvet: high roughness, almost no metallic
+- plum layer: slightly clearer specular separation
+- crown gold: metallic .88 / roughness .34
+- silver trim: metallic premium highlight
+- iris / amethyst / moon: stronger emissive identity
+
+RUNTIME SIGNATURE SILHOUETTE
+- 6 dark-energy ribbons behind the boss
+- triple eclipse / clock halo
+- crescent moon ornament
+- 12 clock/rune marks in ONE InstancedMesh
+- 10 orbit crystals in ONE InstancedMesh
+- cheap anime Fresnel/rim injected into the boss MeshStandardMaterials
+
+PHASE VISUAL STATES
+PHASE 1
+- 2 ribbons on low mobile / up to 6 on desktop depending quality
+- 4 crystals
+- restrained halo / eye emissive
+
+PHASE 2
+- 7 crystal target
+- stronger ribbons, halo and jewel
+- iris/jewel emissive increases
+
+PHASE 3
+- full ribbon silhouette
+- up to 10 crystals
+- strong eclipse halo
+- maximum eye / moon / amethyst glow
+
+MOBILE ADAPTIVE QUALITY
+HIGH
+- 6 ribbons
+- 10 crystals
+
+MEDIUM
+- 4 ribbons
+- 7 crystals
+
+LOW
+- 2 ribbons
+- 4 crystals
+
+Quality reacts to renderScale / frameEma, so the first effects removed on a stressed
+phone are extra ribbons and crystals—not the boss, controls or telegraphs.
+
+All V9.7 skill VFX, V9.6 combat presentation, V9.5 cinematics, rigging,
+multiplayer, Redis and WebSocket systems remain.
+
+
+============================================================
+V10.2 — MOON VOID PALACE ENVIRONMENT + LIGHTING
+============================================================
+
+GOAL
+Move the encounter away from a flat prototype arena and make the V10.1 boss
+read like a premium anime boss while staying within a mobile web budget.
+
+ENVIRONMENT
+- procedural Moon Void Palace sky dome: 1 shader draw
+- large shader moon / phase-3 eclipse: 1 draw
+- dark stone arena base: 1 draw
+- fake reflective moon-marble floor: 1 draw
+- 12 ruined palace pillars: 1 InstancedMesh draw
+- 8 broken celestial obelisks: 1 InstancedMesh draw
+- 18 crystal-ruin pieces: 1 InstancedMesh draw
+- up to 90 atmosphere motes: 1 Points draw
+
+FAKE REFLECTIVE FLOOR
+No RenderTarget and no second scene render.
+The floor shader produces:
+- moon-marble pattern
+- three arena rune rings
+- moon path highlight
+- elongated fake boss reflection
+- smaller Hero/Princess reflected glow
+This preserves the visual idea of a reflective palace floor at a tiny GPU cost.
+
+LIGHTING
+- cool Hemisphere world light
+- directional moon key
+- boss-following violet rim PointLight
+- player fill PointLight
+- ACES tone mapping retained
+- no shadow-map pass
+- environment/boss lighting changes by phase
+
+PHASE 1
+- pale silver moonlight
+- restrained violet fog
+- 8 crystal target
+- cleaner readable arena
+
+PHASE 2
+- stronger purple atmospheric depth
+- stronger boss rim / crystal emission
+- denser fog
+- 13 crystal target
+
+PHASE 3
+- moon becomes eclipse
+- darker fog and exposure
+- boss rim goes magenta-violet
+- maximum crystal emissive
+- environment grading shifts darker
+- up to 18 crystals
+
+MOBILE ADAPTIVE ENVIRONMENT
+HIGH:
+- 12 ruins
+- 8 obelisks
+- 18 crystals
+- 90 atmospheric motes
+
+MEDIUM:
+- 8 ruins
+- 5 obelisks
+- 12 crystals
+- 58 motes
+
+LOW:
+- 5 ruins
+- 3 obelisks
+- 7 crystals
+- 30 motes
+- full-screen bloom overlay disabled
+
+Quality uses the existing renderScale + frameEma system.
+Critical gameplay readability, boss model, telegraphs and controls are never
+removed by this quality system.
+
+POST / ATMOSPHERE
+- inexpensive CSS moon bloom
+- atmospheric color grade
+- phase-reactive grade
+- low mobile automatically disables the expensive blend mode/bloom layer
+
+V10.1 boss model/material, V9.7 skill VFX, V9.6 combat presentation,
+V9.5 cinematics, rigging, dialogue, Redis and WebSocket are retained.
+
+
+============================================================
+V10.3 — BOSS FACE / HAIR / COSTUME REFINEMENT
+============================================================
+
+THIS IS NOT ONLY A SHADER PASS.
+The bundled ma_vuong_mat_ngu.glb has actual vertex-position refinement while
+its skin, skeleton and 11 animation clips are preserved.
+
+ACTUAL GLB GEOMETRY REFINEMENT
+- Face:
+  V-shaped lower jaw; restrained temple width; subtle centre/nose definition.
+- Eyes:
+  more mature horizontal proportions; iris/pupil slightly smaller;
+  very small upward outer-corner angle.
+- Lips:
+  slightly narrower / cleaner.
+- Hair:
+  long back strands fan wider near the tips;
+  side locks frame the face more strongly;
+  bangs gain small length/asymmetry variation.
+- Costume:
+  skirt panels become wider toward the lower hem;
+  cape becomes longer/wider and sits farther behind the body.
+- Crown:
+  lunar tiara widened/tallened;
+  central jewel keeps the focal point.
+- Chest ornament:
+  enlarged slightly to strengthen the eyes → crown → chest focal triangle.
+
+GLB SHA256
+e7ac2b73cd2fb463fd34fba83d95c5b54597d44aaca95ad54c0caaa888f78e7e
+
+RUNTIME RIG-ATTACHED CHARACTER DETAIL
+- 6 additional moon-hair masses in ONE InstancedMesh.
+- 4 crown constellation ornaments in ONE InstancedMesh.
+- 4 celestial outer costume panels in ONE InstancedMesh.
+- Phase-reactive magical energy hem: ONE shader draw.
+- Chest constellation / chain: ONE line draw.
+- Small head-attached face fill light:
+  keeps the anime face readable under changing moon/void lighting;
+  automatically disabled on low mobile quality.
+
+SECONDARY MOTION
+- Existing HairRoot now sways independently.
+- Existing SkirtRoot has stronger but restrained follow-through.
+- Ultimate motion multiplier: 1.8x.
+- Teleport motion multiplier: 1.45x.
+- Added hair layers and outer panels get deterministic lightweight sway;
+  no cloth physics engine.
+
+PHASE CHARACTER STATES
+P1 — MOON QUEEN
+- restrained hair/crown emissive
+- minimal energy hem
+- clean face lighting
+
+P2 — SLEEPLESS
+- stronger hair moonlight
+- stronger crown/chest ornament
+- outer panels more luminous
+
+P3 — ETERNAL NIGHT
+- highest iris/gem/hair glow
+- full energy hem
+- character silhouette reads much more aggressively against V10.2 environment
+
+MOBILE QUALITY
+HIGH
+- 6 extra hair locks / 4 outer panels / 4 crown stars / face fill
+
+MEDIUM
+- 5 hair locks / 3 panels / 4 stars / face fill
+
+LOW
+- 4 hair locks / 2 panels / 2 stars
+- face fill disabled
+- energy hem only forced visible in Phase 3
+
+V10.2 environment/lighting, V10.1 signature boss art,
+V9.7 skill VFX, V9.6 combat presentation, V9.5 cinematics,
+Redis and WebSocket multiplayer are retained.
+
+
+============================================================
+V10.4 — PREMIUM CHARACTER SHADER PASS
+============================================================
+
+GOAL
+Push the V10.3 character closer to premium anime/gacha presentation without
+adding expensive mobile post-processing or extra shadow passes.
+
+ACTUAL GLB MATERIAL TARGET UPDATE
+Patched 15 material targets inside ma_vuong_mat_ngu.glb.
+GLB SHA256:
+fd44617b412e677f004c93d5df6e5d45784dcd13bb11f9992d18f3effe7a00b4
+
+FACE / SKIN
+- soft anime face-light ramp
+- subtle fake subsurface warmth
+- stable moon-rim contribution
+- keeps facial planes readable under V10.2 phase lighting
+
+HAIR
+- directional moonlight band
+- anisotropic-style sheen without physical anisotropic shader
+- silver-lavender rim
+- stronger phase-3 moon response
+
+VELVET / NIGHT CLOTH
+- dark frontal response
+- soft purple grazing sheen
+- visually separated from silk/plum cloth
+
+SILK / PLUM CLOTH
+- longer, cleaner highlight
+- lower roughness than velvet
+- gentle violet edge response
+
+GOLD / SILVER
+- premium moon glint
+- higher metallic separation
+- antique-gold edge warmth retained
+
+AMETHYST / MOON GEM
+- phase-reactive inner violet depth
+- animated low-cost pulse
+- white moon sparkle
+
+EYES
+- stronger iris depth
+- phase-reactive emissive
+- fake cornea highlight
+- two small additive eye-lens instances in ONE InstancedMesh
+- eye-lens draw automatically disabled on low mobile
+
+HAIR MOON BAND
+- one tiny LineSegments draw around upper hair
+- makes the head silhouette separate from dark backgrounds
+- disabled on low mobile
+
+MOBILE QUALITY
+HIGH    = shader factor 1.00 + eye lens + hair moon band
+MEDIUM  = shader factor 0.72 + eye lens + subtler hair band
+LOW     = shader factor 0.38, no eye lens, no hair moon band
+
+No SSR, real subsurface scattering, transmission, refraction or shadow map
+was added. V10.2 environment, V10.3 geometry refinement, V9.7 skill VFX,
+V9.5 cinematics, multiplayer, Redis and WebSocket remain intact.
+
+
+============================================================
+V10.5 — BOSS UI / PORTRAIT / SKILL ICON PASS
+============================================================
+
+GOAL
+Turn the boss HUD from functional UI into a visual system authored specifically
+for Ma Vương Mất Ngủ, while preserving the mobile-web performance budget.
+
+ORIGINAL UI ART
+- 1 original vector boss portrait:
+  public/assets/ui/ma_vuong/boss_portrait.svg
+- 5 original vector skill icons:
+  Bóng Đêm Lan Ra
+  Giấc Mơ Vỡ
+  Ba Giờ Sáng
+  Mộng Du Truy Kích
+  Vĩnh Dạ
+- SVG is lightweight and remains sharp at phone resolutions.
+- No third-party artwork is bundled.
+
+PREMIUM BOSS HUD
+- portrait medallion
+- THE SLEEPLESS MOON subtitle
+- lunar phase chip
+- custom multi-stop boss HP bar
+- live HP percentage
+- five-skill icon strip
+- phase-reactive violet/magenta art direction
+- subtle reusable HUD sheen
+
+SYNCHRONIZED CAST CARD
+Uses the existing authoritative bossCast timeline.
+- current skill icon
+- full Vietnamese skill name
+- cast countdown
+- cast fill until impact
+- recovery/impact state after impact
+- corresponding icon highlights in the five-skill strip
+
+PHASE IDENTITY
+Phase I   — MOON QUEEN
+Phase II  — SLEEPLESS
+Phase III — ETERNAL NIGHT
+
+Phase changes pulse the boss frame and update the visual identity immediately.
+
+MOBILE LANDSCAPE
+On short landscape screens:
+- portrait shrinks
+- subtitle is removed
+- skill icons reduce in size
+- cast card becomes shorter
+- duplicate floating phase badge hides
+Gameplay controls and telegraphs retain priority.
+
+No extra WebGL render pass is introduced by V10.5.
+The new portrait/icons are SVG and the HUD is DOM/CSS only.
+
+V10.4 premium character shaders, V10.3 geometry refinement,
+V10.2 environment, V9.7 skill VFX, cinematics, Redis and WebSocket are retained.
+
+
+============================================================
+V10.6 — ANIMATION ACTING + SECONDARY MOTION PASS
+============================================================
+
+GOAL
+Make Ma Vương Mất Ngủ perform like a character rather than simply play clips.
+The 11 source GLB clips remain intact. V10.6 layers small additive acting on
+the actual rig after AnimationMixer sampling.
+
+GLB
+- 20-bone skin preserved
+- 11 source animation clips preserved
+- no server/root-motion authority changed
+- SHA256:
+  321658c08653489a6c518126de1ddc23964bf79eec2061416a5603c10a97866d
+
+ADDITIVE ACTING BONES
+Hips / Spine / Chest / Neck / Head
+Left + Right UpperArm / ForeArm / Hand
+
+The additive layer subtracts its previous-frame offset before applying the new
+offset. It therefore does not accumulate rotations or destroy the source clip.
+
+SKILL PERFORMANCE
+
+BÓNG ĐÊM LAN RA
+- restrained queenly anticipation
+- symmetric arm sweep
+- chest release at impact
+- soft recovery into idle
+
+GIẤC MƠ VỠ
+- head looks toward the moon
+- arms lift/open
+- torso expands at fracture
+- slower elegant recovery
+
+BA GIỜ SÁNG
+- intentionally eerie stillness
+- slight neck/head turn during 02:59
+- crisp head snap at 03:00
+- returns slowly rather than popping to idle
+
+MỘNG DU TRUY KÍCH
+- body leans into movement
+- stronger shoulder/forearm slash line
+- fastest release timing
+- short recovery crossfade
+
+VĨNH DẠ
+- slow sovereign anticipation
+- open-arm throne silhouette
+- chest/head performance at eclipse
+- largest secondary-motion response
+
+DYNAMIC ACTION TIME-WARP
+The existing server bossCast timestamps drive:
+- anticipation speed
+- release speed
+- recovery speed
+
+A cast clip that finishes before the authoritative recovery window now holds
+its final clamped pose instead of snapping back to idle. The visual returns to
+idle only when the cast ends.
+
+PHASE PERFORMANCE
+Phase II and III now trigger:
+- dedicated additive phase pose
+- arm expansion
+- chest lift / head angle
+- camera trauma
+- restrained zoom pulse
+- Phase III gets the strongest performance
+
+HIT ACTING
+When the boss is not actively casting:
+- light torso recoil
+- alternating left/right head response
+- does not interrupt a telegraphed cast
+
+SUMMON ACTING
+Summon clip now receives:
+- slower elegant timing
+- open-arm additive gesture
+- stronger hair/skirt follow-through
+
+SECONDARY MOTION
+HairRoot / SkirtRoot / HaloRoot now use damped angular springs rather than
+simple independent sine rotation.
+
+The springs react to:
+- normal idle drift
+- cast anticipation
+- impact
+- teleport
+- ultimate
+- phase transition
+
+This gives actual delayed follow-through:
+body moves first → hair/cloth catches up → settles afterward.
+
+MOBILE
+No physics engine is added.
+No extra animation clips or draw calls are required by the acting layer.
+
+LOW mobile:
+- keeps head/spine/chest acting
+- skips forearm/hand additive offsets
+
+V10.5 UI, V10.4 premium shader, V10.3 character geometry,
+V10.2 environment, V9.7 skill VFX, cinematics, Redis and WebSocket remain.
+
+
+============================================================
+V10.7 — FINAL VISUAL POLISH + MOBILE OPTIMIZATION
+============================================================
+
+FINAL SYSTEM-LEVEL PASS FOR THE V10 MA VƯƠNG ENCOUNTER.
+
+COLOR / PRESENTATION
+- final phase-aware grading layer
+- restrained contrast/saturation lift
+- lower grade strength on short landscape phones
+- no expensive WebGL post-process chain added
+
+CAMERA
+- encounter framing now considers Hero + Princess + Boss
+- target is biased toward Boss to keep her visually dominant
+- target uses a damped spring, so teleport/movement does not jerk the camera
+- gameplay/server positions are never modified
+
+UNIFIED QUALITY MANAGER
+The older environment/model/shader/animation quality systems now read ONE
+V10.7 LOW / MEDIUM / HIGH quality state.
+
+Signals:
+- frameEma
+- hardwareConcurrency
+- deviceMemory where supported
+- coarse/touch pointer
+
+Hysteresis prevents rapid quality oscillation.
+
+ADAPTIVE PIXEL RATIO
+Mobile LOW:    ~0.74–0.94
+Mobile MEDIUM: ~0.80–1.10
+Mobile HIGH:   ~0.88–1.25
+
+Dynamic resolution continues to move inside the current tier based on frame time.
+
+LOW-TIER CUTS ONLY DECORATION
+- hides 03:00 thought glyph decoration
+- hides Eternal Night decorative stars
+- hides chromatic-split decoration
+- hides boss HUD sheen / rotating portrait ornament
+- existing V10.2–V10.4 subsystems also switch to their low instance counts
+
+NEVER CUT
+- gameplay telegraphs
+- boss cast timing
+- controls
+- boss HP / cast UI
+- core boss model
+- server simulation / collision
+
+PHONE APP/TAB SWITCH
+- zeroes movement input while hidden
+- clears keyboard state
+- resets frame timing/hysteresis on return
+This reduces large-dt artifacts after switching apps on iPhone.
+
+GLB
+- 20-bone rig retained
+- 11 source clips retained
+- V10.6 geometry/animation content retained
+- SHA256:
+  948e69e97dac65f0f983aef8d670adaa615c006f895cb4145d81abcd17778fc6
+
+IMPORTANT:
+Static validation confirms code/asset integrity. It does NOT prove a 98% visual
+match to the reference image. The final gap must now be judged from real
+deployed screenshots and FPS on the target iPhone; that is the correct next
+stage for shot-by-shot polish.

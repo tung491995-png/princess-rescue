@@ -1,0 +1,29 @@
+{
+  "version": "10.5",
+  "pass": "Boss UI / Portrait / Skill Icon",
+  "uiAssets": {
+    "portrait": "assets/ui/ma_vuong/boss_portrait.svg",
+    "skills": [
+      "night_spread.svg",
+      "dream_shatter.svg",
+      "three_am.svg",
+      "sleepwalk_slash.svg",
+      "eternal_night.svg"
+    ]
+  },
+  "features": {
+    "lunarBossHud": true,
+    "bossHpPercent": true,
+    "phaseIdentity": [
+      "MOON QUEEN",
+      "SLEEPLESS",
+      "ETERNAL NIGHT"
+    ],
+    "synchronizedCastCard": true,
+    "castCountdown": true,
+    "skillStrip": true,
+    "phasePulse": true,
+    "mobileLandscapeCompactMode": true
+  },
+  "artType": "original lightweight SVG/CSS UI; no third-party art"
+}

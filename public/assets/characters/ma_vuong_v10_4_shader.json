@@ -1,0 +1,48 @@
+{
+  "version": "10.4",
+  "boss": "Ma Vương Mất Ngủ",
+  "pass": "Premium Character Shader",
+  "actualGLBMaterialTargetsPatched": [
+    "Skin",
+    "HairSilverLavender",
+    "DressNight",
+    "SilverTrim",
+    "MoonGlow",
+    "CrownGold",
+    "FacePorcelain",
+    "IrisAmethyst",
+    "EyeHighlight",
+    "HairMoonHighlight",
+    "DressVelvet",
+    "DressPlum",
+    "PearlSilver",
+    "AmethystJewel",
+    "StarSilver"
+  ],
+  "runtimeShaders": {
+    "face": "anime ramp + fake SSS + rim",
+    "hair": "directional moon band + anisotropic-style sheen",
+    "velvet": "grazing coloured sheen",
+    "silk": "long moon highlight",
+    "metal": "luxury moon glint",
+    "gem": "inner violet depth + sparkle",
+    "eye": "cornea glint + phase-reactive iris depth"
+  },
+  "extraRuntime": {
+    "eyeLenses": {
+      "instances": 2,
+      "drawCalls": 1,
+      "disabledLowMobile": true
+    },
+    "hairMoonBand": {
+      "drawCalls": 1,
+      "disabledLowMobile": true
+    }
+  },
+  "mobileQuality": {
+    "highShaderQuality": 1.0,
+    "mediumShaderQuality": 0.72,
+    "lowShaderQuality": 0.38
+  },
+  "glbSha256": "fd44617b412e677f004c93d5df6e5d45784dcd13bb11f9992d18f3effe7a00b4"
+}

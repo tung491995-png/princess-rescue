@@ -1,9 +1,9 @@
 {
-  "version": "9.4",
+  "version": "10.1",
   "asset": "ma_vuong_mat_ngu.glb",
   "format": "glTF Binary 2.0",
   "size_bytes": 947944,
-  "sha256": "d78276df3193847c7722fa834c793e0220e449e497c2eb85d2a234eac94b48c2",
+  "sha256": "0177b5ad4c947f800f7d648851908b85ec4868d8b5e6199da0ab0671d182cdd8",
   "skins": 1,
   "joints": 20,
   "animations": [
@@ -49,5 +49,35 @@
     "crown": "crescent crown, amethyst jewel, star ornaments",
     "halo": "three concentric eclipse rings plus twelve orbiting star/jewel markers",
     "materials": "17 PBR material groups with emissive moon/jewel/iris treatment"
+  },
+  "pass": "Boss Model / Material Target",
+  "glbMaterialPatch": [
+    "Skin",
+    "HairSilverLavender",
+    "DressNight",
+    "SilverTrim",
+    "MoonGlow",
+    "CrownGold",
+    "FacePorcelain",
+    "IrisAmethyst",
+    "EyeHighlight",
+    "HairMoonHighlight",
+    "DressVelvet",
+    "DressPlum",
+    "PearlSilver",
+    "AmethystJewel",
+    "StarSilver"
+  ],
+  "runtimeSignatureArt": {
+    "darkRibbons": 6,
+    "haloRings": 3,
+    "clockRunes": 12,
+    "orbitCrystals": 10,
+    "phaseAdaptive": true,
+    "mobileAdaptiveQuality": [
+      "low",
+      "medium",
+      "high"
+    ]
   }
 }

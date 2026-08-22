@@ -1,0 +1,52 @@
+{
+  "version": "10.3",
+  "boss": "Ma Vương Mất Ngủ",
+  "target": "Face / Hair / Costume Refinement",
+  "actualGLBGeometryRefinement": true,
+  "glbChanges": {
+    "face": "V-jaw, softer cheek plane, subtle centre/nose definition",
+    "eyes": "more horizontal mature shape; iris/pupil slightly reduced; outer corner subtly raised",
+    "lips": "slightly narrower",
+    "hair": "back strands fan outward and backward; side locks frame face; bangs length/asymmetry refined",
+    "costume": "lower skirt/cape silhouette enlarged at hem",
+    "crown": "lunar tiara widened/tallened; jewel focal point strengthened",
+    "chest": "ornament enlarged",
+    "animationSkin": "preserved"
+  },
+  "runtimeAdditions": {
+    "hairLocks": {
+      "instances": 6,
+      "drawCalls": 1,
+      "qualityCounts": {
+        "high": 6,
+        "medium": 5,
+        "low": 4
+      }
+    },
+    "crownStars": {
+      "instances": 4,
+      "drawCalls": 1
+    },
+    "outerCostumePanels": {
+      "instances": 4,
+      "drawCalls": 1
+    },
+    "energyHem": {
+      "drawCalls": 1,
+      "phaseReactive": true
+    },
+    "chestConstellation": {
+      "drawCalls": 1
+    },
+    "faceFill": {
+      "lights": 1,
+      "disabledLowMobile": true
+    }
+  },
+  "phaseStates": {
+    "1": "Moon Queen — restrained glow / hem",
+    "2": "Sleepless — stronger hair, crown, panels, gem",
+    "3": "Eternal Night — maximum eye/gem/hair emissive + energy hem"
+  },
+  "glbSha256": "e7ac2b73cd2fb463fd34fba83d95c5b54597d44aaca95ad54c0caaa888f78e7e"
+}

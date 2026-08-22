@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue 3D — Ma Vương Mất Ngủ V9 Character Art + Full Combat</title>
+<title>Princess Rescue V10.7 — Final Visual Polish + Mobile Optimization</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -24,8 +24,78 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 
 #hud{position:fixed;z-index:20;top:calc(7px + var(--st));left:calc(8px + var(--sl));right:calc(8px + var(--sr));display:flex;justify-content:space-between;pointer-events:none}
 .pcard{width:min(31vw,205px);padding:8px 10px 10px;border-radius:18px;background:linear-gradient(180deg,#060818df,#171839d9);border:1px solid #ffffff1e;box-shadow:0 10px 30px #0008;font-size:10px;font-weight:900;text-shadow:0 2px 5px #000}.pcard.r{text-align:right}.sub{font-size:9px;opacity:.8}.bar{height:8px;background:#ffffff16;border:1px solid #ffffff14;border-radius:999px;overflow:hidden;margin-top:4px}.bar.small{height:4px}.fill{height:100%}
-#bossHud{position:fixed;z-index:21;left:31%;right:31%;top:calc(7px + var(--st));text-align:center;pointer-events:none}#bossName{font-family:Georgia,serif;font-weight:950;font-size:13px;color:#eadfff;text-shadow:0 2px 7px #000}#bossHud .bar{height:11px}#bossFill{background:linear-gradient(90deg,#7147cb,#c4adff,#ff617e)}
-#phase{position:fixed;z-index:21;top:calc(44px + var(--st));left:50%;transform:translateX(-50%);padding:4px 10px;border-radius:999px;background:#050611bb;border:1px solid #ffffff20;font-size:9px;font-weight:950;pointer-events:none}
+#bossHud{position:fixed;z-index:24;left:50%;top:calc(5px + var(--st));width:min(51vw,470px);transform:translateX(-50%);pointer-events:none;text-align:left;filter:drop-shadow(0 9px 16px rgba(0,0,0,.55))}
+#bossHudFrame{position:relative;display:grid;grid-template-columns:54px 1fr;gap:8px;align-items:center;min-height:58px;padding:5px 9px 6px 5px;border:1px solid rgba(221,204,255,.25);border-radius:17px;background:linear-gradient(105deg,rgba(7,7,20,.94),rgba(29,17,56,.88) 56%,rgba(9,8,24,.94));box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 0 26px rgba(119,77,205,.12);overflow:hidden}
+#bossHudFrame:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(206,180,255,.06),transparent);transform:translateX(-100%);animation:bossHudSheenV105 6.5s ease-in-out infinite}
+#bossHudFrame:after{content:"";position:absolute;left:64px;right:11px;bottom:3px;height:1px;background:linear-gradient(90deg,transparent,#cfaeff55,transparent)}
+@keyframes bossHudSheenV105{0%,66%{transform:translateX(-120%)}82%,100%{transform:translateX(120%)}}
+#bossPortraitWrap{position:relative;width:50px;height:50px;border-radius:15px;overflow:hidden;border:1px solid rgba(224,207,255,.35);background:#0c0a19;box-shadow:0 0 15px rgba(153,105,255,.22),inset 0 0 12px rgba(255,255,255,.06)}
+#bossPortraitWrap img{width:100%;height:100%;display:block;object-fit:cover}
+#bossPortraitWrap:before{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px dashed rgba(219,190,255,.32);animation:bossPortraitOrbitV105 10s linear infinite}
+#bossPortraitWrap:after{content:"☾";position:absolute;right:2px;top:-1px;font-size:15px;color:#f0d28a;text-shadow:0 0 8px #c292ff}
+@keyframes bossPortraitOrbitV105{to{transform:rotate(360deg)}}
+#bossCore{min-width:0;position:relative;z-index:2}
+#bossTopline{display:flex;align-items:center;gap:6px;height:13px;margin-bottom:1px}
+#bossTitleSmall{font-size:6.5px;font-weight:1000;letter-spacing:1.7px;color:#a995da;white-space:nowrap}
+#bossPhaseChip{margin-left:auto;min-width:47px;padding:2px 6px;border-radius:999px;border:1px solid rgba(230,210,255,.20);background:rgba(6,6,16,.62);text-align:center;font-size:6.5px;font-weight:1000;letter-spacing:.8px;color:#dfd2ff}
+#bossName{font-family:Georgia,ui-serif,serif;font-weight:950;font-size:12px;line-height:14px;letter-spacing:.35px;color:#f0e9ff;text-shadow:0 0 12px rgba(206,176,255,.28),0 2px 5px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bossHealthRow{display:flex;align-items:center;gap:6px;margin-top:3px}
+#bossHpShell{position:relative;flex:1;height:10px;border-radius:999px;padding:1px;background:linear-gradient(90deg,#35265b,#b7a0dd44,#3b1d4d);box-shadow:inset 0 0 6px #000}
+#bossHpShell .bar{height:8px;margin:0;background:#090713;border:0}
+#bossFill{position:relative;background:linear-gradient(90deg,#5a38aa 0%,#9d72e3 38%,#e8d4ff 69%,#d65489 100%);box-shadow:0 0 10px rgba(151,95,231,.45);transition:width .12s linear}
+#bossFill:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(118deg,transparent 0 18px,rgba(255,255,255,.12) 19px,transparent 20px 33px);opacity:.65}
+#bossHpText{width:28px;font-size:6.5px;font-weight:1000;text-align:right;color:#d9ceee}
+#bossSkillStrip{display:flex;gap:3px;margin-top:4px;height:18px}
+.bossSkillIcon{position:relative;width:18px;height:18px;border-radius:5px;overflow:hidden;border:1px solid rgba(222,205,255,.19);background:#0b0a17;opacity:.46;transform:scale(.94);transition:opacity .14s,transform .14s,border-color .14s,box-shadow .14s}
+.bossSkillIcon img{display:block;width:100%;height:100%}
+.bossSkillIcon.active{opacity:1;transform:scale(1.10);border-color:#e2d3ff;box-shadow:0 0 11px rgba(175,119,255,.6)}
+.bossSkillIcon.impact{opacity:1;transform:scale(1.14);border-color:#fff;box-shadow:0 0 13px rgba(255,212,239,.75)}
+#bossCastUi{position:absolute;left:62px;right:8px;top:calc(100% + 4px);height:36px;display:grid;grid-template-columns:29px 1fr;gap:6px;padding:3px 7px 4px 3px;border-radius:11px;border:1px solid rgba(214,191,255,.18);background:linear-gradient(95deg,rgba(8,7,21,.92),rgba(35,20,63,.88));opacity:0;transform:translateY(-4px) scale(.98);transition:opacity .12s,transform .12s;overflow:hidden}
+#bossCastUi.show{opacity:1;transform:translateY(0) scale(1)}
+#bossCastUi.impact{border-color:rgba(255,216,239,.38);box-shadow:0 0 14px rgba(214,88,153,.16)}
+#bossCastIcon{width:29px;height:29px;border-radius:8px;border:1px solid #ffffff21;background:#090815}
+#bossCastInfo{min-width:0;padding-top:2px}
+#bossCastName{font-size:7.5px;font-weight:1000;letter-spacing:.25px;color:#e8deff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bossCastMeta{display:flex;align-items:center;gap:4px;margin-top:3px}
+#bossCastTrack{height:4px;flex:1;border-radius:99px;background:#ffffff13;overflow:hidden}
+#bossCastFill{height:100%;width:0;background:linear-gradient(90deg,#8964d6,#ddc9ff,#ef6d9a);box-shadow:0 0 7px #ae7cff;transition:width .035s linear}
+#bossCastTime{width:28px;text-align:right;font-size:6.3px;font-weight:1000;color:#c7b5e9}
+#phase{position:fixed;z-index:23;top:calc(69px + var(--st));left:50%;transform:translateX(-50%);padding:3px 9px;border-radius:999px;background:linear-gradient(90deg,rgba(7,7,19,.85),rgba(49,27,77,.80));border:1px solid rgba(221,200,255,.17);font-size:7px;font-weight:1000;letter-spacing:1px;color:#c9b9e7;pointer-events:none;opacity:.72}
+body.envPhase2 #bossHudFrame{border-color:rgba(197,168,255,.34);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 0 30px rgba(134,81,222,.20)}
+body.envPhase3 #bossHudFrame{border-color:rgba(224,98,192,.34);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 0 32px rgba(173,46,184,.24)}
+body.envPhase3 #bossFill{background:linear-gradient(90deg,#39205f,#8142b8,#d65bc2,#ff6c9b)}
+body.envPhase3 #bossPortraitWrap{box-shadow:0 0 18px rgba(219,75,204,.32),inset 0 0 12px rgba(255,255,255,.06)}
+#bossHud.phasePulse #bossHudFrame{animation:bossUiPhasePulseV105 .74s ease-out}
+@keyframes bossUiPhasePulseV105{0%{transform:scale(1)}30%{transform:scale(1.035);box-shadow:0 0 34px rgba(238,181,255,.42)}100%{transform:scale(1)}}
+@media(max-width:700px){
+ #bossHud{width:min(52vw,430px);top:calc(3px + var(--st))}
+ #bossHudFrame{grid-template-columns:46px 1fr;gap:6px;min-height:50px;padding:4px 7px 5px 4px;border-radius:14px}
+ #bossPortraitWrap{width:42px;height:42px;border-radius:12px}
+ #bossTitleSmall{font-size:5.8px;letter-spacing:1.2px}
+ #bossPhaseChip{min-width:40px;font-size:5.6px;padding:1px 5px}
+ #bossName{font-size:10px;line-height:11px}
+ #bossHealthRow{margin-top:2px;gap:4px}
+ #bossHpShell{height:8px}#bossHpShell .bar{height:6px}
+ #bossHpText{font-size:5.6px;width:24px}
+ #bossSkillStrip{height:15px;margin-top:3px}.bossSkillIcon{width:15px;height:15px;border-radius:4px}
+ #bossCastUi{left:52px;height:31px;grid-template-columns:24px 1fr;gap:4px;border-radius:9px}
+ #bossCastIcon{width:24px;height:24px;border-radius:6px}
+ #bossCastName{font-size:6.5px}#bossCastTime{font-size:5.5px}
+ #phase{top:calc(59px + var(--st));font-size:6px}
+}
+@media(max-height:500px) and (orientation:landscape){
+ #bossHud{width:min(46vw,390px);top:calc(2px + var(--st))}
+ #bossHudFrame{grid-template-columns:39px 1fr;min-height:43px;padding:3px 6px 4px 3px}
+ #bossPortraitWrap{width:36px;height:36px}
+ #bossTitleSmall{display:none}
+ #bossName{font-size:9px;line-height:10px}
+ #bossSkillStrip{height:13px;margin-top:2px}.bossSkillIcon{width:13px;height:13px}
+ #bossCastUi{left:44px;height:27px;grid-template-columns:21px 1fr;top:calc(100% + 2px)}
+ #bossCastIcon{width:21px;height:21px}
+ #bossCastName{font-size:5.8px}#bossCastMeta{margin-top:2px}
+ #phase{display:none!important}
+}
+
 #trustHud{position:fixed;z-index:21;top:calc(64px + var(--st));left:50%;transform:translateX(-50%);width:min(34vw,220px);text-align:center;font-size:9px;font-weight:950;pointer-events:none}#trustFill{background:linear-gradient(90deg,#66deff,#c6b3ff,#ff86c8)}
 #netBadge{position:fixed;z-index:22;right:calc(10px + var(--sr));top:calc(76px + var(--st));padding:5px 9px;border-radius:999px;background:#03050dbb;border:1px solid #ffffff1d;font-size:9px;font-weight:900;pointer-events:none}
 #banner{position:fixed;z-index:45;left:50%;top:17%;transform:translateX(-50%) scale(.94);padding:10px 15px;border-radius:17px;background:#050611e8;border:1px solid #ffffff28;box-shadow:0 15px 48px #000a;font-size:12px;font-weight:1000;opacity:0;transition:.15s;pointer-events:none;white-space:nowrap}#banner.show{opacity:1;transform:translateX(-50%) scale(1)}
@@ -304,10 +374,56 @@ body.bossDeathLock #ctl1,body.bossDeathLock #ctl2,body.bossDeathLock #desktopHin
  #eternalArtFx .nightWave{height:25%}
 }
 
+
+/* V10.2 — mobile-cheap atmosphere / grading. */
+#envGradeV10{position:fixed;z-index:8;inset:0;pointer-events:none;opacity:.34;
+ background:
+ radial-gradient(circle at 50% 20%,rgba(180,167,255,.10),transparent 30%),
+ radial-gradient(circle at 16% 55%,rgba(74,98,160,.08),transparent 38%),
+ radial-gradient(circle at 83% 49%,rgba(115,64,171,.08),transparent 40%),
+ linear-gradient(180deg,rgba(4,6,19,.02),rgba(21,10,43,.12));
+ mix-blend-mode:screen;transition:opacity .45s,filter .45s;will-change:opacity,filter}
+#envBloomV10{position:fixed;z-index:7;left:50%;top:17%;width:min(58vw,660px);height:min(58vw,660px);pointer-events:none;transform:translate(-50%,-50%);
+ border-radius:50%;background:radial-gradient(circle,rgba(213,207,255,.17),rgba(138,105,230,.07) 31%,transparent 67%);
+ filter:blur(16px);opacity:.68;transition:opacity .45s,transform .55s;will-change:opacity,transform}
+body.envPhase2 #envGradeV10{opacity:.45;filter:saturate(1.08) contrast(1.03)}
+body.envPhase2 #envBloomV10{opacity:.78;transform:translate(-50%,-50%) scale(1.07)}
+body.envPhase3 #envGradeV10{opacity:.57;filter:saturate(1.16) contrast(1.09)}
+body.envPhase3 #envBloomV10{opacity:.44;transform:translate(-50%,-50%) scale(.90)}
+body.envLow #envGradeV10{opacity:.22;mix-blend-mode:normal}
+body.envLow #envBloomV10{display:none}
+@media (pointer:coarse){#envGradeV10{opacity:.27}#envBloomV10{filter:blur(12px);opacity:.52}}
+
+
+/* V10.7 — final presentation grade + decorative quality fallback. */
+#finalGradeV107{position:fixed;z-index:9;inset:0;pointer-events:none;opacity:.25;
+ background:
+  radial-gradient(circle at 50% 29%,rgba(205,194,255,.07),transparent 35%),
+  linear-gradient(180deg,rgba(5,7,21,.01),rgba(21,10,42,.055) 52%,rgba(3,3,10,.13));
+ mix-blend-mode:screen;transition:opacity .45s,filter .45s}
+#finalGradeV107:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 72px rgba(3,2,12,.23)}
+body.v107High #finalGradeV107{opacity:.31;filter:saturate(1.06) contrast(1.025)}
+body.v107Medium #finalGradeV107{opacity:.24;filter:saturate(1.03)}
+body.v107Low #finalGradeV107{opacity:.12;mix-blend-mode:normal;filter:none}
+body.envPhase2 #finalGradeV107{filter:saturate(1.10) contrast(1.035)}
+body.envPhase3 #finalGradeV107{opacity:.37;filter:saturate(1.16) contrast(1.07)}
+/* Never remove gameplay telegraphs. LOW only removes decorative detail. */
+body.v107Low #eternalArtFx .voidStars,
+body.v107Low #threeAmArtFx .thoughtGlyph,
+body.v107Low #threeAmArtFx .edgeThought,
+body.v107Low #combatImpactFx .impactSplit{display:none}
+body.v107Low #bossHudFrame:before,
+body.v107Low #bossPortraitWrap:before{display:none}
+@media(max-height:500px) and (orientation:landscape){
+ #finalGradeV107{opacity:.18}
+ #envBloomV10{opacity:.36!important}
+ #bossHud{max-width:48vw}
+}
+
 </style>
 </head>
 <body>
-<div id="stage"></div><div id="vignette"></div><div id="flash"></div><div id="blackmoon"></div><div id="eyes"></div><div id="clockFx"></div>
+<div id="stage"></div><div id="envBloomV10"></div><div id="envGradeV10"></div><div id="finalGradeV107"></div><div id="vignette"></div><div id="flash"></div><div id="blackmoon"></div><div id="eyes"></div><div id="clockFx"></div>
 <div id="threeAmArtFx">
  <div class="clockBurst"></div>
  <span class="thoughtGlyph g1">…</span><span class="thoughtGlyph g2">?</span>
@@ -369,8 +485,34 @@ body.bossDeathLock #ctl1,body.bossDeathLock #ctl2,body.bossDeathLock #desktopHin
 </div>
 
 <div id="hud" class="hidden"><div class="pcard"><div>⚔️ HERO · <span id="food1">🧋</span></div><div class="sub" id="foodName1">Trà sữa matcha</div><div class="bar"><div id="hp1" class="fill" style="background:linear-gradient(90deg,#55aaff,#8be9ff)"></div></div><div class="bar small"><div id="st1" class="fill" style="background:#8cffbc"></div></div></div><div class="pcard r"><div><span id="food2">🍓</span> · PRINCESS 👑</div><div class="sub" id="foodName2">Crepe dâu</div><div class="bar"><div id="hp2" class="fill" style="background:linear-gradient(90deg,#ff75bd,#ffd2e8)"></div></div><div class="bar small"><div id="st2" class="fill" style="background:#8cffbc"></div></div></div></div>
-<div id="bossHud" class="hidden"><div id="bossName">MA VƯƠNG MẤT NGỦ</div><div class="bar"><div id="bossFill" class="fill"></div></div></div>
-<div id="phase" class="hidden">PHASE 1</div><div id="trustHud" class="hidden">ROYAL TRUST <span id="trustText">0%</span><div class="bar small"><div id="trustFill" class="fill"></div></div></div>
+<div id="bossHud" class="hidden">
+ <div id="bossHudFrame">
+  <div id="bossPortraitWrap"><img src="/assets/ui/ma_vuong/boss_portrait.svg" alt=""></div>
+  <div id="bossCore">
+   <div id="bossTopline"><span id="bossTitleSmall">THE SLEEPLESS MOON</span><span id="bossPhaseChip">PHASE I</span></div>
+   <div id="bossName">MA VƯƠNG MẤT NGỦ</div>
+   <div id="bossHealthRow">
+    <div id="bossHpShell"><div class="bar"><div id="bossFill" class="fill"></div></div></div>
+    <div id="bossHpText">100%</div>
+   </div>
+   <div id="bossSkillStrip">
+    <span class="bossSkillIcon" data-bskill="0"><img src="/assets/ui/ma_vuong/night_spread.svg" alt=""></span>
+    <span class="bossSkillIcon" data-bskill="1"><img src="/assets/ui/ma_vuong/dream_shatter.svg" alt=""></span>
+    <span class="bossSkillIcon" data-bskill="2"><img src="/assets/ui/ma_vuong/three_am.svg" alt=""></span>
+    <span class="bossSkillIcon" data-bskill="3"><img src="/assets/ui/ma_vuong/sleepwalk_slash.svg" alt=""></span>
+    <span class="bossSkillIcon" data-bskill="4"><img src="/assets/ui/ma_vuong/eternal_night.svg" alt=""></span>
+   </div>
+  </div>
+ </div>
+ <div id="bossCastUi">
+  <img id="bossCastIcon" src="/assets/ui/ma_vuong/night_spread.svg" alt="">
+  <div id="bossCastInfo">
+   <div id="bossCastName">BÓNG ĐÊM LAN RA</div>
+   <div id="bossCastMeta"><div id="bossCastTrack"><div id="bossCastFill"></div></div><div id="bossCastTime">CAST</div></div>
+  </div>
+ </div>
+</div>
+<div id="phase" class="hidden">PHASE I · MOON QUEEN</div><div id="trustHud" class="hidden">ROYAL TRUST <span id="trustText">0%</span><div class="bar small"><div id="trustFill" class="fill"></div></div></div>
 <div id="netBadge" class="hidden">● CONNECTING</div><div id="banner"></div><div id="favorite"></div>
 <div id="dialogue"><div id="dialogueSpeaker">BOSS</div><div id="dialogueText"></div></div>
 <div id="dreamCracks"><div class="dreamCrack"></div><div class="dreamCrack"></div><div class="dreamCrack"></div></div>
@@ -380,7 +522,7 @@ body.bossDeathLock #ctl1,body.bossDeathLock #ctl2,body.bossDeathLock #desktopHin
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">SKILL VFX ART PASS V9.7</span></h1><p style="margin-top:7px">Royal Duo cinematic rõ hơn trên mobile + stable joystick trái / action phải.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Royal cinematic</span><span class="badge">10 food sigils</span><span class="badge">Mobile visibility+</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10 FINAL POLISH / MOBILE V10.7</span></h1><p style="margin-top:7px">Royal Duo cinematic rõ hơn trên mobile + stable joystick trái / action phải.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Royal cinematic</span><span class="badge">10 food sigils</span><span class="badge">Mobile visibility+</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -460,6 +602,22 @@ let enteringGame=false,enterRetry=0,enterStateQueued=null,enterSource='',enterTi
 let bossTelegraphRing=null,bossTelegraphRing2=null,bossTelegraphMoon=null,bossTelegraphCone=null;
 let bossTelegraphRune=null,bossMoonCracks3D=null,dreamSlashArt=null;
 let summonMeshes=[],summonSpawnFx=[],summonDeathFx=[];
+// V10.1 — premium boss silhouette/material runtime additions.
+let bossV10Art=null,bossV10Phase=0,bossV10Quality='medium',bossV10LastQualityCheck=0;
+let bossV10MaterialRefs={};
+// V10.2 — Moon Void Palace environment / lighting state.
+let envV10=null,envV10Phase=1,envV10Quality='medium',envV10LastQualityCheck=0;
+// V10.3 — character refinement overlay, attached to the existing rig.
+let bossV103=null,bossV103Phase=1,bossV103Quality='medium',bossV103LastQualityCheck=0;
+// V10.4 premium material/shader runtime.
+let bossV104=null,bossV104Phase=1,bossV104Quality='medium',bossV104LastQualityCheck=0;
+// V10.6 — additive acting / recovery / secondary spring state.
+let bossV106=null,bossV106PhaseActStart=0,bossV106PhaseActUntil=0,bossV106PhaseActPhase=1;
+let bossV106HitStart=0,bossV106HitUntil=0,bossV106HitSide=1,bossV106GestureStart=0,bossV106GestureUntil=0,bossV106Gesture='';
+let bossV106Quality='medium',bossV106LastQualityCheck=0;
+// V10.7 unified visual/performance state.
+let v107Quality='medium',v107LastCheck=0,v107StableGood=0,v107StableBad=0;
+let v107CamFocusX=0,v107CamFocusZ=-1.5,v107CamFocusVelX=0,v107CamFocusVelZ=0;
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
@@ -1447,13 +1605,14 @@ function updateDynamicResolution(rawDt,now){
  else if(frameEma<18){fastFrames+=rawDt;slowFrames=Math.max(0,slowFrames-rawDt)}
  else{slowFrames=Math.max(0,slowFrames-rawDt*.4);fastFrames=Math.max(0,fastFrames-rawDt*.4)}
  if(!renderer||now-lastScaleChange<3500)return;
+ const bounds=v107ScaleBounds();
  let next=renderScale;
- if(slowFrames>.8&&renderScale>renderScaleMin){next=Math.max(renderScaleMin,renderScale-.12);slowFrames=0}
- else if(fastFrames>4&&renderScale<renderScaleMax){next=Math.min(renderScaleMax,renderScale+.10);fastFrames=0}
+ if(slowFrames>.8&&renderScale>bounds.min){next=Math.max(bounds.min,renderScale-.10);slowFrames=0}
+ else if(fastFrames>4&&renderScale<bounds.max){next=Math.min(bounds.max,renderScale+.08);fastFrames=0}
  if(Math.abs(next-renderScale)>.01){
    renderScale=next;lastScaleChange=now;
    renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false);
-   if(netTest.enabled)labLog(`RENDER SCALE -> ${renderScale.toFixed(2)}x · frame ${frameEma.toFixed(1)}ms`);
+   if(netTest.enabled)labLog(`RENDER SCALE -> ${renderScale.toFixed(2)}x · ${v107Quality} · frame ${frameEma.toFixed(1)}ms`);
  }
 }
 
@@ -1556,7 +1715,7 @@ function initRigLoader(){
  }
  rigRuntime.loader=loader;return loader;
 }
-function polishRig(model){
+function polishRig(model,roleName=''){
  model.traverse(o=>{
    if(!o.isMesh)return;
    o.castShadow=false;o.receiveShadow=false;
@@ -1568,9 +1727,45 @@ function polishRig(model){
      if(m.map)m.map.encoding=THREE.sRGBEncoding;
      if(m.emissiveMap)m.emissiveMap.encoding=THREE.sRGBEncoding;
      const n=rigNorm(o.name+' '+m.name);
+
+     if(roleName==='boss'){
+       bossV10MaterialRefs[rigNorm(m.name||o.name)]=m;
+       // V10 target: material separation is deliberate, not one glossy toon value.
+       if(/skin|faceporcelain/.test(n)){
+         if('roughness' in m)m.roughness=.64;if('metalness' in m)m.metalness=0;
+       }else if(/hair/.test(n)){
+         if('roughness' in m)m.roughness=.34;if('metalness' in m)m.metalness=0;
+         m.userData.v10Hair=true;
+       }else if(/dressnight|dressvelvet/.test(n)){
+         if('roughness' in m)m.roughness=.76;if('metalness' in m)m.metalness=0;
+       }else if(/dressplum/.test(n)){
+         if('roughness' in m)m.roughness=.60;if('metalness' in m)m.metalness=.02;
+       }else if(/crowngold/.test(n)){
+         if('roughness' in m)m.roughness=.34;if('metalness' in m)m.metalness=.88;
+       }else if(/silvertrim|pearlsilver|starsilver/.test(n)){
+         if('roughness' in m)m.roughness=.29;if('metalness' in m)m.metalness=.72;
+       }
+     }
+
      if(m.emissive&&/(eye|iris|gem|jewel|crystal|halo|moon|glow|magic)/.test(n)){
-       if(m.color)m.emissive.copy(m.color).multiplyScalar(.30);
-       if('emissiveIntensity' in m)m.emissiveIntensity=Math.max(m.emissiveIntensity||1,1.12);
+       if(m.color)m.emissive.copy(m.color).multiplyScalar(roleName==='boss'?.42:.30);
+       if('emissiveIntensity' in m)m.emissiveIntensity=Math.max(m.emissiveIntensity||1,roleName==='boss'?1.35:1.12);
+     }
+
+     // Cheap anime rim response without a separate postprocess pass.
+     if(roleName==='boss'&&m.isMeshStandardMaterial){
+       m.onBeforeCompile=shader=>{
+         shader.uniforms.uV10Rim={value:/hair/.test(n)?0.24:/dress/.test(n)?.10:.06};
+         shader.uniforms.uV10RimColor={value:new THREE.Color(/hair/.test(n)?0xb8a9ff:0x7650bf)};
+         shader.vertexShader=shader.vertexShader
+           .replace('#include <common>','#include <common>\\nvarying vec3 vV10WorldNormal; varying vec3 vV10ViewDir;')
+           .replace('#include <worldpos_vertex>','#include <worldpos_vertex>\\nvV10WorldNormal=normalize(mat3(modelMatrix)*objectNormal); vV10ViewDir=normalize(cameraPosition-worldPosition.xyz);');
+         shader.fragmentShader=shader.fragmentShader
+           .replace('#include <common>','#include <common>\\nvarying vec3 vV10WorldNormal; varying vec3 vV10ViewDir; uniform float uV10Rim; uniform vec3 uV10RimColor;')
+           .replace('#include <output_fragment>','float v10F=pow(1.0-max(0.0,dot(normalize(vV10WorldNormal),normalize(vV10ViewDir))),3.0); outgoingLight += uV10RimColor*v10F*uV10Rim;\\n#include <output_fragment>');
+         m.userData.v10Shader=shader;
+       };
+       m.customProgramCacheKey=()=>`v10-${n}`;
      }
      m.needsUpdate=true;
    });
@@ -1610,6 +1805,21 @@ function makeRigSockets(rec){
  for(const [k,b] of Object.entries(rec.secondary)){
    if(b)rec.secondaryBase[k]={rot:b.rotation.clone(),scale:b.scale.clone()};
  }
+
+ // V10.6: exact rig bones for additive acting. These never alter server/root positions.
+ rec.actingBones={
+   hips:findRigNode(rec.model,['Hips']),
+   spine:findRigNode(rec.model,['Spine']),
+   chest:findRigNode(rec.model,['Chest']),
+   neck:findRigNode(rec.model,['Neck']),
+   head:findRigNode(rec.model,['Head']),
+   lua:findRigNode(rec.model,['LeftUpperArm']),
+   lfa:findRigNode(rec.model,['LeftForeArm']),
+   lhand:findRigNode(rec.model,['LeftHand']),
+   rua:findRigNode(rec.model,['RightUpperArm']),
+   rfa:findRigNode(rec.model,['RightForeArm']),
+   rhand:findRigNode(rec.model,['RightHand'])
+ };
 }
 function buildRigActions(rec,clips){
  rec.mixer=new THREE.AnimationMixer(rec.model);rec.actions={};rec.clipNames=clips.map(c=>c.name);
@@ -1630,7 +1840,7 @@ function playRigAnimation(roleName,state,{fade=.14,once=false,speed=1}={}){
  if(!action)return false;
  if(rec.active===action&&!once)return true;
  const prev=rec.active;
- action.enabled=true;action.setEffectiveTimeScale(speed);action.setEffectiveWeight(1);
+ action.enabled=true;action.paused=false;action.setEffectiveTimeScale(speed);action.setEffectiveWeight(1);
  action.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat,once?1:Infinity);action.clampWhenFinished=once;
  action.reset().play();if(prev&&prev!==action)prev.crossFadeTo(action,fade,false);
  rec.active=action;rec.activeState=state;
@@ -1638,7 +1848,13 @@ function playRigAnimation(roleName,state,{fade=.14,once=false,speed=1}={}){
    const done=e=>{
      if(e.action!==action)return;
      rec.mixer.removeEventListener('finished',done);
-     if(rec.active===action)playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:.18});
+     if(rec.active!==action)return;
+     // V10.6: a boss cast may finish its source clip before the server recovery window.
+     // Keep the final pose clamped instead of snapping back to idle mid-cast.
+     if(roleName==='boss'&&/^boss_(aoe|shatter|3am|teleport|ultimate)$/.test(state)&&bossCastVisual.cast&&serverNow()<bossCastVisual.cast.endAt){
+       action.paused=true;return;
+     }
+     playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:roleName==='boss'?.24:.18});
    };
    rec.mixer.addEventListener('finished',done);
  }
@@ -1659,15 +1875,19 @@ function loadRigAsset(roleName){
      try{
        const model=gltf.scene||gltf.scenes?.[0];if(!model)throw new Error('GLB has no scene');
        rec.model=model;model.name=roleName+'_RiggedVisual';
-       polishRig(model);normalizeRig(model,cfg);root.add(model);makeRigSockets(rec);buildRigActions(rec,gltf.animations||[]);
+       polishRig(model,roleName);normalizeRig(model,cfg);root.add(model);makeRigSockets(rec);buildRigActions(rec,gltf.animations||[]);
        rec.ready=true;rigRuntime.status[roleName]='ready';setFallback(root,false,model);model.visible=true;
        if(roleName==='boss'&&bossSocketFx&&rec.vfxSocket){
          rec.vfxSocket.add(bossSocketFx);bossSocketFx.position.set(0,0,0);
        }
+       if(roleName==='boss')createBossV10Art(rec);
+       if(roleName==='boss')createBossV103Refinement(rec);
+       if(roleName==='boss')createBossV104ShaderPass(rec);
+       if(roleName==='boss')createBossV106Acting(rec);
        playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:0});
        console.info('[rig]',roleName,'ready',rec.clipNames);
        if(roleName==='boss')setTimeout(()=>{
-         if(!bossIntroActive())banner('🌙 MA VƯƠNG V9.5 — ANIMATION READY ✓');
+         if(!bossIntroActive())banner('🌙 V10.7 FINAL POLISH — MOBILE READY ✓');
        },4700);
        resolve(true);
      }catch(e){
@@ -1690,32 +1910,71 @@ function updateRiggedAnimations(dt){
    if(!rec?.ready||!rec.mixer)continue;
    rec.mixer.update(dt);
 
-   // Secondary animation layer: deliberately light-weight and deterministic.
-   if(rec.role==='boss'&&rec.secondary){
-     const skirt=rec.secondary.skirt,base=rec.secondaryBase?.skirt;
-     if(skirt&&base){
-       skirt.rotation.x=base.rot.x+Math.sin(now*1.55)*.018;
-       skirt.rotation.y=base.rot.y+Math.sin(now*.92)*.026;
-       skirt.rotation.z=base.rot.z+Math.sin(now*1.22+.8)*.014;
-     }
-
-     const halo=rec.secondary.halo,hbase=rec.secondaryBase?.halo;
-     if(halo&&hbase&&bossIntroActive()){
-       const t=clamp((performance.now()-bossIntroV9Start)/Math.max(1,bossIntroV9Duration),0,1);
-       const pulse=1+Math.sin(t*Math.PI)*.18+Math.sin(now*5.5)*.018;
-       halo.scale.set(hbase.scale.x*pulse,hbase.scale.y*pulse,hbase.scale.z*pulse);
-     }
-   }
+   // V10.6: spring follow-through reacts to skill impact, teleport, phase and ultimate.
+   if(rec.role==='boss'&&rec.secondary)updateBossV106Secondary(rec,dt,now);
  }
 }
+
+const BOSS_UI_SKILLS=[
+ {name:'BÓNG ĐÊM LAN RA',icon:'/assets/ui/ma_vuong/night_spread.svg',tag:'NIGHT SPREAD'},
+ {name:'GIẤC MƠ VỠ',icon:'/assets/ui/ma_vuong/dream_shatter.svg',tag:'DREAM SHATTER'},
+ {name:'BA GIỜ SÁNG',icon:'/assets/ui/ma_vuong/three_am.svg',tag:'03:00'},
+ {name:'MỘNG DU TRUY KÍCH',icon:'/assets/ui/ma_vuong/sleepwalk_slash.svg',tag:'SLEEPWALK SLASH'},
+ {name:'VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC',icon:'/assets/ui/ma_vuong/eternal_night.svg',tag:'ETERNAL NIGHT'}
+];
+function bossUiPhaseName(p){
+ return p===1?'MOON QUEEN':p===2?'SLEEPLESS': 'ETERNAL NIGHT';
+}
+function updateBossUiPhase(p){
+ const roman=p===1?'I':p===2?'II':'III';
+ const chip=$('bossPhaseChip');if(chip)chip.textContent=`PHASE ${roman}`;
+ const badge=$('phase');if(badge)badge.textContent=`PHASE ${roman} · ${bossUiPhaseName(p)}`;
+}
+function clearBossSkillUi(){
+ document.querySelectorAll('.bossSkillIcon').forEach(e=>e.classList.remove('active','impact'));
+ const card=$('bossCastUi');if(card){card.classList.remove('show','impact')}
+}
+function setBossSkillUi(i){
+ const sk=BOSS_UI_SKILLS[i]||BOSS_UI_SKILLS[0];
+ document.querySelectorAll('.bossSkillIcon').forEach((e,k)=>{
+   e.classList.toggle('active',k===i);e.classList.remove('impact');
+ });
+ const icon=$('bossCastIcon'),name=$('bossCastName'),card=$('bossCastUi');
+ if(icon)icon.src=sk.icon;if(name)name.textContent=sk.name;
+ if(card){card.classList.remove('impact');card.classList.add('show')}
+}
+function updateBossCastUi(c,now,pre,after){
+ if(!c)return;
+ const card=$('bossCastUi'),fill=$('bossCastFill'),time=$('bossCastTime');
+ if(!card||!fill||!time)return;
+ if(now<c.impactAt){
+   fill.style.width=(pre*100).toFixed(1)+'%';
+   time.textContent=Math.max(0,(c.impactAt-now)/1000).toFixed(1)+'s';
+   card.classList.remove('impact');
+ }else{
+   fill.style.width=((1-after)*100).toFixed(1)+'%';
+   time.textContent='IMPACT';
+   card.classList.add('impact');
+   const icon=document.querySelector(`.bossSkillIcon[data-bskill="${c.i}"]`);
+   if(icon){icon.classList.remove('active');icon.classList.add('impact')}
+ }
+}
+function pulseBossUiPhase(p){
+ updateBossUiPhase(p);
+ const hud=$('bossHud');if(!hud)return;
+ hud.classList.remove('phasePulse');void hud.offsetWidth;hud.classList.add('phasePulse');
+ setTimeout(()=>hud.classList.remove('phasePulse'),780);
+}
+
 function bossCastAnimProfile(i){
+ // V10.6 starts each clip in its anticipation tempo; runtime time-warp handles release/recovery.
  return [
-   {state:'boss_aoe',fade:.13,speed:.88},
-   {state:'boss_shatter',fade:.14,speed:.84},
-   {state:'boss_3am',fade:.16,speed:.78},
-   {state:'boss_teleport',fade:.055,speed:1.18},
-   {state:'boss_ultimate',fade:.18,speed:.72}
- ][i]||{state:'boss_aoe',fade:.12,speed:.9};
+   {state:'boss_aoe',fade:.15,speed:.70},
+   {state:'boss_shatter',fade:.16,speed:.64},
+   {state:'boss_3am',fade:.18,speed:.50},
+   {state:'boss_teleport',fade:.045,speed:1.18},
+   {state:'boss_ultimate',fade:.20,speed:.47}
+ ][i]||{state:'boss_aoe',fade:.15,speed:.70};
 }
 function updateRigLocomotion(sa,sb){
  if(!sa||!sb)return;
@@ -1726,25 +1985,1091 @@ function updateRigLocomotion(sa,sb){
    if(who===role&&pred.dashT>0)playRigAnimation(who,'dash',{fade:.06,speed:1.12});
    else if(!combatAnim[who]?.type)playRigAnimation(who,moving?'run':'idle',{fade:.14});
  }
- if(rigRuntime.records.boss?.ready&&!bossCastVisual.cast)playRigAnimation('boss','boss_idle',{fade:.18});
+ if(rigRuntime.records.boss?.ready&&!bossCastVisual.cast)playRigAnimation('boss','boss_idle',{fade:.22,speed:bossV10Phase===3?.94:.88});
 }
 function rigBossCastState(i){return ['boss_aoe','boss_shatter','boss_3am','boss_teleport','boss_ultimate'][i]||'boss_aoe'}
 
+
+function makeV10Ribbon(index){
+ const geo=new THREE.PlaneGeometry(1,1,16,2);
+ const mat=new THREE.ShaderMaterial({
+   transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,
+   uniforms:{
+     uTime:{value:0},uIndex:{value:index},uPhase:{value:1},
+     uAlpha:{value:.52},uColorA:{value:new THREE.Color(0x100522)},uColorB:{value:new THREE.Color(0x8548d9)}
+   },
+   vertexShader:`
+     precision highp float;
+     uniform float uTime,uIndex,uPhase;
+     varying vec2 vUv;
+     void main(){
+       vUv=uv;vec3 p=position;
+       float side=(uIndex<3.0?-1.0:1.0);
+       float local=mod(uIndex,3.0);
+       float lengthMix=1.0+local*.18+uPhase*.06;
+       p.x=(uv.x-.5)*(.46+local*.12);
+       p.y=(uv.y-.5)*(3.2*lengthMix);
+       float wave=sin(uv.y*7.0+uTime*(.85+local*.11)+uIndex*1.7);
+       p.x+=wave*(.12+.10*uv.y)*side;
+       p.z+=cos(uv.y*5.0+uTime*.72+uIndex)*(.10+.08*uv.y);
+       vec4 wp=modelMatrix*vec4(p,1.0);
+       gl_Position=projectionMatrix*viewMatrix*wp;
+     }`,
+   fragmentShader:`
+     precision highp float;
+     varying vec2 vUv;uniform vec3 uColorA,uColorB;uniform float uTime,uIndex,uPhase,uAlpha;
+     void main(){
+       float edge=smoothstep(0.0,.20,vUv.x)*(1.0-smoothstep(.80,1.0,vUv.x));
+       float taper=smoothstep(0.0,.10,vUv.y)*(1.0-smoothstep(.78,1.0,vUv.y));
+       float noise=.56+.44*sin(vUv.y*18.0-uTime*2.0+uIndex*2.1);
+       vec3 col=mix(uColorA,uColorB,.28+.58*vUv.y);
+       col+=vec3(.24,.10,.36)*noise*uPhase*.12;
+       float a=edge*taper*(.40+.32*noise)*uAlpha;
+       if(a<.018)discard;gl_FragColor=vec4(col,a);
+     }`
+ });
+ const mesh=new THREE.Mesh(geo,mat);
+ mesh.name=`V10DarkRibbon${index}`;mesh.frustumCulled=false;
+ return mesh;
+}
+function createBossV10Art(rec){
+ if(bossV10Art||!rec?.model)return;
+ const root=new THREE.Group();root.name='BossV10SignatureArt';
+
+ // 6 dark ribbons: silhouette first, detail second.
+ const ribbons=new THREE.Group();ribbons.name='DarkRibbons';
+ for(let i=0;i<6;i++){
+   const r=makeV10Ribbon(i);
+   const side=i<3?-1:1,local=i%3;
+   r.position.set(side*(.54+local*.22),1.55-local*.12,-.22-local*.08);
+   r.rotation.z=side*(.30+.12*local);r.rotation.x=-.08+.04*local;
+   ribbons.add(r);
+ }
+
+ // Triple eclipse/clock halo.
+ const halo=new THREE.Group();halo.name='V10EclipseHalo';halo.position.set(0,3.05,-.48);
+ const haloMats=[
+   new THREE.MeshBasicMaterial({color:0xd8bd72,transparent:true,opacity:.70,depthWrite:false,blending:THREE.AdditiveBlending}),
+   new THREE.MeshBasicMaterial({color:0xa684ff,transparent:true,opacity:.54,depthWrite:false,blending:THREE.AdditiveBlending}),
+   new THREE.MeshBasicMaterial({color:0x6a3cb6,transparent:true,opacity:.42,depthWrite:false,blending:THREE.AdditiveBlending})
+ ];
+ [[1.55,.018,haloMats[0]],[1.31,.014,haloMats[1]],[1.05,.012,haloMats[2]]].forEach(([rad,tube,mat],i)=>{
+   const q=new THREE.Mesh(new THREE.TorusGeometry(rad,tube,6,64),mat);q.name=`V10HaloRing${i}`;halo.add(q);
+ });
+ const crescentMat=new THREE.MeshBasicMaterial({color:0xe1ca8a,transparent:true,opacity:.82,depthWrite:false,blending:THREE.AdditiveBlending});
+ const crescent=new THREE.Mesh(new THREE.TorusGeometry(.58,.035,7,48,Math.PI*1.36),crescentMat);
+ crescent.position.set(-.14,.18,.02);crescent.rotation.z=-.72;halo.add(crescent);
+
+ // Twelve rune marks are one InstancedMesh.
+ const runeGeo=new THREE.BoxGeometry(.055,.20,.025);
+ const runeMat=new THREE.MeshBasicMaterial({color:0xe3c97d,transparent:true,opacity:.70,depthWrite:false,blending:THREE.AdditiveBlending});
+ const runes=new THREE.InstancedMesh(runeGeo,runeMat,12);runes.name='V10ClockRunes';
+ const d=new THREE.Object3D();
+ for(let i=0;i<12;i++){
+   const a=i/12*Math.PI*2,r=1.43;
+   d.position.set(Math.sin(a)*r,Math.cos(a)*r,.015);d.rotation.z=-a;d.updateMatrix();runes.setMatrixAt(i,d.matrix);
+ }
+ halo.add(runes);
+
+ // Crystals are a single InstancedMesh.
+ const crystalGeo=new THREE.OctahedronGeometry(.13,0);
+ const crystalMat=new THREE.MeshStandardMaterial({color:0xa57dff,emissive:0x6731bb,emissiveIntensity:1.35,roughness:.22,metalness:.08,transparent:true,opacity:.90});
+ const crystals=new THREE.InstancedMesh(crystalGeo,crystalMat,10);crystals.name='V10OrbitCrystals';crystals.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+ root.add(ribbons,halo,crystals);
+
+ rec.model.add(root);
+ root.position.set(0,0,0);
+ bossV10Art={root,ribbons,halo,runes,crystals,crystalMat,haloMats,phase:1,quality:'medium',dummy:new THREE.Object3D()};
+ updateBossV10Quality(true);
+ updateBossV10Phase(1,true);
+}
+function getBossV10Quality(){return v107Quality;}
+function updateBossV10Quality(force=false){
+ if(!bossV10Art)return;
+ const now=performance.now();
+ if(!force&&now-bossV10LastQualityCheck<1000)return;
+ bossV10LastQualityCheck=now;
+ const q=getBossV10Quality();if(!force&&q===bossV10Quality)return;
+ bossV10Quality=q;bossV10Art.quality=q;
+ const ribbonMax=q==='high'?6:q==='medium'?4:2;
+ [...bossV10Art.ribbons.children].forEach((r,i)=>r.visible=i<ribbonMax);
+ const crystalMax=q==='high'?10:q==='medium'?7:4;
+ bossV10Art.crystals.count=Math.min(crystalMax,bossV10Phase===1?4:bossV10Phase===2?7:10);
+}
+function updateBossV10Phase(phase,force=false){
+ phase=Math.max(1,Math.min(3,phase||1));
+ if(!force&&phase===bossV10Phase)return;
+ bossV10Phase=phase;
+ if(!bossV10Art)return;
+ bossV10Art.phase=phase;
+ const ribbonAlpha=phase===1?.34:phase===2?.48:.66;
+ bossV10Art.ribbons.children.forEach((r,i)=>{
+   r.material.uniforms.uPhase.value=phase;
+   r.material.uniforms.uAlpha.value=ribbonAlpha*(i<2?1:.84);
+ });
+ bossV10Art.haloMats[0].opacity=phase===1?.46:phase===2?.62:.80;
+ bossV10Art.haloMats[1].opacity=phase===1?.32:phase===2?.50:.70;
+ bossV10Art.haloMats[2].opacity=phase===1?.22:phase===2?.38:.62;
+ bossV10Art.crystalMat.emissiveIntensity=phase===1?.78:phase===2?1.18:1.72;
+
+ // Material phase state on the actual skinned GLB.
+ const eye=bossV10MaterialRefs.irisamethyst,jewel=bossV10MaterialRefs.amethystjewel,moon=bossV10MaterialRefs.moonglow;
+ if(eye)eye.emissiveIntensity=phase===1?1.18:phase===2?1.68:2.30;
+ if(jewel)jewel.emissiveIntensity=phase===1?1.25:phase===2?1.85:2.55;
+ if(moon)moon.emissiveIntensity=phase===1?1.05:phase===2?1.55:2.15;
+ updateBossV10Quality(true);
+}
+function updateBossV10Art(now){
+ if(!bossV10Art)return;
+ updateBossV10Quality(false);
+ const t=now*.001,phase=bossV10Phase;
+ bossV10Art.halo.rotation.z=t*(phase===3?.10:.055);
+ if(bossV10Art.halo.children[1])bossV10Art.halo.children[1].rotation.z=-t*.10;
+ if(bossV10Art.halo.children[2])bossV10Art.halo.children[2].rotation.z=t*.16;
+ bossV10Art.runes.rotation.z=-t*(phase===3?.15:.075);
+ bossV10Art.ribbons.children.forEach((r,i)=>r.material.uniforms.uTime.value=t);
+
+ const q=bossV10Quality,qualityMax=q==='high'?10:q==='medium'?7:4;
+ const phaseMax=phase===1?4:phase===2?7:10;
+ const count=Math.min(qualityMax,phaseMax);bossV10Art.crystals.count=count;
+ const d=bossV10Art.dummy;
+ for(let i=0;i<count;i++){
+   const a=t*(.34+(i%3)*.025)+i/count*Math.PI*2;
+   const rad=1.32+(i%3)*.20;
+   d.position.set(Math.cos(a)*rad,2.36+Math.sin(a*1.7+i)*.48,Math.sin(a)*.54-.32);
+   d.rotation.set(t*.52+i,t*.74+i*.5,a);d.scale.setScalar(.72+(i%3)*.17);d.updateMatrix();
+   bossV10Art.crystals.setMatrixAt(i,d.matrix);
+ }
+ bossV10Art.crystals.instanceMatrix.needsUpdate=true;
+}
+
+
+function envHashRand(seed){
+ let x=(seed*1664525+1013904223)>>>0;
+ return ()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296};
+}
+function createV10Environment(){
+ if(envV10)return;
+
+ const root=new THREE.Group();root.name='V10MoonVoidPalace';scene.add(root);
+
+ // ---------------- SKY DOME: one draw call ----------------
+ const skyMat=new THREE.ShaderMaterial({
+   side:THREE.BackSide,depthWrite:false,
+   uniforms:{
+     uTime:{value:0},uPhase:{value:1},
+     uTop:{value:new THREE.Color(0x050716)},
+     uHorizon:{value:new THREE.Color(0x24113f)}
+   },
+   vertexShader:`
+     varying vec3 vP;
+     void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}
+   `,
+   fragmentShader:`
+     precision highp float;
+     varying vec3 vP;uniform float uTime,uPhase;uniform vec3 uTop,uHorizon;
+     float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
+     void main(){
+       vec3 n=normalize(vP);float h=clamp(n.y*.5+.5,0.0,1.0);
+       vec3 col=mix(uHorizon,uTop,smoothstep(.16,.78,h));
+       float lon=atan(n.z,n.x)/6.2831853+.5;
+       float lat=asin(clamp(n.y,-1.0,1.0))/3.1415926+.5;
+       vec2 uv=vec2(lon,lat);
+       float neb=.5+.5*sin(lon*19.0+lat*13.0+sin(lat*17.0)*1.7);
+       neb*=.5+.5*sin(lon*7.0-lat*21.0);
+       col+=vec3(.15,.06,.25)*neb*(.08+.045*uPhase);
+       vec2 cell=floor(uv*vec2(360.0,180.0));
+       float star=step(.9925,hash(cell));
+       float tw=.65+.35*sin(uTime*1.25+hash(cell+4.0)*6.2831);
+       col+=star*tw*mix(vec3(.62,.72,1.0),vec3(1.0,.80,.96),hash(cell+9.0))*(.45+.10*uPhase);
+       float horizonGlow=pow(max(0.0,1.0-abs(n.y+.04)),7.0);
+       col+=vec3(.11,.055,.19)*horizonGlow;
+       gl_FragColor=vec4(col,1.0);
+     }`
+ });
+ const sky=new THREE.Mesh(new THREE.SphereGeometry(46,28,16),skyMat);sky.name='V10SkyDome';root.add(sky);
+
+ // ---------------- LARGE MOON: one shader plane ----------------
+ const moonMat=new THREE.ShaderMaterial({
+   transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+   uniforms:{uPhase:{value:1},uTime:{value:0}},
+   vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+   fragmentShader:`
+     precision highp float;varying vec2 vUv;uniform float uPhase,uTime;
+     float hash(vec2 p){return fract(sin(dot(p,vec2(41.7,289.3)))*43758.4);}
+     void main(){
+       vec2 p=(vUv-.5)*2.0;float d=length(p);
+       float disc=1.0-smoothstep(.94,1.0,d);
+       float rim=(1.0-smoothstep(.80,.98,d))*smoothstep(.60,.90,d);
+       float cr=.5+.5*sin(p.x*17.0+p.y*11.0+sin(p.y*13.0)*1.4);
+       cr*=.45+.55*sin(p.x*7.0-p.y*19.0);
+       vec3 col=mix(vec3(.49,.47,.72),vec3(.94,.92,1.0),.66+cr*.13);
+       col+=rim*vec3(.30,.24,.62);
+       if(uPhase>2.5){
+         float eclipse=smoothstep(.10,.72,length(p-vec2(.20,-.03)));
+         col=mix(vec3(.015,.008,.03),col,eclipse*.32);
+         col+=rim*vec3(.32,.06,.38);
+       }
+       float a=disc*(uPhase>2.5?.72:.92);
+       if(a<.01)discard;gl_FragColor=vec4(col,a);
+     }`
+ });
+ const moon=new THREE.Mesh(new THREE.PlaneGeometry(8.6,8.6),moonMat);
+ moon.name='V10Moon';moon.position.set(0,9.0,-22);root.add(moon);
+
+ // ---------------- ARENA BASE ----------------
+ const baseMat=new THREE.MeshStandardMaterial({color:0x080b19,roughness:.43,metalness:.18,emissive:0x03040b,emissiveIntensity:.65});
+ const base=new THREE.Mesh(new THREE.CylinderGeometry(9.65,9.95,.54,56),baseMat);
+ base.position.y=-.25;base.name='V10ArenaBase';root.add(base);
+
+ // ---------------- FAKE REFLECTIVE FLOOR: one draw call ----------------
+ const floorMat=new THREE.ShaderMaterial({
+   depthWrite:true,transparent:false,
+   uniforms:{
+     uTime:{value:0},uPhase:{value:1},
+     uBoss:{value:new THREE.Vector2(0,0)},uHero:{value:new THREE.Vector2(-2,2)},uPrincess:{value:new THREE.Vector2(2,2)},
+     uBossColor:{value:new THREE.Color(0x9a6be6)}
+   },
+   vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+   fragmentShader:`
+     precision highp float;varying vec2 vUv;uniform float uTime,uPhase;uniform vec2 uBoss,uHero,uPrincess;uniform vec3 uBossColor;
+     float ring(float r,float at,float w){return 1.0-smoothstep(w,w+.018,abs(r-at));}
+     float fakeRefl(vec2 p,vec2 q,float sx,float sz){
+       vec2 d=p-q;return exp(-abs(d.x)*sx)*exp(-abs(d.y)*sz);
+     }
+     void main(){
+       vec2 p=(vUv-.5)*20.0;float r=length(p);
+       vec3 col=mix(vec3(.018,.024,.055),vec3(.045,.030,.092),smoothstep(0.0,9.5,r));
+       float marble=.5+.5*sin(p.x*.82+p.y*1.13+sin(p.x*.31)*2.0);
+       marble*=.5+.5*sin(p.x*2.1-p.y*.67);
+       col+=vec3(.040,.035,.075)*marble*.16;
+       float rings=ring(r,3.0,.025)+ring(r,5.5,.025)+ring(r,8.4,.030);
+       col+=rings*mix(vec3(.20,.16,.46),vec3(.48,.32,.75),uPhase/3.0)*(.46+.15*sin(uTime*1.2+r));
+       // Fake reflected silhouettes/light — no render target cost.
+       float rb=fakeRefl(p,uBoss,1.75,.46)*smoothstep(7.0,0.3,length(p-uBoss));
+       float rh=fakeRefl(p,uHero,2.4,.70)*smoothstep(4.0,.2,length(p-uHero));
+       float rp=fakeRefl(p,uPrincess,2.4,.70)*smoothstep(4.0,.2,length(p-uPrincess));
+       col+=uBossColor*rb*(.11+.055*uPhase);
+       col+=vec3(.20,.55,.82)*rh*.08+vec3(.83,.28,.61)*rp*.08;
+       float moonPath=exp(-abs(p.x)*.45)*smoothstep(-9.0,1.0,-p.y)*smoothstep(9.5,1.5,r);
+       col+=vec3(.33,.31,.58)*moonPath*(uPhase>2.5?.025:.055);
+       float edge=1.0-smoothstep(8.9,9.65,r);
+       col*=.82+.18*edge;
+       gl_FragColor=vec4(col,1.0);
+     }`
+ });
+ const floor=new THREE.Mesh(new THREE.PlaneGeometry(19.25,19.25,1,1),floorMat);
+ floor.rotation.x=-Math.PI/2;floor.position.y=.025;floor.name='V10ReflectiveFloor';root.add(floor);
+
+ // ---------------- RUIN PILLARS: one instanced draw ----------------
+ const ruinMat=new THREE.MeshStandardMaterial({color:0x1a1a32,roughness:.74,metalness:.08,emissive:0x08071a,emissiveIntensity:.6});
+ const ruinGeo=new THREE.CylinderGeometry(.38,.52,5.4,8,1);
+ const ruins=new THREE.InstancedMesh(ruinGeo,ruinMat,12);ruins.name='V10Ruins';
+ const o=new THREE.Object3D();
+ for(let i=0;i<12;i++){
+   const a=-1.23+i/11*2.46,r=11.8+(i%3)*.35;
+   const h=.54+(i%4)*.12;
+   o.position.set(Math.sin(a)*r,2.7*h-.15,-Math.cos(a)*r);
+   o.rotation.y=a+(i%2?.08:-.08);o.rotation.z=(i%3-1)*.025;
+   o.scale.set(.72+(i%3)*.11,h,.72+(i%2)*.08);o.updateMatrix();ruins.setMatrixAt(i,o.matrix);
+ }
+ ruins.instanceMatrix.needsUpdate=true;root.add(ruins);
+
+ // Broken celestial obelisks: one more instanced draw.
+ const obMat=new THREE.MeshStandardMaterial({color:0x24203d,roughness:.56,metalness:.14,emissive:0x12092b,emissiveIntensity:.72});
+ const obGeo=new THREE.ConeGeometry(.52,3.8,5);
+ const obelisks=new THREE.InstancedMesh(obGeo,obMat,8);obelisks.name='V10Obelisks';
+ for(let i=0;i<8;i++){
+   const a=-1.18+i/7*2.36,r=10.15+(i%2)*.65;
+   o.position.set(Math.sin(a)*r,1.5,-Math.cos(a)*r+.15);
+   o.rotation.y=a+.35;o.rotation.z=(i%2?-.16:.12);
+   o.scale.set(.7, .65+(i%3)*.12,.7);o.updateMatrix();obelisks.setMatrixAt(i,o.matrix);
+ }
+ obelisks.instanceMatrix.needsUpdate=true;root.add(obelisks);
+
+ // ---------------- CRYSTAL RUINS: one instanced draw ----------------
+ const crystalMat=new THREE.MeshStandardMaterial({
+   color:0x8a74d4,emissive:0x3d246f,emissiveIntensity:.88,roughness:.19,metalness:.06,
+   transparent:true,opacity:.80
+ });
+ const crystalGeo=new THREE.OctahedronGeometry(.48,0);
+ const crystals=new THREE.InstancedMesh(crystalGeo,crystalMat,18);crystals.name='V10ArenaCrystals';crystals.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+ const rnd=envHashRand(104729);
+ const crystalData=[];
+ for(let i=0;i<18;i++){
+   const a=-1.48+rnd()*2.96,r=8.25+rnd()*3.0;
+   crystalData.push({a,r,s:.55+rnd()*.9,y:.28+rnd()*.52,spin:rnd()*6.28});
+ }
+ root.add(crystals);
+
+ // ---------------- ATMOSPHERIC MOTES: one Points draw ----------------
+ const maxMist=90,mistPos=new Float32Array(maxMist*3),mr=envHashRand(777);
+ for(let i=0;i<maxMist;i++){
+   const a=mr()*Math.PI*2,r=6.5+mr()*11.5;
+   mistPos[i*3]=Math.cos(a)*r;mistPos[i*3+1]=.25+mr()*5.4;mistPos[i*3+2]=Math.sin(a)*r-2.0;
+ }
+ const mistGeo=new THREE.BufferGeometry();mistGeo.setAttribute('position',new THREE.BufferAttribute(mistPos,3));
+ const mistMat=new THREE.PointsMaterial({color:0xc5b8ff,size:.085,transparent:true,opacity:.27,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true});
+ const mist=new THREE.Points(mistGeo,mistMat);mist.name='V10AtmosMotes';root.add(mist);
+
+ // ---------------- LIGHTING ----------------
+ const hemi=new THREE.HemisphereLight(0x9fb7ff,0x130a24,1.02);hemi.name='V10Hemi';scene.add(hemi);
+ const moonKey=new THREE.DirectionalLight(0xe8e5ff,1.58);moonKey.name='V10MoonKey';moonKey.position.set(-6,11,8);scene.add(moonKey);
+ const bossRim=new THREE.PointLight(0x8050e5,1.65,24);bossRim.name='V10BossRim';bossRim.position.set(0,5,-5.5);scene.add(bossRim);
+ const playerFill=new THREE.PointLight(0x688cd8,.38,18);playerFill.name='V10PlayerFill';playerFill.position.set(0,3.2,6.5);scene.add(playerFill);
+
+ envV10={root,sky,skyMat,moon,moonMat,base,baseMat,floor,floorMat,ruins,ruinMat,obelisks,obMat,crystals,crystalMat,crystalData,mist,mistMat,
+   lights:{hemi,moonKey,bossRim,playerFill},phase:1,quality:'medium',dummy:o};
+ updateEnvironmentV10Quality(true);
+ updateEnvironmentV10Phase(1,true);
+}
+function getEnvironmentV10Quality(){return v107Quality;}
+function updateEnvironmentV10Quality(force=false){
+ if(!envV10)return;
+ const now=performance.now();if(!force&&now-envV10LastQualityCheck<1100)return;
+ envV10LastQualityCheck=now;
+ const q=getEnvironmentV10Quality();if(!force&&q===envV10Quality)return;
+ envV10Quality=q;envV10.quality=q;
+ const ruins=q==='high'?12:q==='medium'?8:5;
+ const obs=q==='high'?8:q==='medium'?5:3;
+ const cry=q==='high'?18:q==='medium'?12:7;
+ const mist=q==='high'?90:q==='medium'?58:30;
+ envV10.ruins.count=ruins;envV10.obelisks.count=obs;envV10.crystals.count=Math.min(cry,envV10.phase===1?8:envV10.phase===2?13:18);
+ envV10.mist.geometry.setDrawRange(0,mist);
+ envV10.mistMat.opacity=q==='low'?.16:q==='medium'?.23:.30;
+ document.body.classList.toggle('envLow',q==='low');
+}
+function updateEnvironmentV10Phase(phase,force=false){
+ phase=Math.max(1,Math.min(3,phase||1));if(!force&&phase===envV10Phase)return;
+ envV10Phase=phase;if(!envV10)return;envV10.phase=phase;
+ envV10.skyMat.uniforms.uPhase.value=phase;envV10.moonMat.uniforms.uPhase.value=phase;envV10.floorMat.uniforms.uPhase.value=phase;
+
+ const L=envV10.lights;
+ if(phase===1){
+   scene.fog.color.setHex(0x090b1c);scene.fog.density=.021;
+   renderer.toneMappingExposure=1.12;
+   L.hemi.color.setHex(0xa7bbff);L.hemi.groundColor.setHex(0x150d29);L.hemi.intensity=1.02;
+   L.moonKey.color.setHex(0xe9e7ff);L.moonKey.intensity=1.55;
+   L.bossRim.color.setHex(0x8051df);L.bossRim.intensity=1.60;
+   L.playerFill.color.setHex(0x668bd3);L.playerFill.intensity=.36;
+   envV10.crystalMat.emissiveIntensity=.72;
+ }else if(phase===2){
+   scene.fog.color.setHex(0x0d0922);scene.fog.density=.024;
+   renderer.toneMappingExposure=1.10;
+   L.hemi.color.setHex(0xb1a8ff);L.hemi.groundColor.setHex(0x1b0c31);L.hemi.intensity=1.08;
+   L.moonKey.color.setHex(0xe2d9ff);L.moonKey.intensity=1.68;
+   L.bossRim.color.setHex(0x9c55f0);L.bossRim.intensity=2.05;
+   L.playerFill.color.setHex(0x7d69d4);L.playerFill.intensity=.42;
+   envV10.crystalMat.emissiveIntensity=1.10;
+ }else{
+   scene.fog.color.setHex(0x05030e);scene.fog.density=.029;
+   renderer.toneMappingExposure=1.04;
+   L.hemi.color.setHex(0x755fba);L.hemi.groundColor.setHex(0x07030f);L.hemi.intensity=.82;
+   L.moonKey.color.setHex(0xb7a6ef);L.moonKey.intensity=1.28;
+   L.bossRim.color.setHex(0xb04ce3);L.bossRim.intensity=2.60;
+   L.playerFill.color.setHex(0x553887);L.playerFill.intensity=.29;
+   envV10.crystalMat.emissiveIntensity=1.55;
+ }
+ document.body.classList.toggle('envPhase2',phase===2);
+ document.body.classList.toggle('envPhase3',phase===3);
+ updateEnvironmentV10Quality(true);
+}
+function updateEnvironmentV10(now){
+ if(!envV10)return;updateEnvironmentV10Quality(false);
+ const t=now*.001;envV10.skyMat.uniforms.uTime.value=t;envV10.moonMat.uniforms.uTime.value=t;envV10.floorMat.uniforms.uTime.value=t;
+
+ if(A)envV10.floorMat.uniforms.uHero.value.set(A.position.x,A.position.z);
+ if(B)envV10.floorMat.uniforms.uPrincess.value.set(B.position.x,B.position.z);
+ if(boss)envV10.floorMat.uniforms.uBoss.value.set(boss.position.x,boss.position.z);
+
+ // Billboard the moon toward the camera; it stays an environment object rather than HUD art.
+ envV10.moon.quaternion.copy(camera.quaternion);
+ envV10.mist.rotation.y=t*.012;
+
+ const q=envV10Quality,qualityMax=q==='high'?18:q==='medium'?12:7;
+ const phaseMax=envV10Phase===1?8:envV10Phase===2?13:18;
+ const count=Math.min(qualityMax,phaseMax);envV10.crystals.count=count;
+ const d=envV10.dummy;
+ for(let i=0;i<count;i++){
+   const c=envV10.crystalData[i],pulse=.92+.08*Math.sin(t*.82+c.spin);
+   d.position.set(Math.cos(c.a)*c.r,c.y+Math.sin(t*.45+c.spin)*.10,Math.sin(c.a)*c.r-1.5);
+   d.rotation.set(c.spin+t*.10,t*.18+c.spin,c.a);d.scale.set(c.s*.72,c.s*1.65*pulse,c.s*.72);d.updateMatrix();
+   envV10.crystals.setMatrixAt(i,d.matrix);
+ }
+ envV10.crystals.instanceMatrix.needsUpdate=true;
+
+ // Boss rim follows the encounter centre without adding a shadow pass.
+ if(boss){
+   envV10.lights.bossRim.position.x=lerp(envV10.lights.bossRim.position.x,boss.position.x, .05);
+   envV10.lights.bossRim.position.z=lerp(envV10.lights.bossRim.position.z,boss.position.z-4.2,.05);
+ }
+ if(A&&B){
+   envV10.lights.playerFill.position.x=(A.position.x+B.position.x)*.5;
+   envV10.lights.playerFill.position.z=(A.position.z+B.position.z)*.5+4.4;
+ }
+}
+
+
+
+function makeV103HairLockGeometry(){
+ const g=new THREE.CylinderGeometry(.038,.105,1.42,5,5,false);
+ const p=g.attributes.position;
+ const colors=new Float32Array(p.count*3);
+ for(let i=0;i<p.count;i++){
+   let y=p.getY(i),t=clamp((.71-y)/1.42,0,1);
+   // Curve backward and fan toward the tip.
+   p.setZ(i,p.getZ(i)-.12*t-.11*t*t);
+   p.setX(i,p.getX(i)*(1+.22*t));
+   colors[i*3]=lerp(.82,.72,t);colors[i*3+1]=lerp(.80,.67,t);colors[i*3+2]=lerp(.98,.96,t);
+ }
+ g.setAttribute('color',new THREE.BufferAttribute(colors,3));p.needsUpdate=true;g.computeVertexNormals();
+ return g;
+}
+function makeV103PanelGeometry(){
+ // Low-poly celestial outer panel, local Y from -1 to +0.15.
+ const verts=new Float32Array([
+   -.18,.14,.025,  .18,.14,.025,  .30,-.58,.045,  .10,-1.05,.025, -.10,-1.05,.025, -.30,-.58,.045,
+   -.18,.14,-.025, .18,.14,-.025, .30,-.58,-.045, .10,-1.05,-.025,-.10,-1.05,-.025,-.30,-.58,-.045
+ ]);
+ const idx=[
+   0,1,2, 0,2,3, 0,3,4, 0,4,5,
+   7,6,8, 8,6,9, 9,6,10, 10,6,11,
+   0,6,7,0,7,1, 1,7,8,1,8,2, 2,8,9,2,9,3,
+   3,9,10,3,10,4, 4,10,11,4,11,5, 5,11,6,5,6,0
+ ];
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(verts,3));g.setIndex(idx);g.computeVertexNormals();return g;
+}
+function createBossV103Refinement(rec){
+ if(bossV103||!rec?.model)return;
+
+ const head=findRigNode(rec.model,['Head'])||rec.model;
+ const hairRoot=findRigNode(rec.model,['HairRoot'])||head;
+ const chest=findRigNode(rec.model,['Chest'])||rec.model;
+ const skirt=findRigNode(rec.model,['SkirtRoot'])||rec.model;
+
+ // Additional large hair masses. One InstancedMesh, not six draw calls.
+ const hairMat=new THREE.MeshStandardMaterial({
+   color:0xc9c4ed,vertexColors:true,roughness:.29,metalness:0,
+   emissive:0x251c4f,emissiveIntensity:.24
+ });
+ const hairLocks=new THREE.InstancedMesh(makeV103HairLockGeometry(),hairMat,6);
+ hairLocks.name='V103LayeredHairLocks';hairLocks.instanceMatrix.setUsage(THREE.DynamicDrawUsage);hairRoot.add(hairLocks);
+
+ // Four tiny constellation ornaments around the lunar crown, one draw call.
+ const crownMat=new THREE.MeshStandardMaterial({color:0xd8ad63,emissive:0x5b3810,emissiveIntensity:.30,roughness:.27,metalness:.88});
+ const crownStars=new THREE.InstancedMesh(new THREE.OctahedronGeometry(.052,0),crownMat,4);
+ crownStars.name='V103CrownConstellation';crownStars.instanceMatrix.setUsage(THREE.DynamicDrawUsage);head.add(crownStars);
+
+ // Four additional outer costume panels, one draw call.
+ const panelMat=new THREE.MeshStandardMaterial({color:0x260d45,emissive:0x11041f,emissiveIntensity:.28,roughness:.57,metalness:.02});
+ const panels=new THREE.InstancedMesh(makeV103PanelGeometry(),panelMat,4);
+ panels.name='V103OuterCostumePanels';panels.instanceMatrix.setUsage(THREE.DynamicDrawUsage);skirt.add(panels);
+
+ // Energy hem: one draw, phase-reactive. Only the bottom edge is transparent.
+ const hemMat=new THREE.ShaderMaterial({
+   transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,
+   uniforms:{uTime:{value:0},uPhase:{value:1},uAlpha:{value:.16}},
+   vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+   fragmentShader:`
+    precision highp float;varying vec2 vUv;uniform float uTime,uPhase,uAlpha;
+    float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    void main(){
+      float lower=smoothstep(.96,.12,vUv.y);
+      float edge=smoothstep(0.0,.13,vUv.y)*(1.0-smoothstep(.82,1.0,vUv.y));
+      float n=.48+.52*sin(vUv.x*38.0-uTime*1.8+sin(vUv.x*11.0)*1.7);
+      float star=step(.976,h(floor(vec2(vUv.x*44.0,vUv.y*10.0)+uTime*.04)));
+      vec3 col=mix(vec3(.18,.06,.31),vec3(.63,.27,.92),vUv.y);
+      col+=star*vec3(.55,.62,1.0);
+      float a=edge*(.40+.35*n)*uAlpha*(.68+.15*uPhase);
+      if(a<.014)discard;gl_FragColor=vec4(col,a);
+    }`
+ });
+ const hem=new THREE.Mesh(new THREE.CylinderGeometry(1.08,1.34,.48,32,1,true),hemMat);
+ hem.name='V103EnergyHem';hem.position.set(0,-.82,0);skirt.add(hem);
+
+ // Chest constellation/chain: one LineSegments draw.
+ const chainGeo=new THREE.BufferGeometry();
+ chainGeo.setAttribute('position',new THREE.Float32BufferAttribute([
+   -.23,.15,.17, -.08,.04,.20,  -.08,.04,.20, 0,-.03,.225,
+   0,-.03,.225, .08,.04,.20,  .08,.04,.20, .23,.15,.17,
+   0,-.03,.225, 0,-.14,.235
+ ],3));
+ const chainMat=new THREE.LineBasicMaterial({color:0xd6b86a,transparent:true,opacity:.72,blending:THREE.AdditiveBlending,depthWrite:false});
+ const chestChain=new THREE.LineSegments(chainGeo,chainMat);chestChain.name='V103ChestConstellation';chest.add(chestChain);
+
+ // Small face fill follows the head; disabled first on low mobile.
+ const faceFill=new THREE.PointLight(0xffdce9,.16,1.45);faceFill.name='V103FaceFill';faceFill.position.set(0,.07,.48);head.add(faceFill);
+
+ bossV103={
+   hairLocks,hairMat,crownStars,crownMat,panels,panelMat,hem,hemMat,chestChain,chainMat,faceFill,
+   hairDummy:new THREE.Object3D(),starDummy:new THREE.Object3D(),panelDummy:new THREE.Object3D(),
+   phase:1,quality:'medium'
+ };
+ updateBossV103Quality(true);updateBossV103Phase(1,true);
+}
+function getBossV103Quality(){return v107Quality;}
+function updateBossV103Quality(force=false){
+ if(!bossV103)return;
+ const now=performance.now();if(!force&&now-bossV103LastQualityCheck<1000)return;
+ bossV103LastQualityCheck=now;
+ const q=getBossV103Quality();if(!force&&q===bossV103Quality)return;
+ bossV103Quality=q;bossV103.quality=q;
+ bossV103.hairLocks.count=q==='high'?6:q==='medium'?5:4;
+ bossV103.crownStars.count=q==='low'?2:4;
+ bossV103.panels.count=q==='high'?4:q==='medium'?3:2;
+ bossV103.faceFill.visible=q!=='low';
+ bossV103.hem.visible=q!=='low'||bossV103Phase===3;
+}
+function updateBossV103Phase(phase,force=false){
+ phase=Math.max(1,Math.min(3,phase||1));if(!force&&phase===bossV103Phase)return;
+ bossV103Phase=phase;if(!bossV103)return;bossV103.phase=phase;
+ bossV103.hairMat.emissiveIntensity=phase===1?.18:phase===2?.31:.48;
+ bossV103.crownMat.emissiveIntensity=phase===1?.22:phase===2?.40:.68;
+ bossV103.panelMat.emissiveIntensity=phase===1?.16:phase===2?.28:.46;
+ bossV103.hemMat.uniforms.uPhase.value=phase;
+ bossV103.hemMat.uniforms.uAlpha.value=phase===1?.10:phase===2?.22:.42;
+ bossV103.chainMat.opacity=phase===1?.52:phase===2?.70:.90;
+ bossV103.faceFill.intensity=phase===1?.13:phase===2?.18:.23;
+ updateBossV103Quality(true);
+}
+function updateBossV103(now){
+ if(!bossV103)return;updateBossV103Quality(false);
+ const t=now*.001,phase=bossV103Phase,d=bossV103.hairDummy;
+
+ // Hair layers frame the face and widen at the back. Each instance gets a delayed sway.
+ const hx=[-.28,-.18,-.075,.075,.18,.28];
+ for(let i=0;i<bossV103.hairLocks.count;i++){
+   const side=i<3?-1:1,local=i%3;
+   const sway=Math.sin(t*(1.0+local*.08)+i*1.25)*(.035+.012*phase);
+   d.position.set(hx[i],-.57-local*.035,-.15-.025*local);
+   d.rotation.set(-.10+sway*.55,side*(.10+.045*local),side*(.055+.018*local)+sway);
+   d.scale.set(.88+local*.07,1.0+local*.10,.88+local*.06);d.updateMatrix();
+   bossV103.hairLocks.setMatrixAt(i,d.matrix);
+ }
+ bossV103.hairLocks.instanceMatrix.needsUpdate=true;
+
+ // Lunar crown star constellation.
+ const s=bossV103.starDummy;
+ const starPos=[[-.30,.49,.03],[-.18,.64,.025],[.18,.64,.025],[.30,.49,.03]];
+ for(let i=0;i<bossV103.crownStars.count;i++){
+   const q=starPos[i];s.position.set(q[0],q[1],q[2]);s.rotation.set(t*.25+i,t*.31+i*.7,t*.18);s.scale.setScalar(.82+(i%2)*.18);s.updateMatrix();
+   bossV103.crownStars.setMatrixAt(i,s.matrix);
+ }
+ bossV103.crownStars.instanceMatrix.needsUpdate=true;
+
+ // Costume panels: slow cloth-like follow-through without cloth physics.
+ const p=bossV103.panelDummy;
+ const angs=[-.68,-.25,.25,.68];
+ for(let i=0;i<bossV103.panels.count;i++){
+   const a=angs[i],sway=Math.sin(t*.78+i*1.4)*(.025+.012*phase);
+   p.position.set(Math.sin(a)*.38,-.12,Math.cos(a)*.16-.16);
+   p.rotation.set(.05+sway,a*.64,(-a*.10)+sway*.7);p.scale.set(1,1.02+(i%2)*.04,1);p.updateMatrix();
+   bossV103.panels.setMatrixAt(i,p.matrix);
+ }
+ bossV103.panels.instanceMatrix.needsUpdate=true;
+
+ bossV103.hemMat.uniforms.uTime.value=t;
+ bossV103.hem.rotation.y=t*(phase===3?.09:.035);
+ bossV103.chestChain.rotation.z=Math.sin(t*.86)*.012;
+}
+
+
+function v104PatchMaterialShader(mat,kind){
+ if(!mat||!mat.isMeshStandardMaterial||mat.userData?.v104Patched)return;
+ mat.userData.v104Patched=true;mat.userData.v104Kind=kind;
+ const old=mat.onBeforeCompile;
+ mat.onBeforeCompile=shader=>{
+   if(old)old(shader);
+   shader.uniforms.uV104Phase={value:1};
+   shader.uniforms.uV104Time={value:0};
+   shader.uniforms.uV104Quality={value:1};
+   shader.uniforms.uV104MoonDir={value:new THREE.Vector3(-.42,.76,.50).normalize()};
+   shader.uniforms.uV104Kind={value:
+     kind==='face'?1:kind==='hair'?2:kind==='velvet'?3:kind==='silk'?4:kind==='metal'?5:kind==='gem'?6:kind==='eye'?7:0
+   };
+   shader.uniforms.uV104Accent={value:new THREE.Color(
+     kind==='face'?0xffd8e8:
+     kind==='hair'?0xb9adff:
+     kind==='metal'?0xffdaa0:
+     kind==='gem'||kind==='eye'?0xb067ff:
+     0x7650bf
+   )};
+
+   shader.vertexShader=shader.vertexShader
+     .replace('#include <common>','#include <common>\nvarying vec3 vV104WN; varying vec3 vV104WV; varying vec3 vV104WP;')
+     .replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvV104WP=worldPosition.xyz; vV104WN=normalize(mat3(modelMatrix)*objectNormal); vV104WV=normalize(cameraPosition-worldPosition.xyz);');
+
+   shader.fragmentShader=shader.fragmentShader
+     .replace('#include <common>',`#include <common>
+       varying vec3 vV104WN; varying vec3 vV104WV; varying vec3 vV104WP;
+       uniform float uV104Phase,uV104Time,uV104Quality,uV104Kind;
+       uniform vec3 uV104MoonDir,uV104Accent;
+       float v104sat(float x){return clamp(x,0.0,1.0);}
+     `)
+     .replace('#include <output_fragment>',`
+       vec3 N=normalize(vV104WN),V=normalize(vV104WV);
+       float ndv=v104sat(dot(N,V));
+       float rim=pow(1.0-ndv,3.0);
+       float moon=v104sat(dot(N,normalize(uV104MoonDir)));
+       float halfMoon=pow(v104sat(dot(normalize(uV104MoonDir+V),N)),18.0);
+
+       if(uV104Kind<1.5 && uV104Kind>.5){
+         // FACE — soft anime ramp + subtle fake SSS/cheek warmth.
+         float front=v104sat(N.z*.5+.5);
+         float soft=0.62+0.38*smoothstep(.10,.82,moon*.72+front*.28);
+         outgoingLight*=soft;
+         float sss=pow(v104sat(dot(-N,normalize(uV104MoonDir))),2.2);
+         outgoingLight+=vec3(1.0,.30,.42)*sss*.020*uV104Quality;
+         outgoingLight+=uV104Accent*rim*.018;
+       }else if(uV104Kind<2.5){
+         // HAIR — directional moon band, cheap anisotropic-style sheen.
+         float stripe=pow(v104sat(1.0-abs(dot(N,normalize(vec3(.12,.97,.08))))),2.0);
+         float sheen=halfMoon*(.30+.70*stripe);
+         outgoingLight+=uV104Accent*(sheen*.19+rim*.14)*uV104Quality;
+         outgoingLight+=vec3(.36,.29,.62)*pow(rim,1.5)*.055*uV104Phase;
+       }else if(uV104Kind<3.5){
+         // VELVET — darker frontal body, soft coloured grazing sheen.
+         outgoingLight*=.94-.06*moon;
+         outgoingLight+=uV104Accent*pow(rim,1.35)*.10*uV104Quality;
+       }else if(uV104Kind<4.5){
+         // SILK / plum cloth — long highlight with cleaner spec response.
+         float silk=pow(v104sat(dot(reflect(-normalize(uV104MoonDir),N),V)),7.0);
+         outgoingLight+=uV104Accent*silk*.13*uV104Quality;
+         outgoingLight+=uV104Accent*rim*.045;
+       }else if(uV104Kind<5.5){
+         // LUXURY METAL — moon glint + warm edge.
+         float glint=pow(v104sat(dot(reflect(-normalize(uV104MoonDir),N),V)),28.0);
+         outgoingLight+=uV104Accent*glint*.34*uV104Quality;
+         outgoingLight+=uV104Accent*rim*.07;
+       }else if(uV104Kind<6.5){
+         // GEM — inner violet depth + centre sparkle.
+         float inner=pow(1.0-ndv,1.4);
+         float pulse=.86+.14*sin(uV104Time*2.5+vV104WP.y*7.0);
+         outgoingLight+=uV104Accent*(.16+.18*inner)*pulse*(.70+.14*uV104Phase);
+         outgoingLight+=vec3(1.0,.83,1.0)*halfMoon*.22*uV104Quality;
+       }else if(uV104Kind<7.5){
+         // EYES — phase-reactive cornea glint / iris depth.
+         float cornea=pow(v104sat(dot(reflect(-normalize(vec3(-.25,.65,.72)),N),V)),32.0);
+         float breathe=.86+.14*sin(uV104Time*2.0);
+         outgoingLight+=uV104Accent*(.16+.12*uV104Phase)*breathe;
+         outgoingLight+=vec3(1.0,.94,1.0)*cornea*.52*uV104Quality;
+       }
+       #include <output_fragment>
+     `);
+   mat.userData.v104Shader=shader;
+ };
+ const prevKey=mat.customProgramCacheKey;
+ mat.customProgramCacheKey=()=>`${prevKey?prevKey():''}|v104-${kind}`;
+ mat.needsUpdate=true;
+}
+function v104ClassifyMaterial(name){
+ const n=rigNorm(name||'');
+ if(/faceporcelain|skin/.test(n))return 'face';
+ if(/hair/.test(n))return 'hair';
+ if(/dressvelvet|dressnight/.test(n))return 'velvet';
+ if(/dressplum/.test(n))return 'silk';
+ if(/crowngold|silvertrim|pearlsilver|starsilver/.test(n))return 'metal';
+ if(/amethystjewel|moonglow/.test(n))return 'gem';
+ if(/irisamethyst|eyehighlight|eyedark/.test(n))return 'eye';
+ return null;
+}
+function createBossV104ShaderPass(rec){
+ if(bossV104||!rec?.model)return;
+ const materials=[],byKind={face:[],hair:[],velvet:[],silk:[],metal:[],gem:[],eye:[]};
+ rec.model.traverse(o=>{
+   if(!o.isMesh)return;
+   const mats=Array.isArray(o.material)?o.material:[o.material];
+   mats.forEach(m=>{
+     if(!m)return;
+     const kind=v104ClassifyMaterial(m.name||o.name);
+     if(kind){
+       v104PatchMaterialShader(m,kind);
+       materials.push(m);byKind[kind].push(m);
+     }
+   });
+ });
+
+ // Lightweight eye lens: two small transparent spheres, one draw call via InstancedMesh.
+ const head=findRigNode(rec.model,['Head'])||rec.model;
+ const lensMat=new THREE.MeshBasicMaterial({color:0xe9ddff,transparent:true,opacity:.18,depthWrite:false,blending:THREE.AdditiveBlending});
+ const lenses=new THREE.InstancedMesh(new THREE.SphereGeometry(.055,8,6),lensMat,2);lenses.name='V104EyeLenses';
+ const d=new THREE.Object3D();
+ [[-.105,.025,.285],[.105,.025,.285]].forEach((q,i)=>{
+   d.position.set(q[0],q[1],q[2]);d.scale.set(1.15,.82,.48);d.updateMatrix();lenses.setMatrixAt(i,d.matrix);
+ });
+ head.add(lenses);
+
+ // Hair moonlight ribbon — one line draw, follows head only, disabled on low.
+ const glowGeo=new THREE.BufferGeometry();
+ glowGeo.setAttribute('position',new THREE.Float32BufferAttribute([
+   -.31,.24,.04,-.22,.36,.02,-.22,.36,.02,0,.42,.015,
+   0,.42,.015,.22,.36,.02,.22,.36,.02,.31,.24,.04
+ ],3));
+ const glowMat=new THREE.LineBasicMaterial({color:0xc8bdff,transparent:true,opacity:.24,blending:THREE.AdditiveBlending,depthWrite:false});
+ const hairGlow=new THREE.LineSegments(glowGeo,glowMat);hairGlow.name='V104HairMoonBand';head.add(hairGlow);
+
+ bossV104={materials,byKind,lenses,lensMat,hairGlow,glowMat,phase:1,quality:'medium'};
+ updateBossV104Quality(true);updateBossV104Phase(1,true);
+}
+function getBossV104Quality(){return v107Quality;}
+function updateBossV104Quality(force=false){
+ if(!bossV104)return;
+ const now=performance.now();if(!force&&now-bossV104LastQualityCheck<1000)return;
+ bossV104LastQualityCheck=now;
+ const q=getBossV104Quality();if(!force&&q===bossV104Quality)return;
+ bossV104Quality=q;bossV104.quality=q;
+ const quality=q==='high'?1:q==='medium'?.72:.38;
+ for(const m of bossV104.materials){
+   if(m.userData.v104Shader)m.userData.v104Shader.uniforms.uV104Quality.value=quality;
+ }
+ bossV104.lenses.visible=q!=='low';
+ bossV104.hairGlow.visible=q!=='low';
+ bossV104.glowMat.opacity=q==='high'?.27:q==='medium'?.17:0;
+}
+function updateBossV104Phase(phase,force=false){
+ phase=Math.max(1,Math.min(3,phase||1));if(!force&&phase===bossV104Phase)return;
+ bossV104Phase=phase;if(!bossV104)return;bossV104.phase=phase;
+ for(const m of bossV104.materials){
+   if(m.userData.v104Shader)m.userData.v104Shader.uniforms.uV104Phase.value=phase;
+ }
+ bossV104.lensMat.opacity=phase===1?.14:phase===2?.20:.31;
+ bossV104.glowMat.opacity*=phase===1?.82:phase===2?1.05:1.32;
+ updateBossV104Quality(true);
+}
+function updateBossV104(now){
+ if(!bossV104)return;updateBossV104Quality(false);
+ const t=now*.001;
+ for(const m of bossV104.materials){
+   if(m.userData.v104Shader)m.userData.v104Shader.uniforms.uV104Time.value=t;
+ }
+ // Very small breathing cornea effect.
+ bossV104.lenses.scale.setScalar(.99+.018*Math.sin(t*2.2));
+ bossV104.hairGlow.rotation.z=Math.sin(t*.68)*.008;
+}
+function v104ImpactMaterialPulse(kind='hit'){
+ if(!bossV104)return;
+ const eye=bossV104.byKind.eye||[],gem=bossV104.byKind.gem||[],hair=bossV104.byKind.hair||[];
+ const boost=kind==='ultimate'?1.55:kind==='perfect'?1.34:1.18;
+ const touched=[...eye,...gem,...(kind==='ultimate'?hair:[])];
+ touched.forEach(m=>{
+   if(!m.emissive)return;
+   const base=m.userData.v104BaseEmissiveIntensity ?? m.emissiveIntensity ?? 1;
+   m.userData.v104BaseEmissiveIntensity=base;
+   m.emissiveIntensity=base*boost;
+ });
+ clearTimeout(v104ImpactMaterialPulse.t);
+ v104ImpactMaterialPulse.t=setTimeout(()=>{
+   touched.forEach(m=>{if(m.userData.v104BaseEmissiveIntensity!=null)m.emissiveIntensity=m.userData.v104BaseEmissiveIntensity});
+ },170);
+}
+
+
+function v106SpringStep(s,target,dt,k=44,d=10){
+ // Critically damped-ish tiny angular spring.
+ const a=(target-s.x)*k-s.v*d;
+ s.v+=a*dt;s.x+=s.v*dt;return s.x;
+}
+function v106Ease(x){x=clamp(x,0,1);return x*x*(3-2*x)}
+function v106Bell(x){x=clamp(x,0,1);return Math.sin(x*Math.PI)}
+function v106CreateAxis(){return {x:0,v:0}}
+function createBossV106Acting(rec){
+ if(bossV106||!rec?.model||!rec.actingBones)return;
+ const offsets={};
+ for(const k of Object.keys(rec.actingBones))offsets[k]={x:0,y:0,z:0};
+ const springs={
+   hair:{x:v106CreateAxis(),y:v106CreateAxis(),z:v106CreateAxis()},
+   skirt:{x:v106CreateAxis(),y:v106CreateAxis(),z:v106CreateAxis()},
+   halo:{x:v106CreateAxis(),y:v106CreateAxis(),z:v106CreateAxis(),scale:v106CreateAxis()}
+ };
+ bossV106={
+   rec,bones:rec.actingBones,offsets,springs,
+   idleSeed:(performance.now()%997)/997,
+   lastState:'boss_idle',
+   quality:'medium',
+   actionSpeedBase:1
+ };
+ updateBossV106Quality(true);
+}
+function getBossV106Quality(){return v107Quality;}
+function updateBossV106Quality(force=false){
+ if(!bossV106)return;
+ const now=performance.now();if(!force&&now-bossV106LastQualityCheck<1000)return;
+ bossV106LastQualityCheck=now;
+ const q=getBossV106Quality();if(!force&&q===bossV106Quality)return;
+ bossV106Quality=q;bossV106.quality=q;
+}
+function v106ClearLastBoneOffsets(){
+ if(!bossV106)return;
+ for(const [k,b] of Object.entries(bossV106.bones)){
+   const o=bossV106.offsets[k];if(!b||!o)continue;
+   b.rotation.x-=o.x;b.rotation.y-=o.y;b.rotation.z-=o.z;
+   o.x=o.y=o.z=0;
+ }
+}
+function v106AddPose(pose,weight=1){
+ if(!bossV106||weight<=0)return;
+ for(const [k,v] of Object.entries(pose)){
+   const o=bossV106.offsets[k];if(!o)continue;
+   o.x+=(v[0]||0)*weight;o.y+=(v[1]||0)*weight;o.z+=(v[2]||0)*weight;
+ }
+}
+const V106_CAST_POSES=[
+ { // Bóng Đêm Lan Ra — restrained queenly sweep.
+   anticipate:{chest:[-.035,0,.015],head:[.025,-.03,.012],lua:[-.08,-.04,-.15],rua:[-.08,.04,.15],lfa:[-.10,0,-.10],rfa:[-.10,0,.10]},
+   release:{chest:[.045,0,0],head:[-.02,.018,0],lua:[-.13,-.08,-.24],rua:[-.13,.08,.24],lfa:[-.18,0,-.16],rfa:[-.18,0,.16]},
+   recover:{chest:[.018,0,0],head:[.012,0,0]}
+ },
+ { // Giấc Mơ Vỡ — lift the moon, then break it.
+   anticipate:{chest:[-.045,0,0],head:[-.09,0,0],lua:[-.22,-.03,-.22],rua:[-.22,.03,.22],lfa:[-.30,0,-.12],rfa:[-.30,0,.12]},
+   release:{chest:[.065,0,0],head:[.065,0,0],lua:[-.30,-.02,-.34],rua:[-.30,.02,.34],lfa:[-.39,0,-.18],rfa:[-.39,0,.18]},
+   recover:{chest:[.025,0,0],head:[.025,0,0],lua:[-.04,0,-.04],rua:[-.04,0,.04]}
+ },
+ { // Ba Giờ Sáng — eerie stillness, then clock snap.
+   anticipate:{chest:[-.018,.012,0],neck:[0,.035,0],head:[.014,-.075,.018],lua:[-.04,0,-.08],rua:[-.04,0,.08],lfa:[-.08,0,-.10],rfa:[-.08,0,.10]},
+   release:{chest:[.035,-.018,0],neck:[-.018,-.035,0],head:[-.035,.11,-.026],lua:[-.08,0,-.14],rua:[-.08,0,.14]},
+   recover:{head:[.018,-.025,0],chest:[.012,0,0]}
+ },
+ { // Mộng Du Truy Kích — forward blade body line.
+   anticipate:{hips:[-.025,.025,0],spine:[-.055,.035,0],chest:[-.08,.05,0],head:[-.02,-.065,0],lua:[-.02,0,-.08],rua:[-.14,.08,.25],rfa:[-.26,0,.18]},
+   release:{hips:[-.06,.05,0],spine:[-.10,.08,0],chest:[-.13,.10,0],head:[-.04,-.12,0],rua:[-.22,.13,.38],rfa:[-.34,.02,.26]},
+   recover:{spine:[.025,-.03,0],chest:[.035,-.02,0],head:[.025,.035,0]}
+ },
+ { // Vĩnh Dạ — open throne silhouette.
+   anticipate:{spine:[-.035,0,0],chest:[-.08,0,0],neck:[-.025,0,0],head:[.075,0,0],lua:[-.25,-.12,-.34],rua:[-.25,.12,.34],lfa:[-.38,0,-.17],rfa:[-.38,0,.17]},
+   release:{spine:[.045,0,0],chest:[.10,0,0],neck:[-.045,0,0],head:[-.085,0,0],lua:[-.36,-.18,-.46],rua:[-.36,.18,.46],lfa:[-.48,0,-.22],rfa:[-.48,0,.22],lhand:[0,0,-.10],rhand:[0,0,.10]},
+   recover:{chest:[.055,0,0],head:[-.035,0,0],lua:[-.14,0,-.14],rua:[-.14,0,.14]}
+ }
+];
+function v106CastWeights(c,now){
+ if(!c)return {a:0,r:0,rec:0,impact:0,pre:0,after:0};
+ const pre=clamp((now-c.startAt)/Math.max(1,c.impactAt-c.startAt),0,1);
+ const after=clamp((now-c.impactAt)/Math.max(1,c.endAt-c.impactAt),0,1);
+ const a=now<c.impactAt?v106Ease(pre):0;
+ const impact=Math.exp(-Math.pow((now-c.impactAt)/115,2));
+ const rec=now>=c.impactAt?(1-v106Ease(after)):0;
+ const r=now<c.impactAt?Math.pow(pre,4):impact*.75;
+ return {a,r,rec,impact,pre,after};
+}
+function v106UpdateActionTimeScale(c,weights){
+ const rec=bossV106?.rec;if(!rec?.active||!c)return;
+ const profile=[
+   [.70,1.22,.82],
+   [.64,1.32,.78],
+   [.50,1.15,.70],
+   [1.18,1.62,.96],
+   [.47,.92,.65]
+ ][c.i]||[.72,1.15,.82];
+ let s;
+ if(serverNow()<c.impactAt)s=lerp(profile[0],profile[1],Math.pow(weights.pre,3));
+ else s=lerp(profile[1],profile[2],v106Ease(weights.after));
+ rec.active.paused=false;rec.active.setEffectiveTimeScale(s);
+}
+function startBossV106PhaseAct(phase){
+ bossV106PhaseActPhase=phase;
+ bossV106PhaseActStart=performance.now();
+ bossV106PhaseActUntil=bossV106PhaseActStart+(phase===3?2050:1750);
+ bossV106Gesture='';
+}
+function startBossV106Hit(strength=1){
+ if(bossCastVisual.cast)return;
+ bossV106HitStart=performance.now();bossV106HitUntil=bossV106HitStart+Math.min(360,210+strength*5);
+ bossV106HitSide*=-1;
+}
+function startBossV106Gesture(kind,dur=1100){
+ bossV106Gesture=kind;bossV106GestureStart=performance.now();bossV106GestureUntil=bossV106GestureStart+dur;
+}
+function v106ApplyActing(nowMs){
+ if(!bossV106)return;
+ updateBossV106Quality(false);
+ v106ClearLastBoneOffsets();
+
+ const nowSec=nowMs*.001;
+ const qMult=bossV106Quality==='low'?.68:bossV106Quality==='medium'?.86:1;
+
+ // Persistent stance + asymmetric breathing makes idle less mannequin-like.
+ const phase=bossV10Phase||1;
+ const idle=Math.sin(nowSec*.62+bossV106.idleSeed*4.0);
+ v106AddPose({
+   chest:[Math.sin(nowSec*.92)*.006, idle*.005, .004*idle],
+   head:[Math.sin(nowSec*.51+.8)*.007,Math.sin(nowSec*.37)*.009,.010*idle],
+   spine:[0,phase===3?.010:0,0]
+ },qMult);
+ if(phase===3)v106AddPose({head:[-.010,-.012,.012],chest:[.015,0,0],lua:[-.018,0,-.028],rua:[-.018,0,.028]},qMult);
+
+ // Server-synchronized cast acting.
+ const c=bossCastVisual.cast;
+ if(c){
+   const w=v106CastWeights(c,serverNow()),p=V106_CAST_POSES[c.i]||V106_CAST_POSES[0];
+   v106AddPose(p.anticipate,w.a*qMult);
+   v106AddPose(p.release,w.r*qMult);
+   v106AddPose(p.recover,w.rec*qMult);
+   v106UpdateActionTimeScale(c,w);
+
+   // The 03:00 snap is deliberately crisp.
+   if(c.i===2&&w.impact>.02)v106AddPose({head:[0,.10*bossV106HitSide,-.025],chest:[.018,-.025*bossV106HitSide,0]},w.impact*qMult);
+   // Ultimate gets a short vertical sovereign lift through torso only.
+   if(c.i===4&&w.pre>.72)v106AddPose({spine:[-.018,0,0],chest:[-.025,0,0],head:[.022,0,0]},((w.pre-.72)/.28)*qMult);
+ }
+
+ // Phase-change performance layer.
+ if(nowMs<bossV106PhaseActUntil){
+   const p=clamp((nowMs-bossV106PhaseActStart)/Math.max(1,bossV106PhaseActUntil-bossV106PhaseActStart),0,1);
+   const rise=v106Ease(clamp(p/.42,0,1)),fall=1-v106Ease(clamp((p-.55)/.45,0,1)),w=rise*fall*qMult;
+   const big=bossV106PhaseActPhase===3?1.18:1;
+   v106AddPose({
+     chest:[.075*big,0,0],head:[-.055*big,0,0],
+     lua:[-.26*big,-.10,-.34*big],rua:[-.26*big,.10,.34*big],
+     lfa:[-.30*big,0,-.12],rfa:[-.30*big,0,.12]
+   },w);
+ }
+
+ // Light hit recoil only when not casting.
+ if(nowMs<bossV106HitUntil&&!c){
+   const p=clamp((nowMs-bossV106HitStart)/Math.max(1,bossV106HitUntil-bossV106HitStart),0,1);
+   const w=v106Bell(p)*qMult,side=bossV106HitSide;
+   v106AddPose({spine:[.025,-.035*side,.018*side],chest:[.045,-.05*side,.02*side],head:[.02,.07*side,-.035*side]},w);
+ }
+
+ // Summon gesture enriches the source clip without changing its authored animation.
+ if(nowMs<bossV106GestureUntil&&bossV106Gesture==='summon'){
+   const p=clamp((nowMs-bossV106GestureStart)/Math.max(1,bossV106GestureUntil-bossV106GestureStart),0,1);
+   const w=v106Bell(p)*qMult;
+   v106AddPose({head:[-.025,.03,0],chest:[.035,0,0],lua:[-.14,-.06,-.18],rua:[-.14,.06,.18],lfa:[-.22,0,-.12],rfa:[-.22,0,.12]},w);
+ }
+
+ // Apply accumulated offsets after the AnimationMixer sampled the original clip.
+ for(const [k,b] of Object.entries(bossV106.bones)){
+   const o=bossV106.offsets[k];if(!b||!o)continue;
+   if(bossV106Quality==='low'&&/^(lfa|rfa|lhand|rhand)$/.test(k)){o.x=o.y=o.z=0;continue}
+   b.rotation.x+=o.x;b.rotation.y+=o.y;b.rotation.z+=o.z;
+ }
+}
+function updateBossV106Secondary(rec,dt,now){
+ if(!bossV106||rec!==bossV106.rec||!rec.secondary)return;
+ const c=bossCastVisual.cast,w=c?v106CastWeights(c,serverNow()):null;
+ const phase=bossV10Phase||1;
+ const castPower=c?(w.a*.35+w.impact*.95+w.rec*.22):0;
+ const phasePower=performance.now()<bossV106PhaseActUntil?.70:0;
+ const ult=c?.i===4?(w.a*.55+w.impact*.8):0;
+ const tp=c?.i===3?(w.a*.45+w.impact*.7):0;
+ const idleT=now;
+
+ const hair=rec.secondary.hair,hb=rec.secondaryBase?.hair;
+ if(hair&&hb){
+   const s=bossV106.springs.hair;
+   const tx=Math.sin(idleT*1.22+.3)*.016 + castPower*.035 - tp*.025;
+   const ty=Math.sin(idleT*.86)*.025 + (c?.i===3?bossV106HitSide*.050*castPower:0);
+   const tz=Math.sin(idleT*1.04+1.1)*.020 + ult*.048 + phasePower*.030;
+   hair.rotation.x=hb.rot.x+v106SpringStep(s.x,tx,dt,46,10.5);
+   hair.rotation.y=hb.rot.y+v106SpringStep(s.y,ty,dt,38,9.2);
+   hair.rotation.z=hb.rot.z+v106SpringStep(s.z,tz,dt,42,9.8);
+ }
+ const skirt=rec.secondary.skirt,sb=rec.secondaryBase?.skirt;
+ if(skirt&&sb){
+   const s=bossV106.springs.skirt;
+   const tx=Math.sin(idleT*1.08)*.014 + castPower*.022 + phasePower*.026;
+   const ty=Math.sin(idleT*.71)*.022 + tp*.050*bossV106HitSide;
+   const tz=Math.sin(idleT*.89+.8)*.012 + ult*.034;
+   skirt.rotation.x=sb.rot.x+v106SpringStep(s.x,tx,dt,30,7.5);
+   skirt.rotation.y=sb.rot.y+v106SpringStep(s.y,ty,dt,27,7.0);
+   skirt.rotation.z=sb.rot.z+v106SpringStep(s.z,tz,dt,29,7.2);
+ }
+ const halo=rec.secondary.halo,hlb=rec.secondaryBase?.halo;
+ if(halo&&hlb){
+   const s=bossV106.springs.halo;
+   const intro=bossIntroActive()?Math.sin(clamp((performance.now()-bossIntroV9Start)/bossIntroV9Duration,0,1)*Math.PI)*.16:0;
+   const scaleTarget=intro+phasePower*.11+ult*.16;
+   const sc=1+v106SpringStep(s.scale,scaleTarget,dt,24,6.8);
+   halo.scale.set(hlb.scale.x*sc,hlb.scale.y*sc,hlb.scale.z*sc);
+   halo.rotation.x=hlb.rot.x+v106SpringStep(s.x,Math.sin(idleT*.37)*.008,dt,20,6.2);
+   halo.rotation.y=hlb.rot.y+v106SpringStep(s.y,Math.sin(idleT*.31)*.010,dt,18,6.0);
+   halo.rotation.z=hlb.rot.z+v106SpringStep(s.z,(phase===3?.018:.008)*Math.sin(idleT*.55)+ult*.055,dt,19,6.0);
+ }
+}
+
+
+function v107DeviceTier(){
+ const cores=navigator.hardwareConcurrency||4;
+ const mem=navigator.deviceMemory||4;
+ const coarse=matchMedia('(pointer:coarse)').matches;
+ if(!coarse)return cores>=8?'high':'medium';
+ if(mem<=3||cores<=4)return 'low';
+ return 'medium';
+}
+function v107ScaleBounds(){
+ const dpr=devicePixelRatio||1;
+ if(v107Quality==='high')return {min:Math.min(dpr,mobileDevice?.88:.96),max:Math.min(dpr,mobileDevice?1.25:1.55)};
+ if(v107Quality==='medium')return {min:Math.min(dpr,mobileDevice?.80:.92),max:Math.min(dpr,mobileDevice?1.10:1.38)};
+ return {min:Math.min(dpr,mobileDevice?.74:.86),max:Math.min(dpr,mobileDevice?.94:1.16)};
+}
+function v107SetBodyQuality(q){
+ document.body.classList.toggle('v107High',q==='high');
+ document.body.classList.toggle('v107Medium',q==='medium');
+ document.body.classList.toggle('v107Low',q==='low');
+}
+function v107ApplyQuality(q,force=false){
+ if(!force&&q===v107Quality)return;
+ v107Quality=q;v107SetBodyQuality(q);
+ const b=v107ScaleBounds();
+ renderScale=clamp(renderScale,b.min,b.max);
+ if(renderer){
+   renderer.setPixelRatio(renderScale);
+   renderer.setSize(innerWidth,innerHeight,false);
+ }
+ // Existing subsystems now share this same tier.
+ updateBossV10Quality(true);
+ updateBossV103Quality(true);
+ updateBossV104Quality(true);
+ updateBossV106Quality(true);
+ updateEnvironmentV10Quality(true);
+}
+function v107ChooseQuality(){
+ const tier=v107DeviceTier();
+ if(frameEma>29){v107StableBad++;v107StableGood=0}
+ else if(frameEma<19.5){v107StableGood++;v107StableBad=Math.max(0,v107StableBad-1)}
+ else{v107StableBad=Math.max(0,v107StableBad-1);v107StableGood=Math.max(0,v107StableGood-1)}
+
+ if(tier==='low'){
+   if(v107StableGood>7&&frameEma<18.7)return 'medium';
+   return 'low';
+ }
+ if(v107StableBad>2)return 'low';
+ if(tier==='high'&&v107StableGood>4)return 'high';
+ return 'medium';
+}
+function updateV107Performance(now){
+ if(now-v107LastCheck<1100)return;
+ v107LastCheck=now;
+ v107ApplyQuality(v107ChooseQuality(),false);
+}
+function v107Spring1(current,vel,target,dt,k=18,d=7.8){
+ const a=(target-current)*k-vel*d;
+ vel+=a*dt;current+=vel*dt;return [current,vel];
+}
+function updateV107CameraFocus(dt){
+ if(!A||!B||!boss)return;
+ const px=(A.position.x+B.position.x)*.5,pz=(A.position.z+B.position.z)*.5;
+ let tx=lerp(px,boss.position.x,.42);
+ let tz=lerp(pz,boss.position.z,.34)-.35;
+ tx=clamp(tx,-2.2,2.2);tz=clamp(tz,-3.4,.5);
+ [v107CamFocusX,v107CamFocusVelX]=v107Spring1(v107CamFocusX,v107CamFocusVelX,tx,dt,18,7.8);
+ [v107CamFocusZ,v107CamFocusVelZ]=v107Spring1(v107CamFocusZ,v107CamFocusVelZ,tz,dt,17,7.5);
+}
+
 function setup3D(){
  renderer=new THREE.WebGLRenderer({antialias:!mobileDevice,powerPreference:'high-performance',alpha:false});
+ v107Quality=v107DeviceTier();v107SetBodyQuality(v107Quality);
+ const v107b=v107ScaleBounds();renderScale=clamp(renderScale,v107b.min,v107b.max);
  renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false);
  // No castShadow objects exist in this game; disabling the shadow pipeline saves GPU work on iPhone.
  renderer.shadowMap.enabled=false;renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
  $('stage').appendChild(renderer.domElement);
- scene=new THREE.Scene();scene.background=new THREE.Color(0x080815);scene.fog=new THREE.FogExp2(0x0a0a18,.026);
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x03040b);scene.fog=new THREE.FogExp2(0x090b1c,.021);
  camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);camera.position.set(0,8.2,14);camera.lookAt(0,1,-1.8);
- scene.add(new THREE.HemisphereLight(0x8aa7ff,0x160f2a,1.15));let key=new THREE.DirectionalLight(0xdad9ff,1.55);key.position.set(-5,10,6);scene.add(key);let rim=new THREE.PointLight(0x7547dd,1.8,22);rim.position.set(0,5,-6);scene.add(rim);
- add(scene,new THREE.CylinderGeometry(9.4,9.7,.45,48),std(0x12152a,0x080917,.22,.36),[0,-.22,0],undefined,false);
- for(let r of [3,5.5,8.4]){let rr=add(scene,new THREE.TorusGeometry(r,.032,6,48),std(0x7857b8,0x5d3a9a,.0,.28,true,.68),[0,.03,0],undefined,false).group;rr.rotation.x=Math.PI/2}
- add(scene,new THREE.SphereGeometry(3.1,24,16),std(0xdad8ff,0x9185d8,.0,.8),[0,7,-16],undefined,false);let ml=new THREE.PointLight(0xb8adff,1.7,32);ml.position.set(0,7,-12);scene.add(ml);
+ createV10Environment();
  initCombatInstances();prepareSkillDom();
  renderer.render(scene,camera);
- window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false)})
+ window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();const b=v107ScaleBounds();renderScale=clamp(renderScale,b.min,b.max);renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false)})
 }
 function clearDynamic(){
  if(projectileInst.food)projectileInst.food.count=0;if(projectileInst.enemy)projectileInst.enemy.count=0;if(projectileInst.trail)projectileInst.trail.count=0;
@@ -1758,7 +3083,15 @@ function clearDynamic(){
  predictedShots=[];hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false};
  camTrauma=0;bossSocketFxUntil=0;if(bossSocketFx)bossSocketFx.visible=false;
  deathCinematicStart=0;deathCinematicUntil=0;deathCinematicStats=null;deathCinematicResultShown=false;
+ if(bossV10Art?.root?.parent)bossV10Art.root.parent.remove(bossV10Art.root);
+ bossV10Art=null;bossV10Phase=0;bossV10MaterialRefs={};
+ bossV103=null;bossV103Phase=1;bossV103Quality='medium';
+ bossV104=null;bossV104Phase=1;bossV104Quality='medium';
+ bossV106=null;bossV106PhaseActStart=0;bossV106PhaseActUntil=0;bossV106HitUntil=0;bossV106GestureUntil=0;bossV106Gesture='';
+ v107StableGood=0;v107StableBad=0;v107CamFocusX=0;v107CamFocusZ=-1.5;v107CamFocusVelX=0;v107CamFocusVelZ=0;
+ envV10Phase=1;document.body.classList.remove('envPhase2','envPhase3');
  $('bossDeathFx')?.classList.remove('show');document.body.classList.remove('bossDeathLock');
+ clearBossSkillUi();updateBossUiPhase(1);if($('bossHpText'))$('bossHpText').textContent='100%';
 }
 function ensureGame(){
  if(!renderer)setup3D();
@@ -1808,7 +3141,7 @@ function playBossIntroV9(wait=0){
  cameraZoomTarget=1;cameraKick=.015;
  setVignette(.34);
 
- playRigAnimation('boss','boss_phase',{fade:.06,once:true,speed:.72});
+ startBossV106PhaseAct(1);playRigAnimation('boss','boss_phase',{fade:.08,once:true,speed:.68});
 
  setTimeout(()=>flash('#d8c9ff',mobileDevice?.28:.20,110),360);
  setTimeout(()=>showDialogue('boss','Lại thêm hai kẻ muốn cướp giấc đêm của ta sao?',1750),720);
@@ -2123,9 +3456,9 @@ function reconcilePredictedShotsFromSnapshot(s){
  });
 }
 function setBossCast(c){
- if(!c){bossCastVisual.cast=null;return}
+ if(!c){bossCastVisual.cast=null;clearBossSkillUi();return}
  if(bossCastVisual.cast?.id===c.id)return;
- bossCastVisual={cast:{...c},impactShown:false};
+ bossCastVisual={cast:{...c},impactShown:false};setBossSkillUi(c.i);
  if(c.i===4){
    for(let j=0;j<eyeEls.length;j++){
      const seed=(c.id*92821+j*68917)%100000;
@@ -2147,6 +3480,7 @@ function updateBossCastVisual(){
  if(now>c.endAt+100){bossCastVisual.cast=null;return hideBossCastVisual()}
  const pre=clamp((now-c.startAt)/Math.max(1,c.impactAt-c.startAt),0,1);
  const after=clamp((now-c.impactAt)/Math.max(1,c.endAt-c.impactAt),0,1);
+ updateBossCastUi(c,now,pre,after);
  bossTelegraphRing.visible=true;
  bossTelegraphRing.position.set(boss.position.x,.06,boss.position.z);
  if(bossTelegraphRune){
@@ -2217,6 +3551,12 @@ function updateBossCastVisual(){
 }
 
 function hideBossCastVisual(){
+ clearBossSkillUi();
+ const br=rigRuntime.records.boss;
+ if(br?.ready&&/^boss_(aoe|shatter|3am|teleport|ultimate)$/.test(br.activeState||'')){
+   if(br.active)br.active.paused=false;
+   playRigAnimation('boss','boss_idle',{fade:br.activeState==='boss_teleport'?.13:.26,speed:bossV10Phase===3?.94:.90});
+ }
  if(bossTelegraphRing)bossTelegraphRing.visible=false;
  if(bossTelegraphRing2)bossTelegraphRing2.visible=false;
  if(bossTelegraphMoon)bossTelegraphMoon.visible=false;
@@ -2341,8 +3681,25 @@ function updateBossSocketFx(now){
    if(i<2)ch.rotation.z+=(i?-.075:.09);
  }
 }
+
+function v103BossExpressionPulse(i){
+ if(!bossV103)return;
+ const iris=bossV10MaterialRefs.irisamethyst,jewel=bossV10MaterialRefs.amethystjewel;
+ const eyeBase=bossV103Phase===1?1.18:bossV103Phase===2?1.68:2.30;
+ const jewelBase=bossV103Phase===1?1.25:bossV103Phase===2?1.85:2.55;
+ const mult=i===4?1.46:i===2?1.28:1.16;
+ if(iris)iris.emissiveIntensity=eyeBase*mult;
+ if(jewel)jewel.emissiveIntensity=jewelBase*mult;
+ bossV103.faceFill.intensity*=i===4?1.35:1.16;
+ clearTimeout(v103BossExpressionPulse.t);
+ v103BossExpressionPulse.t=setTimeout(()=>{
+   if(iris)iris.emissiveIntensity=eyeBase;if(jewel)jewel.emissiveIntensity=jewelBase;
+   if(bossV103)bossV103.faceFill.intensity=bossV103Phase===1?.13:bossV103Phase===2?.18:.23;
+ },220);
+}
+
 function bossImpactPresentation(i){
- const mobile=mobileDevice;
+ const mobile=mobileDevice;v103BossExpressionPulse(i);v104ImpactMaterialPulse(i===4?'ultimate':'hit');
  if(i===0){
    playImpactScreenFx('pulse','#9b78ee',420);pulseBossSocketFx(0xa884ff,1.0);
    addCameraTrauma(mobile?.19:.14,3.4);flash('#a889ff',mobile?.17:.12,55);
@@ -2568,7 +3925,11 @@ function updateUI(s){
  if(!s)return;const H=s.players.hero,P=s.players.princess;
  $('hp1').style.width=H.hp+'%';$('hp2').style.width=P.hp+'%';$('st1').style.width=H.stamina+'%';$('st2').style.width=P.stamina+'%';
  $('food1').textContent=foods[H.food][0];$('food2').textContent=foods[P.food][0];$('foodName1').textContent=foods[H.food][1];$('foodName2').textContent=foods[P.food][1];
- $('bossFill').style.width=Math.max(0,s.boss.hp/s.boss.max*100)+'%';$('phase').textContent='PHASE '+s.boss.phase;$('trustText').textContent=Math.round(s.trust)+'%';$('trustFill').style.width=s.trust+'%';$('duoWrap').style.display=s.trust>=100?'block':'none';
+ {
+   const bossPct=Math.max(0,s.boss.hp/s.boss.max*100);
+   $('bossFill').style.width=bossPct+'%';$('bossHpText').textContent=Math.ceil(bossPct)+'%';updateBossUiPhase(s.boss.phase);
+ }
+ updateBossV10Phase(s.boss.phase);updateBossV103Phase(s.boss.phase);updateBossV104Phase(s.boss.phase);updateEnvironmentV10Phase(s.boss.phase);$('trustText').textContent=Math.round(s.trust)+'%';$('trustFill').style.width=s.trust+'%';$('duoWrap').style.display=s.trust>=100?'block':'none';
 }
 function playEvent(e,p){
  if(e==='banner')banner(p.msg);
@@ -2588,6 +3949,8 @@ function playEvent(e,p){
    triggerHitStop(p.owner,p.dmg||10);
    if(p.target==='boss'){
      pulseBossSocketFx(p.dmg>=18?0xffd895:0xd5c0ff,clamp((p.dmg||8)/14,.65,1.35));
+     startBossV106Hit(p.dmg||8);
+     if((p.dmg||0)>=18)v104ImpactMaterialPulse('perfect');
      addCameraTrauma(p.owner===role?(mobileDevice?.13:.10):.065,4.2);
      // Small hits during a telegraphed cast should not cancel the boss animation.
      if(!bossCastVisual.cast&&performance.now()-lastRigBossHitAt>280){
@@ -2600,7 +3963,8 @@ function playEvent(e,p){
  if(e==='reaction')banner(p.name);
  if(e==='dialogue')showDialogue(p.speaker,p.text,p.duration||1900);
  if(e==='summonSpawn'){
-   playRigAnimation('boss','boss_summon',{fade:.08,once:true,speed:1.02});
+   startBossV106Gesture('summon',1250);
+   playRigAnimation('boss','boss_summon',{fade:.10,once:true,speed:.92});
    startSummonSpawnFx(p.points||[]);
    pulseBossSocketFx(0xb898ff,1.2);
    banner('🌙 TIỂU MỘNG ẢNH XUẤT HIỆN');
@@ -2610,7 +3974,15 @@ function playEvent(e,p){
    banner('✨ MỘNG ẢNH TAN VỠ');
  }
  if(e==='summonHit'&&p.hp<=15)flash('#c8b4ff',.18,55);
- if(e==='phase'){playRigAnimation('boss','boss_phase',{fade:.08,once:true});flash(p.phase===2?'#c6b2ff':'#ff6b92',.4,130);banner('BOSS PHASE '+p.phase)}
+ if(e==='phase'){
+   startBossV106PhaseAct(p.phase);
+   playRigAnimation('boss','boss_phase',{fade:.12,once:true,speed:p.phase===3?.72:.82});
+   addCameraTrauma(p.phase===3?(mobileDevice?.27:.20):(mobileDevice?.16:.12),2.8);
+   cameraZoomTarget=p.phase===3?(mobileDevice?1.10:1.065):1.035;
+   setTimeout(()=>cameraZoomTarget=1,p.phase===3?1180:820);
+   flash(p.phase===2?'#c6b2ff':'#ff6b92',p.phase===3?.48:.36,145);
+   pulseBossUiPhase(p.phase);banner('BOSS PHASE '+p.phase+' · '+bossUiPhaseName(p.phase))
+ }
  if(e==='perfect')banner('PERFECT DASH ⚡');
  if(e==='pickup')banner((p.role==='hero'?'Hero':'Công chúa')+' nhặt '+foods[p.food][1]+'!');
  if(e==='dash'&&p.role===role){
@@ -2670,7 +4042,9 @@ function updateCam(dt){
  cameraZoom+=(cameraZoomTarget-cameraZoom)*Math.min(1,dt*4);
  const ty=8.2/cameraZoom,tz=14/cameraZoom,cx=(A.position.x+B.position.x)*.12,cz=(A.position.z+B.position.z)*.06-1.3;
  camera.position.x+=(cx-camera.position.x)*dt*2.2;camera.position.y+=(ty-camera.position.y)*dt*3;camera.position.z+=(tz-camera.position.z)*dt*3;
- camera.lookAt(0,1.5,cz);
+ updateV107CameraFocus(dt);
+ camera.position.x+=v107CamFocusX*.14;
+ camera.lookAt(v107CamFocusX*.20,1.5,cz+v107CamFocusZ*.18);
 
  // Legacy kick feeds the smoother V9.6 trauma system.
  if(cameraKick>0){addCameraTrauma(Math.min(.32,cameraKick*1.25),3.5);cameraKick=Math.max(0,cameraKick-dt*2.8)}
@@ -2684,11 +4058,22 @@ function updateCam(dt){
    camTrauma=Math.max(0,camTrauma-dt*camTraumaDecay);
  }
 }
+
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden){
+   clearKeyboardMove();
+   input.x=0;input.z=0;
+ }else{
+   last=performance.now();
+   v107StableBad=0;v107StableGood=0;
+ }
+});
+
 function frame(now){
  const rawDt=Math.min(.08,(now-last)/1000||0),dt=Math.min(.033,rawDt);last=now;
 
  if(deathCinematicActive()){
-   updateRiggedAnimations(dt);updateBossSocketFx(now);updateDeathCinematic(now,dt);
+   updateV107Performance(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateEnvironmentV10(now);updateDeathCinematic(now,dt);
  }else if(deathCinematicStats&&!deathCinematicResultShown){
    updateDeathCinematic(now,dt);
  }else if(running&&gameInitialized){
@@ -2700,7 +4085,7 @@ function frame(now){
        syncEntities(it.a,it.b,it.t);
        if(now-uiLast>50){uiLast=now;updateUI(latestState||it.b)}
      }
-     updateBossCastVisual();updateCombatAnimations(now);updateRiggedAnimations(dt);updateBossSocketFx(now);updateSkillArtFx(now);updateCam(dt);
+     updateV107Performance(now);updateBossCastVisual();updateCombatAnimations(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateSkillArtFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateEnvironmentV10(now);updateCam(dt);
    }
    if(connected&&now-lastInputSend>33){
      const sendDt=Math.min(.05,(now-lastInputSend)/1000||.033);

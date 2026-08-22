@@ -1,0 +1,56 @@
+{
+  "version": "10.7",
+  "pass": "Final Visual Polish + Mobile Optimization",
+  "quality": {
+    "unified": true,
+    "tiers": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "hysteresis": true,
+    "signals": [
+      "frameEma",
+      "hardwareConcurrency",
+      "deviceMemory",
+      "coarse pointer"
+    ]
+  },
+  "pixelRatioBounds": {
+    "mobileLow": [
+      0.74,
+      0.94
+    ],
+    "mobileMedium": [
+      0.8,
+      1.1
+    ],
+    "mobileHigh": [
+      0.88,
+      1.25
+    ]
+  },
+  "camera": {
+    "dynamicBossBiasedFraming": true,
+    "springSmoothed": true,
+    "authoritativePositionsUntouched": true
+  },
+  "lowTierOnlyRemovesDecorativeEffects": true,
+  "neverRemoved": [
+    "telegraphs",
+    "controls",
+    "HP/cast UI",
+    "boss core model",
+    "server combat"
+  ],
+  "retained": [
+    "V10.6 animation acting",
+    "V10.5 UI",
+    "V10.4 shader",
+    "V10.3 character",
+    "V10.2 environment",
+    "V9.7 VFX",
+    "Redis/WebSocket"
+  ],
+  "glbSha256": "948e69e97dac65f0f983aef8d670adaa615c006f895cb4145d81abcd17778fc6"
+}
