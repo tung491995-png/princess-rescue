@@ -79,7 +79,7 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 <div class="controls right hidden" id="ctl2"><div class="joy"><div class="stick"></div></div><div class="btn attack" data-act="attack">⚔️<span>ATTACK</span></div><div class="btn small dash" data-act="dash">💨<span>DASH</span><div class="cover"></div></div><div class="btn small skill" data-act="skill">✨<span>SKILL</span><div class="cover"></div></div></div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">3D HEAVY RENDERER V7.1</span></h1><p style="margin-top:7px">Single-draw boss projectile shader + automatic heavy-combat boss outline culling.</p><div class="logoMoon"></div><div class="badges"><span class="badge">1 enemy projectile draw call</span><span class="badge">GPU projectile shader</span><span class="badge">Boss outline culling</span><span class="badge">Combat Feel V6</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">3D HEAVY RENDERER V7.2</span></h1><p style="margin-top:7px">Single-draw boss projectile shader + automatic heavy-combat boss outline culling.</p><div class="logoMoon"></div><div class="badges"><span class="badge">1 enemy projectile draw call</span><span class="badge">GPU projectile shader</span><span class="badge">Boss outline culling</span><span class="badge">Combat Feel V6</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -424,7 +424,36 @@ function onMessage(m){
    return;
  }
  if(m.type==='start'){
-   acceptInitialState(m.state);ensureGame();running=true;showGameUI();banner('ONLINE CO-OP — START');
+   try{
+     acceptInitialState(m.state);
+     ensureGame();
+     running=true;
+     showGameUI();
+     $('hostStart').disabled=false;
+     $('hostStart').textContent='BẮT ĐẦU TRẬN';
+     banner('ONLINE CO-OP — START');
+   }catch(err){
+     console.error('[game boot]',err);
+     $('hostStart').disabled=false;
+     $('hostStart').textContent='THỬ LẠI';
+     showConnectionError('Lỗi khởi tạo game: '+(err?.message||err));
+   }
+   return;
+ }
+ if(m.type==='startAck'){
+   if(m.ok){
+     if(role==='hero'){
+       $('hostStatus').className='status ok';
+       $('hostStatus').textContent='● Server đã nhận lệnh — đang vào trận…';
+     }
+   }else{
+     $('hostStart').disabled=false;
+     $('hostStart').textContent='BẮT ĐẦU TRẬN';
+     const msg=m.reason==='PRINCESS_OFFLINE'
+       ?'Princess đã mất kết nối. Mở lại link mời rồi thử lại.'
+       :'Server từ chối bắt đầu trận.';
+     showConnectionError(msg);
+   }
    return;
  }
  if(m.type==='state'){
@@ -1146,7 +1175,22 @@ function finish(win,stats){
 $('createRoom').onclick=createRoom;
 $('joinRoom').onclick=()=>showScreen('joinLobby');
 $('copyInvite').onclick=()=>{const text=$('inviteLink').textContent;navigator.clipboard?.writeText(text).then(()=>banner('ĐÃ COPY LINK MỜI ✓')).catch(()=>prompt('Copy link:',text))};
-$('hostStart').onclick=()=>send({type:'start'});
+$('hostStart').onclick=()=>{
+ if($('hostStart').disabled)return;
+ $('hostStart').disabled=true;
+ $('hostStart').textContent='ĐANG VÀO TRẬN…';
+ $('hostStatus').className='status warn';
+ $('hostStatus').textContent='Đang gửi lệnh bắt đầu tới server…';
+ send({type:'start'});
+ // Safety reset if neither startAck nor start arrives.
+ setTimeout(()=>{
+   if(!running&&$('hostStart').disabled){
+     $('hostStart').disabled=false;
+     $('hostStart').textContent='THỬ LẠI';
+     showConnectionError('Server chưa phản hồi lệnh bắt đầu sau 8 giây.');
+   }
+ },8000);
+};
 $('hostCancel').onclick=leaveRoom;$('joinCancel').onclick=()=>{if(sessionToken)leaveRoom();else showScreen('home')};
 $('joinGo').onclick=()=>joinRoom($('roomInput').value);$('backLobby').onclick=leaveRoom;
 $('duoBtn').onpointerdown=e=>{send({type:'action',a:'duo',st:Date.now()+serverOffset});e.preventDefault()};
@@ -1163,6 +1207,14 @@ if(inviteRoom&&(!sess||sess.room!==inviteRoom)){
 }else if(inviteRoom){
  $('roomInput').value=inviteRoom.slice(0,6);showScreen('joinLobby');
 }
+window.addEventListener('error',e=>{
+ console.error('[runtime]',e.error||e.message);
+ if(role==='hero'&&!running)showConnectionError('Runtime: '+(e.message||'unknown error'));
+});
+window.addEventListener('unhandledrejection',e=>{
+ console.error('[promise]',e.reason);
+ if(role==='hero'&&!running)showConnectionError('Promise: '+(e.reason?.message||e.reason||'unknown'));
+});
 if(!window.THREE)alert('Game cần Internet để tải Three.js.');
 })();
 </script>

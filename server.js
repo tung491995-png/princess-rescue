@@ -574,11 +574,17 @@ function reset(room){
   for(let i=0;i<5;i++)spawnPickup(room);
   markDirty(room);
 }
-async function startMatch(room){
+function startMatch(room){
   reset(room);room.state.started=true;room.state.paused=false;room.state.pauseRole=null;
   markDirty(room);
-  await persistRoomNow(room);
-  broadcast(room,{type:'start',state:snapshot(room)});
+
+  // Start gameplay immediately. Persistence must never block the match transition.
+  const state=snapshot(room);
+  broadcast(room,{type:'start',state});
+
+  persistRoomNow(room)
+    .then(()=>console.log(`[redis] started room ${room.code} persisted`))
+    .catch(err=>console.error('[persist start]',err?.message||err));
 }
 
 function tick(room,dt){
@@ -818,7 +824,14 @@ wss.on('connection',(ws,req)=>{
     }
 
     if(m.type==='start'&&role==='hero'){
-      if(connected(room,'princess'))await startMatch(room);
+      const princessOnline=connected(room,'princess');
+      console.log(`[ws] start requested ${room.code} princess=${princessOnline}`);
+      if(!princessOnline){
+        send(ws,{type:'startAck',ok:false,reason:'PRINCESS_OFFLINE'});
+        return;
+      }
+      send(ws,{type:'startAck',ok:true});
+      startMatch(room);
       return;
     }
 
@@ -911,5 +924,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,()=>console.log(`Princess Rescue V7.1 server on :${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,()=>console.log(`Princess Rescue V7.2 server on :${PORT} | redis=${redisReady} | ws=/ws`));
 })();

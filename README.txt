@@ -495,3 +495,15 @@ After deploy test:
   /healthz
   /diag
 Then create a Hero room and watch Render logs.
+
+V7.2 START-MATCH HOTFIX
+=======================
+- Match start no longer awaits Redis before broadcasting `start`.
+- Redis start snapshot persists asynchronously.
+- Server emits `startAck`.
+- Server logs:
+    [ws] start requested ABC123 princess=true/false
+- If Princess disconnected, Hero gets a visible message instead of a dead button.
+- Start button shows ĐANG VÀO TRẬN…
+- Client catches 3D/game boot exceptions and prints the actual runtime error in the lobby.
+- 8-second start timeout prevents infinite waiting.
