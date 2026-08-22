@@ -1530,3 +1530,21 @@ Static validation confirms code/asset integrity. It does NOT prove a 98% visual
 match to the reference image. The final gap must now be judged from real
 deployed screenshots and FPS on the target iPhone; that is the correct next
 stage for shot-by-shot polish.
+
+
+============================================================
+V10.7.1 — CONTROLS + BOSS VISIBILITY HOTFIX
+============================================================
+Confirmed source-level faults fixed:
+1. V10 rim shader used literal `\\n` text inside GLSL. Replaced with valid newline escapes.
+2. V10/V10.4 shaders referenced Three.js `worldPosition` where r128 may not define it.
+   Both now compute `(modelMatrix * vec4(transformed,1.0)).xyz` explicitly.
+3. Input heartbeat runs before all decorative visual work.
+4. RAF is always rescheduled from `finally`, so one VFX/render failure cannot kill controls.
+5. Intro input lock now follows authoritative server `introUntil`.
+6. WebGL canvas is focusable and focuses on mouse input.
+7. Fixed V10.7 visibilitychange ReferenceError (`input` -> `localInput`).
+8. Boss fallback remains available until rig bounds/shader health pass the watchdog.
+9. Repeated visual errors switch to LOW + procedural boss instead of freezing gameplay.
+
+GLB SHA256: bd87670e8caecde8383b59af5b03e235b8a746f70545ede0416aee5bb70761d4

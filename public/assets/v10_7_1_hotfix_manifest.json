@@ -1,0 +1,23 @@
+{
+  "version": "10.7.1",
+  "hotfix": [
+    "GLSL newline injection",
+    "unsafe worldPosition usage",
+    "input heartbeat ordering",
+    "RAF resilience",
+    "authoritative intro input gate",
+    "canvas focus",
+    "visibilitychange input reference",
+    "boss fallback watchdog"
+  ],
+  "retained": [
+    "V10.7 visual polish",
+    "V10.6 acting",
+    "V10.5 UI",
+    "V10.4 shader intent",
+    "V10.3 model",
+    "V10.2 environment",
+    "Redis/WebSocket"
+  ],
+  "glbSha256": "bd87670e8caecde8383b59af5b03e235b8a746f70545ede0416aee5bb70761d4"
+}

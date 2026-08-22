@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.7 — Final Visual Polish + Mobile Optimization</title>
+<title>Princess Rescue V10.7.1 — Controls + Boss Visibility Hotfix</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -522,7 +522,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10 FINAL POLISH / MOBILE V10.7</span></h1><p style="margin-top:7px">Royal Duo cinematic rõ hơn trên mobile + stable joystick trái / action phải.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Royal cinematic</span><span class="badge">10 food sigils</span><span class="badge">Mobile visibility+</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.7.1 STABILITY HOTFIX</span></h1><p style="margin-top:7px">Royal Duo cinematic rõ hơn trên mobile + stable joystick trái / action phải.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Royal cinematic</span><span class="badge">10 food sigils</span><span class="badge">Mobile visibility+</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -618,6 +618,8 @@ let bossV106Quality='medium',bossV106LastQualityCheck=0;
 // V10.7 unified visual/performance state.
 let v107Quality='medium',v107LastCheck=0,v107StableGood=0,v107StableBad=0;
 let v107CamFocusX=0,v107CamFocusZ=-1.5,v107CamFocusVelX=0,v107CamFocusVelZ=0;
+// V10.7.1 stability watchdog.
+let v1071VisualErrors=0,v1071LastVisualError='',v1071SafeMode=false,v1071BossCheckAt=0;
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
@@ -1758,11 +1760,11 @@ function polishRig(model,roleName=''){
          shader.uniforms.uV10Rim={value:/hair/.test(n)?0.24:/dress/.test(n)?.10:.06};
          shader.uniforms.uV10RimColor={value:new THREE.Color(/hair/.test(n)?0xb8a9ff:0x7650bf)};
          shader.vertexShader=shader.vertexShader
-           .replace('#include <common>','#include <common>\\nvarying vec3 vV10WorldNormal; varying vec3 vV10ViewDir;')
-           .replace('#include <worldpos_vertex>','#include <worldpos_vertex>\\nvV10WorldNormal=normalize(mat3(modelMatrix)*objectNormal); vV10ViewDir=normalize(cameraPosition-worldPosition.xyz);');
+           .replace('#include <common>','#include <common>\nvarying vec3 vV10WorldNormal; varying vec3 vV10ViewDir;')
+           .replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvec3 v10WorldPos=(modelMatrix*vec4(transformed,1.0)).xyz; vV10WorldNormal=normalize(mat3(modelMatrix)*objectNormal); vV10ViewDir=normalize(cameraPosition-v10WorldPos);');
          shader.fragmentShader=shader.fragmentShader
-           .replace('#include <common>','#include <common>\\nvarying vec3 vV10WorldNormal; varying vec3 vV10ViewDir; uniform float uV10Rim; uniform vec3 uV10RimColor;')
-           .replace('#include <output_fragment>','float v10F=pow(1.0-max(0.0,dot(normalize(vV10WorldNormal),normalize(vV10ViewDir))),3.0); outgoingLight += uV10RimColor*v10F*uV10Rim;\\n#include <output_fragment>');
+           .replace('#include <common>','#include <common>\nvarying vec3 vV10WorldNormal; varying vec3 vV10ViewDir; uniform float uV10Rim; uniform vec3 uV10RimColor;')
+           .replace('#include <output_fragment>','float v10F=pow(1.0-max(0.0,dot(normalize(vV10WorldNormal),normalize(vV10ViewDir))),3.0); outgoingLight += uV10RimColor*v10F*uV10Rim;\n#include <output_fragment>');
          m.userData.v10Shader=shader;
        };
        m.customProgramCacheKey=()=>`v10-${n}`;
@@ -1865,6 +1867,54 @@ function attachObjectToRigSocket(roleName,obj,type='weapon'){
  const socket=type==='vfx'?rec.vfxSocket:rec.weaponSocket;if(!socket)return false;
  socket.add(obj);return true;
 }
+
+function setBossProceduralFallback(visible=true,reason=''){
+ if(!boss)return;
+ const rec=rigRuntime.records.boss;
+ boss.visible=true;
+ if(rec?.model)rec.model.visible=!visible;
+ setFallback(boss,visible,rec?.model||null);
+ if(visible){
+   rigRuntime.status.boss='fallback-safe';
+   if(reason&&reason!==setBossProceduralFallback.lastReason){
+     setBossProceduralFallback.lastReason=reason;
+     console.warn('[boss fallback]',reason);
+     if(running)banner('⚠ BOSS SAFE FALLBACK — ĐÃ KHÔI PHỤC HIỂN THỊ');
+   }
+ }
+}
+function bossRigProgramHealth(rec){
+ if(!renderer||!rec?.model)return null;
+ let seen=0,bad=0;
+ rec.model.traverse(o=>{
+   if(!o.isMesh)return;
+   const mats=Array.isArray(o.material)?o.material:[o.material];
+   mats.forEach(m=>{
+     if(!m)return;
+     const props=renderer.properties?.get?.(m);
+     const prog=props?.currentProgram||props?.program;
+     const diag=prog?.diagnostics;
+     if(diag){seen++;if(diag.runnable===false)bad++}
+   });
+ });
+ return seen?bad===0:null;
+}
+function ensureBossVisualSafety(now=performance.now()){
+ if(!running||!gameInitialized||!boss||now-v1071BossCheckAt<850)return;
+ v1071BossCheckAt=now;boss.visible=true;
+ const rec=rigRuntime.records.boss;
+ if(!rec?.ready||!rec.model){setBossProceduralFallback(true,'RIG_NOT_READY');return}
+ try{
+   rec.model.updateMatrixWorld(true);
+   const box=new THREE.Box3().setFromObject(rec.model),size=new THREE.Vector3();box.getSize(size);
+   const finite=[size.x,size.y,size.z,box.min.x,box.min.y,box.min.z].every(Number.isFinite);
+   if(!finite||size.y<.25||size.y>12){setBossProceduralFallback(true,'INVALID_RIG_BOUNDS');return}
+ }catch(e){setBossProceduralFallback(true,'RIG_BOUNDS_ERROR');return}
+ const health=bossRigProgramHealth(rec);
+ if(health===false)setBossProceduralFallback(true,'BOSS_SHADER_NOT_RUNNABLE');
+ else if(!v1071SafeMode){rec.model.visible=true;setFallback(boss,false,rec.model);rigRuntime.status.boss='ready'}
+}
+
 function loadRigAsset(roleName){
  const cfg=RIG_ASSETS[roleName],root=rigRoot(roleName),loader=initRigLoader();
  if(!cfg||!root||!loader)return Promise.resolve(false);
@@ -1876,7 +1926,9 @@ function loadRigAsset(roleName){
        const model=gltf.scene||gltf.scenes?.[0];if(!model)throw new Error('GLB has no scene');
        rec.model=model;model.name=roleName+'_RiggedVisual';
        polishRig(model,roleName);normalizeRig(model,cfg);root.add(model);makeRigSockets(rec);buildRigActions(rec,gltf.animations||[]);
-       rec.ready=true;rigRuntime.status[roleName]='ready';setFallback(root,false,model);model.visible=true;
+       rec.ready=true;rigRuntime.status[roleName]='ready';model.visible=true;
+       if(roleName==='boss'){setFallback(root,true,model);setTimeout(()=>ensureBossVisualSafety(performance.now()),180)}
+       else setFallback(root,false,model);
        if(roleName==='boss'&&bossSocketFx&&rec.vfxSocket){
          rec.vfxSocket.add(bossSocketFx);bossSocketFx.position.set(0,0,0);
        }
@@ -1887,7 +1939,7 @@ function loadRigAsset(roleName){
        playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:0});
        console.info('[rig]',roleName,'ready',rec.clipNames);
        if(roleName==='boss')setTimeout(()=>{
-         if(!bossIntroActive())banner('🌙 V10.7 FINAL POLISH — MOBILE READY ✓');
+         if(!bossIntroActive())banner('🛠 V10.7.1 — CONTROLS + BOSS HOTFIX READY ✓');
        },4700);
        resolve(true);
      }catch(e){
@@ -2597,7 +2649,7 @@ function v104PatchMaterialShader(mat,kind){
 
    shader.vertexShader=shader.vertexShader
      .replace('#include <common>','#include <common>\nvarying vec3 vV104WN; varying vec3 vV104WV; varying vec3 vV104WP;')
-     .replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvV104WP=worldPosition.xyz; vV104WN=normalize(mat3(modelMatrix)*objectNormal); vV104WV=normalize(cameraPosition-worldPosition.xyz);');
+     .replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvec3 v104WorldPos=(modelMatrix*vec4(transformed,1.0)).xyz; vV104WP=v104WorldPos; vV104WN=normalize(mat3(modelMatrix)*objectNormal); vV104WV=normalize(cameraPosition-v104WorldPos);');
 
    shader.fragmentShader=shader.fragmentShader
      .replace('#include <common>',`#include <common>
@@ -3089,6 +3141,7 @@ function clearDynamic(){
  bossV104=null;bossV104Phase=1;bossV104Quality='medium';
  bossV106=null;bossV106PhaseActStart=0;bossV106PhaseActUntil=0;bossV106HitUntil=0;bossV106GestureUntil=0;bossV106Gesture='';
  v107StableGood=0;v107StableBad=0;v107CamFocusX=0;v107CamFocusZ=-1.5;v107CamFocusVelX=0;v107CamFocusVelZ=0;
+ v1071VisualErrors=0;v1071LastVisualError='';v1071SafeMode=false;v1071BossCheckAt=0;
  envV10Phase=1;document.body.classList.remove('envPhase2','envPhase3');
  $('bossDeathFx')?.classList.remove('show');document.body.classList.remove('bossDeathLock');
  clearBossSkillUi();updateBossUiPhase(1);if($('bossHpText'))$('bossHpText').textContent='100%';
@@ -3232,6 +3285,14 @@ function enterGameFromState(state,source='server'){
 }
 
 
+function gameplayIntroLocked(){
+ const until=Number(latestState?.introUntil)||0;
+ return !!(until&&serverNow()<until);
+}
+function gameplayInputEnabled(){
+ return !!(running&&connected&&role&&!gameplayIntroLocked());
+}
+
 function preferredControlMode(){
  const forced=bootQuery.get('controls');
  if(forced==='touch'||forced==='desktop')return forced;
@@ -3260,7 +3321,7 @@ function updateControlMode(){
  if(!touch)syncKeyboardMove();
 }
 function triggerPlayerAction(act){
- if(!running||!connected||!role||bossIntroActive())return;
+ if(!gameplayInputEnabled())return;
  if(act==='dash'){
    let x=localInput.x,z=localInput.y,l=Math.hypot(x,z);
    if(l<.1){x=Math.sin(pred.rot);z=Math.cos(pred.rot);l=1}
@@ -3278,6 +3339,7 @@ function bindDesktopCanvas(){
  if(!renderer?.domElement||desktopCanvasBound)return;
  desktopCanvasBound=true;
  const canvas=renderer.domElement;
+ canvas.tabIndex=0;canvas.style.outline='none';
 
  // These handlers exist only on the game canvas. The lobby is a higher-z HTML screen,
  // so desktop combat input cannot steal clicks from TẠO PHÒNG / VÀO PHÒNG.
@@ -3287,6 +3349,7 @@ function bindDesktopCanvas(){
  canvas.addEventListener('pointerdown',e=>{
    if(!running||controlMode!=='desktop')return;
    if(e.pointerType&&e.pointerType!=='mouse')return;
+   try{canvas.focus({preventScroll:true})}catch(_){canvas.focus()}
    if(e.button===0){triggerPlayerAction('attack');e.preventDefault()}
    else if(e.button===2){triggerPlayerAction('dash');e.preventDefault()}
  });
@@ -4061,42 +4124,61 @@ function updateCam(dt){
 
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden){
-   clearKeyboardMove();
-   input.x=0;input.z=0;
+   clearKeyboardMove();localInput.x=0;localInput.y=0;
  }else{
-   last=performance.now();
-   v107StableBad=0;v107StableGood=0;
+   last=performance.now();v107StableBad=0;v107StableGood=0;if(running)updateControlMode();
  }
 });
 
+
+function v1071VisualFailure(err,where='visual'){
+ const msg=String(err?.message||err||'unknown');v1071VisualErrors++;v1071LastVisualError=`${where}: ${msg}`;
+ console.error('[V10.7.1 visual recovery]',where,err);
+ if(v1071VisualErrors>=2&&!v1071SafeMode){
+   v1071SafeMode=true;v107Quality='low';v107SetBodyQuality('low');
+   try{v107ApplyQuality('low',true)}catch(_){}
+   setBossProceduralFallback(true,'VISUAL_SAFE_MODE');
+   banner('⚠ VISUAL SAFE MODE — GAMEPLAY VẪN HOẠT ĐỘNG');
+ }
+}
+function sendInputHeartbeat(now){
+ if(!running||!gameInitialized||!connected||now-lastInputSend<=33)return;
+ const sendDt=Math.min(.05,(now-lastInputSend)/1000||.033);lastInputSend=now;inputSeq++;
+ const q={seq:inputSeq,x:localInput.x,y:localInput.y,dt:sendDt};
+ pendingInputs.push(q);if(pendingInputs.length>60)pendingInputs.shift();
+ send({type:'input',seq:q.seq,x:q.x,y:q.y});
+}
+
 function frame(now){
  const rawDt=Math.min(.08,(now-last)/1000||0),dt=Math.min(.033,rawDt);last=now;
-
- if(deathCinematicActive()){
-   updateV107Performance(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateEnvironmentV10(now);updateDeathCinematic(now,dt);
- }else if(deathCinematicStats&&!deathCinematicResultShown){
-   updateDeathCinematic(now,dt);
- }else if(running&&gameInitialized){
-   const visualFrozen=now<hitStopUntil;
-   if(!visualFrozen){
-     simulatePrediction(dt);simulatePredictedShots(dt);
-     const it=interpolatedState();
-     if(it&&it.a){
-       syncEntities(it.a,it.b,it.t);
-       if(now-uiLast>50){uiLast=now;updateUI(latestState||it.b)}
+ try{sendInputHeartbeat(now)}catch(err){console.error('[input heartbeat]',err)}
+ try{
+   if(deathCinematicActive()){
+     try{updateV107Performance(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateEnvironmentV10(now);updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-visual')}
+   }else if(deathCinematicStats&&!deathCinematicResultShown){
+     try{updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-result')}
+   }else if(running&&gameInitialized){
+     const visualFrozen=now<hitStopUntil;
+     if(!visualFrozen){
+       try{
+         simulatePrediction(dt);simulatePredictedShots(dt);
+         const it=interpolatedState();
+         if(it&&it.a){syncEntities(it.a,it.b,it.t);if(now-uiLast>50){uiLast=now;updateUI(latestState||it.b)}}
+       }catch(err){console.error('[core visual sync]',err)}
+       try{updateV107Performance(now)}catch(err){v1071VisualFailure(err,'quality')}
+       try{updateBossCastVisual()}catch(err){v1071VisualFailure(err,'boss-cast')}
+       try{updateCombatAnimations(now)}catch(err){v1071VisualFailure(err,'combat-anim')}
+       try{updateRiggedAnimations(dt);v106ApplyActing(now)}catch(err){v1071VisualFailure(err,'rig-animation')}
+       try{updateBossSocketFx(now);updateSkillArtFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now)}catch(err){v1071VisualFailure(err,'boss-art')}
+       try{updateEnvironmentV10(now);updateCam(dt)}catch(err){v1071VisualFailure(err,'environment-camera')}
      }
-     updateV107Performance(now);updateBossCastVisual();updateCombatAnimations(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateSkillArtFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateEnvironmentV10(now);updateCam(dt);
+     try{ensureBossVisualSafety(now)}catch(err){console.error('[boss watchdog]',err)}
    }
-   if(connected&&now-lastInputSend>33){
-     const sendDt=Math.min(.05,(now-lastInputSend)/1000||.033);
-     lastInputSend=now;inputSeq++;
-     const q={seq:inputSeq,x:localInput.x,y:localInput.y,dt:sendDt};
-     pendingInputs.push(q);if(pendingInputs.length>60)pendingInputs.shift();
-     send({type:'input',seq:q.seq,x:q.x,y:q.y});
+   if(renderer){
+     try{renderer.render(scene,camera)}catch(err){v1071VisualFailure(err,'renderer')}
+     try{updateDynamicResolution(rawDt,now)}catch(err){console.error('[dynamic resolution]',err)}
    }
- }
- if(renderer){renderer.render(scene,camera);updateDynamicResolution(rawDt,now)}
- requestAnimationFrame(frame);
+ }finally{requestAnimationFrame(frame)}
 }
 requestAnimationFrame(frame);
 
@@ -4159,7 +4241,7 @@ function finish(win,stats){
 
 
 window.addEventListener('keydown',e=>{
- if(!running||controlMode!=='desktop'||bossIntroActive())return;
+ if(!running||controlMode!=='desktop'||gameplayIntroLocked())return;
  const t=e.target;
  if(t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable))return;
 
