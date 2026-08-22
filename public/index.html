@@ -79,7 +79,7 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 <div class="controls right hidden" id="ctl2"><div class="joy"><div class="stick"></div></div><div class="btn attack" data-act="attack">⚔️<span>ATTACK</span></div><div class="btn small dash" data-act="dash">💨<span>DASH</span><div class="cover"></div></div><div class="btn small skill" data-act="skill">✨<span>SKILL</span><div class="cover"></div></div></div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">3D HEAVY RENDERER V7</span></h1><p style="margin-top:7px">Single-draw boss projectile shader + automatic heavy-combat boss outline culling.</p><div class="logoMoon"></div><div class="badges"><span class="badge">1 enemy projectile draw call</span><span class="badge">GPU projectile shader</span><span class="badge">Boss outline culling</span><span class="badge">Combat Feel V6</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">3D HEAVY RENDERER V7.1</span></h1><p style="margin-top:7px">Single-draw boss projectile shader + automatic heavy-combat boss outline culling.</p><div class="logoMoon"></div><div class="badges"><span class="badge">1 enemy projectile draw call</span><span class="badge">GPU projectile shader</span><span class="badge">Boss outline culling</span><span class="badge">Combat Feel V6</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -136,7 +136,7 @@ function fav(t){let e=$('favorite');e.textContent=t;e.classList.add('show');clea
 function flash(color='#fff',opacity=.55,dur=140){let e=$('flash');e.style.background=color;e.style.opacity=opacity;setTimeout(()=>e.style.opacity=0,dur)}
 function setVignette(v){$('vignette').style.opacity=v}
 function showScreen(id){document.querySelectorAll('.screen').forEach(e=>e.classList.add('hidden'));$(id).classList.remove('hidden')}
-function wsUrl(){return `${location.protocol==='https:'?'wss':'ws'}://${location.host}`}
+function wsUrl(){return `${location.protocol==='https:'?'wss':'ws'}://${location.host}/ws`}
 function send(o){if(ws&&ws.readyState===WebSocket.OPEN)try{ws.send(JSON.stringify(o))}catch{}}
 function saveSession(){if(roomCode&&role&&sessionToken)localStorage.setItem(SESSION_KEY,JSON.stringify({room:roomCode,role,token:sessionToken}))}
 function loadSession(){try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}}
@@ -274,6 +274,23 @@ function initNetLab(){
 function reconnectOverlay(show,text='Đang kết nối lại…'){
  $('reconnectOverlay').classList.toggle('show',show);$('reconnectText').textContent=text;
 }
+function showConnectionError(msg){
+ const text=String(msg||'Lỗi kết nối server.');
+ if(role==='hero'){
+   $('hostStatus').className='status err';
+   $('hostStatus').textContent='⚠ '+text;
+ }else if(role==='princess'){
+   $('joinStatus').className='status err';
+   $('joinStatus').textContent='⚠ '+text;
+ }
+ console.error('[network]',text);
+}
+function clearConnectionError(){
+ if(role==='hero' && $('hostStatus').classList.contains('err')){
+   $('hostStatus').className='status warn';
+   $('hostStatus').textContent='Đã nối WebSocket — đang tạo phòng…';
+ }
+}
 function inviteFor(code){let u=new URL(location.href);u.search='';u.searchParams.set('room',code);u.searchParams.set('join','1');return u.toString()}
 function startPing(){
  clearInterval(startPing.i);
@@ -287,18 +304,44 @@ function connect(onOpen){
  intentionalClose=false;
  clearTimeout(reconnectTimer);
  try{ws&&ws.close()}catch{}
- ws=new WebSocket(wsUrl());
- ws.onopen=()=>{
+ const socketUrl=wsUrl();
+ const current=new WebSocket(socketUrl);
+ ws=current;
+
+ const timeout=setTimeout(()=>{
+   if(current===ws && current.readyState!==WebSocket.OPEN){
+     try{current.close()}catch{}
+     showConnectionError('Không kết nối được game server sau 8 giây.');
+   }
+ },8000);
+
+ current.onopen=()=>{
+   if(current!==ws)return;
+   clearTimeout(timeout);
    connected=true;reconnectAttempt=0;netLabel();reconnectOverlay(false);startPing();
-   if(netTest.enabled)labLog('WebSocket OPEN');
+   clearConnectionError();
+   if(netTest.enabled)labLog('WebSocket OPEN '+socketUrl);
    if(onOpen)onOpen();
    else if(sessionToken)send({type:'resume',token:sessionToken});
  };
- ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch{return}routeIncoming(m)};
- ws.onerror=()=>{};
- ws.onclose=()=>{
-   connected=false;netLabel();if(netTest.enabled)labLog('WebSocket CLOSED');
+ current.onmessage=e=>{
+   if(current!==ws)return;
+   let m;try{m=JSON.parse(e.data)}catch{return}
+   routeIncoming(m)
+ };
+ current.onerror=()=>{
+   if(current!==ws)return;
+   showConnectionError('WebSocket lỗi. Kiểm tra Render Logs hoặc /diag.');
+ };
+ current.onclose=e=>{
+   if(current!==ws)return;
+   clearTimeout(timeout);
+   connected=false;netLabel();if(netTest.enabled)labLog(`WebSocket CLOSED ${e.code}`);
    if(intentionalClose)return;
+   if(!sessionToken){
+     showConnectionError(`Game server đã đóng kết nối (${e.code||'unknown'}).`);
+     return;
+   }
    if(sessionToken){
      if(running)reconnectOverlay(true,'Mất mạng — đang nối lại trận…');
      scheduleReconnect();

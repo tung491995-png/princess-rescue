@@ -12,7 +12,7 @@ const KEY_PREFIX = process.env.REDIS_PREFIX || 'princess-rescue:v3:';
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server, path:'/ws' });
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -254,7 +254,6 @@ async function createRoom(){
   for(let i=0;i<5;i++)spawnPickup(room);
   rooms.set(code,room);
   markDirty(room);
-  await persistRoomNow(room);
   return room;
 }
 
@@ -730,7 +729,18 @@ app.get('/healthz',(_req,res)=>res.json({
   uptime:process.uptime()
 }));
 
-wss.on('connection',(ws)=>{
+app.get('/diag',(_req,res)=>res.json({
+  ok:true,
+  redis:redisReady,
+  rooms:rooms.size,
+  websocketClients:wss.clients.size,
+  websocketPath:'/ws',
+  uptime:process.uptime(),
+  now:Date.now()
+}));
+
+wss.on('connection',(ws,req)=>{
+  console.log(`[ws] connected ${req.socket.remoteAddress||'unknown'}`);
   ws.isAlive=true;
   ws.on('pong',()=>ws.isAlive=true);
 
@@ -745,8 +755,11 @@ wss.on('connection',(ws)=>{
     if(m.type==='create'){
       const room=await createRoom();
       attach(room,'hero',ws);
-      await persistRoomNow(room);
+      console.log(`[ws] create room ${room.code}`);
       send(ws,{type:'created',code:room.code,role:'hero',token:room.slots.hero.token,state:snapshot(room)});
+      persistRoomNow(room)
+        .then(()=>console.log(`[redis] room ${room.code} persisted`))
+        .catch(err=>console.error('[persist create]',err?.message||err));
       return;
     }
 
@@ -758,9 +771,10 @@ wss.on('connection',(ws)=>{
       if(slot.token){send(ws,{type:'error',code:'ROOM_FULL'});return}
       slot.token=token();
       attach(room,'princess',ws);
-      await persistRoomNow(room);
+      console.log(`[ws] princess joined ${code}`);
       send(ws,{type:'joined',code,role:'princess',token:slot.token,state:snapshot(room)});
       send(room.slots.hero.ws,{type:'peerJoined',role:'princess'});
+      persistRoomNow(room).catch(err=>console.error('[persist join]',err?.message||err));
       return;
     }
 
@@ -897,5 +911,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,()=>console.log(`Princess Rescue V3 server on :${PORT} | redis=${redisReady}`));
+  server.listen(PORT,()=>console.log(`Princess Rescue V7.1 server on :${PORT} | redis=${redisReady} | ws=/ws`));
 })();

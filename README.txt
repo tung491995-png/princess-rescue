@@ -482,3 +482,16 @@ Example:
 - server restart recovery
 - lag compensation / rewind
 - reconnect harness
+
+V7.1 CONNECTION HOTFIX
+======================
+- WebSocket now uses explicit /ws path.
+- /diag reports Redis + WebSocket status.
+- Create-room UI no longer waits for Redis persistence.
+- Visible 8-second WebSocket timeout/error instead of infinite 'Đang kết nối server...'.
+- Server logs: [ws] connected, [ws] create room, [redis] room persisted.
+
+After deploy test:
+  /healthz
+  /diag
+Then create a Hero room and watch Render logs.
