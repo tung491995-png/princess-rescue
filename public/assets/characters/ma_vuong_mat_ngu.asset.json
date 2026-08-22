@@ -1,0 +1,43 @@
+{
+  "asset": "ma_vuong_mat_ngu.glb",
+  "version": "V9.3",
+  "format": "glTF Binary 2.0",
+  "size_bytes": 360112,
+  "sha256": "3173e6f88ad1507b5239c231279f748074ccb8aa14d5400551c3790dfc26e1a3",
+  "skin_count": 1,
+  "joint_count": 20,
+  "animation_count": 11,
+  "animations": [
+    "Idle",
+    "Move",
+    "Cast_AOE",
+    "Cast_Shatter",
+    "Cast_3AM",
+    "Teleport",
+    "Summon",
+    "Ultimate",
+    "Hit",
+    "PhaseChange",
+    "Death"
+  ],
+  "material_count": 8,
+  "materials": [
+    "Skin",
+    "HairSilverLavender",
+    "DressNight",
+    "SilverTrim",
+    "MoonGlow",
+    "EyeDark",
+    "LipRose",
+    "CrownGold"
+  ],
+  "visual_identity": [
+    "silver-lavender long hair",
+    "deep night royal layered dress",
+    "crescent crown + glowing jewel",
+    "eclipse moon halo with rune spokes",
+    "purple emissive eyes/orb/stars",
+    "anime-fantasy female boss silhouette"
+  ],
+  "provenance": "Original boss asset generated specifically for this Princess Rescue project; no third-party model geometry is bundled in this GLB."
+}

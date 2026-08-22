@@ -542,6 +542,7 @@ function runTask(room,task){
     }
   }else if(task.type==='summon_dreams'){
     const count=Math.min(3,task.data.count||2);
+    broadcast(room,{type:'event',e:'summonSpawn',p:{count}});
     for(let i=0;i<count;i++){
       const a=(i/count)*Math.PI*2+Math.random()*.5;
       const r=5.7+Math.random()*1.6;

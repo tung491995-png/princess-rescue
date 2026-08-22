@@ -1,0 +1,76 @@
+{
+  "version": "9.3",
+  "files": {
+    "hero": "hero.glb",
+    "princess": "princess.glb",
+    "boss": "ma_vuong_mat_ngu.glb"
+  },
+  "playerAnimations": [
+    "Idle",
+    "Run",
+    "Dash",
+    "Attack",
+    "Skill",
+    "Hit",
+    "Down",
+    "Revive",
+    "Royal"
+  ],
+  "bossAnimations": [
+    "Idle",
+    "Move",
+    "Cast_AOE",
+    "Cast_Shatter",
+    "Cast_3AM",
+    "Teleport",
+    "Summon",
+    "Ultimate",
+    "Hit",
+    "PhaseChange",
+    "Death"
+  ],
+  "socketHints": {
+    "weapon": [
+      "RightHand",
+      "Hand_R",
+      "mixamorigRightHand"
+    ],
+    "vfx": [
+      "UpperChest",
+      "Chest",
+      "Spine2"
+    ]
+  },
+  "fallback": "Missing/invalid GLB never blocks gameplay; V9 procedural visual stays visible.",
+  "bundled": {
+    "boss": true,
+    "hero": false,
+    "princess": false
+  },
+  "bossAssetSpec": {
+    "joints": 20,
+    "animations": [
+      "Idle",
+      "Move",
+      "Cast_AOE",
+      "Cast_Shatter",
+      "Cast_3AM",
+      "Teleport",
+      "Summon",
+      "Ultimate",
+      "Hit",
+      "PhaseChange",
+      "Death"
+    ],
+    "materials": [
+      "Skin",
+      "HairSilverLavender",
+      "DressNight",
+      "SilverTrim",
+      "MoonGlow",
+      "EyeDark",
+      "LipRose",
+      "CrownGold"
+    ]
+  }
+}

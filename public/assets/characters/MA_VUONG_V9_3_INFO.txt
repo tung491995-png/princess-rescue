@@ -1,0 +1,51 @@
+MA VƯƠNG MẤT NGỦ — REAL RIGGED GLB V9.3
+==========================================
+
+FILE
+ma_vuong_mat_ngu.glb
+
+TECH
+- glTF Binary 2.0
+- 1 skin
+- 20 joints/bones
+- 11 embedded animation clips
+- 8 PBR material groups
+- Skinned mesh, JOINTS_0 + WEIGHTS_0
+- Real inverse bind matrices
+- Runtime Three.js AnimationMixer compatible
+
+ANIMATIONS
+- Idle
+- Move
+- Cast_AOE
+- Cast_Shatter
+- Cast_3AM
+- Teleport
+- Summon
+- Ultimate
+- Hit
+- PhaseChange
+- Death
+
+MATERIALS
+- Skin
+- HairSilverLavender
+- DressNight
+- SilverTrim
+- MoonGlow
+- EyeDark
+- LipRose
+- CrownGold
+
+VISUAL IDENTITY
+- tóc dài silver/lavender
+- mặt anime + mắt tím emissive
+- váy dark royal nhiều lớp
+- silver trim
+- crescent crown + jewel
+- eclipse moon halo
+- orbiting moon/star ornaments
+- magic orb trên tay
+
+Runtime V9.3 sẽ ưu tiên file này.
+Procedural V9 chỉ còn fallback nếu GLB load thất bại.

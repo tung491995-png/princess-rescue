@@ -30,10 +30,10 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 #netBadge{position:fixed;z-index:22;right:calc(10px + var(--sr));top:calc(76px + var(--st));padding:5px 9px;border-radius:999px;background:#03050dbb;border:1px solid #ffffff1d;font-size:9px;font-weight:900;pointer-events:none}
 #banner{position:fixed;z-index:45;left:50%;top:17%;transform:translateX(-50%) scale(.94);padding:10px 15px;border-radius:17px;background:#050611e8;border:1px solid #ffffff28;box-shadow:0 15px 48px #000a;font-size:12px;font-weight:1000;opacity:0;transition:.15s;pointer-events:none;white-space:nowrap}#banner.show{opacity:1;transform:translateX(-50%) scale(1)}
 #favorite{position:fixed;z-index:46;left:50%;top:30%;transform:translate(-50%,-50%) scale(.9);width:min(86vw,550px);padding:14px 18px;border-radius:23px;background:linear-gradient(135deg,#43dfaeee,#62caffee,#c69cffee);border:2px solid #fff;box-shadow:0 0 44px #8cecff99,0 18px 60px #000a;font-size:14px;font-weight:1000;text-align:center;opacity:0;transition:.18s;pointer-events:none}#favorite.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-#dialogue{position:fixed;z-index:47;left:50%;bottom:calc(26% + var(--sb));transform:translateX(-50%) translateY(10px);width:min(82vw,720px);padding:9px 14px 11px;border-radius:16px;background:linear-gradient(180deg,rgba(8,8,23,.90),rgba(19,13,42,.86));border:1px solid rgba(220,205,255,.25);box-shadow:0 12px 38px rgba(0,0,0,.45),0 0 28px rgba(126,91,255,.12);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .16s,transform .16s}
+#dialogue{position:fixed;z-index:47;left:50%;bottom:calc(48px + var(--sb));transform:translateX(-50%) translateY(8px);width:min(52vw,480px);max-width:calc(100vw - 24px);padding:6px 10px 7px;border-radius:11px;background:linear-gradient(180deg,rgba(8,8,23,.56),rgba(19,13,42,.34));border:1px solid rgba(220,205,255,.16);box-shadow:0 7px 20px rgba(0,0,0,.24),0 0 16px rgba(126,91,255,.07);backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .14s,transform .14s;overflow:hidden;will-change:opacity,transform}
 #dialogue.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#dialogueSpeaker{font-size:9px;font-weight:1000;letter-spacing:1.2px;color:#cbbaff;text-transform:uppercase;margin-bottom:3px}
-#dialogueText{font-size:clamp(12px,1.8vw,16px);font-weight:850;line-height:1.35;text-shadow:0 2px 8px #000;white-space:normal}
+#dialogueSpeaker{font-size:7px;font-weight:1000;letter-spacing:1px;color:#cbbaff;text-transform:uppercase;margin-bottom:2px;opacity:.9}
+#dialogueText{font-size:clamp(10px,1.25vw,12px);font-weight:800;line-height:1.22;text-shadow:0 1px 5px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #dialogueBoss #dialogueSpeaker{color:#d8c2ff}
 #bossIntroV9{position:fixed;z-index:44;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(circle at 50% 48%,rgba(133,88,218,.12),transparent 32%,rgba(2,2,10,.78) 78%);opacity:0;transition:opacity .35s}
 #bossIntroV9.show{display:flex;opacity:1}
@@ -46,7 +46,7 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 #bossIntroV9 .sig:after{inset:28%;border-color:rgba(161,116,255,.22)}
 @keyframes bossSigSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 
-@media(max-width:700px){#dialogue{bottom:calc(29% + var(--sb));width:min(90vw,620px);padding:8px 11px}#dialogueText{font-size:12px}}
+@media(max-width:700px){#dialogue{bottom:calc(9px + var(--sb));width:min(72vw,360px);max-width:calc(100vw - 24px);padding:5px 9px 6px;border-radius:10px;background:linear-gradient(180deg,rgba(8,8,23,.48),rgba(19,13,42,.28));border-color:rgba(220,205,255,.13);box-shadow:0 5px 16px rgba(0,0,0,.2)}#dialogueSpeaker{font-size:6.5px;margin-bottom:1px}#dialogueText{font-size:10px;line-height:1.18}}
 #clockFx{position:fixed;z-index:43;left:50%;top:32%;transform:translate(-50%,-50%);font-size:62px;font-weight:1000;color:#eee5ff;text-shadow:0 0 28px currentColor,0 5px 16px #000;opacity:0;pointer-events:none}
 #vignette{position:fixed;z-index:18;inset:0;pointer-events:none;background:radial-gradient(circle at center,transparent 25%,rgba(0,0,15,.95));opacity:.12;transition:opacity .2s;will-change:opacity;transform:translateZ(0)}#flash{position:fixed;z-index:42;inset:0;pointer-events:none;background:#fff;opacity:0;will-change:opacity;transform:translateZ(0)}
 #blackmoon{position:fixed;z-index:17;will-change:opacity;transform:translateZ(0);right:9%;top:9%;width:min(24vw,180px);height:min(24vw,180px);border-radius:50%;pointer-events:none;background:radial-gradient(circle,#010103 0 58%,#120b24 72%,transparent 73%);box-shadow:0 0 50px #6c44ad99;opacity:0;transition:.2s}
@@ -200,7 +200,7 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">ROYAL MOBILE VFX V8.0</span></h1><p style="margin-top:7px">Royal Duo cinematic rõ hơn trên mobile + stable joystick trái / action phải.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Royal cinematic</span><span class="badge">10 food sigils</span><span class="badge">Mobile visibility+</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">REAL RIGGED BOSS V9.3</span></h1><p style="margin-top:7px">Royal Duo cinematic rõ hơn trên mobile + stable joystick trái / action phải.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Royal cinematic</span><span class="badge">10 food sigils</span><span class="badge">Mobile visibility+</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -208,6 +208,8 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 <div id="rotate" class="screen"><div class="panel"><h1>↻ Xoay ngang iPhone nha</h1><p style="margin-top:7px">Online co-op được tối ưu cho landscape.</p></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
 <script>
 (()=>{
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rand=(a,b)=>a+Math.random()*(b-a),lerp=(a,b,t)=>a+(b-a)*t;
@@ -223,6 +225,27 @@ let renderer,scene,camera,A,B,boss,running=false,last=0,cameraZoom=1,cameraZoomT
 let latestState=null,snapshotBuffer=[];
 let localInput={x:0,y:0},inputSeq=0,lastInputSend=0,pendingInputs=[],pred={x:0,z:0,rot:0,dashT:0,dashVX:0,dashVZ:0};
 let localReady=false,gameInitialized=false;
+
+// V9.2: production GLB/GLTF runtime with procedural fallback.
+const RIG_ASSETS={
+ hero:{url:'/assets/characters/hero.glb',targetHeight:2.30,rootBase:.90},
+ princess:{url:'/assets/characters/princess.glb',targetHeight:2.32,rootBase:.90},
+ boss:{url:'/assets/characters/ma_vuong_mat_ngu.glb',targetHeight:4.45,rootBase:1.12}
+};
+const RIG_ALIASES={
+ idle:['idle','stand','breathing'],run:['run','walk','jog'],dash:['dash','dodge','evade','roll'],
+ attack:['attack','atk','shoot','fire'],skill:['skill','cast','magic','ability'],hit:['hit','hurt','damage'],
+ down:['down','knockdown','ko'],revive:['revive','getup','rise'],royal:['royal','ultimate','ult','burst'],
+ boss_idle:['idle','bossidle','stand'],boss_move:['move','float','hover','walk'],
+ boss_aoe:['cast_aoe','aoe','nightspread','cast01','skill01','cast'],
+ boss_shatter:['cast_shatter','shatter','dreambreak','cast02','skill02','cast'],
+ boss_3am:['cast_3am','3am','clock','cast03','skill03','cast'],
+ boss_teleport:['teleport','blink','dash','cast04','skill04'],
+ boss_summon:['summon','spawn','conjure'],boss_ultimate:['ultimate','ult','eternalnight','vinhda','burst'],
+ boss_phase:['phase','phasechange','transform','enrage'],boss_hit:['hit','hurt'],boss_death:['death','die','defeat']
+};
+const rigRuntime={loader:null,draco:null,records:{hero:null,princess:null,boss:null},loading:false,status:{hero:'fallback',princess:'fallback',boss:'fallback'}};
+
 
 // V7.9 stable input mode. Lobby remains ordinary clickable HTML.
 // Mouse combat handlers are attached only to the WebGL canvas.
@@ -1194,6 +1217,149 @@ function setInst(mesh,index,x,y,z,color,rot=0,scale=1){
  mesh.setMatrixAt(index,dummy3D.matrix);mesh.setColorAt(index,tempColor3D.setHex(color));return true;
 }
 
+
+function rigNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'')}
+function rigRoot(roleName){return roleName==='hero'?A:roleName==='princess'?B:boss}
+function initRigLoader(){
+ if(rigRuntime.loader)return rigRuntime.loader;
+ if(!window.THREE?.GLTFLoader){console.warn('[rig] GLTFLoader unavailable; using fallback');return null}
+ const loader=new THREE.GLTFLoader();
+ if(window.THREE.DRACOLoader){
+   try{
+     const draco=new THREE.DRACOLoader();
+     draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
+     loader.setDRACOLoader(draco);rigRuntime.draco=draco;
+   }catch(e){console.warn('[rig] Draco',e)}
+ }
+ rigRuntime.loader=loader;return loader;
+}
+function polishRig(model){
+ model.traverse(o=>{
+   if(!o.isMesh)return;
+   o.castShadow=false;o.receiveShadow=false;
+   if(Array.isArray(o.material))o.material=o.material.map(m=>m?.clone?.()||m);
+   else if(o.material?.clone)o.material=o.material.clone();
+   const mats=Array.isArray(o.material)?o.material:[o.material];
+   mats.forEach(m=>{
+     if(!m)return;
+     if(m.map)m.map.encoding=THREE.sRGBEncoding;
+     if(m.emissiveMap)m.emissiveMap.encoding=THREE.sRGBEncoding;
+     const n=rigNorm(o.name+' '+m.name);
+     if(m.emissive&&/(eye|iris|gem|jewel|crystal|halo|moon|glow|magic)/.test(n)){
+       if(m.color)m.emissive.copy(m.color).multiplyScalar(.30);
+       if('emissiveIntensity' in m)m.emissiveIntensity=Math.max(m.emissiveIntensity||1,1.12);
+     }
+     m.needsUpdate=true;
+   });
+ });
+}
+function normalizeRig(model,cfg){
+ model.updateMatrixWorld(true);
+ let box=new THREE.Box3().setFromObject(model),size=new THREE.Vector3();box.getSize(size);
+ const s=cfg.targetHeight/(Math.max(.001,size.y)*cfg.rootBase);
+ model.scale.setScalar(s);model.updateMatrixWorld(true);
+ box=new THREE.Box3().setFromObject(model);
+ const c=new THREE.Vector3();box.getCenter(c);
+ model.position.set(-c.x,-box.min.y,-c.z);model.updateMatrixWorld(true);
+}
+function findRigNode(model,names){
+ const wants=names.map(rigNorm);let best=null,score=-1;
+ model.traverse(o=>{
+   const n=rigNorm(o.name);if(!n)return;
+   let s=0;
+   for(const w of wants)s=Math.max(s,n===w?100:n.includes(w)?70:(w.includes(n)&&n.length>3)?40:0);
+   if(s>score){score=s;best=o}
+ });
+ return score>0?best:null;
+}
+function makeRigSockets(rec){
+ const hand=findRigNode(rec.model,['RightHand','Hand_R','mixamorigRightHand','R_Hand','wrist_r'])
+   ||findRigNode(rec.model,['LeftHand','Hand_L','mixamorigLeftHand','L_Hand','wrist_l'])||rec.model;
+ const chest=findRigNode(rec.model,['UpperChest','Chest','Spine2','Spine_2','mixamorigSpine2'])||rec.model;
+ rec.weaponSocket=new THREE.Group();rec.weaponSocket.name='WeaponSocket';hand.add(rec.weaponSocket);
+ rec.vfxSocket=new THREE.Group();rec.vfxSocket.name='VFXSocket';chest.add(rec.vfxSocket);
+}
+function buildRigActions(rec,clips){
+ rec.mixer=new THREE.AnimationMixer(rec.model);rec.actions={};rec.clipNames=clips.map(c=>c.name);
+ const src=clips.map(c=>({clip:c,n:rigNorm(c.name)}));
+ for(const [state,aliases] of Object.entries(RIG_ALIASES)){
+   const wants=aliases.map(rigNorm);
+   let hit=src.find(x=>wants.includes(x.n))||src.find(x=>wants.some(w=>x.n.includes(w)||w.includes(x.n)));
+   if(hit)rec.actions[state]=rec.mixer.clipAction(hit.clip);
+ }
+}
+function setFallback(root,visible,model=null){
+ for(const child of root?.children||[]){if(child!==model)child.visible=visible}
+}
+function playRigAnimation(roleName,state,{fade=.14,once=false,speed=1}={}){
+ const rec=rigRuntime.records[roleName];if(!rec?.ready||!rec.mixer)return false;
+ let action=rec.actions[state];
+ if(!action)action=rec.actions[roleName==='boss'?'boss_idle':'idle'];
+ if(!action)return false;
+ if(rec.active===action&&!once)return true;
+ const prev=rec.active;
+ action.enabled=true;action.setEffectiveTimeScale(speed);action.setEffectiveWeight(1);
+ action.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat,once?1:Infinity);action.clampWhenFinished=once;
+ action.reset().play();if(prev&&prev!==action)prev.crossFadeTo(action,fade,false);
+ rec.active=action;
+ if(once){
+   const done=e=>{
+     if(e.action!==action)return;
+     rec.mixer.removeEventListener('finished',done);
+     if(rec.active===action)playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:.18});
+   };
+   rec.mixer.addEventListener('finished',done);
+ }
+ return true;
+}
+function attachObjectToRigSocket(roleName,obj,type='weapon'){
+ const rec=rigRuntime.records[roleName];if(!rec?.ready||!obj)return false;
+ const socket=type==='vfx'?rec.vfxSocket:rec.weaponSocket;if(!socket)return false;
+ socket.add(obj);return true;
+}
+function loadRigAsset(roleName){
+ const cfg=RIG_ASSETS[roleName],root=rigRoot(roleName),loader=initRigLoader();
+ if(!cfg||!root||!loader)return Promise.resolve(false);
+ const rec={role:roleName,root,model:null,mixer:null,actions:{},active:null,ready:false,weaponSocket:null,vfxSocket:null,clipNames:[]};
+ rigRuntime.records[roleName]=rec;rigRuntime.status[roleName]='loading';root.userData.rigRecord=rec;
+ return new Promise(resolve=>{
+   loader.load(cfg.url,gltf=>{
+     try{
+       const model=gltf.scene||gltf.scenes?.[0];if(!model)throw new Error('GLB has no scene');
+       rec.model=model;model.name=roleName+'_RiggedVisual';
+       polishRig(model);normalizeRig(model,cfg);root.add(model);makeRigSockets(rec);buildRigActions(rec,gltf.animations||[]);
+       rec.ready=true;rigRuntime.status[roleName]='ready';setFallback(root,false,model);model.visible=true;
+       playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:0});
+       console.info('[rig]',roleName,'ready',rec.clipNames);
+       if(roleName==='boss')setTimeout(()=>banner('🌙 MA VƯƠNG GLB — RIG READY ✓'),260);
+       resolve(true);
+     }catch(e){
+       console.error('[rig]',roleName,'setup failed',e);rigRuntime.status[roleName]='fallback';setFallback(root,true);resolve(false);
+     }
+   },undefined,e=>{
+     console.warn('[rig]',roleName,'asset unavailable; fallback retained',e?.message||e);
+     rigRuntime.status[roleName]='fallback';setFallback(root,true);resolve(false);
+   });
+ });
+}
+function loadAllRiggedCharacters(){
+ if(rigRuntime.loading)return;rigRuntime.loading=true;
+ Promise.allSettled(['hero','princess','boss'].map(loadRigAsset)).finally(()=>{rigRuntime.loading=false;console.info('[rig] status',rigRuntime.status)});
+}
+function updateRiggedAnimations(dt){for(const rec of Object.values(rigRuntime.records))if(rec?.ready&&rec.mixer)rec.mixer.update(dt)}
+function updateRigLocomotion(sa,sb){
+ if(!sa||!sb)return;
+ for(const who of ['hero','princess']){
+   const rec=rigRuntime.records[who];if(!rec?.ready)continue;
+   const p0=sa.players?.[who],p1=sb.players?.[who];if(!p0||!p1)continue;
+   const moving=Math.hypot(p1.x-p0.x,p1.z-p0.z)>.012;
+   if(who===role&&pred.dashT>0)playRigAnimation(who,'dash',{fade:.06,speed:1.12});
+   else if(!combatAnim[who]?.type)playRigAnimation(who,moving?'run':'idle',{fade:.14});
+ }
+ if(rigRuntime.records.boss?.ready&&!bossCastVisual.cast)playRigAnimation('boss','boss_idle',{fade:.18});
+}
+function rigBossCastState(i){return ['boss_aoe','boss_shatter','boss_3am','boss_teleport','boss_ultimate'][i]||'boss_aoe'}
+
 function setup3D(){
  renderer=new THREE.WebGLRenderer({antialias:!mobileDevice,powerPreference:'high-performance',alpha:false});
  renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false);
@@ -1222,6 +1388,7 @@ function ensureGame(){
  if(!renderer)setup3D();
  if(gameInitialized)return;
  clearDynamic();A=makeChar('hero');B=makeChar('princess');boss=makeBoss();gameInitialized=true;localReady=false;
+ loadAllRiggedCharacters();
  const s=latestState||snapshotBuffer.at(-1)?.s;
  if(s)applyImmediateState(s);
 }
@@ -1438,6 +1605,7 @@ function triggerCombatAnim(who,type,startServerTs=null){
  const localStart=startServerTs?performance.now()+(startServerTs-serverNow()):performance.now();
  a.type=type;a.start=localStart;
  a.dur=type==='skill'?430:230;
+ playRigAnimation(who,type,{fade:.07,once:true,speed:type==='skill'?1.02:1.12});
 }
 function updateCombatAnimations(now){
  if(!A||!B||!boss)return;
@@ -1626,9 +1794,11 @@ function simulatePrediction(dt){
 function syncEntities(sa,sb,t){
  if(!gameInitialized)return;
  const remoteRole=role==='hero'?'princess':'hero',remoteMesh=remoteRole==='hero'?A:B;
+ updateRigLocomotion(sa,sb);
  const ra=sa.players[remoteRole],rb=sb.players[remoteRole];
  remoteMesh.position.x=lerp(ra.x,rb.x,t);remoteMesh.position.z=lerp(ra.z,rb.z,t);remoteMesh.rotation.y=lerp(ra.rot,rb.rot,t);
- boss.position.x=lerp(sa.boss.x,sb.boss.x,t);boss.position.z=lerp(sa.boss.z,sb.boss.z,t);boss.position.y=.1+Math.sin(performance.now()/1000*1.8)*.12;boss.userData.orb.rotation.y+=.028;
+ boss.position.x=lerp(sa.boss.x,sb.boss.x,t);boss.position.z=lerp(sa.boss.z,sb.boss.z,t);boss.position.y=.1+Math.sin(performance.now()/1000*1.8)*.12;
+ if(boss.userData.orb)boss.userData.orb.rotation.y+=.028;
  // V9 character polish: subtle idle breathing, halo orbit and hair sway.
  if(boss.userData.v9){
    const bt=performance.now()*.0018, br=1+.012*Math.sin(bt*2.0);
@@ -1722,6 +1892,7 @@ function playEvent(e,p){
  if(e==='banner')banner(p.msg);
  if(e==='bossCast'){
    setBossCast(p);
+   playRigAnimation('boss',rigBossCastState(p.i),{fade:.10,once:true});
    const names=['🌙 BÓNG ĐÊM LAN RA','💠 GIẤC MƠ VỠ','🕒 BA GIỜ SÁNG','🌀 MỘNG DU TRUY KÍCH','🌑 VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC'];
    banner(names[p.i]||'BOSS CAST');
  }
@@ -1732,15 +1903,21 @@ function playEvent(e,p){
  if(e==='favorite')fav(p.msg);
  if(e==='reaction')banner(p.name);
  if(e==='dialogue')showDialogue(p.speaker,p.text,p.duration||1900);
+ if(e==='summonSpawn'){
+   playRigAnimation('boss','boss_summon',{fade:.08,once:true,speed:1.02});
+   banner('🌙 TIỂU MỘNG ẢNH XUẤT HIỆN');
+ }
  if(e==='summonDefeated')banner('✨ MỘNG ẢNH TAN VỠ');
  if(e==='summonHit'&&p.hp<=15)flash('#c8b4ff',.18,55);
- if(e==='phase'){flash(p.phase===2?'#c6b2ff':'#ff6b92',.4,130);banner('BOSS PHASE '+p.phase)}
+ if(e==='phase'){playRigAnimation('boss','boss_phase',{fade:.08,once:true});flash(p.phase===2?'#c6b2ff':'#ff6b92',.4,130);banner('BOSS PHASE '+p.phase)}
  if(e==='perfect')banner('PERFECT DASH ⚡');
  if(e==='pickup')banner((p.role==='hero'?'Hero':'Công chúa')+' nhặt '+foods[p.food][1]+'!');
  if(e==='dash'&&p.role===role){
    pred.dashT=.25;pred.dashVX=p.x*13;pred.dashVZ=p.z*13;
  }
  if(e==='royal'){
+   playRigAnimation('hero','royal',{fade:.08,once:true});
+   playRigAnimation('princess','royal',{fade:.08,once:true});
    banner('👑 ROYAL FEAST — BÌNH MINH ĐẠI TIỆC');
    playRoyalFx();
  }
@@ -1783,7 +1960,7 @@ function frame(now){
        syncEntities(it.a,it.b,it.t);
        if(now-uiLast>50){uiLast=now;updateUI(latestState||it.b)}
      }
-     updateBossCastVisual();updateCombatAnimations(now);updateCam(dt);
+     updateBossCastVisual();updateCombatAnimations(now);updateRiggedAnimations(dt);updateCam(dt);
    }
    if(connected&&now-lastInputSend>33){
      const sendDt=Math.min(.05,(now-lastInputSend)/1000||.033);
@@ -1846,6 +2023,8 @@ function rebind(){
  });
 }
 function finish(win,stats){
+ if(win)playRigAnimation('boss','boss_death',{fade:.06,once:true,speed:.92});
+ else{playRigAnimation('hero','down',{fade:.08,once:true});playRigAnimation('princess','down',{fade:.08,once:true})}
  running=false;['hud','bossHud','phase','trustHud','netBadge','ctl1','ctl2','desktopHint'].forEach(id=>$(id).classList.add('hidden'));$('duoWrap').style.display='none';$('royalFx')?.classList.remove('show');clearKeyboardMove();
  $('resultTitle').textContent=win?'VICTORY — BÌNH MINH ✨':'VĨNH DẠ NUỐT CHỬNG 💀';
  $('resultText').innerHTML=win?`Hai người đã cùng hạ Ma Vương Mất Ngủ.<br>Damage: Hero ${stats.hero} · Princess ${stats.princess}<br>Perfect Dash: ${stats.perfect} · Rescue: ${stats.saves}`:'Hai người bị hạ. Room/session nằm trong Redis nên refresh hoặc server restart vẫn có thể reconnect trong thời hạn session.';

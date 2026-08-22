@@ -1,4 +1,4 @@
-PRINCESS RESCUE 3D — V8.1 MA VUONG MAT NGU FULL COMBAT / VFX
+PRINCESS RESCUE 3D — V9 CHARACTER ART + FULL COMBAT / VFX
 
 PRINCESS RESCUE 3D — SERVER MULTIPLAYER V3
 
@@ -638,7 +638,14 @@ No new Three.js geometry/material/projectile allocations are created during acti
 Canonical final name:
 ROYAL FEAST — BÌNH MINH ĐẠI TIỆC
 
-V8.1 — MA VƯƠNG MẤT NGỦ FULL COMBAT PASS
+V9 — MA VƯƠNG MẤT NGỦ CHARACTER ART + FULL COMBAT PASS
+V9.1 — DIALOGUE OVERLAY PASS
+- Dialogue is now a compact fixed overlay near the bottom edge.
+- Desktop: centered above the bottom hint, small translucent card.
+- Mobile: centered ~9px above the safe-area bottom, 72vw max, single-line ellipsis.
+- pointer-events:none so it never captures gameplay input.
+- Reduced font, padding, opacity and shadow so movement/combat sightlines remain clear.
+
 =========================================
 
 ADDED BOSS TIMELINE
@@ -666,3 +673,73 @@ MOBILE PERFORMANCE
 - Dream summons are capped at three and use low-poly geometry.
 - Boss outline is disabled during heavy projectile phases.
 - Telegraph meshes are preallocated once.
+
+
+============================================================
+V9.2 — RIGGED CHARACTER RUNTIME
+============================================================
+
+- GLTFLoader + DRACOLoader.
+- SkinnedMesh / Skeleton / AnimationMixer.
+- Cross-fade animation state machine.
+- Player: Idle/Run/Dash/Attack/Skill/Hit/Down/Revive/Royal.
+- Boss: Idle/Move/Cast_AOE/Cast_Shatter/Cast_3AM/Teleport/Summon/
+  Ultimate/Hit/PhaseChange/Death.
+- WeaponSocket tự tìm bone tay.
+- VFXSocket tự tìm chest/spine.
+- Model tự normalize chiều cao.
+- Texture sRGB + emissive polish nhẹ cho eye/gem/halo.
+- GLB load bất đồng bộ; không chặn start trận.
+- Nếu model/loader/animation lỗi: procedural V9 vẫn là fallback.
+- Multiplayer root A/B/boss không bị thay đổi nên prediction/interpolation giữ nguyên.
+
+ASSET PATH:
+public/assets/characters/hero.glb
+public/assets/characters/princess.glb
+public/assets/characters/ma_vuong_mat_ngu.glb
+
+Lưu ý: ZIP này triển khai runtime để nhận asset production thật.
+Nó không giả lập rằng đã có artist-quality GLB nếu chưa cung cấp model nguồn.
+
+
+============================================================
+V9.3 — MA VƯƠNG REAL RIGGED BOSS ASSET
+============================================================
+
+BUNDLED ASSET
+public/assets/characters/ma_vuong_mat_ngu.glb
+
+Đây không còn là runtime chờ model:
+- GLB boss thật đã nằm trong ZIP.
+- 20 bones.
+- 11 animation clips:
+  Idle, Move, Cast_AOE, Cast_Shatter, Cast_3AM, Teleport, Summon, Ultimate, Hit, PhaseChange, Death
+- 8 PBR materials:
+  Skin, HairSilverLavender, DressNight, SilverTrim, MoonGlow, EyeDark, LipRose, CrownGold
+
+Boss visual:
+- silver/lavender hair
+- anime face + emissive purple eyes
+- layered dark royal dress
+- silver trim
+- crescent crown
+- eclipse moon halo
+- magic orb + star/rune ornaments
+
+Tích hợp:
+- Cast_AOE -> Bóng Đêm Lan Ra
+- Cast_Shatter -> Giấc Mơ Vỡ
+- Cast_3AM -> Ba Giờ Sáng
+- Teleport -> Mộng Du Truy Kích
+- Summon -> Tiểu Mộng Ảnh
+- Ultimate -> Vĩnh Dạ
+- PhaseChange -> phase transition
+- Hit -> boss hit
+- Death -> defeat
+- Idle / Move -> base locomotion
+
+Khi load thành công game hiện:
+MA VƯƠNG GLB — RIG READY ✓
+
+Hero/Princess GLB vẫn là optional ở bản này; nếu thiếu thì dùng procedural
+character fallback như V9.2.

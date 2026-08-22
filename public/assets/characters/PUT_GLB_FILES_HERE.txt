@@ -1,0 +1,20 @@
+V9.2 RIGGED CHARACTER ASSETS
+
+Đặt đúng 3 file:
+- hero.glb
+- princess.glb
+- ma_vuong_mat_ngu.glb
+
+Yêu cầu khuyến nghị:
+- GLB 2.0, SkinnedMesh + Skeleton
+- texture 1K/2K cho mobile
+- Draco compression được hỗ trợ
+- RightHand / Hand_R / mixamorigRightHand cho weapon socket
+- UpperChest / Chest / Spine2 cho VFX socket
+
+Animation:
+Hero/Princess: Idle, Run, Dash, Attack, Skill, Hit, Down, Revive, Royal
+Boss: Idle, Move, Cast_AOE, Cast_Shatter, Cast_3AM, Teleport, Summon,
+Ultimate, Hit, PhaseChange, Death
+
+Nếu thiếu asset hoặc tên clip khác, game vẫn chạy bằng procedural V9 fallback.
