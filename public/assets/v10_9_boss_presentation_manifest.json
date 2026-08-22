@@ -1,0 +1,31 @@
+{
+  "version": "10.9.0",
+  "name": "Boss Presentation Repair",
+  "source": "princess_rescue_v10_8_cinematic_rig_fix",
+  "changes": {
+    "idle_pose": "post-mixer queen stance for upper arms, forearms, hands, chest and head",
+    "visual_scale": 1.42,
+    "previous_visual_scale": 1.12,
+    "gameplay_camera": {
+      "height": 7.55,
+      "distance": 12.7,
+      "look_at_y": 1.78
+    },
+    "lighting": "phase-aware warm boss key plus stronger cool rim",
+    "materials": "stable MeshStandardMaterial PBR palette separation"
+  },
+  "gameplay_authority_unchanged": [
+    "server hitboxes",
+    "collision radii",
+    "boss HP",
+    "movement",
+    "projectiles",
+    "intro lock"
+  ],
+  "glb": {
+    "path": "characters/ma_vuong_mat_ngu.glb",
+    "bones": 20,
+    "clips": 11,
+    "sha256": "bd87670e8caecde8383b59af5b03e235b8a746f70545ede0416aee5bb70761d4"
+  }
+}

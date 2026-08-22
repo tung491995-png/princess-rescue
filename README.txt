@@ -1,4 +1,4 @@
-PRINCESS RESCUE 3D — V10.8 SMOOTH INTRO + RIGGED BOSS RELIABILITY
+PRINCESS RESCUE 3D — V10.9 BOSS PRESENTATION REPAIR
 
 PRINCESS RESCUE 3D — SERVER MULTIPLAYER V3
 
@@ -1593,3 +1593,36 @@ VALIDATION
 
 GLB SHA256
 bd87670e8caecde8383b59af5b03e235b8a746f70545ede0416aee5bb70761d4
+
+
+============================================================
+V10.9 — BOSS PRESENTATION REPAIR
+============================================================
+
+LATEST SCREENSHOT REVIEW
+- The real 20-bone GLB is visible and stable.
+- The Idle clip does not contain LeftUpperArm / RightUpperArm channels, which
+  leaves those bones in their authored horizontal bind pose.
+- The boss reads too small and too flat against the purple arena.
+
+POSE / ANIMATION
+- A post-mixer queen stance lowers both upper arms, bends the forearms and adds
+  a restrained chest/head attitude during idle.
+- The stance automatically fades down during casts, summon gestures and phase
+  acting so the existing 11 authored action clips retain their silhouettes.
+- No GLB bones, clips or timing data were removed.
+
+BOSS READABILITY
+- Visual boss scale increases from 1.12 to 1.42 (+26.8%).
+- This is presentation-only: server hitboxes, collision radii, HP, movement,
+  projectile logic and encounter balance are unchanged.
+- Stable built-in PBR remains enabled. Palette separation now distinguishes
+  porcelain skin, moonlit hair, dark dress, gold crown and silver trim.
+
+CAMERA / LIGHTING
+- Gameplay camera moves closer and slightly lower (12.7 / 7.55) and looks
+  higher toward the boss body.
+- Encounter focus is biased more strongly toward the boss.
+- A no-shadow warm key light follows the boss while the existing cool rim is
+  strengthened; phase grading lowers ambient flattening.
+- No post-processing pass or shadow map was added, preserving mobile cost.

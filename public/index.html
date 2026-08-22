@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.8 — Smooth Intro + Rigged Boss</title>
+<title>Princess Rescue V10.9 — Boss Presentation Repair</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -522,7 +522,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.8 CINEMATIC + RIG FIX</span></h1><p style="margin-top:7px">Intro mượt hơn trên iPhone · boss rigged thật được ưu tiên · controls giữ ổn định.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Prewarmed boss rig</span><span class="badge">Smooth fixed-anchor intro</span><span class="badge">Stable PBR</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.9 BOSS PRESENTATION</span></h1><p style="margin-top:7px">Dáng nữ vương tự nhiên hơn · boss lớn và rõ hơn · camera, ánh sáng chiến đấu được cân lại.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Queen idle stance</span><span class="badge">Stronger boss framing</span><span class="badge">Stable PBR</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -1751,6 +1751,21 @@ function polishRig(model,roleName=''){
        }else if(/silvertrim|pearlsilver|starsilver/.test(n)){
          if('roughness' in m)m.roughness=.29;if('metalness' in m)m.metalness=.72;
        }
+       // V10.9: keep the stable built-in PBR path, but pull the source palette
+       // toward a clearer moonlit hierarchy so face, hair and dress do not merge.
+       if(V108_STABLE_PBR&&m.isMeshStandardMaterial){
+         m.flatShading=false;m.dithering=true;m.toneMapped=true;
+         let tint=null,amount=.30;
+         if(/skin|faceporcelain/.test(n)){tint=0xe7b8c3;amount=.22}
+         else if(/hairmoonhighlight/.test(n)){tint=0xd8d2f5;amount=.34}
+         else if(/hair/.test(n)){tint=0xb8b0d6;amount=.28}
+         else if(/dressnight/.test(n)){tint=0x090a22;amount=.36}
+         else if(/dressvelvet/.test(n)){tint=0x1b082f;amount=.34}
+         else if(/dressplum/.test(n)){tint=0x421060;amount=.30}
+         else if(/crowngold/.test(n)){tint=0xd19b43;amount=.24}
+         else if(/silvertrim|pearlsilver|starsilver/.test(n)){tint=0xa8b5d2;amount=.24}
+         if(tint!==null&&m.color)m.color.lerp(new THREE.Color(tint),amount);
+       }
      }
 
      if(m.emissive&&/(eye|iris|gem|jewel|crystal|halo|moon|glow|magic)/.test(n)){
@@ -2382,13 +2397,14 @@ function createV10Environment(){
  const mist=new THREE.Points(mistGeo,mistMat);mist.name='V10AtmosMotes';root.add(mist);
 
  // ---------------- LIGHTING ----------------
- const hemi=new THREE.HemisphereLight(0x9fb7ff,0x130a24,1.02);hemi.name='V10Hemi';scene.add(hemi);
- const moonKey=new THREE.DirectionalLight(0xe8e5ff,1.58);moonKey.name='V10MoonKey';moonKey.position.set(-6,11,8);scene.add(moonKey);
- const bossRim=new THREE.PointLight(0x8050e5,1.65,24);bossRim.name='V10BossRim';bossRim.position.set(0,5,-5.5);scene.add(bossRim);
+ const hemi=new THREE.HemisphereLight(0x9fb7ff,0x130a24,.78);hemi.name='V10Hemi';scene.add(hemi);
+ const moonKey=new THREE.DirectionalLight(0xe8e5ff,1.72);moonKey.name='V10MoonKey';moonKey.position.set(-6,11,8);scene.add(moonKey);
+ const bossRim=new THREE.PointLight(0x8050e5,2.05,24);bossRim.name='V10BossRim';bossRim.position.set(0,5,-5.5);scene.add(bossRim);
+ const bossKey=new THREE.PointLight(0xffd6e8,1.05,14);bossKey.name='V109BossKey';bossKey.position.set(-2.2,4.7,3.8);scene.add(bossKey);
  const playerFill=new THREE.PointLight(0x688cd8,.38,18);playerFill.name='V10PlayerFill';playerFill.position.set(0,3.2,6.5);scene.add(playerFill);
 
  envV10={root,sky,skyMat,moon,moonMat,base,baseMat,floor,floorMat,ruins,ruinMat,obelisks,obMat,crystals,crystalMat,crystalData,mist,mistMat,
-   lights:{hemi,moonKey,bossRim,playerFill},phase:1,quality:'medium',dummy:o};
+   lights:{hemi,moonKey,bossRim,bossKey,playerFill},phase:1,quality:'medium',dummy:o};
  updateEnvironmentV10Quality(true);
  updateEnvironmentV10Phase(1,true);
 }
@@ -2416,27 +2432,30 @@ function updateEnvironmentV10Phase(phase,force=false){
  const L=envV10.lights;
  if(phase===1){
    scene.fog.color.setHex(0x090b1c);scene.fog.density=.021;
-   renderer.toneMappingExposure=1.12;
-   L.hemi.color.setHex(0xa7bbff);L.hemi.groundColor.setHex(0x150d29);L.hemi.intensity=1.02;
-   L.moonKey.color.setHex(0xe9e7ff);L.moonKey.intensity=1.55;
-   L.bossRim.color.setHex(0x8051df);L.bossRim.intensity=1.60;
-   L.playerFill.color.setHex(0x668bd3);L.playerFill.intensity=.36;
+   renderer.toneMappingExposure=1.06;
+   L.hemi.color.setHex(0xa7bbff);L.hemi.groundColor.setHex(0x150d29);L.hemi.intensity=.78;
+   L.moonKey.color.setHex(0xe9e7ff);L.moonKey.intensity=1.72;
+   L.bossRim.color.setHex(0x8051df);L.bossRim.intensity=2.05;
+   L.bossKey.color.setHex(0xffd6e8);L.bossKey.intensity=1.05;
+   L.playerFill.color.setHex(0x668bd3);L.playerFill.intensity=.32;
    envV10.crystalMat.emissiveIntensity=.72;
  }else if(phase===2){
    scene.fog.color.setHex(0x0d0922);scene.fog.density=.024;
-   renderer.toneMappingExposure=1.10;
-   L.hemi.color.setHex(0xb1a8ff);L.hemi.groundColor.setHex(0x1b0c31);L.hemi.intensity=1.08;
-   L.moonKey.color.setHex(0xe2d9ff);L.moonKey.intensity=1.68;
-   L.bossRim.color.setHex(0x9c55f0);L.bossRim.intensity=2.05;
-   L.playerFill.color.setHex(0x7d69d4);L.playerFill.intensity=.42;
+   renderer.toneMappingExposure=1.04;
+   L.hemi.color.setHex(0xb1a8ff);L.hemi.groundColor.setHex(0x1b0c31);L.hemi.intensity=.82;
+   L.moonKey.color.setHex(0xe2d9ff);L.moonKey.intensity=1.78;
+   L.bossRim.color.setHex(0x9c55f0);L.bossRim.intensity=2.35;
+   L.bossKey.color.setHex(0xffc9e5);L.bossKey.intensity=1.18;
+   L.playerFill.color.setHex(0x7d69d4);L.playerFill.intensity=.36;
    envV10.crystalMat.emissiveIntensity=1.10;
  }else{
    scene.fog.color.setHex(0x05030e);scene.fog.density=.029;
-   renderer.toneMappingExposure=1.04;
-   L.hemi.color.setHex(0x755fba);L.hemi.groundColor.setHex(0x07030f);L.hemi.intensity=.82;
-   L.moonKey.color.setHex(0xb7a6ef);L.moonKey.intensity=1.28;
-   L.bossRim.color.setHex(0xb04ce3);L.bossRim.intensity=2.60;
-   L.playerFill.color.setHex(0x553887);L.playerFill.intensity=.29;
+   renderer.toneMappingExposure=1.00;
+   L.hemi.color.setHex(0x755fba);L.hemi.groundColor.setHex(0x07030f);L.hemi.intensity=.62;
+   L.moonKey.color.setHex(0xb7a6ef);L.moonKey.intensity=1.38;
+   L.bossRim.color.setHex(0xb04ce3);L.bossRim.intensity=3.10;
+   L.bossKey.color.setHex(0xe8b6d8);L.bossKey.intensity=.90;
+   L.playerFill.color.setHex(0x553887);L.playerFill.intensity=.25;
    envV10.crystalMat.emissiveIntensity=1.55;
  }
  document.body.classList.toggle('envPhase2',phase===2);
@@ -2467,10 +2486,14 @@ function updateEnvironmentV10(now){
  }
  envV10.crystals.instanceMatrix.needsUpdate=true;
 
- // Boss rim follows the encounter centre without adding a shadow pass.
+ // Two no-shadow boss lights move with the rig: cool separation from behind,
+ // warm facial/readability key from the camera side.
  if(boss){
    envV10.lights.bossRim.position.x=lerp(envV10.lights.bossRim.position.x,boss.position.x, .05);
    envV10.lights.bossRim.position.z=lerp(envV10.lights.bossRim.position.z,boss.position.z-4.2,.05);
+   envV10.lights.bossKey.position.x=lerp(envV10.lights.bossKey.position.x,boss.position.x-2.2,.06);
+   envV10.lights.bossKey.position.y=lerp(envV10.lights.bossKey.position.y,boss.position.y+4.7,.06);
+   envV10.lights.bossKey.position.z=lerp(envV10.lights.bossKey.position.z,boss.position.z+3.8,.06);
  }
  if(A&&B){
    envV10.lights.playerFill.position.x=(A.position.x+B.position.x)*.5;
@@ -2960,6 +2983,18 @@ function v106ApplyActing(nowMs){
  // Persistent stance + asymmetric breathing makes idle less mannequin-like.
  const phase=bossV10Phase||1;
  const idle=Math.sin(nowSec*.62+bossV106.idleSeed*4.0);
+ const c=bossCastVisual.cast;
+ const phaseAct=nowMs<bossV106PhaseActUntil;
+ const summonAct=nowMs<bossV106GestureUntil&&bossV106Gesture==='summon';
+ const stanceWeight=(c ? .28 : phaseAct ? .22 : summonAct ? .38 : 1)*qMult;
+ // The authored Idle clip has no upper-arm channels. Add a restrained base
+ // stance after mixer sampling so both arms rest naturally beside the dress.
+ v106AddPose({
+   chest:[-.018,0,0],head:[-.008,0,.012],
+   lua:[.035,-.04,.72],rua:[.035,.04,-.72],
+   lfa:[-.10,.02,-.20],rfa:[-.10,-.02,.20],
+   lhand:[0,0,-.05],rhand:[0,0,.05]
+ },stanceWeight);
  v106AddPose({
    chest:[Math.sin(nowSec*.92)*.006, idle*.005, .004*idle],
    head:[Math.sin(nowSec*.51+.8)*.007,Math.sin(nowSec*.37)*.009,.010*idle],
@@ -2968,7 +3003,6 @@ function v106ApplyActing(nowMs){
  if(phase===3)v106AddPose({head:[-.010,-.012,.012],chest:[.015,0,0],lua:[-.018,0,-.028],rua:[-.018,0,.028]},qMult);
 
  // Server-synchronized cast acting.
- const c=bossCastVisual.cast;
  if(c){
    const w=v106CastWeights(c,serverNow()),p=V106_CAST_POSES[c.i]||V106_CAST_POSES[0];
    v106AddPose(p.anticipate,w.a*qMult);
@@ -3121,9 +3155,9 @@ function v107Spring1(current,vel,target,dt,k=18,d=7.8){
 function updateV107CameraFocus(dt){
  if(!A||!B||!boss)return;
  const px=(A.position.x+B.position.x)*.5,pz=(A.position.z+B.position.z)*.5;
- let tx=lerp(px,boss.position.x,.42);
- let tz=lerp(pz,boss.position.z,.34)-.35;
- tx=clamp(tx,-2.2,2.2);tz=clamp(tz,-3.4,.5);
+ let tx=lerp(px,boss.position.x,.50);
+ let tz=lerp(pz,boss.position.z,.44)-.35;
+ tx=clamp(tx,-2.5,2.5);tz=clamp(tz,-3.8,.2);
  [v107CamFocusX,v107CamFocusVelX]=v107Spring1(v107CamFocusX,v107CamFocusVelX,tx,dt,18,7.8);
  [v107CamFocusZ,v107CamFocusVelZ]=v107Spring1(v107CamFocusZ,v107CamFocusVelZ,tz,dt,17,7.5);
 }
@@ -3137,7 +3171,7 @@ function setup3D(){
  renderer.shadowMap.enabled=false;renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
  $('stage').appendChild(renderer.domElement);
  scene=new THREE.Scene();scene.background=new THREE.Color(0x03040b);scene.fog=new THREE.FogExp2(0x090b1c,.021);
- camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);camera.position.set(0,8.2,14);camera.lookAt(0,1,-1.8);
+ camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);camera.position.set(0,7.55,12.7);camera.lookAt(0,1.78,-1.8);
  createV10Environment();
  initCombatInstances();prepareSkillDom();
  renderer.render(scene,camera);
@@ -3493,7 +3527,9 @@ function updateCombatAnimations(now){
    m.scale.set(base*sx,base*sy,base*sz);
    m.rotation.x=tilt;
  }
- const bbase=1.12;
+ // Visual-only authority: +27% presentation scale. Server collision radii,
+ // movement and boss state remain unchanged.
+ const bbase=1.42;
  if(now<bossHitPulseUntil){
    const q=(bossHitPulseUntil-now)/95;
    boss.scale.set(bbase*(1+.035*q),bbase*(1-.045*q),bbase*(1+.035*q));
@@ -4135,9 +4171,9 @@ function updateCam(dt){
      const gx=(A.position.x+B.position.x)*.12;
      const gz=(A.position.z+B.position.z)*.06-1.3;
      px=lerp(bx+3.2,gx,u);
-     py=lerp(4.65,8.2,u);
-     pz=lerp(bz+5.45,14,u);
-     lx=lerp(bx,0,u);ly=lerp(2.65,1.5,u);lz=lerp(bz,gz,u);
+     py=lerp(4.65,7.55,u);
+     pz=lerp(bz+5.45,12.7,u);
+     lx=lerp(bx,0,u);ly=lerp(2.65,1.78,u);lz=lerp(bz,gz,u);
    }
    // Frame-rate independent damping hides uneven 30/60 Hz mobile delivery
    // without changing the authoritative cinematic clock.
@@ -4149,11 +4185,11 @@ function updateCam(dt){
    return;
  }
  cameraZoom+=(cameraZoomTarget-cameraZoom)*Math.min(1,dt*4);
- const ty=8.2/cameraZoom,tz=14/cameraZoom,cx=(A.position.x+B.position.x)*.12,cz=(A.position.z+B.position.z)*.06-1.3;
+ const ty=7.55/cameraZoom,tz=12.7/cameraZoom,cx=(A.position.x+B.position.x)*.12,cz=(A.position.z+B.position.z)*.06-1.3;
  camera.position.x+=(cx-camera.position.x)*dt*2.2;camera.position.y+=(ty-camera.position.y)*dt*3;camera.position.z+=(tz-camera.position.z)*dt*3;
  updateV107CameraFocus(dt);
  camera.position.x+=v107CamFocusX*.14;
- camera.lookAt(v107CamFocusX*.20,1.5,cz+v107CamFocusZ*.18);
+ camera.lookAt(v107CamFocusX*.20,1.78,cz+v107CamFocusZ*.18);
 
  // Legacy kick feeds the smoother V9.6 trauma system.
  if(cameraKick>0){addCameraTrauma(Math.min(.32,cameraKick*1.25),3.5);cameraKick=Math.max(0,cameraKick-dt*2.8)}
