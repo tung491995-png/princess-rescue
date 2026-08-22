@@ -507,3 +507,19 @@ V7.2 START-MATCH HOTFIX
 - Start button shows ĐANG VÀO TRẬN…
 - Client catches 3D/game boot exceptions and prints the actual runtime error in the lobby.
 - 8-second start timeout prevents infinite waiting.
+
+V7.3 RUNTIME HOTFIX
+===================
+Fixes:
+  ReferenceError: spin is not defined
+
+Cause:
+V7 collapsed boss projectiles into a single shader batch and removed the old local
+`spin` variable. Pickup instance rotation still referenced `spin` inside syncEntities().
+
+Fix:
+A single cached frame timestamp now drives both:
+- boss projectile shader pulse
+- pickup instance rotation
+
+No network/gameplay behavior changed.
