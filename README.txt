@@ -1,4 +1,30 @@
-PRINCESS RESCUE 3D — V10.16.2 ECLIPSE WALTZ INTRO
+PRINCESS RESCUE 3D — V10.17 ROYAL BLADE COMBAT UI
+
+ROYAL BLADE COMBAT
+==================
+- Hero and Princess now carry distinct royal swords at all times.
+- Basic Attack is a three-hit, server-authoritative melee combo with 2.62 m
+  reach; the third strike extends to 2.85 m and deals the strongest damage.
+- Basic Attack never creates a ranged projectile.
+- Skill remains ranged and fires five faceted Royal Bolt sword-crystals with
+  bright role-colored trails: cyan/violet for Hero, pink/gold for Princess.
+- Sword glow, arc trail, sparkles, charge ring, hit flash and combo callouts
+  are pooled/persistent effects and do not allocate a new 3D object per hit.
+
+CONCEPT HUD
+===========
+- Hero and Princess status cards are grouped at the left edge with ornate
+  portraits, HP, stamina, weapon sigils and level labels.
+- Boss health/phase stays centered at the top.
+- Chat is a compact three-line panel at the bottom center.
+- Mobile action buttons use gold fantasy frames: Slash, Arc Shot and Dash.
+- The center of the screen remains open for boss readability.
+
+PRESERVED FROM V10.16.2
+=======================
+- 10.5 s Eclipse Waltz, authoritative 11 s co-op lock, Tripo boss, scene-owned
+  virtual Spine02/Head halo, orb weapon, Spirit Orb, 19 animations, ROOT XZ,
+  full-body camera, hitboxes, revive, Royal Trust and network recovery.
 
 ECLIPSE WALTZ CINEMATIC
 =======================

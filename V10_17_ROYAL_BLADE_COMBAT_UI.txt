@@ -1,0 +1,25 @@
+PRINCESS RESCUE V10.17 — ROYAL BLADE COMBAT UI
+
+PLAYER COMBAT
+- Hero sword: cyan/violet crystal blade with gold guard.
+- Princess sword: pink/gold crystal blade with royal gem.
+- Basic attack: 3-hit melee combo; range 2.62 / 2.62 / 2.85 m.
+- Skill: five ranged Royal Bolt sword-crystals with additive trails.
+- Server decides melee range, combo damage, boss/summon target and hit result.
+- Client prediction only starts the sword swing; it never predicts basic bullets.
+
+VFX
+- Persistent sword glow, hot inner blade, curved slash trail and sparkles.
+- Skill charge ring and role-colored projectile trails.
+- Sword impacts use short slash flash, hit-stop, camera trauma and boss recoil.
+- Mobile path reuses the existing instanced projectile/trail batches.
+
+INTERFACE
+- Left-side character cards preserve arena visibility.
+- Centered boss bar and Royal Trust.
+- Bottom-center three-line chat.
+- Fantasy gold-framed Slash, Arc Shot and Dash buttons.
+
+REGRESSION GUARANTEES
+- No changes to boss model ownership, halo attachment, orb, animation map,
+  ROOT XZ, camera envelope, co-op intro lock or 2200 boss HP.

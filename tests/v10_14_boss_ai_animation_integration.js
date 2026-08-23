@@ -194,7 +194,7 @@ async function run() {
     if (state.boss?.hp !== 2200 || state.boss?.max !== 2200) throw new Error('Boss HP mismatch');
     if (!attackScheduled) {
       attackScheduled = true;
-      setTimeout(() => hero.send(JSON.stringify({ type:'action', a:'attack', st:Date.now(), aid:'v1014-dodge-test' })), Math.max(0, remaining + 80));
+      setTimeout(() => hero.send(JSON.stringify({ type:'action', a:'skill', st:Date.now(), aid:'v1014-dodge-test' })), Math.max(0, remaining + 80));
     }
     startValidated = true; finishIfReady();
   };

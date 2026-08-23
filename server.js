@@ -82,7 +82,7 @@ function player(role){
     x:role==='hero'?-3:3,z:3,rot:0,
     hp:100,stamina:100,food:role==='hero'?2:7,
     down:false,revive:0,inv:0,dash:0,vx:0,vz:0,
-    atkCd:0,skillCd:0,
+    atkCd:0,skillCd:0,combo:0,comboUntil:0,
     input:{x:0,y:0},ack:0,
     lastDashTs:0,
     score:0,perfect:0,saves:0
@@ -497,7 +497,7 @@ function hitBoss(room,pr){
   const dmg=pr.dmg*weak*bonus;
   b.hp-=dmg;owner.score+=dmg;
   broadcast(room,{type:'event',e:'combatHit',p:{
-    target:'boss',owner:pr.owner,aid:pr.aid||null,dmg:Math.round(dmg),ts:Date.now()
+    target:'boss',owner:pr.owner,aid:pr.aid||null,kind:pr.kind||'projectile',dmg:Math.round(dmg),ts:Date.now()
   }});
   markDirty(room);
 }
@@ -516,29 +516,66 @@ function fastForwardPlayerProjectile(room,pr,ms){
 function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
   const s=room.state,p=s.players[role],b=s.boss,f=FOODS[p.food];
   if(p.down)return{accepted:false,projectiles:[]};
-  if(skill){
-    if(p.skillCd>0)return{accepted:false,projectiles:[]};
-    p.skillCd=2.8;
-  }else{
-    if(p.atkCd>0)return{accepted:false,projectiles:[]};
-    p.atkCd=.22;
-  }
-
   actionTs=clampActionTs(actionTs);
   const shooter=sampleHistory(room,role,actionTs);
   const target=sampleHistory(room,'boss',actionTs);
   const [dx,dz]=norm(target.x-shooter.x,target.z-shooter.z);
-  const base=Math.atan2(dz,dx),n=skill?5:1;
+  p.rot=Math.atan2(dx,dz);
+
+  // V10.17: the basic action is a true server-authoritative sword strike.
+  // Only the Skill action creates ranged projectiles.
+  if(!skill){
+    if(p.atkCd>0)return{accepted:false,projectiles:[]};
+    p.atkCd=.32;
+    const comboNow=Date.now();
+    p.combo=comboNow<=(p.comboUntil||0)?((p.combo||0)+1)%3:0;
+    p.comboUntil=comboNow+720;
+    const combo=p.combo,reach=combo===2?2.85:2.62;
+    const damageScale=[1.08,1.16,1.32][combo];
+    let hit=false,targetType='air',hitX=shooter.x+dx*reach,hitZ=shooter.z+dz*reach;
+
+    let nearestSummon=null,nearestSummonDistance=Infinity;
+    for(const summon of s.summons||[]){
+      if(summon.hp<=0)continue;
+      const distance=Math.hypot(summon.x-shooter.x,summon.z-shooter.z);
+      if(distance<=reach&&distance<nearestSummonDistance){
+        nearestSummon=summon;nearestSummonDistance=distance;
+      }
+    }
+    const bossDistance=Math.hypot(target.x-shooter.x,target.z-shooter.z);
+    if(nearestSummon&&nearestSummonDistance<bossDistance){
+      const damage=f.dmg*damageScale;
+      nearestSummon.hp-=damage;hit=true;targetType='summon';hitX=nearestSummon.x;hitZ=nearestSummon.z;
+      broadcast(room,{type:'event',e:'summonHit',p:{id:nearestSummon.id,dmg:Math.round(damage),hp:Math.max(0,nearestSummon.hp)}});
+      if(nearestSummon.hp<=0){
+        broadcast(room,{type:'event',e:'summonDefeated',p:{id:nearestSummon.id,x:nearestSummon.x,z:nearestSummon.z,y:nearestSummon.y}});
+        s.trust=Math.min(100,s.trust+4);
+      }
+    }else if(bossDistance<=reach&&bossCanBeHit(b,actionTs)){
+      hit=true;targetType='boss';hitX=target.x;hitZ=target.z;
+      hitBoss(room,{owner:role,aid,food:p.food,dmg:f.dmg*damageScale,kind:'sword'});
+      s.trust=Math.min(100,s.trust+(combo===2?2:1));
+    }
+    broadcast(room,{type:'event',e:'swordSlash',p:{
+      role,aid,combo,hit,target:targetType,x:shooter.x,z:shooter.z,targetX:hitX,targetZ:hitZ,startAt:actionTs
+    }});
+    markDirty(room);
+    return{accepted:true,projectiles:[],melee:true,hit,combo,target:targetType};
+  }
+
+  if(p.skillCd>0)return{accepted:false,projectiles:[]};
+  p.skillCd=2.8;
+  const base=Math.atan2(dz,dx),n=5;
   const latencyMs=Math.max(0,Date.now()-actionTs);
   const spawned=[];
 
   for(let i=0;i<n;i++){
-    const a=base+(i-(n-1)/2)*(skill?.12:0);
+    const a=base+(i-(n-1)/2)*.12;
     const pr={
-      id:s.nextProj++,aid,owner:role,enemy:false,kind:'food',food:p.food,
-      x:shooter.x,z:shooter.z,y:1.15,
-      vx:Math.cos(a)*(skill?10.5:8.8),vz:Math.sin(a)*(skill?10.5:8.8),
-      dmg:f.dmg*(skill?1.45:1),t:3
+      id:s.nextProj++,aid,owner:role,enemy:false,kind:'royalBolt',food:p.food,
+      x:shooter.x,z:shooter.z,y:1.28,
+      vx:Math.cos(a)*10.8,vz:Math.sin(a)*10.8,
+      dmg:f.dmg*1.45,t:3
     };
     fastForwardPlayerProjectile(room,pr,latencyMs);
     if(pr.t>0){
@@ -547,11 +584,9 @@ function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
     }
   }
 
-  if(skill){
-    s.trust=Math.min(100,s.trust+4);
-    broadcast(room,{type:'event',e:'banner',p:{msg:`✨ ${f.name.toUpperCase()} · SKILL`}});
-  }
-  broadcast(room,{type:'event',e:'actionAnim',p:{role,a:skill?'skill':'attack',aid,startAt:actionTs}});
+  s.trust=Math.min(100,s.trust+4);
+  broadcast(room,{type:'event',e:'banner',p:{msg:`✦ ${role==='hero'?'KIẾM KHÍ TINH QUANG':'HOÀNG GIA TINH VŨ'}`}});
+  broadcast(room,{type:'event',e:'actionAnim',p:{role,a:'skill',aid,startAt:actionTs}});
   markDirty(room);
   return{accepted:true,projectiles:spawned};
 }
@@ -1209,7 +1244,7 @@ wss.on('connection',(ws,req)=>{
       }
       if(m.a==='attack'||m.a==='skill'){
         const result=spawnShot(room,role,m.a==='skill',actionTs,aid);
-        send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,serverTs:Date.now()});
+        send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,melee:!!result.melee,hit:!!result.hit,combo:result.combo,target:result.target,serverTs:Date.now()});
       }else if(m.a==='dash'){
         dash(room,role,actionTs);
       }else if(m.a==='duo'){

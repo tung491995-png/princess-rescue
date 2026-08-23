@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.16.2 — Eclipse Waltz Intro</title>
+<title>Princess Rescue V10.17 — Royal Blade Combat</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -182,7 +182,7 @@ body.bossIntroLock #hud,body.bossIntroLock #bossHud,body.bossIntroLock #phase,bo
 #visualAuditReport{display:none;margin-top:7px;padding:7px 8px;border-radius:10px;background:#090917;border:1px solid #ffffff18;font-size:8.5px;font-weight:850;line-height:1.4;color:#cdbcf2}
 #visualAuditReport.show{display:block}#visualAuditReport.pass{color:#9fffd6;border-color:#6affbd55;background:#082019cc}#visualAuditReport.fail{color:#ffb3c3;border-color:#ff6d8d66;background:#240914cc}
 #animationLabView{position:absolute;right:calc(10px + var(--sr));bottom:calc(10px + var(--sb));pointer-events:auto;padding:8px 11px;border-radius:12px;background:#090817dc;border:1px solid #ffffff1f;color:#eee5ff;font-size:9px;font-weight:950}
-body.animationLabMode #hud,body.animationLabMode #bossHud,body.animationLabMode #phase,body.animationLabMode #trustHud,body.animationLabMode #netBadge,body.animationLabMode #ctl1,body.animationLabMode #ctl2,body.animationLabMode #desktopHint,body.animationLabMode #duoWrap,body.animationLabMode #dialogue{display:none!important}
+body.animationLabMode #hud,body.animationLabMode #bossHud,body.animationLabMode #phase,body.animationLabMode #trustHud,body.animationLabMode #netBadge,body.animationLabMode #battleChat,body.animationLabMode #ctl1,body.animationLabMode #ctl2,body.animationLabMode #desktopHint,body.animationLabMode #duoWrap,body.animationLabMode #dialogue{display:none!important}
 @media(max-height:500px) and (orientation:landscape){#animationLabPanel{width:min(330px,42vw);padding:8px;font-size:9px;border-radius:14px}#animationLabTop{margin-bottom:4px}#animationLabStatus{padding:5px 7px;margin-bottom:5px}.animLabRow{margin-top:4px;grid-template-columns:72px 1fr 38px}#animationLabButtons{margin-top:5px}#animationLabButtons button{min-height:30px}#animationLabHint{margin-top:5px}}
 
 
@@ -437,6 +437,62 @@ body.v107Low #bossPortraitWrap:before{display:none}
  #bossHud{max-width:48vw}
 }
 
+/* V10.17 — Royal Blade combat HUD, based on the approved anime RPG concept. */
+#hud{top:calc(92px + var(--st));left:calc(14px + var(--sl));right:auto;width:min(23vw,230px);display:flex;flex-direction:column;gap:9px}
+.pcard{position:relative;width:100%;min-height:69px;padding:8px 9px 8px 66px;border-radius:8px 17px 17px 8px;text-align:left!important;
+ background:linear-gradient(105deg,rgba(4,8,23,.94),rgba(20,23,55,.82) 69%,rgba(35,25,67,.70));
+ border:1px solid rgba(222,195,124,.52);box-shadow:inset 0 0 0 1px rgba(140,106,255,.12),0 7px 24px rgba(0,0,0,.43),0 0 18px rgba(93,67,178,.12)}
+.pcard:after{content:"";position:absolute;left:62px;right:8px;bottom:5px;height:1px;background:linear-gradient(90deg,#e7c86d99,transparent)}
+.pavatar{position:absolute;left:-2px;top:50%;width:58px;height:58px;transform:translateY(-50%);border-radius:50%;display:grid;place-items:center;
+ font-family:Georgia,serif;font-size:22px;font-weight:1000;color:#fff;border:2px solid #e8c86f;background:radial-gradient(circle at 38% 30%,#e7edff,#4466aa 34%,#11182f 68%);
+ box-shadow:0 0 0 3px #0b0d20,0 0 18px rgba(111,158,255,.55);overflow:hidden}
+.pavatar:before{content:"";position:absolute;inset:4px;border-radius:50%;border:1px dashed rgba(255,235,170,.5)}
+.pavatar.princess{background:radial-gradient(circle at 38% 30%,#fff0f8,#e37fb1 35%,#4b193d 70%);box-shadow:0 0 0 3px #160b1d,0 0 18px rgba(255,110,193,.52)}
+.pnameRow{display:flex;align-items:center;gap:5px;font-family:Georgia,serif;font-size:12px;color:#fff6d5;letter-spacing:.25px}
+.pcard .level{margin-left:auto;font-family:Inter,sans-serif;font-size:7px;color:#d6c8f8}.pcard .sub{font-size:7px;color:#b9b5d2;opacity:1;margin-top:1px}
+.pcard .bar{height:9px;margin-top:4px;border-radius:2px;border-color:#d2bd7659;background:#080a16}.pcard .bar.small{height:4px;margin-top:3px}
+.weaponSigil{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;color:#fff;border:1px solid #e2c570;background:#17142b;box-shadow:0 0 8px currentColor}
+#bossHud{width:min(48vw,560px)}#bossHudFrame{border-radius:5px 19px 5px 19px;border-color:rgba(225,192,105,.42)}
+#bossHpShell{border-radius:2px;background:linear-gradient(90deg,#6e5421,#d6b85b77,#6e5421)}#bossHpShell .bar,#bossFill{border-radius:1px}
+#bossName{font-size:13px;letter-spacing:.8px;color:#fff2ce}#bossPhaseChip{border-color:#d9b95e77;color:#ffe49a}
+#trustHud{top:calc(72px + var(--st));width:min(24vw,250px);padding:4px 10px;border-radius:0 0 14px 14px;
+ background:linear-gradient(90deg,transparent,rgba(28,19,55,.82),transparent);color:#f8e6a7;letter-spacing:1px}
+#netBadge{top:calc(15px + var(--st));right:calc(12px + var(--sr));border-color:#d8bb6b55;color:#a8ffbe}
+#battleChat{position:fixed;z-index:24;left:50%;bottom:calc(12px + var(--sb));width:min(45vw,620px);transform:translateX(-50%);
+ padding:7px 11px;border:1px solid rgba(213,185,104,.30);border-radius:4px 14px 4px 14px;background:linear-gradient(90deg,rgba(4,7,20,.74),rgba(16,12,36,.65),rgba(4,7,20,.74));
+ box-shadow:0 10px 30px rgba(0,0,0,.34),inset 0 0 20px rgba(111,78,190,.08);backdrop-filter:blur(5px);pointer-events:none}
+.battleChatLine{display:flex;gap:7px;align-items:baseline;min-height:15px;font-size:9px;line-height:1.25;color:#e9e7f7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.battleChatLine .who{flex:0 0 auto;font-family:Georgia,serif;font-weight:950;color:#80cfff}.battleChatLine.princess .who{color:#ff8fca}.battleChatLine.boss .who{color:#c19aff}
+#dialogue{bottom:calc(62px + var(--sb));width:min(42vw,540px);border-color:rgba(221,190,105,.34);border-radius:4px 14px 4px 14px}
+.controls.left{width:170px;height:170px}.joy{width:126px;height:126px;border:1px solid rgba(224,196,112,.42);box-shadow:inset 0 0 32px #0009,0 0 0 3px rgba(58,42,101,.28),0 12px 28px #0007}
+.stick{background:radial-gradient(circle at 35% 30%,rgba(235,226,255,.66),rgba(116,91,188,.34) 55%,rgba(28,20,57,.72));border-color:#e9ce83aa}
+.controls.right{width:245px;height:190px}.ctlLabel{display:none}
+.btn{border:2px solid rgba(229,201,118,.76);background:radial-gradient(circle at 37% 28%,rgba(205,177,255,.50),rgba(72,36,130,.68) 54%,rgba(8,7,22,.92));
+ box-shadow:0 0 0 3px rgba(11,9,29,.76),0 0 16px rgba(137,83,238,.48),0 10px 27px #000a;text-shadow:0 1px 7px #000}
+.btn:after{content:"";position:absolute;inset:6px;border-radius:50%;border:1px solid rgba(255,239,181,.24);pointer-events:none}
+.btn .keycap{font-family:Georgia,serif;font-size:20px;line-height:1;color:#fff4c9;text-shadow:0 0 12px currentColor}.btn span{font-size:7px;color:#f6eac3;letter-spacing:.8px}
+.attack{width:94px;height:94px;font-size:0}.attack .bladeIcon{position:relative;width:46px;height:46px;transform:rotate(43deg)}
+.bladeIcon:before{content:"";position:absolute;left:19px;top:0;width:9px;height:34px;clip-path:polygon(50% 0,100% 18%,78% 100%,22% 100%,0 18%);
+ background:linear-gradient(90deg,#8f66ff,#fff 50%,#7ad7ff);box-shadow:0 0 9px #9e86ff,0 0 20px #7858ff}
+.bladeIcon:after{content:"";position:absolute;left:8px;top:31px;width:31px;height:6px;border-radius:50%;background:linear-gradient(90deg,#bb8a32,#fff0a5,#bb8a32);box-shadow:0 0 8px #f1ca6b}
+.right .attack{right:0;bottom:0}.right .dash{right:102px;bottom:87px}.right .skill{right:112px;bottom:8px}
+.small{width:68px;height:68px}.skill{background:radial-gradient(circle at 40% 34%,rgba(255,202,245,.60),rgba(123,50,166,.72) 55%,rgba(15,7,30,.94))}
+.dash{background:radial-gradient(circle at 40% 34%,rgba(198,232,255,.55),rgba(57,72,151,.70) 55%,rgba(7,12,29,.94))}
+.cover{background:linear-gradient(180deg,rgba(8,7,18,.38),rgba(4,3,10,.90));backdrop-filter:blur(1px)}
+#duoWrap{bottom:calc(18px + var(--sb))}#duoBtn{border-color:#ffe78b;background:radial-gradient(circle at 40% 30%,#fff9ce,#ffcf5eaa 19%,#e281ff8c 49%,#4bdcff66);font-family:Georgia,serif;letter-spacing:.8px}
+body.bossIntroLock #battleChat{opacity:.12}
+@media(max-height:500px) and (orientation:landscape){
+ #hud{top:calc(62px + var(--st));left:calc(8px + var(--sl));width:min(22vw,185px);gap:5px}
+ .pcard{min-height:52px;padding:5px 6px 5px 50px;border-radius:6px 12px 12px 6px}.pavatar{width:45px;height:45px;font-size:16px}
+ .pnameRow{font-size:9px}.pcard .sub{font-size:6px}.pcard .bar{height:7px;margin-top:2px}.pcard .bar.small{height:3px}.pcard:after{left:48px}
+ #bossHud{width:min(46vw,430px)}#battleChat{bottom:calc(5px + var(--sb));width:min(43vw,520px);padding:5px 8px}.battleChatLine{font-size:7px;min-height:12px}
+ #dialogue{bottom:calc(45px + var(--sb));width:min(40vw,480px)}
+ .controls.left{left:calc(5px + var(--sl));width:138px;height:138px}.joy{left:2px;bottom:1px;width:112px;height:112px}.stick{width:48px;height:48px;margin:-24px}
+ .controls.right{right:calc(5px + var(--sr));width:220px;height:164px}.attack{width:80px;height:80px}.attack .bladeIcon{transform:rotate(43deg) scale(.86)}
+ .small{width:58px;height:58px}.btn .keycap{font-size:16px}.right .attack{right:0;bottom:0}.right .dash{right:86px;bottom:76px}.right .skill{right:98px;bottom:5px}
+ #duoBtn{width:78px;height:78px;font-size:9px}
+}
+
 </style>
 </head>
 <body>
@@ -501,7 +557,10 @@ body.v107Low #bossPortraitWrap:before{display:none}
  <div id="netLabLog"></div>
 </div>
 
-<div id="hud" class="hidden"><div class="pcard"><div>⚔️ HERO · <span id="food1">🧋</span></div><div class="sub" id="foodName1">Trà sữa matcha</div><div class="bar"><div id="hp1" class="fill" style="background:linear-gradient(90deg,#55aaff,#8be9ff)"></div></div><div class="bar small"><div id="st1" class="fill" style="background:#8cffbc"></div></div></div><div class="pcard r"><div><span id="food2">🍓</span> · PRINCESS 👑</div><div class="sub" id="foodName2">Crepe dâu</div><div class="bar"><div id="hp2" class="fill" style="background:linear-gradient(90deg,#ff75bd,#ffd2e8)"></div></div><div class="bar small"><div id="st2" class="fill" style="background:#8cffbc"></div></div></div></div>
+<div id="hud" class="hidden">
+ <div class="pcard"><div class="pavatar hero">H</div><div class="pnameRow"><span class="weaponSigil">⚔</span> ANH HÙNG <span class="level">LV.90</span></div><div class="sub"><span id="food1">🧋</span> <span id="foodName1">Trà sữa matcha</span></div><div class="bar"><div id="hp1" class="fill" style="background:linear-gradient(90deg,#448dff,#76e7ff,#ffe77a)"></div></div><div class="bar small"><div id="st1" class="fill" style="background:linear-gradient(90deg,#53caff,#9dffdd)"></div></div></div>
+ <div class="pcard r"><div class="pavatar princess">P</div><div class="pnameRow"><span class="weaponSigil">✦</span> CÔNG CHÚA <span class="level">LV.90</span></div><div class="sub"><span id="food2">🍓</span> <span id="foodName2">Crepe dâu</span></div><div class="bar"><div id="hp2" class="fill" style="background:linear-gradient(90deg,#ff5aa9,#ff9ed0,#ffe57b)"></div></div><div class="bar small"><div id="st2" class="fill" style="background:linear-gradient(90deg,#ff90d0,#ffedac)"></div></div></div>
+</div>
 <div id="bossHud" class="hidden">
  <div id="bossHudFrame">
   <div id="bossPortraitWrap"><img src="/assets/ui/ma_vuong/boss_portrait.svg" alt=""></div>
@@ -532,14 +591,15 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="phase" class="hidden">PHASE I · MOON QUEEN</div><div id="trustHud" class="hidden">ROYAL TRUST <span id="trustText">0%</span><div class="bar small"><div id="trustFill" class="fill"></div></div></div>
 <div id="netBadge" class="hidden">● CONNECTING</div><div id="banner"></div><div id="favorite"></div>
 <div id="dialogue"><div id="dialogueSpeaker">BOSS</div><div id="dialogueText"></div></div>
+<div id="battleChat" class="hidden"><div class="battleChatLine hero"><span class="who">Anh Hùng:</span><span>Sẵn sàng. Đòn thường dùng kiếm, skill mới bắn xa.</span></div><div class="battleChatLine princess"><span class="who">Công Chúa:</span><span>Để em giữ nhịp Royal Trust nhé ✦</span></div><div class="battleChatLine boss"><span class="who">Ma Vương:</span><span>Thử chạm được vào ta trước đã.</span></div></div>
 <div id="dreamCracks"><div class="dreamCrack"></div><div class="dreamCrack"></div><div class="dreamCrack"></div></div>
 
 <div class="controls left hidden" id="ctl1"><div class="ctlLabel">MOVE</div><div class="joy"><div class="stick"></div></div></div>
-<div class="controls right hidden" id="ctl2"><div class="ctlLabel">ACTION</div><div class="btn attack" data-act="attack">⚔️<span>ATTACK</span></div><div class="btn small dash" data-act="dash">💨<span>DASH</span><div class="cover"></div></div><div class="btn small skill" data-act="skill">✨<span>SKILL</span><div class="cover"></div></div></div>
-<div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
+<div class="controls right hidden" id="ctl2"><div class="ctlLabel">ACTION</div><div class="btn attack" data-act="attack"><i class="bladeIcon"></i><span>SLASH</span><div class="cover"></div></div><div class="btn small dash" data-act="dash"><b class="keycap">↯</b><span>DASH</span><div class="cover"></div></div><div class="btn small skill" data-act="skill"><b class="keycap">Q</b><span>ARC SHOT</span><div class="cover"></div></div></div>
+<div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái CHÉM · Chuột phải / SHIFT NÉ · SPACE / E KIẾM KHÍ</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.16.2 ECLIPSE WALTZ INTRO</span></h1><p style="margin-top:7px">Boss múa dưới nguyệt thực trước khi vào trận; halo theo thân trên bằng socket ảo độc lập.</p><div class="logoMoon"></div><div class="badges"><span class="badge">10.5s Eclipse Waltz</span><span class="badge">Virtual chest/head halo</span><span class="badge">Homing spirit orb</span><span class="badge">Server-synced intro</span><span class="badge">ROOT XZ preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.17 ROYAL BLADE COMBAT</span></h1><p style="margin-top:7px">Hero và Công chúa dùng kiếm cận chiến; skill phóng kiếm khí lấp lánh theo phong cách anime RPG.</p><div class="logoMoon"></div><div class="badges"><span class="badge">3-hit sword combo</span><span class="badge">Royal Arc Shot</span><span class="badge">Concept HUD</span><span class="badge">10.5s Eclipse Waltz</span><span class="badge">Virtual halo preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -548,7 +608,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.16.2 ECLIPSE WALTZ AUDIT</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.17 ROYAL BLADE AUDIT</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -587,22 +647,22 @@ const RIG_ASSETS={
  hero:{url:'/assets/characters/hero.glb',targetHeight:2.30,rootBase:.90},
  princess:{url:'/assets/characters/princess.glb',targetHeight:2.32,rootBase:.90},
  boss:{
-  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.2',
+  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17',
   mobileUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.16.2',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.16.2',
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.2'
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.17',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.17',
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17'
   ],
   desktopUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.2',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.16.2'
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.17'
   ],
   targetHeight:4.45,rootBase:1.12
  }
 };
 const BOSS_PROP_ASSETS={
- orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.16.2',
- halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.16.2'
+ orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.17',
+ halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.17'
 };
 const RIG_ALIASES={
  idle:['idle','stand','breathing'],run:['run','walk','jog'],dash:['dash','dodge','evade','roll'],
@@ -659,6 +719,7 @@ let desktopCanvasBound=false;
 const MAX_VIS_PROJECTILES=128,MAX_VIS_PICKUPS=24;
 let projectileInst={food:null,enemy:null,trail:null},pickupInst=null,darkPoolMesh=null;
 let sharedGeo={},sharedMat={},dummy3D=null,tempColor3D=null;
+const playerBoltDirection=new THREE.Vector3(),playerBoltUp=new THREE.Vector3(0,1,0);
 let enemyKindAttr=null,enemyColorAttr=null,enemyPulseAttr=null;
 let trailColorAttr=null,trailAlphaAttr=null;
 let bossOutlineVisible=true,heavyCombat=false,heavyQuietSince=0;
@@ -666,14 +727,15 @@ let eyeEls=[];
 let uiLast=0;
 
 // V6 combat-feel state. No per-hit geometry allocations.
-let actionId=0,predictedShots=[],hitStopUntil=0,cameraKick=0,bossHitPulseUntil=0;
+let actionId=0,predictedShots=[],predictedSwordAids=new Set(),hitStopUntil=0,cameraKick=0,bossHitPulseUntil=0;
+const localSwordCombo={hero:{combo:-1,until:0},princess:{combo:-1,until:0}};
 let lastRigBossHitAt=0;
 
 // V9.6 presentation state.
 let camTrauma=0,camTraumaDecay=3.0,camShakePhase=0;
 let bossSocketFx=null,bossSocketFxStart=0,bossSocketFxUntil=0,bossSocketFxBaseColor=0xc7b3ff;
 let deathCinematicStart=0,deathCinematicUntil=0,deathCinematicStats=null,deathCinematicResultShown=false;
-const combatAnim={hero:{type:null,start:0,dur:0},princess:{type:null,start:0,dur:0}};
+const combatAnim={hero:{type:null,start:0,dur:0,combo:0,hit:false},princess:{type:null,start:0,dur:0,combo:0,hit:false}};
 let bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};
 let bossIntroV9Until=0,bossIntroV9Played=false,bossIntroV9Start=0,bossIntroV9Duration=BOSS_INTRO_FULL_MS,bossIntroWaits=0;
 
@@ -749,10 +811,20 @@ const foods=[['🧆','Nem chua rán',0xffbd57],['🍢','Xiên bẩn',0xff6250],[
 function banner(t){let e=$('banner');e.textContent=t;e.classList.add('show');clearTimeout(banner.t);banner.t=setTimeout(()=>e.classList.remove('show'),1100)}
 function fav(t){let e=$('favorite');e.textContent=t;e.classList.add('show');clearTimeout(fav.t);fav.t=setTimeout(()=>e.classList.remove('show'),1600)}
 let dialogueTimer=null;
+function appendBattleChat(speaker,text){
+ const log=$('battleChat');if(!log||!text)return;
+ const row=document.createElement('div');
+ row.className=`battleChatLine ${speaker==='princess'?'princess':speaker==='boss'?'boss':'hero'}`;
+ const who=speaker==='boss'?'Ma Vương':speaker==='princess'?'Công Chúa':'Anh Hùng';
+ const name=document.createElement('span');name.className='who';name.textContent=who+':';
+ const copy=document.createElement('span');copy.textContent=text;row.append(name,copy);log.append(row);
+ while(log.children.length>3)log.firstElementChild.remove();
+}
 function showDialogue(speaker,text,duration=1900){
  const box=$('dialogue');if(!box)return;
  $('dialogueSpeaker').textContent=speaker==='boss'?'MA VƯƠNG MẤT NGỦ':speaker==='princess'?'CÔNG CHÚA':'HERO';
  $('dialogueText').textContent=text||'';
+ appendBattleChat(speaker,text||'');
  box.dataset.speaker=speaker;box.classList.add('show');
  clearTimeout(dialogueTimer);dialogueTimer=setTimeout(()=>box.classList.remove('show'),duration);
 }
@@ -1242,6 +1314,58 @@ function eyeDetail(p,x,y,z,iris=0x8b4ee8,glow=0xc59cff){
  add(p,new THREE.SphereGeometry(.011,8,6),std(0xffffff,0xffffff,.0,.15),[x-.018,y+.022,z+.08],undefined,false);
  return {white,ir};
 }
+function makeRoyalBlade(holder,role){
+ const hero=role==='hero';
+ const primary=hero?0x78cfff:0xff82cb,secondary=hero?0x7858ff:0xffc35f,dark=hero?0x151a3d:0x36142f;
+ const root=new THREE.Group();root.name=hero?'HeroRoyalBlade':'PrincessRoyalBlade';
+ root.position.set(.70,.96,.04);root.rotation.set(0,0,hero?-.20:.20);
+
+ const bladeMat=new THREE.MeshStandardMaterial({
+  color:primary,emissive:primary,emissiveIntensity:1.65,metalness:.52,roughness:.16,
+  transparent:true,opacity:.96
+ });
+ const innerMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.82,blending:THREE.AdditiveBlending,depthWrite:false});
+ const goldMat=new THREE.MeshStandardMaterial({color:0xe5bd61,emissive:0x6c4514,emissiveIntensity:.72,metalness:.86,roughness:.19});
+ const gripMat=new THREE.MeshStandardMaterial({color:dark,emissive:secondary,emissiveIntensity:.30,metalness:.34,roughness:.42});
+
+ const blade=new THREE.Mesh(new THREE.ConeGeometry(.135,1.48,4),bladeMat);blade.position.y=.81;blade.rotation.y=Math.PI/4;root.add(blade);
+ const inner=new THREE.Mesh(new THREE.ConeGeometry(.064,1.33,4),innerMat);inner.position.y=.78;inner.rotation.y=Math.PI/4;root.add(inner);
+ const guard=new THREE.Mesh(new THREE.BoxGeometry(.44,.065,.09),goldMat);guard.position.y=.08;root.add(guard);
+ for(const side of [-1,1]){
+  const wing=new THREE.Mesh(new THREE.ConeGeometry(.075,.34,4),goldMat);
+  wing.position.set(side*.21,.09,0);wing.rotation.z=side*Math.PI/2;wing.rotation.y=Math.PI/4;root.add(wing);
+ }
+ const grip=new THREE.Mesh(new THREE.CylinderGeometry(.045,.055,.34,8),gripMat);grip.position.y=-.14;root.add(grip);
+ const gem=new THREE.Mesh(new THREE.OctahedronGeometry(.09,0),new THREE.MeshStandardMaterial({color:secondary,emissive:secondary,emissiveIntensity:2.0,roughness:.12}));
+ gem.position.y=.08;gem.scale.set(.72,1.0,.48);root.add(gem);
+ const pommel=new THREE.Mesh(new THREE.OctahedronGeometry(.072,0),goldMat);pommel.position.y=-.34;root.add(pommel);
+
+ const trailMat=new THREE.MeshBasicMaterial({color:primary,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+ const trail=new THREE.Mesh(new THREE.TorusGeometry(.88,.085,6,42,Math.PI*1.42),trailMat);
+ trail.name=hero?'HeroBladeTrail':'PrincessBladeTrail';trail.position.set(-.12,1.15,.18);trail.rotation.z=-2.36;trail.visible=false;holder.add(trail);
+ const trailHot=new THREE.Mesh(new THREE.TorusGeometry(.88,.026,5,42,Math.PI*1.42),innerMat.clone());
+ trailHot.material.opacity=0;trailHot.position.copy(trail.position);trailHot.rotation.copy(trail.rotation);trailHot.visible=false;holder.add(trailHot);
+
+ const skillMat=new THREE.MeshBasicMaterial({color:secondary,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending});
+ const skillRing=new THREE.Mesh(new THREE.TorusGeometry(.54,.035,6,40),skillMat);
+ skillRing.position.set(0,1.24,.18);skillRing.rotation.x=Math.PI/2;skillRing.visible=false;holder.add(skillRing);
+
+ const sparklePos=[];
+ for(let i=0;i<14;i++){
+  const a=i/14*Math.PI*2,radius=.55+(i%4)*.12;
+  sparklePos.push(Math.cos(a)*radius,.86+(i%3)*.24,Math.sin(a)*.22+.15);
+ }
+ const sparkleGeo=new THREE.BufferGeometry();sparkleGeo.setAttribute('position',new THREE.Float32BufferAttribute(sparklePos,3));
+ const sparkleMat=new THREE.PointsMaterial({color:hero?0xc4eeff:0xffd1ee,size:.085,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true});
+ const sparkles=new THREE.Points(sparkleGeo,sparkleMat);sparkles.visible=false;holder.add(sparkles);
+
+ holder.add(root);
+ holder.userData.royalBlade={
+  root,blade,inner,bladeMat,innerMat,goldMat,trail,trailHot,trailMat,skillRing,skillMat,sparkles,sparkleMat,
+  bindPos:root.position.clone(),bindRot:root.rotation.clone(),primary,secondary,role
+ };
+ return holder.userData.royalBlade;
+}
 function makeChar(role){
  const r=new THREE.Group(),h=role==='hero',skin=0xffd9c7;
  const hairCol=h?0x17243f:0x8a4d73,coat=h?0x244e84:0x9f477e;
@@ -1290,6 +1414,7 @@ function makeChar(role){
    add(cg,new THREE.TorusGeometry(.24,.035,8,24),std(0xffd76c,0xffb62e,.5,.28),[0,0,0],[1,1,.8],false).group.rotation.x=Math.PI/2;
    for(const x of [-.16,0,.16])add(cg,new THREE.ConeGeometry(.045,.18,6),std(0xffdf78,0xffb52f,.5,.28),[x,.08,0],undefined,false);
  }
+ makeRoyalBlade(r,role);
  r.scale.setScalar(.88);scene.add(r);return r;
 }
 function makeBoss(){
@@ -1401,12 +1526,12 @@ function makeDreamSummon(){
 function initSharedRenderAssets(){
  if(sharedGeo.food)return;
 
- // Player projectile mesh remains a tiny sphere batch.
- sharedGeo.food=new THREE.SphereGeometry(.12,7,5);
+ // V10.17: ranged skills use a faceted royal blade/crystal batch.
+ sharedGeo.food=new THREE.OctahedronGeometry(.18,0);
  sharedGeo.pickup=new THREE.OctahedronGeometry(.23,0);
  sharedGeo.darkPool=new THREE.CylinderGeometry(1,1,.025,36);
 
- sharedMat.food=new THREE.MeshBasicMaterial({color:0xffffff,vertexColors:true,transparent:true,opacity:.94});
+ sharedMat.food=new THREE.MeshBasicMaterial({color:0xffffff,vertexColors:true,transparent:true,opacity:.98,depthWrite:false,blending:THREE.AdditiveBlending});
  sharedMat.pickup=new THREE.MeshBasicMaterial({color:0xffffff,vertexColors:true,transparent:true,opacity:.96});
  sharedMat.darkPool=new THREE.ShaderMaterial({
    transparent:true,depthWrite:false,side:THREE.DoubleSide,
@@ -1898,6 +2023,19 @@ function setInst(mesh,index,x,y,z,color,rot=0,scale=1){
  if(index>=mesh.instanceMatrix.count)return false;
  dummy3D.position.set(x,y,z);dummy3D.rotation.set(rot,rot*.71,rot*.37);dummy3D.scale.setScalar(scale);dummy3D.updateMatrix();
  mesh.setMatrixAt(index,dummy3D.matrix);mesh.setColorAt(index,tempColor3D.setHex(color));return true;
+}
+function setPlayerBoltInst(index,x,y,z,vx,vz,color,scale=1){
+ if(index>=projectileInst.food.instanceMatrix.count)return false;
+ playerBoltDirection.set(vx||0,0,vz||1);
+ if(playerBoltDirection.lengthSq()<.001)playerBoltDirection.set(0,0,1);
+ playerBoltDirection.normalize();
+ dummy3D.position.set(x,y,z);
+ dummy3D.quaternion.setFromUnitVectors(playerBoltUp,playerBoltDirection);
+ dummy3D.scale.set(.82*scale,1.92*scale,.82*scale);
+ dummy3D.updateMatrix();
+ projectileInst.food.setMatrixAt(index,dummy3D.matrix);
+ projectileInst.food.setColorAt(index,tempColor3D.setHex(color));
+ return true;
 }
 
 
@@ -2395,7 +2533,7 @@ function finishBossVisualAudit(){
  if(rec?.visualAccepted){enforceBossTripoVisibility(rec);playAnimationLabClip(18);animationLab.view=0;updateAnimationLab(0)}
  visualAudit.active=false;visualAudit.done=true;visualAudit.finishedAt=performance.now();visualAudit.passed=visualAudit.issues.length===0;
  visualAudit.stage=visualAudit.passed?'pass':'fail';updateVisualAuditReport();
- $('animationLabStatus').textContent=visualAudit.passed?'V10.16.2 AUDIT · PASS · Eclipse Waltz + virtual halo':`V10.16.2 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
+ $('animationLabStatus').textContent=visualAudit.passed?'V10.17 AUDIT · PASS · Royal Blade + Eclipse Waltz':`V10.17 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
  return visualAudit;
 }
 function attachObjectToRigSocket(roleName,obj,type='weapon'){
@@ -4149,7 +4287,7 @@ function lockBossIntroUI(lock){
    localInput.x=0;localInput.y=0;clearKeyboardMove();
    $('ctl1')?.classList.add('hidden');$('ctl2')?.classList.add('hidden');$('desktopHint')?.classList.add('hidden');
  }else{
-   ['hud','bossHud','phase','trustHud','netBadge'].forEach(id=>{const e=$(id);if(e)e.style.opacity=''});
+   ['hud','bossHud','phase','trustHud','netBadge','battleChat'].forEach(id=>{const e=$(id);if(e)e.style.opacity=''});
    updateControlMode();
  }
 }
@@ -4347,6 +4485,13 @@ function triggerPlayerAction(act){
    send({type:'action',a:'dash',st:Date.now()+serverOffset});
    return;
  }
+ if(boss){
+   const dx=boss.position.x-pred.x,dz=boss.position.z-pred.z;
+   if(Math.hypot(dx,dz)>.05){
+     pred.rot=Math.atan2(dx,dz);
+     const me=role==='hero'?A:B;if(me)me.rotation.y=pred.rot;
+   }
+ }
  const aid=`${role}-${++actionId}`;
  predictPlayerProjectiles(act,aid);
  send({type:'action',a:act,aid,st:Date.now()+serverOffset});
@@ -4372,7 +4517,7 @@ function bindDesktopCanvas(){
 }
 
 function showGameUI(){
- ['hud','bossHud','phase','trustHud','netBadge'].forEach(id=>$(id).classList.remove('hidden'));
+ ['hud','bossHud','phase','trustHud','netBadge','battleChat'].forEach(id=>$(id).classList.remove('hidden'));
  showScreen('home');$('home').classList.add('hidden');
  rebind();
  bindDesktopCanvas();
@@ -4439,25 +4584,47 @@ function localFood(){
  const s=latestState?.players?.[role];
  return s?.food ?? (role==='hero'?2:7);
 }
-function triggerCombatAnim(who,type,startServerTs=null){
+function triggerCombatAnim(who,type,startServerTs=null,meta={}){
  const a=combatAnim[who];if(!a)return;
  const localStart=startServerTs?performance.now()+(startServerTs-serverNow()):performance.now();
- const profile=type==='skill'?{dur:500,fade:.085,speed:.94}:type==='dash'?{dur:300,fade:.035,speed:1.18}:{dur:235,fade:.045,speed:1.10};
- a.type=type;a.start=localStart;a.dur=profile.dur;
+ const profile=type==='skill'?{dur:680,fade:.085,speed:.94}:type==='dash'?{dur:300,fade:.035,speed:1.18}:{dur:420,fade:.045,speed:1.16};
+ a.type=type;a.start=localStart;a.dur=profile.dur;a.combo=Number(meta.combo)||0;a.hit=!!meta.hit;
  playRigAnimation(who,type,{fade:profile.fade,once:true,speed:profile.speed});
 }
 function updateCombatAnimations(now){
  if(!A||!B||!boss)return;
  for(const [who,m] of [['hero',A],['princess',B]]){
    const a=combatAnim[who],base=.9;
-   let sx=1,sy=1,sz=1,tilt=0;
+   const weapon=m.userData.royalBlade;
+   let sx=1,sy=1,sz=1,tilt=0,lean=0;
+   if(weapon){
+     weapon.root.position.copy(weapon.bindPos);weapon.root.rotation.copy(weapon.bindRot);
+     weapon.bladeMat.emissiveIntensity=1.65;weapon.innerMat.opacity=.82;
+     weapon.trail.visible=false;weapon.trailHot.visible=false;weapon.skillRing.visible=false;weapon.sparkles.visible=false;
+     weapon.trailMat.opacity=0;weapon.trailHot.material.opacity=0;weapon.skillMat.opacity=0;weapon.sparkleMat.opacity=0;
+     weapon.skillRing.scale.setScalar(1);weapon.sparkles.rotation.y=0;
+   }
    if(a.type){
      const p=clamp((now-a.start)/a.dur,0,1);
      if(p>=1){a.type=null}
      else if(a.type==='attack'){
-       if(p<.28){const q=p/.28;sx=.98;sy=1-.07*q;sz=1.03;tilt=.08*q}
-       else if(p<.52){const q=(p-.28)/.24;sx=1+.07*(1-q);sy=.94+.08*(1-q);tilt=-.10*(1-q)}
-       else{const q=(p-.52)/.48;sx=1+.03*(1-q);sy=1-.02*(1-q);tilt=-.03*(1-q)}
+       const combo=a.combo%3,swing=1-Math.pow(1-clamp((p-.10)/.60,0,1),3),fade=Math.sin(Math.PI*clamp(p,0,1));
+       const starts=[-1.20,1.08,-1.58],ends=[1.06,-1.17,1.52];
+       if(p<.22){const q=p/.22;sx=.98;sy=1-.07*q;sz=1.04;tilt=.10*q;lean=(combo===1?-.08:.08)*q}
+       else if(p<.70){const q=(p-.22)/.48;sx=1+.08*(1-q);sy=.93+.08*(1-q);tilt=-.13*(1-q);lean=(combo===1?.13:-.13)*(1-q)}
+       else{const q=(p-.70)/.30;sx=1+.025*(1-q);sy=1-.015*(1-q);tilt=-.035*(1-q);lean*=1-q}
+       if(weapon){
+         weapon.root.rotation.z=weapon.bindRot.z+lerp(starts[combo],ends[combo],swing);
+         weapon.root.rotation.x=.16*Math.sin(p*Math.PI)*(combo===1?-1:1);
+         weapon.root.position.z=.10+.16*Math.sin(Math.PI*p);
+         weapon.bladeMat.emissiveIntensity=1.65+fade*(a.hit?2.5:1.65);weapon.innerMat.opacity=.82+fade*.18;
+         weapon.trail.visible=true;weapon.trailHot.visible=true;
+         weapon.trail.rotation.z=-2.45+(combo===1?.32:combo===2?-.24:0)+swing*.34;
+         weapon.trailHot.rotation.copy(weapon.trail.rotation);
+         const trailScale=.72+fade*(combo===2?.72:.48);weapon.trail.scale.setScalar(trailScale);weapon.trailHot.scale.copy(weapon.trail.scale);
+         weapon.trailMat.opacity=fade*(a.hit?.88:.62);weapon.trailHot.material.opacity=fade*(a.hit?.94:.72);
+         weapon.sparkles.visible=true;weapon.sparkleMat.opacity=fade*(a.hit?.88:.52);weapon.sparkles.rotation.y=p*4.2*(combo===1?-1:1);
+       }
      }else if(a.type==='dash'){
        if(p<.22){const q=p/.22;sx=1+.08*q;sy=1-.10*q;sz=1+.16*q;tilt=-.08*q}
        else{const q=(p-.22)/.78;sx=1+.08*(1-q);sy=.90+.10*q;sz=1+.16*(1-q);tilt=-.08*(1-q)}
@@ -4465,10 +4632,18 @@ function updateCombatAnimations(now){
        if(p<.35){const q=p/.35;sx=1-.05*q;sy=1+.08*q;sz=1-.05*q;tilt=.10*q}
        else if(p<.58){const q=(p-.35)/.23;sx=1+.11*(1-q);sy=.93+.12*(1-q);sz=1+.11*(1-q);tilt=-.13*(1-q)}
        else{const q=(p-.58)/.42;sx=1+.04*(1-q);sy=1-.02*(1-q);tilt=-.04*(1-q)}
+       if(weapon){
+         const charge=Math.sin(Math.PI*p);
+         weapon.root.rotation.z=weapon.bindRot.z+lerp(-.45,.18,p);weapon.root.position.y=weapon.bindPos.y+.18*charge;
+         weapon.bladeMat.emissiveIntensity=1.65+charge*3.2;weapon.innerMat.opacity=.82+charge*.18;
+         weapon.skillRing.visible=true;weapon.skillMat.opacity=charge*.86;weapon.skillRing.rotation.z=p*5.2*(who==='hero'?1:-1);
+         weapon.skillRing.scale.setScalar(.52+charge*1.15);
+         weapon.sparkles.visible=true;weapon.sparkleMat.opacity=charge*.95;weapon.sparkles.rotation.y=p*6.4;
+       }
      }
    }
    m.scale.set(base*sx,base*sy,base*sz);
-   m.rotation.x=tilt;
+   m.rotation.x=tilt;m.rotation.z=lean;
  }
  // Visual-only authority: +27% presentation scale. Server collision radii,
  // movement and boss state remain unchanged.
@@ -4479,21 +4654,29 @@ function updateCombatAnimations(now){
  }else boss.scale.setScalar(bbase);
 }
 function predictPlayerProjectiles(kind,aid){
- const food=localFood(),skill=kind==='skill',n=skill?5:1;
+ const food=localFood(),skill=kind==='skill';
+ if(!skill){
+   const comboState=localSwordCombo[role],now=performance.now();
+   comboState.combo=now<=comboState.until?(comboState.combo+1)%3:0;comboState.until=now+720;
+   predictedSwordAids.add(aid);setTimeout(()=>predictedSwordAids.delete(aid),1400);
+   triggerCombatAnim(role,'attack',null,{combo:comboState.combo,hit:false});
+   return;
+ }
+ const n=5;
  const me=role==='hero'?A:B;
  const ox=pred.x||me.position.x,oz=pred.z||me.position.z;
  let dx=boss.position.x-ox,dz=boss.position.z-oz,l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;
- const base=Math.atan2(dz,dx),speed=skill?10.5:8.8;
+ const base=Math.atan2(dz,dx),speed=10.8;
  for(let i=0;i<n;i++){
-   const a=base+(i-(n-1)/2)*(skill?.12:0);
+   const a=base+(i-(n-1)/2)*.12;
    predictedShots.push({
-     aid,index:i,pid:null,food,
-     x:ox,y:1.15,z:oz,
+     aid,index:i,pid:null,food,owner:role,kind:'royalBolt',
+     x:ox,y:1.28,z:oz,
      vx:Math.cos(a)*speed,vz:Math.sin(a)*speed,
      t:1.0,acked:false
    });
  }
- triggerCombatAnim(role,kind);
+ triggerCombatAnim(role,'skill');
 }
 function simulatePredictedShots(dt){
  if(!predictedShots.length)return;
@@ -4504,6 +4687,10 @@ function simulatePredictedShots(dt){
 }
 function reconcileActionAck(m){
  const aid=m.aid;if(!aid)return;
+ if(m.a==='attack'){
+   if(!m.accepted)predictedSwordAids.delete(aid);
+   return;
+ }
  const group=predictedShots.filter(p=>p.aid===aid);
  if(!m.accepted){
    predictedShots=predictedShots.filter(p=>p.aid!==aid);
@@ -4898,7 +5085,7 @@ function showFinalResult(win,stats){
  document.body.classList.remove('bossDeathLock');
  $('bossDeathFx')?.classList.remove('show');
  setVignette(.12);cameraZoomTarget=1;resetBossVisualAfterDeath();
- ['hud','bossHud','phase','trustHud','netBadge','ctl1','ctl2','desktopHint'].forEach(id=>$(id)?.classList.add('hidden'));
+ ['hud','bossHud','phase','trustHud','netBadge','battleChat','ctl1','ctl2','desktopHint'].forEach(id=>$(id)?.classList.add('hidden'));
  $('duoWrap').style.display='none';$('royalFx')?.classList.remove('show');clearKeyboardMove();
  $('resultTitle').textContent=win?'VICTORY — BÌNH MINH ✨':'VĨNH DẠ NUỐT CHỬNG 💀';
  $('resultText').innerHTML=win?`Hai người đã cùng hạ Ma Vương Mất Ngủ.<br>Damage: Hero ${stats.hero} · Princess ${stats.princess}<br>Perfect Dash: ${stats.perfect} · Rescue: ${stats.saves}`:'Hai người bị hạ. Room/session nằm trong Redis nên refresh hoặc server restart vẫn có thể reconnect trong thời hạn session.';
@@ -5016,9 +5203,10 @@ function syncEntities(sa,sb,t){
      if(setEnemyInst(enemyCount,x,y,z,color,kind,pulseBase+pb.id*.31,size))enemyCount++;
      if(setTrailInst(trailCount,x,y,z,vx,vz,color,pb.k==='spiritOrb'?1:pb.k==='orbclone'?.92:.76))trailCount++;
    }else{
-     const color=foods[pb.f]?.[2]??0xffffff;
-     if(setInst(projectileInst.food,foodCount,x,y,z,color,0,mobileDevice?1.18:1))foodCount++;
-     if(setTrailInst(trailCount,x,y,z,vx,vz,color,.68))trailCount++;
+     const color=pb.o==='hero'?0x75d8ff:pb.o==='princess'?0xff8fd5:(foods[pb.f]?.[2]??0xffffff);
+     const boltScale=(pb.k==='royalBolt'?1.18:1)*(mobileDevice?1.14:1);
+     if(setPlayerBoltInst(foodCount,x,y,z,vx,vz,color,boltScale))foodCount++;
+     if(setTrailInst(trailCount,x,y,z,vx,vz,color,pb.k==='royalBolt'?.94:.68))trailCount++;
    }
  }
  pruneBossOrbCloneMuzzles(nowVisual);
@@ -5026,10 +5214,10 @@ function syncEntities(sa,sb,t){
  // Append predicted local shots into the player projectile batch.
  for(const p of predictedShots){
    if(foodCount>=MAX_VIS_PROJECTILES)break;
-   const color=foods[p.food]?.[2]??0xffffff;
-   const ps=(p.acked?1.0:1.12)*(mobileDevice?1.18:1);
-   if(setInst(projectileInst.food,foodCount,p.x,p.y,p.z,color,0,ps))foodCount++;
-   if(setTrailInst(trailCount,p.x,p.y,p.z,p.vx,p.vz,color,.72))trailCount++;
+   const color=p.owner==='hero'?0x75d8ff:0xff8fd5;
+   const ps=(p.acked?1.12:1.26)*(mobileDevice?1.14:1);
+   if(setPlayerBoltInst(foodCount,p.x,p.y,p.z,p.vx,p.vz,color,ps))foodCount++;
+   if(setTrailInst(trailCount,p.x,p.y,p.z,p.vx,p.vz,color,.98))trailCount++;
  }
 
  projectileInst.food.count=foodCount;
@@ -5075,6 +5263,13 @@ function updateUI(s){
  if(!s)return;const H=s.players.hero,P=s.players.princess;
  $('hp1').style.width=H.hp+'%';$('hp2').style.width=P.hp+'%';$('st1').style.width=H.stamina+'%';$('st2').style.width=P.stamina+'%';
  $('food1').textContent=foods[H.food][0];$('food2').textContent=foods[P.food][0];$('foodName1').textContent=foods[H.food][1];$('foodName2').textContent=foods[P.food][1];
+ const me=role==='princess'?P:H;
+ const attackCover=document.querySelector('#ctl2 .attack .cover');
+ const skillCover=document.querySelector('#ctl2 .skill .cover');
+ const dashCover=document.querySelector('#ctl2 .dash .cover');
+ if(attackCover)attackCover.style.height=clamp((me.atkCd||0)/.32*100,0,100)+'%';
+ if(skillCover)skillCover.style.height=clamp((me.skillCd||0)/2.8*100,0,100)+'%';
+ if(dashCover)dashCover.style.height=(me.stamina<22?clamp((22-me.stamina)/22*100,0,100):0)+'%';
  {
    const bossPct=Math.max(0,s.boss.hp/s.boss.max*100);
    $('bossFill').style.width=bossPct+'%';$('bossHpText').textContent=Math.ceil(bossPct)+'%';updateBossUiPhase(s.boss.phase);
@@ -5108,8 +5303,21 @@ function playEvent(e,p){
  if(e==='actionAnim'){
    if(!(p.role===role&&combatAnim[p.role]?.type))triggerCombatAnim(p.role,p.a,p.startAt);
  }
+ if(e==='swordSlash'){
+   const predicted=p.role===role&&predictedSwordAids.has(p.aid);
+   if(predicted){
+     predictedSwordAids.delete(p.aid);
+     const localAnim=combatAnim[p.role];if(localAnim){localAnim.combo=p.combo||0;localAnim.hit=!!p.hit}
+   }else triggerCombatAnim(p.role,'attack',p.startAt,{combo:p.combo||0,hit:!!p.hit});
+   if((p.combo||0)===2&&p.hit)appendBattleChat(p.role,p.role==='hero'?'Tinh quang—đoạn nguyệt!':'Hoa tinh—khai kiếm!');
+ }
  if(e==='combatHit'){
    if(p.target==='boss'){
+     if(p.kind==='sword'){
+       const swordColor=p.owner==='hero'?'#7bddff':'#ff91d7';
+       playImpactScreenFx('slash',swordColor,310);
+       if(p.owner===role)flash(swordColor,mobileDevice?.20:.13,40);
+     }
      const heavy=(p.dmg||0)>=18;triggerBossArmamentHit(heavy?'heavy':'light',p.dmg||0);
      pulseBossSocketFx(heavy?0xffd895:0xd5c0ff,clamp((p.dmg||8)/14,.65,1.35));
      if(heavy){

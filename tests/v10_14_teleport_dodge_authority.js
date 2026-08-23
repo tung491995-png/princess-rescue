@@ -40,7 +40,7 @@ function run(){
     if(m.type==='start'){
       startState=m.state;
       const wait=Math.max(0,startState.introUntil-Date.now()+80);
-      setTimeout(()=>hero.send(JSON.stringify({type:'action',a:'attack',st:Date.now(),aid:'teleport-dodge-test'})),wait);
+      setTimeout(()=>hero.send(JSON.stringify({type:'action',a:'skill',st:Date.now(),aid:'teleport-dodge-test'})),wait);
     }
     if(m.type==='event'&&m.e==='bossEvade'){
       const p=m.p,distance=Math.hypot(p.toX-p.fromX,p.toZ-p.fromZ);
