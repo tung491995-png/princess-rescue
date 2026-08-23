@@ -1,0 +1,39 @@
+PRINCESS RESCUE V10.14 — BOSS AI ANIMATION INTEGRATION
+
+APPROVED CLIP MAP
+- 18: lobby/main Idle
+- 08: Combat Idle
+- 03: server-authoritative side dodge
+- 12: server-authoritative teleport dodge and Teleport → Spin Kick skill
+- 13: Quick Cast
+- 14: Heavy Cast / AOE
+- 09: Hit
+- 15: Death
+- 17: Ultimate
+
+CROPPED PRESENTATION RANGES
+- 05 / 6.65–8.15s: intro rise into queen stance
+- 06 / 0.15–2.45s: intro Royal Idle
+- 11 / 0.08–0.78s: phase-2 charge pose
+- 16 / 9.60–12.10s: phase-3 Eternal Night pose
+- Full source clips remain available in Animation Lab; only these ranges run in gameplay.
+
+BOSS DODGE AI
+- Incoming player projectiles are evaluated by closest-approach prediction over 0.72s.
+- Phase-scaled dodge chance and cooldown prevent constant unfair evasion.
+- Clip 03 uses a 2.25m smooth server movement with a short, explicit dodge window.
+- Clip 12 is reserved for phase 2/3 crowded fire or deterministic cadence, moving 3.15m.
+- Server owns from/to position, arena clamp, invulnerability window and hitbox.
+- Animation root motion never moves the authoritative hitbox.
+
+TELEGRAPH / VFX
+- Every cast sends telegraphMs, warningAt, releaseAt, impactAt, endAt and VFX identity.
+- Client warning ring/socket pulse is synchronized to warningAt.
+- Existing impact, moon, clock, teleport and ultimate VFX remain synchronized to impactAt.
+
+PRESERVED FROM V10.13.2
+- 19 clips baked to zero world-XZ drift on Root/Hip/Pelvis.
+- Exact-Hip runtime anchor.
+- Full-body camera envelope in intro, combat, lab and death.
+- Same-origin Three.js/GLTFLoader and mobile 2K → 1K fallback.
+- Boss 2,200 HP, 5-second intro and two-player co-op protocol.

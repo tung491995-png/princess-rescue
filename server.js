@@ -35,6 +35,9 @@ const MAX_REWIND_MS = 220;
 const MAX_PROJECTILE_FAST_FORWARD_MS = 150;
 const HIT_CONFIRM_DELAY_MS = 90;
 const DASH_IFRAME_MS = 340;
+const TEST_FAST_BOSS = process.env.BOSS_TEST_FAST === '1';
+const TEST_BOSS_SKILL = /^\d+$/.test(process.env.BOSS_TEST_SKILL || '') ? Number(process.env.BOSS_TEST_SKILL) : null;
+const TEST_BOSS_DODGE = /^(3|12)$/.test(process.env.BOSS_TEST_DODGE || '') ? process.env.BOSS_TEST_DODGE : null;
 
 const FOODS = [
   {name:'Nem chua rán',el:'crispy',dmg:16},
@@ -87,7 +90,10 @@ function freshState(){
     started:false,paused:false,pauseRole:null,introUntil:0,
     trust:0,tick:0,
     players:{hero:player('hero'),princess:player('princess')},
-    boss:{x:0,z:-4.7,hp:2200,max:2200,phase:1,skillIndex:-1,skillT:1.8,lastEl:null,lastElT:0},
+    boss:{
+      x:0,z:-4.7,hp:2200,max:2200,phase:1,skillIndex:-1,skillT:TEST_FAST_BOSS?.12:1.8,lastEl:null,lastElT:0,
+      evade:null,evadeInvUntil:0,dodgeReadyAt:0,dodgeSeq:0,phaseLockUntil:0
+    },
     projectiles:[],pickups:[],darkPool:null,summons:[],
     activeCast:null,
     nextProj:1,nextPickup:1,nextHit:1,nextTask:1,nextCast:1,nextSummon:1,
@@ -137,6 +143,11 @@ function deserializeRoom(raw){
   room.state.nextSummon ||= 1;
   room.state.activeCast ||= null;
   room.state.summons ||= [];
+  room.state.boss.evade ||= null;
+  room.state.boss.evadeInvUntil ||= 0;
+  room.state.boss.dodgeReadyAt ||= 0;
+  room.state.boss.dodgeSeq ||= 0;
+  room.state.boss.phaseLockUntil ||= 0;
   room.state.players.hero.lastDashTs ||= 0;
   room.state.players.princess.lastDashTs ||= 0;
 
@@ -161,14 +172,14 @@ function castDialogue(room,i,phase){
     0:['Bóng tối luôn tìm được kẻ đang mệt nhất.'],
     1:['Giấc mơ đẹp nhất… thường là thứ dễ vỡ nhất.'],
     2:['02:59… 03:00. Giờ đẹp để nghĩ linh tinh.'],
-    3:['Đừng nghĩ đứng xa là an toàn.'],
+    3:['Khoảng cách chỉ là một ảo ảnh.'],
     4:['Đủ rồi. Đêm nay… sẽ không kết thúc.']
   };
   const playerLines={
     0:['Ra khỏi vòng đi, lát muốn đứng gần anh thì tính sau.','Né đi! Đừng để đêm ôm trọn mình.'],
     1:['Trên đầu! Em né trước đi.','Mảnh vỡ trên cao!'],
     2:['Khung giờ mất ngủ quốc dân tới rồi.','03:00 rồi… tập trung nào.'],
-    3:['Đừng đứng yên, boss sắp áp sát.','Ra khỏi đường chém!'],
+    3:['Boss dịch chuyển! Ra khỏi vòng đá!','Né khỏi vòng tím, boss sắp xoay đá!'],
     4:['Qua đợt này rồi dồn damage!','Đứng gần anh, qua ulti này đã.']
   };
   dialogue(room,'boss',bossLines[i]?.[0]||'Ngủ đi… trong đêm của ta.',2400);
@@ -365,6 +376,91 @@ function segmentCircleHit(x1,z1,x2,z2,cx,cz,r){
   return d2(px,pz,cx,cz)<=r*r;
 }
 
+function clampBossToArena(x,z,radius=7.05){
+  const r=Math.hypot(x,z);
+  if(r<=radius)return{x,z};
+  return{x:x*radius/r,z:z*radius/r};
+}
+function updateBossEvade(room,now){
+  const b=room.state.boss,e=b.evade;
+  if(!e)return false;
+  if(e.kind==='teleport'){
+    b.x=e.toX;b.z=e.toZ;
+  }else{
+    const t=Math.max(0,Math.min(1,(now-e.startAt)/Math.max(1,e.endAt-e.startAt)));
+    const smooth=t*t*(3-2*t);
+    b.x=e.fromX+(e.toX-e.fromX)*smooth;
+    b.z=e.fromZ+(e.toZ-e.fromZ)*smooth;
+  }
+  if(now>=e.endAt){
+    b.x=e.toX;b.z=e.toZ;b.evade=null;
+    markDirty(room);
+    return false;
+  }
+  return true;
+}
+function incomingBossThreats(room,horizon=.72){
+  const b=room.state.boss,threats=[];
+  for(const pr of room.state.projectiles){
+    if(pr.enemy||pr.t<=0)continue;
+    const vv=pr.vx*pr.vx+pr.vz*pr.vz;
+    if(vv<.01)continue;
+    const rx=b.x-pr.x,rz=b.z-pr.z;
+    const closestT=Math.max(0,Math.min(horizon,(rx*pr.vx+rz*pr.vz)/vv));
+    const cx=pr.x+pr.vx*closestT,cz=pr.z+pr.vz*closestT;
+    const miss=Math.hypot(cx-b.x,cz-b.z);
+    if(closestT>.035&&miss<1.92)threats.push({pr,closestT,miss});
+  }
+  threats.sort((a,b)=>a.closestT-b.closestT||a.miss-b.miss);
+  return threats;
+}
+function bossEvadeDestination(room,threat,distance){
+  const b=room.state.boss,pr=threat.pr,l=Math.hypot(pr.vx,pr.vz)||1;
+  const px=-pr.vz/l,pz=pr.vx/l;
+  const candidates=[
+    clampBossToArena(b.x+px*distance,b.z+pz*distance),
+    clampBossToArena(b.x-px*distance,b.z-pz*distance)
+  ];
+  const score=point=>{
+    const edge=7.25-Math.hypot(point.x,point.z);
+    const playerGap=Math.min(...['hero','princess'].map(role=>{
+      const p=room.state.players[role];return Math.hypot(point.x-p.x,point.z-p.z);
+    }));
+    return edge*1.8+Math.min(4,playerGap)*.32;
+  };
+  return score(candidates[0])>=score(candidates[1])?candidates[0]:candidates[1];
+}
+function tryBossEvade(room,now){
+  const s=room.state,b=s.boss;
+  if(b.hp<=0||b.evade||s.activeCast||now<(b.phaseLockUntil||0)||now<(b.dodgeReadyAt||0))return false;
+  const threats=incomingBossThreats(room);
+  if(!threats.length)return false;
+  const chance=b.phase===1?.24:b.phase===2?.38:.54;
+  if(!TEST_BOSS_DODGE&&Math.random()>chance)return false;
+
+  b.dodgeSeq=(b.dodgeSeq||0)+1;
+  const crowded=threats.filter(t=>t.closestT<.42).length>=2;
+  const useTeleport=TEST_BOSS_DODGE==='12'||(!TEST_BOSS_DODGE&&b.phase>=2&&(crowded||b.dodgeSeq%(b.phase===3?3:4)===0));
+  const kind=useTeleport?'teleport':'strafe';
+  const duration=useTeleport?260:390;
+  const destination=bossEvadeDestination(room,threats[0],useTeleport?3.15:2.25);
+  const evade={
+    id:b.dodgeSeq,kind,clip:useTeleport?12:3,startAt:now,endAt:now+duration,
+    fromX:b.x,fromZ:b.z,toX:destination.x,toZ:destination.z
+  };
+  b.evade=evade;
+  b.evadeInvUntil=now+(useTeleport?300:260);
+  b.dodgeReadyAt=now+(b.phase===1?2550:b.phase===2?2050:1650);
+  b.skillT=Math.max(b.skillT,useTeleport?.62:.42);
+  if(useTeleport){b.x=destination.x;b.z=destination.z}
+  broadcast(room,{type:'event',e:'bossEvade',p:{...evade,threats:threats.length}});
+  markDirty(room);
+  return true;
+}
+function bossCanBeHit(b,now=Date.now()){
+  return now>=(b.evadeInvUntil||0);
+}
+
 function spawnPickup(room,food=null){
   const s=room.state,id=s.nextPickup++,a=Math.random()*Math.PI*2,r=2.2+Math.random()*5.0;
   s.pickups.push({id,food:food??Math.floor(Math.random()*FOODS.length),x:Math.cos(a)*r,z:Math.sin(a)*r});
@@ -401,7 +497,7 @@ function fastForwardPlayerProjectile(room,pr,ms){
   if(dt<=0)return;
   const x1=pr.x,z1=pr.z,x2=x1+pr.vx*dt,z2=z1+pr.vz*dt;
   const b=room.state.boss;
-  if(segmentCircleHit(x1,z1,x2,z2,b.x,b.z,1.55)){
+  if(bossCanBeHit(b)&&segmentCircleHit(x1,z1,x2,z2,b.x,b.z,1.55)){
     hitBoss(room,pr);
     pr.t=0;
   }else{
@@ -540,6 +636,28 @@ function runTask(room,task){
         s.projectiles.push({id:s.nextProj++,owner:null,enemy:true,kind:'slash',food:2,x:s.boss.x,z:s.boss.z,y:1.25,vx:Math.cos(a)*8.4,vz:Math.sin(a)*8.4,dmg:12+s.boss.phase,t:1.45});
       }
     }
+  }else if(task.type==='teleport_kick_reposition'){
+    let role=task.data.role||'hero',p=s.players[role];
+    if(!p||p.down){role=role==='hero'?'princess':'hero';p=s.players[role]}
+    if(p){
+      // Arrive behind the target. The server owns the new position so both phones
+      // see the same teleport and the visual boss never separates from its hitbox.
+      const distance=task.data.distance||1.62;
+      b.x=p.x-Math.sin(p.rot||0)*distance;
+      b.z=p.z-Math.cos(p.rot||0)*distance;
+      const arenaR=Math.hypot(b.x,b.z);
+      if(arenaR>7.35){b.x*=7.35/arenaR;b.z*=7.35/arenaR}
+      broadcast(room,{type:'event',e:'bossTeleportKick',p:{role,x:b.x,z:b.z,kickAt:task.data.kickAt,impactAt:task.data.impactAt}});
+    }
+  }else if(task.type==='spin_kick_hit'){
+    const radius=task.data.radius||2.2,dmg=task.data.dmg||16,hitRoles=[];
+    for(const role of ['hero','princess']){
+      const p=s.players[role];
+      if(!p.down&&d2(p.x,p.z,b.x,b.z)<=radius*radius){
+        queueEnemyHit(room,role,dmg,Date.now());hitRoles.push(role);
+      }
+    }
+    broadcast(room,{type:'event',e:'spinKickImpact',p:{x:b.x,z:b.z,radius,dmg,hitRoles}});
   }else if(task.type==='summon_dreams'){
     const count=Math.min(3,task.data.count||2),spawned=[];
     for(let i=0;i<count;i++){
@@ -582,14 +700,27 @@ function processTasks(room,now){
 }
 function bossSkill(room){
   const s=room.state,b=s.boss;
-  const allowed=b.phase===1?[0,1,3]:b.phase===2?[0,1,2,3]:[0,1,2,3,4];
+  const phaseAllowed=b.phase===1?[0,1,3]:b.phase===2?[0,1,2,3]:[0,1,2,3,4];
+  const allowed=Number.isInteger(TEST_BOSS_SKILL)&&TEST_BOSS_SKILL>=0&&TEST_BOSS_SKILL<=4?[TEST_BOSS_SKILL]:phaseAllowed;
   const nextPos=(b.skillIndex+1)%allowed.length;
   const i=allowed[nextPos];
   b.skillIndex=nextPos;
   const now=Date.now();
-  const telegraphMs={0:800,1:1050,2:1200,3:620,4:1500}[i]||800;
-  const endMs={0:2600,1:3100,2:4400,3:2300,4:7200}[i]||2600;
-  const cast={id:s.nextCast++,i,startAt:now,impactAt:now+telegraphMs,endAt:now+endMs,phase:b.phase,targetRole:i===3?(b.phase%2?'hero':'princess'):null};
+  const profile={
+    0:{telegraphMs:880,endMs:2550,vfx:'night_pool'},
+    1:{telegraphMs:1250,endMs:3500,vfx:'moon_shatter'},
+    2:{telegraphMs:1450,endMs:4650,vfx:'three_am'},
+    3:{telegraphMs:1280,endMs:2350,vfx:'teleport_kick'},
+    4:{telegraphMs:1800,endMs:7400,vfx:'eternal_night'}
+  }[i]||{telegraphMs:880,endMs:2550,vfx:'night_pool'};
+  const {telegraphMs,endMs}=profile;
+  const targetRole=i===3?(b.phase%2?'hero':'princess'):null;
+  const cast={
+    id:s.nextCast++,i,startAt:now,telegraphMs,warningAt:now+Math.round(telegraphMs*.56),
+    impactAt:now+telegraphMs,releaseAt:now+telegraphMs,endAt:now+endMs,
+    phase:b.phase,targetRole,vfx:profile.vfx
+  };
+  if(i===3){cast.teleportAt=now+330;cast.kickAt=now+410;cast.radius=2.2}
   s.activeCast=cast;
   broadcast(room,{type:'event',e:'bossCast',p:cast});
   castDialogue(room,i,b.phase);
@@ -603,8 +734,10 @@ function bossSkill(room){
     scheduleTask(room,telegraphMs,'three_am_edges');
     scheduleTask(room,telegraphMs+820,'boss_radial',{n:8,speed:5.7,dmg:9+b.phase,kind:'thought',angleOffset:.2,y:1.4});
   }else if(i===3){
-    // Mộng Du Truy Kích: targeted moon slash represented by a short fan of thought/shard projectiles.
-    scheduleTask(room,telegraphMs,'dream_slash',{role:b.phase%2?'hero':'princess'});
+    // Ảo Ảnh Luân Vũ: Teleport 12 places the boss behind the target, then
+    // Spin Kick 07 releases a fair, server-authoritative circular melee hit.
+    scheduleTask(room,cast.teleportAt-now,'teleport_kick_reposition',{role:targetRole,distance:1.62,kickAt:cast.kickAt,impactAt:cast.impactAt});
+    scheduleTask(room,cast.impactAt-now,'spin_kick_hit',{radius:cast.radius,dmg:13+b.phase*3});
   }else if(i===4){
     // Vĩnh Dạ: three broad night waves + shard pressure + dream summons.
     for(let w=0;w<3;w++){
@@ -696,9 +829,10 @@ function tick(room,dt){
   }
 
   b.lastElT=Math.max(0,b.lastElT-dt);
+  updateBossEvade(room,now);
   const ratio=b.hp/b.max,next=ratio>.66?1:ratio>.33?2:3;
   if(next!==b.phase){
-    b.phase=next;broadcast(room,{type:'event',e:'phase',p:{phase:next}});
+    b.phase=next;b.phaseLockUntil=now+(next===3?2500:2200);broadcast(room,{type:'event',e:'phase',p:{phase:next,until:b.phaseLockUntil}});
     if(next===2){
       dialogue(room,'boss','Các ngươi vẫn chưa chịu mệt sao?',2200);
       scheduleTask(room,340,'dialogue',{speaker:'hero',text:'Khung giờ 3 giờ sáng tới rồi. Tập trung!',duration:1900});
@@ -707,8 +841,9 @@ function tick(room,dt){
       scheduleTask(room,380,'dialogue',{speaker:'princess',text:'Boss nói nhiều ghê. Đánh thôi!',duration:1800});
     }
   }
+  tryBossEvade(room,now);
   b.skillT-=dt;
-  if(b.skillT<=0&&!s.activeCast){
+  if(b.skillT<=0&&!s.activeCast&&!b.evade&&now>=(b.phaseLockUntil||0)){
     b.skillT=b.phase===1?4.0:b.phase===2?3.35:3.05;
     bossSkill(room);
   }
@@ -766,7 +901,7 @@ function tick(room,dt){
           s.trust=Math.min(100,s.trust+4);
         }
         pr.t=0;
-      }else if(segmentCircleHit(x1,z1,pr.x,pr.z,b.x,b.z,1.55)){
+      }else if(bossCanBeHit(b,now)&&segmentCircleHit(x1,z1,pr.x,pr.z,b.x,b.z,1.55)){
         hitBoss(room,pr);pr.t=0;
       }
     }

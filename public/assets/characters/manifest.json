@@ -1,90 +1,78 @@
 {
-  "version": "9.4",
+  "version": "10.14.0",
   "files": {
     "hero": "hero.glb",
     "princess": "princess.glb",
-    "boss": "ma_vuong_mat_ngu.glb"
+    "bossDesktop4K": "ma_vuong_mat_ngu_root_locked.glb",
+    "bossMobile2K": "ma_vuong_mat_ngu_mobile_2k.glb",
+    "bossMobile1K": "ma_vuong_mat_ngu_mobile_1k.glb"
   },
-  "playerAnimations": [
-    "Idle",
-    "Run",
-    "Dash",
-    "Attack",
-    "Skill",
-    "Hit",
-    "Down",
-    "Revive",
-    "Royal"
-  ],
-  "bossAnimations": [
-    "Idle",
-    "Move",
-    "Cast_AOE",
-    "Cast_Shatter",
-    "Cast_3AM",
-    "Teleport",
-    "Summon",
-    "Ultimate",
-    "Hit",
-    "PhaseChange",
-    "Death"
-  ],
-  "socketHints": {
-    "weapon": [
-      "RightHand",
-      "Hand_R",
-      "mixamorigRightHand"
-    ],
-    "vfx": [
-      "UpperChest",
-      "Chest",
-      "Spine2"
-    ]
-  },
-  "fallback": "Missing/invalid GLB never blocks gameplay; V9 procedural visual stays visible.",
   "bundled": {
     "boss": true,
     "hero": false,
-    "princess": false
+    "princess": false,
+    "threeR128": true,
+    "gltfLoaderR128": true
   },
   "bossAssetSpec": {
-    "joints": 20,
-    "animationCount": 11,
-    "animations": [
-      "Idle",
-      "Move",
-      "Cast_AOE",
-      "Cast_Shatter",
-      "Cast_3AM",
-      "Teleport",
-      "Summon",
-      "Ultimate",
-      "Hit",
-      "PhaseChange",
-      "Death"
+    "format": "glTF Binary 2.0",
+    "nodes": 46,
+    "meshes": 1,
+    "skins": 1,
+    "joints": 44,
+    "animationCount": 19,
+    "animationNames": [
+      "NlaTrack",
+      "NlaTrack.001",
+      "NlaTrack.002",
+      "NlaTrack.003",
+      "NlaTrack.004",
+      "NlaTrack.005",
+      "NlaTrack.006",
+      "NlaTrack.007",
+      "NlaTrack.008",
+      "NlaTrack.009",
+      "NlaTrack.010",
+      "NlaTrack.011",
+      "NlaTrack.012",
+      "NlaTrack.013",
+      "NlaTrack.014",
+      "NlaTrack.015",
+      "NlaTrack.016",
+      "NlaTrack.017",
+      "NlaTrack.018"
     ],
-    "materialCount": 17,
-    "materials": [
-      "Skin",
-      "HairSilverLavender",
-      "DressNight",
-      "SilverTrim",
-      "MoonGlow",
-      "EyeDark",
-      "LipRose",
-      "CrownGold",
-      "FacePorcelain",
-      "IrisAmethyst",
-      "EyeHighlight",
-      "HairMoonHighlight",
-      "DressVelvet",
-      "DressPlum",
-      "PearlSilver",
-      "AmethystJewel",
-      "StarSilver"
-    ],
-    "meshPrimitives": 90,
-    "approxVertices": 12966,
-    "sizeKB": 925.7
-  }
+    "textureTiers": {
+      "desktop": "4096x4096",
+      "mobilePrimary": "2048x2048",
+      "mobileFallback": "1024x1024"
+    }
+  },
+  "mobileLoadOrder": [
+    "ma_vuong_mat_ngu_mobile_2k.glb",
+    "ma_vuong_mat_ngu_mobile_1k.glb",
+    "ma_vuong_mat_ngu_root_locked.glb"
+  ],
+  "rootMotion": {
+    "space": "world",
+    "lockedAxes": ["X", "Z"],
+    "lockedNodes": ["Root", "Hip", "Pelvis"],
+    "maxSourceDriftRemoved": 3.581173127478787,
+    "maxRemainingDrift": 0.000000024
+  },
+  "camera": "Full-body envelope guard is active in intro, combat, Animation Lab and death cinematic.",
+  "bossAI": {
+    "idle": 18,
+    "combatIdle": 8,
+    "strafeDodge": 3,
+    "teleportDodge": 12,
+    "quickCast": 13,
+    "aoe": 14,
+    "hit": 9,
+    "death": 15,
+    "ultimate": 17,
+    "presentationSegments": [5, 6, 11, 16],
+    "authority": "Server owns dodge decisions, position, invulnerability window and hitbox. Clips are visual-only."
+  },
+  "fallback": "The procedural boss is retained only while loading or after all same-origin GLB tiers fail."
 }

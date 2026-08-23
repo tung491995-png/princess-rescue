@@ -1,6 +1,6 @@
 {
-  "version": "10.12.1",
-  "title": "Boss Animation Lab — Root + Hips Lock Hotfix",
+  "version": "10.14.0",
+  "title": "Boss Animation Lab — Approved AI Animation Map",
   "bossAsset": "/assets/characters/ma_vuong_mat_ngu.glb",
   "bossAssetProfile": {
     "animations": 19,
@@ -18,7 +18,26 @@
     "timeline scrub",
     "front, right, back and left camera views"
   ],
-  "gameplayChanges": false,
+  "gameplayChanges": true,
+  "teleportSpinKick": {
+    "teleportClip": 12,
+    "kickClip": 7,
+    "telegraphMs": 1280,
+    "radius": 2.2,
+    "damageByPhase": [16, 19, 22]
+  },
+  "bossAIMap": {
+    "idle": 18,
+    "combatIdle": 8,
+    "strafeDodge": 3,
+    "teleport": 12,
+    "quickCast": 13,
+    "aoe": 14,
+    "hit": 9,
+    "death": 15,
+    "ultimate": 17,
+    "croppedPresentationOnly": [5, 6, 11, 16]
+  },
   "preserved": [
     "two-player co-op protocol",
     "authoritative five-second intro lock",

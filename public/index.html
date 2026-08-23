@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.12.1 — Boss Animation Lab</title>
+<title>Princess Rescue V10.14 — Boss AI Animation Integration</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -537,7 +537,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.12.1 ANIMATION LAB</span></h1><p style="margin-top:7px">Boss Tripo mới · 19 animation · kiểm tra clip, tốc độ và root motion trực tiếp trên điện thoại.</p><div class="logoMoon"></div><div class="badges"><span class="badge">19 boss clips</span><span class="badge">Root + Hips lock XZ</span><span class="badge">Touch controls</span><span class="badge">Stable PBR</span><span class="badge">Co-op preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.14 BOSS AI</span></h1><p style="margin-top:7px">Boss Tripo dùng bộ animation đã chốt · né đạn server-authoritative · telegraph và VFX đồng bộ.</p><div class="logoMoon"></div><div class="badges"><span class="badge">03 Strafe Dodge</span><span class="badge">12 Teleport Evade</span><span class="badge">Telegraph công bằng</span><span class="badge">Full-body camera</span><span class="badge">Mobile 2K → 1K</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -546,7 +546,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.12.1</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.14 AI MAP</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -561,9 +561,8 @@ body.v107Low #bossPortraitWrap:before{display:none}
  <button id="animationLabView">GÓC NHÌN · FRONT</button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+<script src="/vendor/three-r128/three.min.js"></script>
+<script src="/vendor/three-r128/GLTFLoader.js"></script>
 <script>
 (()=>{
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rand=(a,b)=>a+Math.random()*(b-a),lerp=(a,b,t)=>a+(b-a)*t;
@@ -584,21 +583,35 @@ let localReady=false,gameInitialized=false;
 const RIG_ASSETS={
  hero:{url:'/assets/characters/hero.glb',targetHeight:2.30,rootBase:.90},
  princess:{url:'/assets/characters/princess.glb',targetHeight:2.32,rootBase:.90},
- boss:{url:'/assets/characters/ma_vuong_mat_ngu.glb',targetHeight:4.45,rootBase:1.12}
+ boss:{
+  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14',
+  mobileUrls:[
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.14',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.14',
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14'
+  ],
+  desktopUrls:[
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.14'
+  ],
+  targetHeight:4.45,rootBase:1.12
+ }
 };
 const RIG_ALIASES={
  idle:['idle','stand','breathing'],run:['run','walk','jog'],dash:['dash','dodge','evade','roll'],
  attack:['attack','atk','shoot','fire'],skill:['skill','cast','magic','ability'],hit:['hit','hurt','damage'],
  down:['down','knockdown','ko'],revive:['revive','getup','rise'],royal:['royal','ultimate','ult','burst'],
  boss_idle:['idle','bossidle','stand'],boss_move:['move','float','hover','walk'],
- boss_aoe:['cast_aoe','aoe','nightspread','cast01','skill01','cast'],
+ boss_combat_idle:['combatidle','battleidle'],boss_dodge:['strafe','evade','sidedodge'],
+ boss_quick_cast:['quickcast','castquick'],boss_aoe:['cast_aoe','aoe','nightspread','cast01','skill01','cast'],
  boss_shatter:['cast_shatter','shatter','dreambreak','cast02','skill02','cast'],
  boss_3am:['cast_3am','3am','clock','cast03','skill03','cast'],
- boss_teleport:['teleport','blink','dash','cast04','skill04'],
+ boss_teleport:['teleport','blink','dash','cast04','skill04'],boss_spin_kick:['spinkick','spin_kick','kick','roundhouse'],
  boss_summon:['summon','spawn','conjure'],boss_ultimate:['ultimate','ult','eternalnight','vinhda','burst'],
+ boss_intro_rise:['introrise'],boss_intro_royal:['introroyal'],boss_phase_charge:['phasecharge'],boss_phase_eternal:['phaseeternal'],
  boss_phase:['phase','phasechange','transform','enrage'],boss_hit:['hit','hurt'],boss_death:['death','die','defeat']
 };
-const rigRuntime={loader:null,draco:null,records:{hero:null,princess:null,boss:null},loading:false,status:{hero:'fallback',princess:'fallback',boss:'fallback'}};
+const rigRuntime={loader:null,records:{hero:null,princess:null,boss:null},loading:false,status:{hero:'fallback',princess:'fallback',boss:'fallback'}};
 
 // V10.12 — the Tripo GLB uses generic NlaTrack names, so the lab keeps a
 // stable index-based catalogue until every motion is visually approved.
@@ -609,8 +622,18 @@ const V1012_ANIMATION_LABELS=[
  'Death','Long Taunt / Phase 2','Ultimate Cast','Main Idle'
 ];
 const V1012_BOSS_ACTION_MAP={
- boss_idle:18,boss_move:1,boss_aoe:13,boss_shatter:14,boss_3am:11,
- boss_teleport:12,boss_summon:17,boss_ultimate:17,boss_phase:6,boss_hit:9,boss_death:15
+ boss_idle:18,boss_combat_idle:8,boss_move:1,boss_dodge:3,boss_quick_cast:13,boss_aoe:14,
+ boss_teleport:12,boss_spin_kick:7,boss_summon:17,boss_ultimate:17,boss_hit:9,boss_death:15,
+ boss_intro_rise:5,boss_intro_royal:6,boss_phase_charge:11,boss_phase_eternal:16
+};
+// Only the visually clean ranges are used from the four long source clips.
+// This avoids their dead time/extreme poses while preserving the full GLB for Animation Lab.
+const V1014_PRESENTATION_SEGMENTS={
+ introRise:{state:'boss_intro_rise',start:6.65,end:8.15,speed:.92},
+ introRoyal:{state:'boss_intro_royal',start:.15,end:2.45,speed:.94},
+ phase2Charge:{state:'boss_phase_charge',start:.08,end:.78,speed:.55},
+ phase2Royal:{state:'boss_intro_royal',start:.15,end:1.05,speed:.72},
+ phase3Eternal:{state:'boss_phase_eternal',start:9.60,end:12.10,speed:1.04}
 };
 const animationLab={active:false,index:18,speed:1,loop:true,rootLock:true,paused:false,view:0,action:null};
 const animationLabViews=['FRONT','RIGHT','BACK','LEFT'];
@@ -641,7 +664,7 @@ let camTrauma=0,camTraumaDecay=3.0,camShakePhase=0;
 let bossSocketFx=null,bossSocketFxStart=0,bossSocketFxUntil=0,bossSocketFxBaseColor=0xc7b3ff;
 let deathCinematicStart=0,deathCinematicUntil=0,deathCinematicStats=null,deathCinematicResultShown=false;
 const combatAnim={hero:{type:null,start:0,dur:0},princess:{type:null,start:0,dur:0}};
-let bossCastVisual={cast:null,impactShown:false};
+let bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};
 let bossIntroV9Until=0,bossIntroV9Played=false,bossIntroV9Start=0,bossIntroV9Duration=4250,bossIntroWaits=0;
 
 // V7.5: mobile-safe scene transition.
@@ -672,6 +695,8 @@ const V108_STABLE_PBR=true;
 const V1012_EXTERNAL_BOSS=true;
 let v108PrewarmStarted=false,v108BossReady=false,v108IntroRestoreScale=0;
 const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
+// V10.14 keeps the V10.13.2 full-body camera guard for the 4.45 m Tripo boss.
+const v10132CameraLook=new THREE.Vector3(),v10132CameraOffset=new THREE.Vector3(),v10132FramePoint=new THREE.Vector3();
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
@@ -1760,13 +1785,6 @@ function initRigLoader(){
  if(rigRuntime.loader)return rigRuntime.loader;
  if(!window.THREE?.GLTFLoader){console.warn('[rig] GLTFLoader unavailable; using fallback');return null}
  const loader=new THREE.GLTFLoader();
- if(window.THREE.DRACOLoader){
-   try{
-     const draco=new THREE.DRACOLoader();
-     draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
-     loader.setDRACOLoader(draco);rigRuntime.draco=draco;
-   }catch(e){console.warn('[rig] Draco',e)}
- }
  rigRuntime.loader=loader;return loader;
 }
 function polishRig(model,roleName=''){
@@ -1861,6 +1879,15 @@ function findRigNode(model,names){
  });
  return score>0?best:null;
 }
+function findExactRigNode(model,names){
+ const wants=names.map(rigNorm);
+ for(const wanted of wants){
+   let found=null;
+   model.traverse(o=>{if(!found&&rigNorm(o.name)===wanted)found=o});
+   if(found)return found;
+ }
+ return null;
+}
 function makeRigSockets(rec){
  const hand=findRigNode(rec.model,['RightHand','Hand_R','mixamorigRightHand','R_Hand','wrist_r'])
    ||findRigNode(rec.model,['LeftHand','Hand_L','mixamorigLeftHand','L_Hand','wrist_l'])||rec.model;
@@ -1906,48 +1933,109 @@ function buildRigActions(rec,clips){
      if(!rec.actions[state]&&rec.clipActions[index])rec.actions[state]=rec.clipActions[index];
    }
  }
- rec.rootMotionBone=findRigNode(rec.model,['Root']);
- if(rec.rootMotionBone)rec.rootMotionBind={position:rec.rootMotionBone.position.clone(),quaternion:rec.rootMotionBone.quaternion.clone(),scale:rec.rootMotionBone.scale.clone()};
- rec.hipMotionBone=findRigNode(rec.model,['Hips','Hip','Pelvis']);
- if(rec.hipMotionBone&&rec.hipMotionBone!==rec.rootMotionBone)rec.hipMotionBind={position:rec.hipMotionBone.position.clone(),quaternion:rec.hipMotionBone.quaternion.clone(),scale:rec.hipMotionBone.scale.clone()};
+ rec.rootMotionBone=findExactRigNode(rec.model,['Root']);
+ rec.hipMotionBone=findExactRigNode(rec.model,['Hip','Hips']);
+ rec.pelvisMotionBone=findExactRigNode(rec.model,['Pelvis']);
+ rec.motionLockBones=[];
+ for(const bone of [rec.rootMotionBone,rec.hipMotionBone,rec.pelvisMotionBone]){
+   if(!bone||rec.motionLockBones.some(entry=>entry.bone===bone))continue;
+   rec.motionLockBones.push({bone,bind:{position:bone.position.clone(),quaternion:bone.quaternion.clone(),scale:bone.scale.clone()}});
+ }
+ rec.rootMotionBind=rec.motionLockBones.find(entry=>entry.bone===rec.rootMotionBone)?.bind||null;
+ rec.hipMotionBind=rec.motionLockBones.find(entry=>entry.bone===rec.hipMotionBone)?.bind||null;
+ if(rec.role==='boss'&&rec.hipMotionBone){
+   rec.modelBindPosition=rec.model.position.clone();
+   rec.root.updateMatrixWorld(true);rec.model.updateMatrixWorld(true);
+   rec.motionAnchorBindRoot=rec.root.worldToLocal(rec.hipMotionBone.getWorldPosition(new THREE.Vector3()));
+   rec.motionLockCurrent=new THREE.Vector3();rec.motionLockTarget=new THREE.Vector3();
+   rec.motionLockCurrentLocal=new THREE.Vector3();rec.motionLockTargetLocal=new THREE.Vector3();
+   rec.motionLockResidual=0;
+ }
 }
 function setFallback(root,visible,model=null){
  for(const child of root?.children||[]){if(child!==model)child.visible=visible}
 }
-function playRigAnimation(roleName,state,{fade=.14,once=false,speed=1}={}){
+function bossRestAnimationState(){
+ return running&&!bossIntroActive()?'boss_combat_idle':'boss_idle';
+}
+function playRigAnimation(roleName,state,{fade=.14,once=false,speed=1,segmentStart=null,segmentEnd=null,returnState=null}={}){
  const rec=rigRuntime.records[roleName];if(!rec?.ready||!rec.mixer)return false;
  let action=rec.actions[state];
  if(!action)action=rec.actions[roleName==='boss'?'boss_idle':'idle'];
  if(!action)return false;
- if(rec.active===action&&!once)return true;
+ const hasSegment=Number.isFinite(segmentStart)&&Number.isFinite(segmentEnd)&&segmentEnd>segmentStart;
+ if(rec.active===action&&!once&&!hasSegment)return true;
  const prev=rec.active;
+ if(rec.finishedHandler){rec.mixer.removeEventListener('finished',rec.finishedHandler);rec.finishedHandler=null}
+ rec.activeSegment=null;
  action.enabled=true;action.paused=false;action.setEffectiveTimeScale(speed);action.setEffectiveWeight(1);
- action.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat,once?1:Infinity);action.clampWhenFinished=once;
- action.reset().play();if(prev&&prev!==action)prev.crossFadeTo(action,fade,false);
+ action.setLoop((once||hasSegment)?THREE.LoopOnce:THREE.LoopRepeat,(once||hasSegment)?1:Infinity);action.clampWhenFinished=once||hasSegment;
+ action.reset();
+ if(hasSegment){
+   const duration=action.getClip()?.duration||segmentEnd;
+   action.time=clamp(segmentStart,0,Math.max(0,duration-.001));
+   rec.activeSegment={action,state,end:Math.min(segmentEnd,duration),returnState:returnState||(roleName==='boss'?bossRestAnimationState():'idle'),fade};
+ }
+ action.play();if(prev&&prev!==action)prev.crossFadeTo(action,fade,false);
  rec.active=action;rec.activeState=state;
- if(once){
+ if(once&&!hasSegment){
    const done=e=>{
      if(e.action!==action)return;
      rec.mixer.removeEventListener('finished',done);
+     rec.finishedHandler=null;
      if(rec.active!==action)return;
      // V10.6: a boss cast may finish its source clip before the server recovery window.
      // Keep the final pose clamped instead of snapping back to idle mid-cast.
-     if(roleName==='boss'&&/^boss_(aoe|shatter|3am|teleport|ultimate)$/.test(state)&&bossCastVisual.cast&&serverNow()<bossCastVisual.cast.endAt){
+     if(roleName==='boss'&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test(state)&&bossCastVisual.cast&&serverNow()<bossCastVisual.cast.endAt){
        action.paused=true;return;
      }
-     playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:roleName==='boss'?.24:.18});
+     playRigAnimation(roleName,roleName==='boss'?bossRestAnimationState():'idle',{fade:roleName==='boss'?.24:.18});
    };
+   rec.finishedHandler=done;
    rec.mixer.addEventListener('finished',done);
  }
  return true;
 }
+function playBossPresentationSegment(name,overrides={}){
+ const segment=V1014_PRESENTATION_SEGMENTS[name];if(!segment)return false;
+ return playRigAnimation('boss',segment.state,{
+   fade:overrides.fade??.10,once:true,speed:overrides.speed??segment.speed,
+   segmentStart:segment.start,segmentEnd:segment.end,returnState:overrides.returnState||bossRestAnimationState()
+ });
+}
 function applyBossRootLock(rec,enabled=true){
  if(!enabled||!rec)return;
- for(const [bone,bind] of [[rec.rootMotionBone,rec.rootMotionBind],[rec.hipMotionBone,rec.hipMotionBind]]){
-   if(!bone||!bind)continue;
-   bone.position.x=bind.position.x;
-   bone.position.z=bind.position.z;
-   bone.updateMatrix();
+ // Root/Hip/Pelvis do not share the same local axes in this Tripo rig.
+ // The asset is baked in world XZ, and this second runtime layer anchors the
+ // exact Hip position to the authoritative outer boss group every frame.
+ for(const entry of rec.motionLockBones||[]){
+   const {bone,bind}=entry;if(!bone||!bind)continue;
+   if(bone===rec.rootMotionBone){bone.position.x=bind.position.x;bone.position.z=bind.position.z;bone.updateMatrix()}
+ }
+ if(!rec.model||!rec.root||!rec.hipMotionBone||!rec.motionAnchorBindRoot||!rec.modelBindPosition)return;
+ rec.model.position.x=rec.modelBindPosition.x;rec.model.position.z=rec.modelBindPosition.z;
+ rec.root.updateMatrixWorld(true);rec.model.updateMatrixWorld(true);
+ rec.hipMotionBone.getWorldPosition(rec.motionLockCurrent);
+ rec.motionLockTarget.copy(rec.motionAnchorBindRoot);rec.root.localToWorld(rec.motionLockTarget);
+ // Keep authored vertical lift/fall. Only world X/Z is corrected.
+ rec.motionLockTarget.y=rec.motionLockCurrent.y;
+ rec.motionLockCurrentLocal.copy(rec.motionLockCurrent);rec.root.worldToLocal(rec.motionLockCurrentLocal);
+ rec.motionLockTargetLocal.copy(rec.motionLockTarget);rec.root.worldToLocal(rec.motionLockTargetLocal);
+ rec.model.position.x+=rec.motionLockTargetLocal.x-rec.motionLockCurrentLocal.x;
+ rec.model.position.z+=rec.motionLockTargetLocal.z-rec.motionLockCurrentLocal.z;
+ rec.model.updateMatrixWorld(true);
+ rec.hipMotionBone.getWorldPosition(rec.motionLockCurrent);
+ rec.motionLockResidual=Math.hypot(rec.motionLockCurrent.x-rec.motionLockTarget.x,rec.motionLockCurrent.z-rec.motionLockTarget.z);
+ if(rec.motionLockResidual>.004){
+   // A second linear correction covers unusual parent scaling without allowing
+   // the visual model to separate from the server-owned hitbox.
+   rec.motionLockCurrentLocal.copy(rec.motionLockCurrent);rec.root.worldToLocal(rec.motionLockCurrentLocal);
+   rec.motionLockTargetLocal.copy(rec.motionLockTarget);rec.root.worldToLocal(rec.motionLockTargetLocal);
+   rec.model.position.x+=rec.motionLockTargetLocal.x-rec.motionLockCurrentLocal.x;
+   rec.model.position.z+=rec.motionLockTargetLocal.z-rec.motionLockCurrentLocal.z;
+   rec.model.updateMatrixWorld(true);
+   rec.hipMotionBone.getWorldPosition(rec.motionLockCurrent);
+   rec.motionLockResidual=Math.hypot(rec.motionLockCurrent.x-rec.motionLockTarget.x,rec.motionLockCurrent.z-rec.motionLockTarget.z);
  }
 }
 function populateAnimationLab(rec){
@@ -1973,7 +2061,7 @@ function updateAnimationLabUi(rec){
  $('animationLabTime').textContent=`${time.toFixed(2)} / ${clip.duration.toFixed(2)}s`;
  if(document.activeElement!==$('animationLabTimeline'))$('animationLabTimeline').value=String(Math.round(time/Math.max(.001,clip.duration)*1000));
  $('animationLabSpeedValue').textContent=`${animationLab.speed.toFixed(2)}×`;
- $('animationLabRootState').textContent=animationLab.rootLock?'XZ':'FREE';
+ $('animationLabRootState').textContent=animationLab.rootLock?'WORLD XZ':'BAKED';
  $('animationLabPlay').textContent=animationLab.paused?'▶ PLAY':'Ⅱ PAUSE';
  $('animationLabLoop').classList.toggle('active',animationLab.loop);
  $('animationLabRoot').classList.toggle('active',animationLab.rootLock);
@@ -2011,10 +2099,10 @@ function closeAnimationLab(){
  document.body.classList.remove('animationLabMode');
  const rec=rigRuntime.records.boss;
  if(animationLab.action)animationLab.action.stop();animationLab.action=null;
- for(const [bone,bind] of [[rec?.rootMotionBone,rec?.rootMotionBind],[rec?.hipMotionBone,rec?.hipMotionBind]]){
-   if(!bone||!bind)continue;
+ for(const {bone,bind} of rec?.motionLockBones||[]){
    bone.position.copy(bind.position);bone.quaternion.copy(bind.quaternion);bone.scale.copy(bind.scale);bone.updateMatrix();
  }
+ if(rec?.model&&rec.modelBindPosition){rec.model.position.x=rec.modelBindPosition.x;rec.model.position.z=rec.modelBindPosition.z;rec.model.updateMatrixWorld(true)}
  if(A)A.visible=true;if(B)B.visible=true;
  if(rec?.ready)playRigAnimation('boss','boss_idle',{fade:0,speed:.88});
  showScreen('home');
@@ -2035,9 +2123,9 @@ function updateAnimationLab(dt){
    else{rec.mixer.update(dt);applyBossRootLock(rec,animationLab.rootLock)}
    if(rec.secondary)updateBossV106Secondary(rec,dt,performance.now()*.001);
  }
- const view=animationLab.view,radius=7.6,y=3.15;
+ const view=animationLab.view,radius=mobileDevice?9.4:8.6,y=4.05;
  const positions=[[0,y,radius],[radius,y,0],[0,y,-radius],[-radius,y,0]];
- camera.position.set(...positions[view]);camera.lookAt(0,2.15,0);
+ camera.position.set(...positions[view]);v10132CameraLook.set(0,2.30,0);camera.lookAt(v10132CameraLook);frameBossFullBody(v10132CameraLook,.76,.82);
  updateAnimationLabUi(rec);
 }
 function attachObjectToRigSocket(roleName,obj,type='weapon'){
@@ -2081,7 +2169,12 @@ function ensureBossVisualSafety(now=performance.now()){
  if(!running||!gameInitialized||!boss||now-v1071BossCheckAt<850)return;
  v1071BossCheckAt=now;boss.visible=true;
  const rec=rigRuntime.records.boss;
- if(!rec?.ready||!rec.model){setBossProceduralFallback(true,'RIG_NOT_READY');return}
+ // While a mobile asset is still loading, keep the already-visible safe mesh
+ // without turning a recoverable load into a permanent fallback state.
+ if(!rec?.ready||!rec.model){
+   if(rigRuntime.status.boss==='loading'||rigRuntime.status.boss==='retrying')return;
+   setBossProceduralFallback(true,'RIG_NOT_READY');return;
+ }
  try{
    rec.model.updateMatrixWorld(true);
    const box=new THREE.Box3().setFromObject(rec.model),size=new THREE.Vector3();box.getSize(size);
@@ -2093,16 +2186,57 @@ function ensureBossVisualSafety(now=performance.now()){
  else if(!v1071SafeMode){rec.model.visible=true;setFallback(boss,false,rec.model);rigRuntime.status.boss='ready'}
 }
 
-function loadRigAsset(roleName){
+function loadGlbCandidate(loader,url,timeoutMs){
+ return new Promise((resolve,reject)=>{
+   const controller=typeof AbortController!=='undefined'?new AbortController():null;
+   let settled=false;
+   const finish=(fn,value)=>{if(settled)return;settled=true;clearTimeout(timer);fn(value)};
+   const timer=setTimeout(()=>{
+     try{controller?.abort()}catch{}
+     finish(reject,new Error('GLB_TIMEOUT'));
+   },timeoutMs);
+   fetch(url,{cache:'force-cache',signal:controller?.signal}).then(response=>{
+     if(!response.ok)throw new Error(`GLB_HTTP_${response.status}`);
+     return response.arrayBuffer();
+   }).then(buffer=>{
+     loader.parse(buffer,'/',gltf=>finish(resolve,gltf),error=>finish(reject,error||new Error('GLB_PARSE_FAILED')));
+   }).catch(error=>finish(reject,error));
+ });
+}
+
+function disposeRigAttempt(rec){
+ if(rec?.mixer)try{rec.mixer.stopAllAction()}catch{}
+ if(rec?.model){
+   rec.model.removeFromParent?.();
+   const geometries=new Set(),materials=new Set(),textures=new Set();
+   rec.model.traverse(o=>{
+     if(o.geometry)geometries.add(o.geometry);
+     const mats=Array.isArray(o.material)?o.material:[o.material];
+     mats.forEach(m=>{
+       if(!m)return;materials.add(m);
+       for(const value of Object.values(m))if(value?.isTexture)textures.add(value);
+     });
+   });
+   textures.forEach(t=>t.dispose?.());materials.forEach(m=>m.dispose?.());geometries.forEach(g=>g.dispose?.());
+ }
+ rec.model=null;rec.mixer=null;rec.actions={};rec.active=null;rec.ready=false;rec.clipNames=[];
+}
+
+async function loadRigAsset(roleName){
  const cfg=RIG_ASSETS[roleName],root=rigRoot(roleName),loader=initRigLoader();
- if(!cfg||!root||!loader)return Promise.resolve(false);
- const rec={role:roleName,root,model:null,mixer:null,actions:{},active:null,ready:false,weaponSocket:null,vfxSocket:null,clipNames:[]};
+ if(!cfg||!root||!loader)return false;
+ const rec={role:roleName,root,model:null,mixer:null,actions:{},active:null,ready:false,weaponSocket:null,vfxSocket:null,clipNames:[],loadedUrl:'',loadAttempt:0};
  rigRuntime.records[roleName]=rec;rigRuntime.status[roleName]='loading';root.userData.rigRecord=rec;
- return new Promise(resolve=>{
-   loader.load(cfg.url,gltf=>{
+ const urls=roleName==='boss'?(mobileDevice?cfg.mobileUrls:cfg.desktopUrls):[cfg.url];
+ const candidates=[...new Set((urls||[cfg.url]).filter(Boolean))];
+ for(let attempt=0;attempt<candidates.length;attempt++){
+   const url=candidates[attempt];rec.loadAttempt=attempt+1;
+   rigRuntime.status[roleName]=attempt?'retrying':'loading';
+   try{
+     const gltf=await loadGlbCandidate(loader,url,mobileDevice?15000:18000);
      try{
        const model=gltf.scene||gltf.scenes?.[0];if(!model)throw new Error('GLB has no scene');
-       rec.model=model;model.name=roleName+'_RiggedVisual';
+       rec.model=model;rec.loadedUrl=url;model.name=roleName+'_RiggedVisual';
        polishRig(model,roleName);normalizeRig(model,cfg);root.add(model);makeRigSockets(rec);buildRigActions(rec,gltf.animations||[]);
        rec.ready=true;rigRuntime.status[roleName]='ready';model.visible=roleName!=='boss';
        if(roleName==='boss')setFallback(root,true,model);
@@ -2110,13 +2244,20 @@ function loadRigAsset(roleName){
        if(roleName==='boss'&&bossSocketFx&&rec.vfxSocket){
          rec.vfxSocket.add(bossSocketFx);bossSocketFx.position.set(0,0,0);
        }
-       // The new Tripo model already contains its final hair, dress, crown and
-       // 4K material. Do not stack the legacy procedural mesh overlays on it.
+       // The Tripo model already contains its final hair, dress, crown and
+       // baked material. Do not stack the legacy procedural overlays on it.
        if(roleName==='boss'&&!V1012_EXTERNAL_BOSS)createBossV10Art(rec);
        if(roleName==='boss'&&!V1012_EXTERNAL_BOSS)createBossV103Refinement(rec);
        if(roleName==='boss'&&!V1012_EXTERNAL_BOSS)createBossV104ShaderPass(rec);
        if(roleName==='boss')createBossV106Acting(rec);
        if(roleName==='boss'){
+         // Cap anisotropy on mobile. The visual difference is negligible at
+         // gameplay distance, while the texture becomes much cheaper to upload.
+         if(mobileDevice)model.traverse(o=>{
+           if(!o.isMesh)return;
+           const mats=Array.isArray(o.material)?o.material:[o.material];
+           mats.forEach(m=>{if(m?.map){m.map.anisotropy=Math.min(2,renderer?.capabilities?.getMaxAnisotropy?.()||1);m.map.needsUpdate=true}});
+         });
          // Compile while the lobby still covers the canvas so shot one never
          // pays the GLB/PBR program creation cost.
          model.visible=true;
@@ -2127,19 +2268,26 @@ function loadRigAsset(roleName){
        }
        playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:0});
        if(roleName==='boss'&&animationLab.active){populateAnimationLab(rec);playAnimationLabClip(animationLab.index)}
-       console.info('[rig]',roleName,'ready',rec.clipNames);
+       console.info('[rig]',roleName,'ready',url,rec.clipNames);
        if(roleName==='boss')setTimeout(()=>{
-         if(!bossIntroActive())banner('🌙 V10.8 — RIGGED BOSS READY ✓');
+         if(!bossIntroActive())banner(`🌙 TRIPO BOSS READY · ${url.includes('_1k')?'1K':url.includes('_2k')?'2K':'4K'} ✓`);
        },4700);
-       resolve(true);
+       return true;
      }catch(e){
-       console.error('[rig]',roleName,'setup failed',e);rigRuntime.status[roleName]='fallback';setFallback(root,true);resolve(false);
+       disposeRigAttempt(rec);
+       throw e;
      }
-   },undefined,e=>{
-     console.warn('[rig]',roleName,'asset unavailable; fallback retained',e?.message||e);
-     rigRuntime.status[roleName]='fallback';setFallback(root,true);resolve(false);
-   });
- });
+   }catch(e){
+     console.warn('[rig]',roleName,`attempt ${attempt+1}/${candidates.length} failed`,url,e?.message||e);
+     if(attempt<candidates.length-1){
+       rigRuntime.status[roleName]='retrying';
+       if(roleName==='boss'&&running)banner(`ĐANG THỬ LẠI BOSS TRIPO · ${attempt+2}/${candidates.length}`);
+     }
+   }
+ }
+ rigRuntime.status[roleName]='fallback';setFallback(root,true);
+ if(roleName==='boss'&&running)banner('⚠ KHÔNG TẢI ĐƯỢC BOSS TRIPO · ĐANG DÙNG BOSS AN TOÀN');
+ return false;
 }
 function loadAllRiggedCharacters(){
  if(rigRuntime.loading)return;rigRuntime.loading=true;
@@ -2154,6 +2302,11 @@ function updateRiggedAnimations(dt){
    if(!rec?.ready||!rec.mixer)continue;
    if(animationLab.active&&rec.role==='boss')continue;
    rec.mixer.update(dt);
+   if(rec.activeSegment&&rec.active===rec.activeSegment.action&&rec.active.time>=rec.activeSegment.end-.001){
+     const segment=rec.activeSegment;
+     rec.activeSegment=null;segment.action.paused=true;
+     playRigAnimation(rec.role,segment.returnState||'idle',{fade:segment.fade??.14});
+   }
    if(rec.role==='boss')applyBossRootLock(rec,true);
 
    // V10.6: spring follow-through reacts to skill impact, teleport, phase and ultimate.
@@ -2165,7 +2318,7 @@ const BOSS_UI_SKILLS=[
  {name:'BÓNG ĐÊM LAN RA',icon:'/assets/ui/ma_vuong/night_spread.svg',tag:'NIGHT SPREAD'},
  {name:'GIẤC MƠ VỠ',icon:'/assets/ui/ma_vuong/dream_shatter.svg',tag:'DREAM SHATTER'},
  {name:'BA GIỜ SÁNG',icon:'/assets/ui/ma_vuong/three_am.svg',tag:'03:00'},
- {name:'MỘNG DU TRUY KÍCH',icon:'/assets/ui/ma_vuong/sleepwalk_slash.svg',tag:'SLEEPWALK SLASH'},
+ {name:'ẢO ẢNH LUÂN VŨ',icon:'/assets/ui/ma_vuong/sleepwalk_slash.svg',tag:'TELEPORT → SPIN KICK'},
  {name:'VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC',icon:'/assets/ui/ma_vuong/eternal_night.svg',tag:'ETERNAL NIGHT'}
 ];
 function bossUiPhaseName(p){
@@ -2213,14 +2366,14 @@ function pulseBossUiPhase(p){
 }
 
 function bossCastAnimProfile(i){
- // V10.6 starts each clip in its anticipation tempo; runtime time-warp handles release/recovery.
+ // V10.14: the approved Tripo clip catalogue drives every combat state.
  return [
-   {state:'boss_aoe',fade:.15,speed:.70},
-   {state:'boss_shatter',fade:.16,speed:.64},
-   {state:'boss_3am',fade:.18,speed:.50},
+   {state:'boss_quick_cast',fade:.09,speed:1.12},
+   {state:'boss_aoe',fade:.14,speed:.94},
+   {state:'boss_aoe',fade:.16,speed:.82},
    {state:'boss_teleport',fade:.045,speed:1.18},
-   {state:'boss_ultimate',fade:.20,speed:.47}
- ][i]||{state:'boss_aoe',fade:.15,speed:.70};
+   {state:'boss_ultimate',fade:.18,speed:.72}
+ ][i]||{state:'boss_quick_cast',fade:.09,speed:1.12};
 }
 function updateRigLocomotion(sa,sb){
  if(!sa||!sb)return;
@@ -2231,9 +2384,12 @@ function updateRigLocomotion(sa,sb){
    if(who===role&&pred.dashT>0)playRigAnimation(who,'dash',{fade:.06,speed:1.12});
    else if(!combatAnim[who]?.type)playRigAnimation(who,moving?'run':'idle',{fade:.14});
  }
- if(rigRuntime.records.boss?.ready&&!bossCastVisual.cast)playRigAnimation('boss','boss_idle',{fade:.22,speed:bossV10Phase===3?.94:.88});
+ const br=rigRuntime.records.boss;
+ if(br?.ready&&!bossCastVisual.cast&&!br.activeSegment&&!bossIntroActive()&&serverNow()>=(br.actionLockUntil||0)){
+   playRigAnimation('boss','boss_combat_idle',{fade:.18,speed:bossV10Phase===3?1.04:.96});
+ }
 }
-function rigBossCastState(i){return ['boss_aoe','boss_shatter','boss_3am','boss_teleport','boss_ultimate'][i]||'boss_aoe'}
+function rigBossCastState(i){return ['boss_quick_cast','boss_aoe','boss_aoe','boss_teleport','boss_ultimate'][i]||'boss_quick_cast'}
 
 
 function makeV10Ribbon(index){
@@ -3148,7 +3304,8 @@ function v106ApplyActing(nowMs){
  const c=bossCastVisual.cast;
  const phaseAct=nowMs<bossV106PhaseActUntil;
  const summonAct=nowMs<bossV106GestureUntil&&bossV106Gesture==='summon';
- const stanceWeight=(c ? .28 : phaseAct ? .22 : summonAct ? .38 : 1)*qMult;
+ const spinKickActive=c?.i===3&&serverNow()>=(c.kickAt||Infinity);
+ const stanceWeight=(spinKickActive ? 0 : c ? .28 : phaseAct ? .22 : summonAct ? .38 : 1)*qMult;
  // The authored Idle clip has no upper-arm channels. Add a restrained base
  // stance after mixer sampling so both arms rest naturally beside the dress.
  v106AddPose({
@@ -3165,7 +3322,7 @@ function v106ApplyActing(nowMs){
  if(phase===3)v106AddPose({head:[-.010,-.012,.012],chest:[.015,0,0],lua:[-.018,0,-.028],rua:[-.018,0,.028]},qMult);
 
  // Server-synchronized cast acting.
- if(c){
+ if(c&&!spinKickActive){
    const w=v106CastWeights(c,serverNow()),p=V106_CAST_POSES[c.i]||V106_CAST_POSES[0];
    v106AddPose(p.anticipate,w.a*qMult);
    v106AddPose(p.release,w.r*qMult);
@@ -3317,11 +3474,14 @@ function v107Spring1(current,vel,target,dt,k=18,d=7.8){
 function updateV107CameraFocus(dt){
  if(!A||!B||!boss)return;
  const px=(A.position.x+B.position.x)*.5,pz=(A.position.z+B.position.z)*.5;
- let tx=lerp(px,boss.position.x,.50);
- let tz=lerp(pz,boss.position.z,.44)-.35;
- tx=clamp(tx,-2.5,2.5);tz=clamp(tz,-3.8,.2);
- [v107CamFocusX,v107CamFocusVelX]=v107Spring1(v107CamFocusX,v107CamFocusVelX,tx,dt,18,7.8);
- [v107CamFocusZ,v107CamFocusVelZ]=v107Spring1(v107CamFocusZ,v107CamFocusVelZ,tz,dt,17,7.5);
+ const portrait=(camera?.aspect||innerWidth/innerHeight)<.82;
+ // On narrow phone screens the boss receives priority; otherwise a distant
+ // server teleport can place the full rig outside the horizontal FOV.
+ const bossWeight=portrait?.96:.88;
+ const tx=clamp(lerp(px,boss.position.x,bossWeight),-8.2,8.2);
+ const tz=clamp(lerp(pz,boss.position.z,bossWeight),-8.2,8.2);
+ [v107CamFocusX,v107CamFocusVelX]=v107Spring1(v107CamFocusX,v107CamFocusVelX,tx,dt,22,9.2);
+ [v107CamFocusZ,v107CamFocusVelZ]=v107Spring1(v107CamFocusZ,v107CamFocusVelZ,tz,dt,21,8.8);
 }
 
 function setup3D(){
@@ -3348,7 +3508,7 @@ function clearDynamic(){
  for(const m of summonSpawnFx)m.visible=false;for(const m of summonDeathFx)m.visible=false;
  $('threeAmArtFx')?.classList.remove('show');$('eternalArtFx')?.classList.remove('show');
  if(A?.parent)scene.remove(A);if(B?.parent)scene.remove(B);if(boss?.parent)scene.remove(boss);
- predictedShots=[];hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false};
+ predictedShots=[];hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};
  camTrauma=0;bossSocketFxUntil=0;if(bossSocketFx)bossSocketFx.visible=false;
  deathCinematicStart=0;deathCinematicUntil=0;deathCinematicStats=null;deathCinematicResultShown=false;
  if(bossV10Art?.root?.parent)bossV10Art.root.parent.remove(bossV10Art.root);
@@ -3392,8 +3552,9 @@ function playBossIntroV9(wait=0){
    return;
  }
 
- // Give the bundled GLB a short chance to hot-swap before the reveal.
- if(!rigRuntime.records.boss?.ready&&wait<12&&remaining>3200){
+ // The loader starts behind the lobby. On mobile, allow the 2K/1K retry chain
+ // to finish before revealing the boss, without extending the server lock.
+ if(!rigRuntime.records.boss?.ready&&wait<(mobileDevice?28:14)&&remaining>2100){
    bossIntroWaits=wait+1;
    setTimeout(()=>playBossIntroV9(wait+1),100);
    return;
@@ -3422,7 +3583,11 @@ function playBossIntroV9(wait=0){
  cameraZoomTarget=1;cameraKick=.015;
  setVignette(.34);
 
- startBossV106PhaseAct(1);playRigAnimation('boss','boss_phase',{fade:.08,once:true,speed:.68});
+ startBossV106PhaseAct(1);
+ playBossPresentationSegment('introRise',{fade:.06,returnState:'boss_idle'});
+ setTimeout(()=>{
+   if(bossIntroActive())playBossPresentationSegment('introRoyal',{fade:.10,returnState:'boss_idle'});
+ },1640);
 
  setTimeout(()=>flash('#d8c9ff',mobileDevice?.28:.20,110),360);
  setTimeout(()=>showDialogue('boss','Lại thêm hai kẻ muốn cướp giấc đêm của ta sao?',1750),720);
@@ -3438,7 +3603,7 @@ function playBossIntroV9(wait=0){
    if(br?.secondary?.halo&&br.secondaryBase?.halo){
      br.secondary.halo.scale.copy(br.secondaryBase.halo.scale);
    }
-   playRigAnimation('boss','boss_idle',{fade:.22});
+   playRigAnimation('boss','boss_combat_idle',{fade:.22,speed:.96});
    if(renderer&&v108IntroRestoreScale>0&&Math.abs(renderScale-v108IntroRestoreScale)>.025){
      const restore=v108IntroRestoreScale;
      setTimeout(()=>{renderScale=restore;renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false)},180);
@@ -3466,7 +3631,7 @@ function enterGameFromState(state,source='server'){
    if(!s){enteringGame=false;return}
 
    try{
-     // CDN may technically finish after the websocket start event on some mobile browsers.
+     // The local Three.js bundle must be ready before WebGL scene creation.
      if(!window.THREE)throw new Error('THREE_NOT_READY');
 
      acceptInitialState(s);
@@ -3635,6 +3800,7 @@ function applyImmediateState(s){
  A.position.set(H.x,0,H.z);A.rotation.y=H.rot;
  B.position.set(P.x,0,P.z);B.rotation.y=P.rot;
  boss.position.set(s.boss.x,.1,s.boss.z);
+ v107CamFocusX=s.boss.x;v107CamFocusZ=s.boss.z;v107CamFocusVelX=0;v107CamFocusVelZ=0;
  pred.x=(role==='hero'?H:P).x;pred.z=(role==='hero'?H:P).z;pred.rot=(role==='hero'?H:P).rot;pred.dashT=0;
  syncBossCastFromSnapshot(s.cast);
  bossOutlineVisible=true;heavyCombat=false;heavyQuietSince=0;setBossOutlineVisible(true);
@@ -3759,7 +3925,7 @@ function reconcilePredictedShotsFromSnapshot(s){
 function setBossCast(c){
  if(!c){bossCastVisual.cast=null;clearBossSkillUi();return}
  if(bossCastVisual.cast?.id===c.id)return;
- bossCastVisual={cast:{...c},impactShown:false};setBossSkillUi(c.i);
+ bossCastVisual={cast:{...c},impactShown:false,kickShown:false,teleportShown:false,warningShown:false};setBossSkillUi(c.i);
  if(c.i===4){
    for(let j=0;j<eyeEls.length;j++){
      const seed=(c.id*92821+j*68917)%100000;
@@ -3781,6 +3947,20 @@ function updateBossCastVisual(){
  if(now>c.endAt+100){bossCastVisual.cast=null;return hideBossCastVisual()}
  const pre=clamp((now-c.startAt)/Math.max(1,c.impactAt-c.startAt),0,1);
  const after=clamp((now-c.impactAt)/Math.max(1,c.endAt-c.impactAt),0,1);
+ const warningAt=c.warningAt||lerp(c.startAt,c.impactAt,.56);
+ if(!bossCastVisual.warningShown&&now>=warningAt&&now<c.impactAt){
+   bossCastVisual.warningShown=true;
+   const warningColors=[0x9f78ed,0xece7ff,0xb994ff,0xc2a7ff,0x8150bd];
+   pulseBossSocketFx(warningColors[c.i]||0xc7b3ff,c.i===4?1.18:.78);
+   flash(c.i===4?'#53236f':'#d8caff',mobileDevice?.10:.065,38);
+ }
+ if(c.i===3&&c.teleportAt&&!bossCastVisual.teleportShown&&now>=c.teleportAt){
+   bossCastVisual.teleportShown=true;flash('#bda4ff',mobileDevice?.23:.16,45);pulseBossSocketFx(0xa886ff,.82);
+ }
+ if(c.i===3&&c.kickAt&&!bossCastVisual.kickShown&&now>=c.kickAt){
+   bossCastVisual.kickShown=true;
+   playRigAnimation('boss','boss_spin_kick',{fade:.025,once:true,speed:1.12});
+ }
  updateBossCastUi(c,now,pre,after);
  bossTelegraphRing.visible=true;
  bossTelegraphRing.position.set(boss.position.x,.06,boss.position.z);
@@ -3793,11 +3973,12 @@ function updateBossCastVisual(){
  }
  bossTelegraphRing.material.opacity=now<c.impactAt?(mobileDevice?.42:.25)+(mobileDevice?.58:.65)*pre:(mobileDevice?.88:.72)*(1-after);
  bossTelegraphRing.scale.setScalar((mobileDevice?1.16:1)*(1+.9*pre+.25*Math.sin(performance.now()*.018)));
- bossTelegraphRing2.visible=c.i===4;
+ bossTelegraphRing2.visible=c.i===4||(now>=warningAt&&now<c.impactAt);
  if(bossTelegraphRing2.visible){
    bossTelegraphRing2.position.set(boss.position.x,.07,boss.position.z);
-   bossTelegraphRing2.material.opacity=(.20+.42*pre)*(1-after);
-   bossTelegraphRing2.scale.setScalar(1+.35*pre);
+   bossTelegraphRing2.material.opacity=(c.i===4?.20:.12)+(c.i===4?.42:.32)*pre;
+   bossTelegraphRing2.material.opacity*=1-after;
+   bossTelegraphRing2.scale.setScalar((c.i===4?1:.84)+(c.i===4?.35:.48)*pre);
  }
  bossTelegraphMoon.visible=false;bossTelegraphCone.visible=false;
  if(bossMoonCracks3D)bossMoonCracks3D.visible=false;
@@ -3825,11 +4006,18 @@ function updateBossCastVisual(){
  }else if(c.i===3){
    bossTelegraphRing.material.color.setHex(0xb18cff);
    if(bossTelegraphRune)bossTelegraphRune.material.uniforms.uColor.value.setHex(0xc1a4ff);
-   const target=c.targetRole==='princess'?B:A;
-   const dx=target.position.x-boss.position.x,dz=target.position.z-boss.position.z;
-   const ang=Math.atan2(dz,dx);
-   bossTelegraphCone.visible=true;bossTelegraphCone.position.set((boss.position.x+target.position.x)*.5,.065,(boss.position.z+target.position.z)*.5);
-   bossTelegraphCone.rotation.y=-ang;bossTelegraphCone.material.opacity=.18+.36*pre;
+   if(!c.teleportAt||now<c.teleportAt){
+     const target=c.targetRole==='princess'?B:A;
+     const dx=target.position.x-boss.position.x,dz=target.position.z-boss.position.z;
+     const ang=Math.atan2(dz,dx);
+     bossTelegraphCone.visible=true;bossTelegraphCone.position.set((boss.position.x+target.position.x)*.5,.065,(boss.position.z+target.position.z)*.5);
+     bossTelegraphCone.rotation.y=-ang;bossTelegraphCone.material.opacity=.18+.36*pre;
+   }else{
+     bossTelegraphCone.visible=false;
+     const kickPre=clamp((now-(c.kickAt||c.teleportAt))/Math.max(1,c.impactAt-(c.kickAt||c.teleportAt)),0,1);
+     bossTelegraphRing.scale.setScalar(1.38+1.02*kickPre);
+     bossTelegraphRing.material.opacity=.44+.50*kickPre;
+   }
  }else{
    bossTelegraphRing.material.color.setHex(0x7040a9);
    if(bossTelegraphRune)bossTelegraphRune.material.uniforms.uColor.value.setHex(0x7040a9);
@@ -3845,7 +4033,7 @@ function updateBossCastVisual(){
    }else if(c.i===2){
      playThreeAmArtFx();
    }else if(c.i===3){
-     startDreamSlashArt(c);
+     startSpinKickArt();
    }
  }
  if(c.i===4&&now>c.impactAt+2200){setVignette(.12)}
@@ -3854,9 +4042,9 @@ function updateBossCastVisual(){
 function hideBossCastVisual(){
  clearBossSkillUi();
  const br=rigRuntime.records.boss;
- if(br?.ready&&/^boss_(aoe|shatter|3am|teleport|ultimate)$/.test(br.activeState||'')){
+ if(br?.ready&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test(br.activeState||'')){
    if(br.active)br.active.paused=false;
-   playRigAnimation('boss','boss_idle',{fade:br.activeState==='boss_teleport'?.13:.26,speed:bossV10Phase===3?.94:.90});
+   playRigAnimation('boss','boss_combat_idle',{fade:br.activeState==='boss_teleport'?.13:.24,speed:bossV10Phase===3?1.04:.96});
  }
  if(bossTelegraphRing)bossTelegraphRing.visible=false;
  if(bossTelegraphRing2)bossTelegraphRing2.visible=false;
@@ -3888,6 +4076,29 @@ function startDreamSlashArt(c){
  dreamSlashArt.rotation.set(0,-ang+.22,0);
  dreamSlashArt.scale.setScalar(.42);
  dreamSlashArt.userData.start=performance.now();dreamSlashArt.userData.until=dreamSlashArt.userData.start+430;
+ dreamSlashArt.visible=true;
+ for(const m of dreamSlashArt.children)m.material.opacity=0;
+}
+function startSpinKickArt(){
+ if(!dreamSlashArt||!boss)return;
+ dreamSlashArt.position.set(boss.position.x,.12,boss.position.z);
+ dreamSlashArt.rotation.set(0,0,0);dreamSlashArt.scale.setScalar(.36);
+ dreamSlashArt.userData.start=performance.now();dreamSlashArt.userData.until=dreamSlashArt.userData.start+520;
+ dreamSlashArt.visible=true;
+ for(const m of dreamSlashArt.children)m.material.opacity=0;
+}
+function startBossEvadeArt(p){
+ if(!dreamSlashArt||!boss||!p)return;
+ const fx=p.kind==='teleport'?p:{
+   ...p,toX:Number.isFinite(p.toX)?p.toX:boss.position.x,toZ:Number.isFinite(p.toZ)?p.toZ:boss.position.z,
+   fromX:Number.isFinite(p.fromX)?p.fromX:boss.position.x,fromZ:Number.isFinite(p.fromZ)?p.fromZ:boss.position.z
+ };
+ const mx=(fx.fromX+fx.toX)*.5,mz=(fx.fromZ+fx.toZ)*.5;
+ dreamSlashArt.position.set(p.kind==='teleport'?fx.toX:mx,.11,p.kind==='teleport'?fx.toZ:mz);
+ dreamSlashArt.rotation.set(0,-Math.atan2(fx.toZ-fx.fromZ,fx.toX-fx.fromX),0);
+ dreamSlashArt.scale.setScalar(p.kind==='teleport'?.48:.25);
+ dreamSlashArt.userData.start=performance.now();
+ dreamSlashArt.userData.until=dreamSlashArt.userData.start+(p.kind==='teleport'?440:360);
  dreamSlashArt.visible=true;
  for(const m of dreamSlashArt.children)m.material.opacity=0;
 }
@@ -4092,22 +4303,22 @@ function updateDeathCinematic(now,dt){
    });
  }
 
- // Orbit close-up -> cracked moon full body -> sunrise pullback.
- let px,py,pz,lx=boss.position.x,ly=2.8,lz=boss.position.z;
+ // Full-body orbit -> cracked moon tableau -> sunrise pullback.
+ let px,py,pz,lx=boss.position.x,ly=2.35,lz=boss.position.z;
  if(t<.38){
    const u=sm(t/.38);
-   px=lerp(boss.position.x+3.1,boss.position.x+.8,u);
-   py=lerp(4.4,3.6,u);pz=lerp(boss.position.z+5.0,boss.position.z+3.3,u);ly=lerp(2.8,3.5,u);
+   px=lerp(boss.position.x+3.4,boss.position.x+1.0,u);
+   py=lerp(4.8,4.25,u);pz=lerp(boss.position.z+9.2,boss.position.z+8.4,u);ly=lerp(2.35,2.45,u);
  }else if(t<.72){
    const u=sm((t-.38)/.34);
-   px=lerp(boss.position.x+.8,boss.position.x-3.2,u);
-   py=lerp(3.6,4.65,u);pz=lerp(boss.position.z+3.3,boss.position.z+5.8,u);ly=lerp(3.5,2.7,u);
+   px=lerp(boss.position.x+1.0,boss.position.x-3.4,u);
+   py=lerp(4.25,5.0,u);pz=lerp(boss.position.z+8.4,boss.position.z+9.5,u);ly=lerp(2.45,2.30,u);
  }else{
    const u=sm((t-.72)/.28);
-   px=lerp(boss.position.x-3.2,0,u);py=lerp(4.65,8.7,u);pz=lerp(boss.position.z+5.8,15.3,u);
-   lx=lerp(boss.position.x,0,u);ly=lerp(2.7,1.45,u);lz=lerp(boss.position.z,-1.5,u);
+   px=lerp(boss.position.x-3.4,0,u);py=lerp(5.0,8.7,u);pz=lerp(boss.position.z+9.5,15.3,u);
+   lx=lerp(boss.position.x,0,u);ly=lerp(2.30,1.75,u);lz=lerp(boss.position.z,-1.5,u);
  }
- camera.position.set(px,py,pz);camera.lookAt(lx,ly,lz);
+ camera.position.set(px,py,pz);v10132CameraLook.set(lx,ly,lz);camera.lookAt(v10132CameraLook);frameBossFullBody(v10132CameraLook,.76,.82);
 }
 
 function triggerHitStop(owner,dmg){
@@ -4240,7 +4451,7 @@ function playEvent(e,p){
      const ap=bossCastAnimProfile(p.i);
      playRigAnimation('boss',ap.state,{fade:ap.fade,once:true,speed:ap.speed});
    }
-   const names=['🌙 BÓNG ĐÊM LAN RA','💠 GIẤC MƠ VỠ','🕒 BA GIỜ SÁNG','🌀 MỘNG DU TRUY KÍCH','🌑 VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC'];
+   const names=['🌙 BÓNG ĐÊM LAN RA','💠 GIẤC MƠ VỠ','🕒 BA GIỜ SÁNG','🌀 ẢO ẢNH LUÂN VŨ','🌑 VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC'];
    banner(names[p.i]||'BOSS CAST');
  }
  if(e==='actionAnim'){
@@ -4260,12 +4471,33 @@ function playEvent(e,p){
      }
    }
  }
+ if(e==='bossTeleportKick'){
+   flash('#bda4ff',mobileDevice?.24:.17,48);pulseBossSocketFx(0xa886ff,.86);
+   addCameraTrauma(mobileDevice?.10:.07,5.2);
+ }
+ if(e==='bossEvade'){
+   const br=rigRuntime.records.boss;
+   if(br)br.actionLockUntil=(p.endAt||serverNow()+420)+(p.kind==='teleport'?260:520);
+   if(p.kind==='teleport'){
+     playRigAnimation('boss','boss_teleport',{fade:.025,once:true,speed:1.72});
+     flash('#b793ff',mobileDevice?.20:.13,42);pulseBossSocketFx(0x9f78ed,.82);
+   }else{
+     playRigAnimation('boss','boss_dodge',{fade:.025,once:true,speed:2.80});
+     pulseBossSocketFx(0xd9ccff,.58);
+   }
+   startBossEvadeArt(p);addCameraTrauma(p.kind==='teleport'?.09:.045,5.4);
+ }
+ if(e==='spinKickImpact'){
+   if(!bossCastVisual.cast||!bossCastVisual.impactShown){
+     bossCastVisual.impactShown=true;bossImpactPresentation(3);startSpinKickArt();
+   }
+ }
  if(e==='favorite')fav(p.msg);
  if(e==='reaction')banner(p.name);
  if(e==='dialogue')showDialogue(p.speaker,p.text,p.duration||1900);
  if(e==='summonSpawn'){
    startBossV106Gesture('summon',1250);
-   playRigAnimation('boss','boss_summon',{fade:.10,once:true,speed:.92});
+   if(!bossCastVisual.cast)playRigAnimation('boss','boss_ultimate',{fade:.10,once:true,speed:.92});
    startSummonSpawnFx(p.points||[]);
    pulseBossSocketFx(0xb898ff,1.2);
    banner('🌙 TIỂU MỘNG ẢNH XUẤT HIỆN');
@@ -4277,7 +4509,15 @@ function playEvent(e,p){
  if(e==='summonHit'&&p.hp<=15)flash('#c8b4ff',.18,55);
  if(e==='phase'){
    startBossV106PhaseAct(p.phase);
-   playRigAnimation('boss','boss_phase',{fade:.12,once:true,speed:p.phase===3?.72:.82});
+   if(p.phase===2){
+     playBossPresentationSegment('phase2Charge',{fade:.08,returnState:'boss_combat_idle'});
+     setTimeout(()=>{
+       const br=rigRuntime.records.boss;
+       if(running&&!bossCastVisual.cast&&!br?.activeSegment)playBossPresentationSegment('phase2Royal',{fade:.10,returnState:'boss_combat_idle'});
+     },1320);
+   }else{
+     playBossPresentationSegment('phase3Eternal',{fade:.10,returnState:'boss_combat_idle'});
+   }
    addCameraTrauma(p.phase===3?(mobileDevice?.27:.20):(mobileDevice?.16:.12),2.8);
    cameraZoomTarget=p.phase===3?(mobileDevice?1.10:1.065):1.035;
    setTimeout(()=>cameraZoomTarget=1,p.phase===3?1180:820);
@@ -4298,8 +4538,24 @@ function playEvent(e,p){
  if(e==='bossSkill'){
    // Legacy compatibility only. V9.7 visuals are driven by synchronized bossCast timeline.
    const i=p.i;
-   const names=['🌙 BÓNG ĐÊM LAN RA','💠 GIẤC MƠ VỠ','🕒 BA GIỜ SÁNG','🌀 MỘNG DU TRUY KÍCH','🌑 VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC'];
+   const names=['🌙 BÓNG ĐÊM LAN RA','💠 GIẤC MƠ VỠ','🕒 BA GIỜ SÁNG','🌀 ẢO ẢNH LUÂN VŨ','🌑 VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC'];
    banner(names[i]||'BOSS SKILL');
+ }
+}
+function frameBossFullBody(look,marginX=.76,marginY=.82){
+ if(!boss||!camera||!look)return;
+ camera.updateMatrixWorld(true);
+ let overflow=1;
+ const bx=boss.position.x,by=boss.position.y,bz=boss.position.z;
+ // Conservative envelope includes the crown, long skirt and extended kick leg.
+ for(const x of [-2.15,2.15])for(const y of [by-.06,by+4.82])for(const z of [-1.35,1.35]){
+   v10132FramePoint.set(bx+x,y,bz+z).project(camera);
+   if(v10132FramePoint.z<-1||v10132FramePoint.z>1)overflow=Math.max(overflow,1.35);
+   overflow=Math.max(overflow,Math.abs(v10132FramePoint.x)/marginX,Math.abs(v10132FramePoint.y)/marginY);
+ }
+ if(overflow>1){
+   v10132CameraOffset.copy(camera.position).sub(look).multiplyScalar(clamp(overflow*1.07,1,1.72));
+   camera.position.copy(look).add(v10132CameraOffset);camera.lookAt(look);camera.updateMatrixWorld(true);
  }
 }
 function updateCam(dt){
@@ -4308,34 +4564,35 @@ function updateCam(dt){
    const t=clamp((performance.now()-bossIntroV9Start)/Math.max(1,bossIntroV9Duration),0,1);
    const sm=x=>x*x*(3-2*x);
    const bx=v108IntroAnchor.x,bz=v108IntroAnchor.z;
-   let px,py,pz,lx=bx,ly=3.0,lz=bz;
+   const portrait=(camera.aspect||innerWidth/innerHeight)<.82;
+   const introBack=portrait?9.7:8.6;
+   let px,py,pz,lx=bx,ly=2.35,lz=bz;
 
    if(t<.24){
      const u=sm(t/.24);
-     px=lerp(bx-4.4,bx-2.2,u);
-     py=lerp(3.8,4.25,u);
-     pz=lerp(bz+5.8,bz+4.25,u);
-     ly=lerp(2.55,3.35,u);
+     px=lerp(bx-3.5,bx-1.8,u);
+     py=lerp(4.7,4.35,u);
+     pz=lerp(bz+introBack+1.0,bz+introBack,u);
+     ly=lerp(2.20,2.45,u);
    }else if(t<.53){
      const u=sm((t-.24)/.29);
-     px=lerp(bx-2.2,bx+.72,u);
-     py=lerp(4.25,3.75,u);
-     pz=lerp(bz+4.25,bz+3.35,u);
-     ly=lerp(3.35,3.65,u);
+     px=lerp(bx-1.8,bx+.65,u);
+     py=lerp(4.35,4.15,u);
+     pz=lerp(bz+introBack,bz+introBack-.3,u);
+     ly=lerp(2.45,2.38,u);
    }else if(t<.78){
      const u=sm((t-.53)/.25);
-     px=lerp(bx+.72,bx+3.2,u);
-     py=lerp(3.75,4.65,u);
-     pz=lerp(bz+3.35,bz+5.45,u);
-     ly=lerp(3.65,2.65,u);
+     px=lerp(bx+.65,bx+3.1,u);
+     py=lerp(4.15,4.85,u);
+     pz=lerp(bz+introBack-.3,bz+introBack+.8,u);
+     ly=lerp(2.38,2.30,u);
    }else{
      const u=sm((t-.78)/.22);
-     const gx=(A.position.x+B.position.x)*.12;
-     const gz=(A.position.z+B.position.z)*.06-1.3;
-     px=lerp(bx+3.2,gx,u);
-     py=lerp(4.65,7.55,u);
-     pz=lerp(bz+5.45,12.7,u);
-     lx=lerp(bx,0,u);ly=lerp(2.65,1.78,u);lz=lerp(bz,gz,u);
+     const finalY=portrait?8.75:7.95,finalBack=portrait?17.2:14.5;
+     px=lerp(bx+3.1,v107CamFocusX,u);
+     py=lerp(4.85,finalY,u);
+     pz=lerp(bz+introBack+.8,v107CamFocusZ+finalBack,u);
+     lx=lerp(bx,v107CamFocusX,u);ly=lerp(2.30,2.30,u);lz=lerp(bz,v107CamFocusZ,u);
    }
    // Frame-rate independent damping hides uneven 30/60 Hz mobile delivery
    // without changing the authoritative cinematic clock.
@@ -4344,14 +4601,23 @@ function updateCam(dt){
    camera.position.lerp(v108IntroCamTarget,follow);
    v108IntroLook.lerp(v108IntroLookTarget,follow);
    camera.lookAt(v108IntroLook);
+   frameBossFullBody(v108IntroLook,portrait?.72:.78,.82);
    return;
  }
  cameraZoom+=(cameraZoomTarget-cameraZoom)*Math.min(1,dt*4);
- const ty=7.55/cameraZoom,tz=12.7/cameraZoom,cx=(A.position.x+B.position.x)*.12,cz=(A.position.z+B.position.z)*.06-1.3;
- camera.position.x+=(cx-camera.position.x)*dt*2.2;camera.position.y+=(ty-camera.position.y)*dt*3;camera.position.z+=(tz-camera.position.z)*dt*3;
  updateV107CameraFocus(dt);
- camera.position.x+=v107CamFocusX*.14;
- camera.lookAt(v107CamFocusX*.20,1.78,cz+v107CamFocusZ*.18);
+ const portrait=(camera.aspect||innerWidth/innerHeight)<.82;
+ const safeZoom=Math.min(cameraZoom,portrait?1.015:1.065);
+ const ty=(portrait?8.75:7.95)/safeZoom;
+ const back=(portrait?17.2:14.5)/safeZoom;
+ const tx=v107CamFocusX,tz=v107CamFocusZ+back;
+ const followX=1-Math.exp(-dt*4.6),followYZ=1-Math.exp(-dt*4.0);
+ camera.position.x=lerp(camera.position.x,tx,followX);
+ camera.position.y=lerp(camera.position.y,ty,followYZ);
+ camera.position.z=lerp(camera.position.z,tz,followYZ);
+ v10132CameraLook.set(v107CamFocusX,2.30,v107CamFocusZ);
+ camera.lookAt(v10132CameraLook);
+ frameBossFullBody(v10132CameraLook,portrait?.72:.78,.82);
 
  // Legacy kick feeds the smoother V9.6 trauma system.
  if(cameraKick>0){addCameraTrauma(Math.min(.32,cameraKick*1.25),3.5);cameraKick=Math.max(0,cameraKick-dt*2.8)}

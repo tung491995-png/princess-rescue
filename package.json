@@ -1,11 +1,11 @@
 {
-  "name": "princess-rescue-v10-12-1-root-lock-hotfix",
-  "version": "10.12.1",
+  "name": "princess-rescue-v10-14-boss-ai-animation-integration",
+  "version": "10.14.0",
   "private": true,
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "test": "node tests/v10_12_smoke.js"
+    "test": "node tests/v10_14_boss_ai_animation_integration.js && node tests/v10_14_teleport_dodge_authority.js"
   },
   "dependencies": {
     "express": "^4.21.2",

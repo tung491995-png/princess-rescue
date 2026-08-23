@@ -1,0 +1,126 @@
+{
+  "clips": [
+    {
+      "index": 0,
+      "name": "NlaTrack",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 2.6925401639667914
+    },
+    {
+      "index": 1,
+      "name": "NlaTrack.001",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 1.581853355268029
+    },
+    {
+      "index": 2,
+      "name": "NlaTrack.002",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 1.5417944192009754
+    },
+    {
+      "index": 3,
+      "name": "NlaTrack.003",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.27351679500257114
+    },
+    {
+      "index": 4,
+      "name": "NlaTrack.004",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 2.973141684696429
+    },
+    {
+      "index": 5,
+      "name": "NlaTrack.005",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.15914264483577703
+    },
+    {
+      "index": 6,
+      "name": "NlaTrack.006",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.06151124852927073
+    },
+    {
+      "index": 7,
+      "name": "NlaTrack.007",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.16913027851736476
+    },
+    {
+      "index": 8,
+      "name": "NlaTrack.008",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.33538875011586133
+    },
+    {
+      "index": 9,
+      "name": "NlaTrack.009",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.21165266570597277
+    },
+    {
+      "index": 10,
+      "name": "NlaTrack.010",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.0646656698117926
+    },
+    {
+      "index": 11,
+      "name": "NlaTrack.011",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.05726276580085071
+    },
+    {
+      "index": 12,
+      "name": "NlaTrack.012",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 3.581173127478787
+    },
+    {
+      "index": 13,
+      "name": "NlaTrack.013",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.10838696503809235
+    },
+    {
+      "index": 14,
+      "name": "NlaTrack.014",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.3302854750351521
+    },
+    {
+      "index": 15,
+      "name": "NlaTrack.015",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.4217053472652522
+    },
+    {
+      "index": 16,
+      "name": "NlaTrack.016",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.5377031429080948
+    },
+    {
+      "index": 17,
+      "name": "NlaTrack.017",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.13781667849027984
+    },
+    {
+      "index": 18,
+      "name": "NlaTrack.018",
+      "translationChannelsFiltered": 3,
+      "maxRemovedWorldXZ": 0.1330164695163967
+    }
+  ],
+  "lockedNodes": [
+    "Pelvis",
+    "Hip",
+    "Root"
+  ],
+  "animationCount": 19,
+  "maxRemovedWorldXZ": 3.581173127478787,
+  "status": "PASS"
+}

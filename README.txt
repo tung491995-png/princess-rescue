@@ -1,3 +1,14 @@
+PRINCESS RESCUE 3D — V10.14 BOSS AI ANIMATION INTEGRATION
+
+LATEST UPGRADE
+==========
+- Approved animation map: 18 Idle, 08 Combat Idle, 13 Quick Cast, 14 AOE, 09 Hit, 15 Death, 17 Ultimate.
+- Server-authoritative projectile evasion: clip 03 strafes; clip 12 teleports in later phases/crowded fire.
+- Fair warningAt → releaseAt telegraph payloads and synchronized warning/impact VFX.
+- Only clean ranges of long clips 05/06/11/16 are used for intro and phase presentations.
+- V10.13.2 world-XZ root lock, exact-Hip anchor, full-body camera and mobile 2K → 1K retry are preserved.
+- See V10_14_BOSS_AI_ANIMATION_INTEGRATION.txt for validation details.
+
 PRINCESS RESCUE 3D — V10.9 BOSS PRESENTATION REPAIR
 
 PRINCESS RESCUE 3D — SERVER MULTIPLAYER V3

@@ -1,0 +1,36 @@
+PRINCESS RESCUE V10.13.2 — ROOT XZ + FULL-BODY CAMERA LOCK
+
+NGUYÊN NHÂN
+- Rig Tripo có node Root xoay -90 độ.
+- Chuyển động lao tới/lùi của Hip nằm chủ yếu trong Hip.position.y.
+- V10.13.1 chỉ khóa local X/Z và chọn nhầm Pelvis thay vì exact Hip.
+- Clip Teleport 12 còn trôi gần 2,989 đơn vị world XZ; mức nguồn lớn nhất trong 19 clip là 3,581.
+
+SỬA ROOT MOTION
+- Lọc translation của exact Root, Hip và Pelvis trong world space.
+- Loại world X/Z nhưng giữ nguyên chuyển động thẳng đứng.
+- Áp dụng cho đủ 19 animation trong GLB 4K, mobile 2K và mobile 1K.
+- Sai số world XZ còn lại tối đa: khoảng 0,000000024.
+- Runtime tiếp tục neo exact Hip vào group boss do server điều khiển sau mỗi lần AnimationMixer cập nhật.
+- Teleport vẫn do server đổi boss.x/boss.z; animation không tự dịch hitbox.
+
+CAMERA FULL BODY
+- Camera ưu tiên vị trí boss sau mỗi teleport, đặc biệt trên màn hình dọc.
+- Envelope an toàn bao gồm vương miện, toàn bộ váy và chân đang Spin Kick.
+- Nếu envelope vượt khung, camera tự lùi ra theo world space trước khi render.
+- Guard được dùng trong intro, combat, Animation Lab và death cinematic.
+- Đã kiểm tra các tỷ lệ 390x844, 430x932, 768x1024, 844x390 và 16:9.
+
+GIỮ NGUYÊN
+- 46 node, 44 joint, 1 skin và 19 animation.
+- Teleport clip 12 → Spin Kick clip 07.
+- Bán kính hit 2,2 m và sát thương server-authoritative.
+- Boss 2.200 HP, intro 5 giây và co-op hai người.
+- Loader nội bộ cùng chuỗi mobile 2K → 1K của V10.13.1.
+
+KIỂM TRA
+- Cú pháp server và trình duyệt: PASS.
+- World-XZ của 19 clip trên cả ba GLB: PASS.
+- Camera full body tại các mép đấu trường và năm tỷ lệ màn hình: PASS.
+- Tạo phòng → tham gia → bắt đầu trận: PASS.
+- Teleport → Spin Kick → server hit: PASS.
