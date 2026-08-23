@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.9 — Boss Presentation Repair</title>
+<title>Princess Rescue V10.10 — Character Refinement Pass</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -522,7 +522,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.9 BOSS PRESENTATION</span></h1><p style="margin-top:7px">Dáng nữ vương tự nhiên hơn · boss lớn và rõ hơn · camera, ánh sáng chiến đấu được cân lại.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Queen idle stance</span><span class="badge">Stronger boss framing</span><span class="badge">Stable PBR</span><span class="badge">Stable controls</span><span class="badge">Redis + Network Lab</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.10 CHARACTER REFINEMENT</span></h1><p style="margin-top:7px">Tóc nhiều lớp · tay áo nữ vương · dáng đứng sống động hơn · khuôn mặt rõ chi tiết hơn.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Layered anime hair</span><span class="badge">Refined sleeves</span><span class="badge">Asymmetric queen stance</span><span class="badge">Stable controls</span><span class="badge">Mobile-safe PBR</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -624,6 +624,8 @@ let v1071VisualErrors=0,v1071LastVisualError='',v1071SafeMode=false,v1071BossChe
 const V108_STABLE_PBR=true;
 let v108PrewarmStarted=false,v108BossReady=false,v108IntroRestoreScale=0;
 const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
+// V10.10 — video-driven character silhouette refinement.
+let bossV110=null,bossV110Phase=1,bossV110Quality='medium';
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
@@ -1757,8 +1759,8 @@ function polishRig(model,roleName=''){
          m.flatShading=false;m.dithering=true;m.toneMapped=true;
          let tint=null,amount=.30;
          if(/skin|faceporcelain/.test(n)){tint=0xe7b8c3;amount=.22}
-         else if(/hairmoonhighlight/.test(n)){tint=0xd8d2f5;amount=.34}
-         else if(/hair/.test(n)){tint=0xb8b0d6;amount=.28}
+         else if(/hairmoonhighlight/.test(n)){tint=0xa8a0cc;amount=.65}
+         else if(/hair/.test(n)){tint=0x918ab8;amount=.55}
          else if(/dressnight/.test(n)){tint=0x090a22;amount=.36}
          else if(/dressvelvet/.test(n)){tint=0x1b082f;amount=.34}
          else if(/dressplum/.test(n)){tint=0x421060;amount=.30}
@@ -1957,6 +1959,7 @@ function loadRigAsset(roleName){
        if(roleName==='boss')createBossV103Refinement(rec);
        if(roleName==='boss')createBossV104ShaderPass(rec);
        if(roleName==='boss')createBossV106Acting(rec);
+       if(roleName==='boss')createBossV110Refinement(rec);
        if(roleName==='boss'){
          // Compile while the lobby still covers the canvas so shot one never
          // pays the GLB/PBR program creation cost.
@@ -2400,7 +2403,7 @@ function createV10Environment(){
  const hemi=new THREE.HemisphereLight(0x9fb7ff,0x130a24,.78);hemi.name='V10Hemi';scene.add(hemi);
  const moonKey=new THREE.DirectionalLight(0xe8e5ff,1.72);moonKey.name='V10MoonKey';moonKey.position.set(-6,11,8);scene.add(moonKey);
  const bossRim=new THREE.PointLight(0x8050e5,2.05,24);bossRim.name='V10BossRim';bossRim.position.set(0,5,-5.5);scene.add(bossRim);
- const bossKey=new THREE.PointLight(0xffd6e8,1.05,14);bossKey.name='V109BossKey';bossKey.position.set(-2.2,4.7,3.8);scene.add(bossKey);
+ const bossKey=new THREE.PointLight(0xffd6e8,.86,14);bossKey.name='V110BossKey';bossKey.position.set(-2.2,4.7,3.8);scene.add(bossKey);
  const playerFill=new THREE.PointLight(0x688cd8,.38,18);playerFill.name='V10PlayerFill';playerFill.position.set(0,3.2,6.5);scene.add(playerFill);
 
  envV10={root,sky,skyMat,moon,moonMat,base,baseMat,floor,floorMat,ruins,ruinMat,obelisks,obMat,crystals,crystalMat,crystalData,mist,mistMat,
@@ -2432,29 +2435,29 @@ function updateEnvironmentV10Phase(phase,force=false){
  const L=envV10.lights;
  if(phase===1){
    scene.fog.color.setHex(0x090b1c);scene.fog.density=.021;
-   renderer.toneMappingExposure=1.06;
+   renderer.toneMappingExposure=1.02;
    L.hemi.color.setHex(0xa7bbff);L.hemi.groundColor.setHex(0x150d29);L.hemi.intensity=.78;
    L.moonKey.color.setHex(0xe9e7ff);L.moonKey.intensity=1.72;
    L.bossRim.color.setHex(0x8051df);L.bossRim.intensity=2.05;
-   L.bossKey.color.setHex(0xffd6e8);L.bossKey.intensity=1.05;
+   L.bossKey.color.setHex(0xffd6e8);L.bossKey.intensity=.86;
    L.playerFill.color.setHex(0x668bd3);L.playerFill.intensity=.32;
    envV10.crystalMat.emissiveIntensity=.72;
  }else if(phase===2){
    scene.fog.color.setHex(0x0d0922);scene.fog.density=.024;
-   renderer.toneMappingExposure=1.04;
+   renderer.toneMappingExposure=1.00;
    L.hemi.color.setHex(0xb1a8ff);L.hemi.groundColor.setHex(0x1b0c31);L.hemi.intensity=.82;
    L.moonKey.color.setHex(0xe2d9ff);L.moonKey.intensity=1.78;
    L.bossRim.color.setHex(0x9c55f0);L.bossRim.intensity=2.35;
-   L.bossKey.color.setHex(0xffc9e5);L.bossKey.intensity=1.18;
+   L.bossKey.color.setHex(0xffc9e5);L.bossKey.intensity=.98;
    L.playerFill.color.setHex(0x7d69d4);L.playerFill.intensity=.36;
    envV10.crystalMat.emissiveIntensity=1.10;
  }else{
    scene.fog.color.setHex(0x05030e);scene.fog.density=.029;
-   renderer.toneMappingExposure=1.00;
+   renderer.toneMappingExposure=.98;
    L.hemi.color.setHex(0x755fba);L.hemi.groundColor.setHex(0x07030f);L.hemi.intensity=.62;
    L.moonKey.color.setHex(0xb7a6ef);L.moonKey.intensity=1.38;
    L.bossRim.color.setHex(0xb04ce3);L.bossRim.intensity=3.10;
-   L.bossKey.color.setHex(0xe8b6d8);L.bossKey.intensity=.90;
+   L.bossKey.color.setHex(0xe8b6d8);L.bossKey.intensity=.78;
    L.playerFill.color.setHex(0x553887);L.playerFill.intensity=.25;
    envV10.crystalMat.emissiveIntensity=1.55;
  }
@@ -2504,7 +2507,7 @@ function updateEnvironmentV10(now){
 
 
 function makeV103HairLockGeometry(){
- const g=new THREE.CylinderGeometry(.038,.105,1.42,5,5,false);
+ const g=new THREE.CylinderGeometry(.034,.108,1.42,9,8,false);
  const p=g.attributes.position;
  const colors=new Float32Array(p.count*3);
  for(let i=0;i<p.count;i++){
@@ -2541,8 +2544,8 @@ function createBossV103Refinement(rec){
 
  // Additional large hair masses. One InstancedMesh, not six draw calls.
  const hairMat=new THREE.MeshStandardMaterial({
-   color:0xc9c4ed,vertexColors:true,roughness:.29,metalness:0,
-   emissive:0x251c4f,emissiveIntensity:.24
+   color:0xaaa4d1,vertexColors:true,roughness:.38,metalness:0,
+   emissive:0x211a45,emissiveIntensity:.18
  });
  const hairLocks=new THREE.InstancedMesh(makeV103HairLockGeometry(),hairMat,6);
  hairLocks.name='V103LayeredHairLocks';hairLocks.instanceMatrix.setUsage(THREE.DynamicDrawUsage);hairRoot.add(hairLocks);
@@ -2590,7 +2593,7 @@ function createBossV103Refinement(rec){
  const chestChain=new THREE.LineSegments(chainGeo,chainMat);chestChain.name='V103ChestConstellation';chest.add(chestChain);
 
  // Small face fill follows the head; disabled first on low mobile.
- const faceFill=new THREE.PointLight(0xffdce9,.16,1.45);faceFill.name='V103FaceFill';faceFill.position.set(0,.07,.48);head.add(faceFill);
+ const faceFill=new THREE.PointLight(0xffdce9,.09,1.45);faceFill.name='V103FaceFill';faceFill.position.set(0,.07,.48);head.add(faceFill);
 
  bossV103={
    hairLocks,hairMat,crownStars,crownMat,panels,panelMat,hem,hemMat,chestChain,chainMat,faceFill,
@@ -2621,7 +2624,7 @@ function updateBossV103Phase(phase,force=false){
  bossV103.hemMat.uniforms.uPhase.value=phase;
  bossV103.hemMat.uniforms.uAlpha.value=phase===1?.10:phase===2?.22:.42;
  bossV103.chainMat.opacity=phase===1?.52:phase===2?.70:.90;
- bossV103.faceFill.intensity=phase===1?.13:phase===2?.18:.23;
+ bossV103.faceFill.intensity=phase===1?.08:phase===2?.11:.15;
  updateBossV103Quality(true);
 }
 function updateBossV103(now){
@@ -2663,6 +2666,109 @@ function updateBossV103(now){
  bossV103.hemMat.uniforms.uTime.value=t;
  bossV103.hem.rotation.y=t*(phase===3?.09:.035);
  bossV103.chestChain.rotation.z=Math.sin(t*.86)*.012;
+}
+
+
+function v110LimbShell(parent,child,material,startRadius,endRadius,coverage=.92){
+ if(!parent||!child)return null;
+ const dir=child.position.clone(),full=dir.length();if(full<.01)return null;
+ const mesh=new THREE.Mesh(new THREE.CylinderGeometry(endRadius,startRadius,full*coverage,12,3,false),material);
+ mesh.name='V110TailoredSleeve';mesh.position.copy(dir).multiplyScalar(coverage*.5);
+ mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
+ mesh.castShadow=false;mesh.receiveShadow=false;parent.add(mesh);return mesh;
+}
+function v110Cuff(parent,child,material,radius){
+ if(!parent||!child)return null;
+ const dir=child.position.clone();if(dir.length()<.01)return null;
+ const mesh=new THREE.Mesh(new THREE.TorusGeometry(radius,.026,7,22),material);
+ mesh.name='V110MoonCuff';mesh.position.copy(dir).multiplyScalar(.83);
+ mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),dir.clone().normalize());
+ mesh.castShadow=false;mesh.receiveShadow=false;parent.add(mesh);return mesh;
+}
+function v110Bang(head,points,radius,material,name){
+ const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));
+ const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,10,radius,7,false),material);
+ mesh.name=name;mesh.castShadow=false;mesh.receiveShadow=false;head.add(mesh);return mesh;
+}
+function createBossV110Refinement(rec){
+ if(bossV110||!rec?.model)return;
+ const B=rec.actingBones||{},head=B.head||findRigNode(rec.model,['Head'])||rec.model;
+ const chest=B.chest||findRigNode(rec.model,['Chest'])||rec.model;
+
+ // The source rear hair uses thirteen flat prisms. Keep the two facial locks,
+ // replace only the long back cards with curved V10.3/V10.10 hair masses.
+ const hiddenHair=[];
+ rec.model.traverse(o=>{
+   if(!o.isMesh||!o.geometry?.attributes?.position)return;
+   const mats=Array.isArray(o.material)?o.material:[o.material];
+   if(!mats.some(m=>/hairmoonhighlight/.test(rigNorm(m?.name||''))))return;
+   const pos=o.geometry.attributes.position;if(pos.count!==20)return;
+   if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();
+   const box=o.geometry.boundingBox;
+   if(box&&(box.max.y-box.min.y)>1.2&&box.max.z<0){o.visible=false;hiddenHair.push(o)}
+ });
+
+ const hairMat=new THREE.MeshStandardMaterial({color:0xa39cc9,roughness:.36,metalness:0,emissive:0x20183f,emissiveIntensity:.10});
+ const velvetMat=new THREE.MeshStandardMaterial({color:0x2b0b49,roughness:.64,metalness:0,emissive:0x10031d,emissiveIntensity:.08});
+ const plumMat=new THREE.MeshStandardMaterial({color:0x5a1976,roughness:.48,metalness:.02,emissive:0x1c0529,emissiveIntensity:.10});
+ const silverMat=new THREE.MeshStandardMaterial({color:0xb8c1dc,roughness:.28,metalness:.70,emissive:0x17182c,emissiveIntensity:.06});
+
+ const sleeves=[];
+ sleeves.push(v110LimbShell(B.lua,B.lfa,plumMat,.225,.155,.94));
+ sleeves.push(v110LimbShell(B.rua,B.rfa,plumMat,.225,.155,.94));
+ sleeves.push(v110LimbShell(B.lfa,B.lhand,velvetMat,.125,.165,.90));
+ sleeves.push(v110LimbShell(B.rfa,B.rhand,velvetMat,.125,.165,.90));
+ const cuffs=[v110Cuff(B.lfa,B.lhand,silverMat,.172),v110Cuff(B.rfa,B.rhand,silverMat,.172)].filter(Boolean);
+
+ const shoulders=[];
+ for(const bone of [B.lua,B.rua])if(bone){
+   const q=new THREE.Mesh(new THREE.SphereGeometry(.205,12,8),velvetMat);
+   q.name='V110VelvetShoulder';q.scale.set(1.16,.74,1.0);q.position.set(0,.015,0);bone.add(q);shoulders.push(q);
+ }
+
+ // Five rounded anime locks replace the rigid forehead/cardboard reading.
+ const bangs=[
+   v110Bang(head,[[-.24,.35,.19],[-.22,.23,.28],[-.16,.11,.31]],.050,hairMat,'V110BangL'),
+   v110Bang(head,[[ .24,.35,.19],[ .22,.23,.28],[ .16,.11,.31]],.050,hairMat,'V110BangR'),
+   v110Bang(head,[[-.045,.39,.21],[0,.27,.30],[.035,.15,.315]],.046,hairMat,'V110BangC')
+ ];
+ const templeLocks=[
+   v110Bang(head,[[-.29,.30,.16],[-.33,.05,.25],[-.29,-.23,.24]],.047,hairMat,'V110TempleL'),
+   v110Bang(head,[[ .29,.30,.16],[ .33,.05,.25],[ .29,-.23,.24]],.047,hairMat,'V110TempleR')
+ ];
+
+ const collar=new THREE.Mesh(new THREE.TorusGeometry(.29,.032,7,30,Math.PI*1.56),silverMat);
+ collar.name='V110LunarCollar';collar.position.set(0,.245,.19);collar.rotation.z=-Math.PI*.28;collar.scale.set(1.16,.62,.70);chest.add(collar);
+
+ bossV110={rec,model:rec.model,basePos:rec.model.position.clone(),baseRotY:rec.model.rotation.y,
+   hiddenHair,hairMat,velvetMat,plumMat,silverMat,sleeves:sleeves.filter(Boolean),cuffs,shoulders,bangs,templeLocks,collar,
+   phase:1,quality:'medium'};
+ updateBossV110Quality(true);updateBossV110Phase(1,true);
+}
+function updateBossV110Quality(force=false){
+ if(!bossV110)return;const q=v107Quality;if(!force&&q===bossV110Quality)return;
+ bossV110Quality=q;bossV110.quality=q;
+ bossV110.templeLocks.forEach(m=>m.visible=q!=='low');
+ bossV110.collar.visible=q!=='low';
+ bossV110.cuffs.forEach(m=>m.visible=q!=='low'||bossV110Phase===3);
+}
+function updateBossV110Phase(phase,force=false){
+ phase=Math.max(1,Math.min(3,phase||1));if(!force&&phase===bossV110Phase)return;
+ bossV110Phase=phase;if(!bossV110)return;bossV110.phase=phase;
+ bossV110.hairMat.emissiveIntensity=phase===1?.08:phase===2?.13:.20;
+ bossV110.plumMat.emissiveIntensity=phase===1?.08:phase===2?.14:.22;
+ bossV110.silverMat.emissiveIntensity=phase===1?.05:phase===2?.10:.18;
+ updateBossV110Quality(true);
+}
+function updateBossV110(now){
+ if(!bossV110)return;updateBossV110Quality(false);
+ const t=now*.001,c=bossCastVisual.cast,w=c?v106CastWeights(c,serverNow()):null;
+ const hover=Math.sin(t*.82)*.018+(w?w.a*.026:0);
+ bossV110.model.position.y=bossV110.basePos.y+hover;
+ bossV110.model.rotation.y=bossV110.baseRotY+Math.sin(t*.34)*.014;
+ bossV110.bangs.forEach((m,i)=>m.rotation.z=Math.sin(t*.66+i*.9)*.006);
+ bossV110.templeLocks.forEach((m,i)=>m.rotation.z=(i?1:-1)*(.012+.008*Math.sin(t*.58+i)));
+ bossV110.collar.rotation.z=-Math.PI*.28+Math.sin(t*.72)*.008;
 }
 
 
@@ -2986,19 +3092,22 @@ function v106ApplyActing(nowMs){
  const c=bossCastVisual.cast;
  const phaseAct=nowMs<bossV106PhaseActUntil;
  const summonAct=nowMs<bossV106GestureUntil&&bossV106Gesture==='summon';
- const stanceWeight=(c ? .28 : phaseAct ? .22 : summonAct ? .38 : 1)*qMult;
+ const stanceWeight=(c ? .38 : phaseAct ? .26 : summonAct ? .42 : 1)*qMult;
  // The authored Idle clip has no upper-arm channels. Add a restrained base
  // stance after mixer sampling so both arms rest naturally beside the dress.
  v106AddPose({
-   chest:[-.018,0,0],head:[-.008,0,.012],
-   lua:[.035,-.04,.72],rua:[.035,.04,-.72],
-   lfa:[-.10,.02,-.20],rfa:[-.10,-.02,.20],
-   lhand:[0,0,-.05],rhand:[0,0,.05]
+   chest:[-.018,.012,0],head:[-.008,-.018,.012],
+   lua:[.035,-.055,.76],rua:[.025,.070,-.66],
+   lfa:[-.12,.035,-.24],rfa:[-.07,-.025,.27],
+   lhand:[0,-.02,-.10],rhand:[0,.03,.06]
  },stanceWeight);
  v106AddPose({
    chest:[Math.sin(nowSec*.92)*.006, idle*.005, .004*idle],
    head:[Math.sin(nowSec*.51+.8)*.007,Math.sin(nowSec*.37)*.009,.010*idle],
-   spine:[0,phase===3?.010:0,0]
+   spine:[0,phase===3?.010:0,0],
+   lua:[.003*idle,0,.010*idle],rua:[-.003*idle,0,.008*idle],
+   lfa:[.006*idle,0,-.010*idle],rfa:[-.005*idle,0,.012*idle],
+   lhand:[0,.006*idle,0],rhand:[0,-.007*idle,0]
  },qMult);
  if(phase===3)v106AddPose({head:[-.010,-.012,.012],chest:[.015,0,0],lua:[-.018,0,-.028],rua:[-.018,0,.028]},qMult);
 
@@ -3126,6 +3235,7 @@ function v107ApplyQuality(q,force=false){
  updateBossV103Quality(true);
  updateBossV104Quality(true);
  updateBossV106Quality(true);
+ updateBossV110Quality(true);
  updateEnvironmentV10Quality(true);
 }
 function v107ChooseQuality(){
@@ -3194,6 +3304,7 @@ function clearDynamic(){
  bossV103=null;bossV103Phase=1;bossV103Quality='medium';
  bossV104=null;bossV104Phase=1;bossV104Quality='medium';
  bossV106=null;bossV106PhaseActStart=0;bossV106PhaseActUntil=0;bossV106HitUntil=0;bossV106GestureUntil=0;bossV106Gesture='';
+ bossV110=null;bossV110Phase=1;bossV110Quality='medium';
  v107StableGood=0;v107StableBad=0;v107CamFocusX=0;v107CamFocusZ=-1.5;v107CamFocusVelX=0;v107CamFocusVelZ=0;
  v1071VisualErrors=0;v1071LastVisualError='';v1071SafeMode=false;v1071BossCheckAt=0;
  envV10Phase=1;document.body.classList.remove('envPhase2','envPhase3');
@@ -3833,7 +3944,7 @@ function v103BossExpressionPulse(i){
  clearTimeout(v103BossExpressionPulse.t);
  v103BossExpressionPulse.t=setTimeout(()=>{
    if(iris)iris.emissiveIntensity=eyeBase;if(jewel)jewel.emissiveIntensity=jewelBase;
-   if(bossV103)bossV103.faceFill.intensity=bossV103Phase===1?.13:bossV103Phase===2?.18:.23;
+   if(bossV103)bossV103.faceFill.intensity=bossV103Phase===1?.08:bossV103Phase===2?.11:.15;
  },220);
 }
 
@@ -4068,7 +4179,7 @@ function updateUI(s){
    const bossPct=Math.max(0,s.boss.hp/s.boss.max*100);
    $('bossFill').style.width=bossPct+'%';$('bossHpText').textContent=Math.ceil(bossPct)+'%';updateBossUiPhase(s.boss.phase);
  }
- updateBossV10Phase(s.boss.phase);updateBossV103Phase(s.boss.phase);updateBossV104Phase(s.boss.phase);updateEnvironmentV10Phase(s.boss.phase);$('trustText').textContent=Math.round(s.trust)+'%';$('trustFill').style.width=s.trust+'%';$('duoWrap').style.display=s.trust>=100?'block':'none';
+ updateBossV10Phase(s.boss.phase);updateBossV103Phase(s.boss.phase);updateBossV104Phase(s.boss.phase);updateBossV110Phase(s.boss.phase);updateEnvironmentV10Phase(s.boss.phase);$('trustText').textContent=Math.round(s.trust)+'%';$('trustFill').style.width=s.trust+'%';$('duoWrap').style.display=s.trust>=100?'block':'none';
 }
 function playEvent(e,p){
  if(e==='banner')banner(p.msg);
@@ -4236,7 +4347,7 @@ function frame(now){
  try{sendInputHeartbeat(now)}catch(err){console.error('[input heartbeat]',err)}
  try{
    if(deathCinematicActive()){
-     try{updateV107Performance(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateEnvironmentV10(now);updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-visual')}
+     try{updateV107Performance(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateBossV110(now);updateEnvironmentV10(now);updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-visual')}
    }else if(deathCinematicStats&&!deathCinematicResultShown){
      try{updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-result')}
    }else if(running&&gameInitialized){
@@ -4250,7 +4361,7 @@ function frame(now){
        try{updateV107Performance(now)}catch(err){v1071VisualFailure(err,'quality')}
        try{updateBossCastVisual()}catch(err){v1071VisualFailure(err,'boss-cast')}
        try{updateCombatAnimations(now)}catch(err){v1071VisualFailure(err,'combat-anim')}
-       try{updateRiggedAnimations(dt);v106ApplyActing(now)}catch(err){v1071VisualFailure(err,'rig-animation')}
+       try{updateRiggedAnimations(dt);v106ApplyActing(now);updateBossV110(now)}catch(err){v1071VisualFailure(err,'rig-animation')}
        try{updateBossSocketFx(now);updateSkillArtFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now)}catch(err){v1071VisualFailure(err,'boss-art')}
        try{updateEnvironmentV10(now);updateCam(dt)}catch(err){v1071VisualFailure(err,'environment-camera')}
      }
