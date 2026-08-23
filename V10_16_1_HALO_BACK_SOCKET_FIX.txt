@@ -1,0 +1,19 @@
+PRINCESS RESCUE V10.16.1 — HALO BACK SOCKET FIX
+
+Problem fixed
+- The supplied halo appeared near the boss's feet instead of floating behind
+  the upper back.
+
+Runtime solution
+- Normalize the halo plane to an upright local XY plane before scaling.
+- Scale halo visual height to 2.74 m.
+- Center the independent socket 3.70 m above the authoritative boss root.
+- Offset it 1.12 m behind the boss facing direction.
+- Add only 0.055 m of clamped world-space hover.
+- Keep the halo scene-owned and outside the boss rig, skeleton and hitbox.
+- Expand mobile camera bounds to include the complete halo.
+
+Preserved
+- Tripo boss model lock and all 19 animation clips.
+- Orb weapon state/VFX and homing Spirit Orb.
+- Boss AI, damage, ROOT XZ correction, hitboxes and co-op protocol.

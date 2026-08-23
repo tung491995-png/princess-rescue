@@ -163,7 +163,7 @@ for (const fragment of [
   'ORB_SOCKET_DRIFT',
   'ORB_TOO_FAR_FROM_HAND',
   'HALO_FOLLOW_DRIFT',
-  'by+5.05'
+  'by+5.18'
 ]) {
   if (!html.includes(fragment)) throw new Error(`V10.15 source feature missing: ${fragment}`);
 }

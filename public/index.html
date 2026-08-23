@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.15.1 — Orb Projectile Combat</title>
+<title>Princess Rescue V10.16.1 — Halo Back Socket Fix</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -539,7 +539,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.15.1 ORB PROJECTILES</span></h1><p style="margin-top:7px">Orb chính luôn ở tay trái; Quick Cast và AOE bắn các bản sao VFX nhẹ do server đồng bộ.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Persistent hand orb</span><span class="badge">GPU orb clones</span><span class="badge">Server hit validation</span><span class="badge">Tripo model lock</span><span class="badge">ROOT XZ preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.16.1 HALO BACK SOCKET FIX</span></h1><p style="margin-top:7px">Halo lơ lửng sau đầu–vai, cách lưng rõ ràng và không còn rơi xuống chân.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Upper-back halo socket</span><span class="badge">8-state orb/halo</span><span class="badge">Homing spirit orb</span><span class="badge">Server hit validation</span><span class="badge">ROOT XZ preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -548,7 +548,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.15.1 ORB PROJECTILE AUDIT</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.16.1 HALO BACK-SOCKET AUDIT</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -587,22 +587,22 @@ const RIG_ASSETS={
  hero:{url:'/assets/characters/hero.glb',targetHeight:2.30,rootBase:.90},
  princess:{url:'/assets/characters/princess.glb',targetHeight:2.32,rootBase:.90},
  boss:{
-  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.15.1',
+  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.1',
   mobileUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.15.1',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.15.1',
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.15.1'
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.16.1',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.16.1',
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.1'
   ],
   desktopUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.15.1',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.15.1'
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.1',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.16.1'
   ],
   targetHeight:4.45,rootBase:1.12
  }
 };
 const BOSS_PROP_ASSETS={
- orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.15.1',
- halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.15.1'
+ orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.16.1',
+ halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.16.1'
 };
 const RIG_ALIASES={
  idle:['idle','stand','breathing'],run:['run','walk','jog'],dash:['dash','dodge','evade','roll'],
@@ -692,11 +692,17 @@ let bossV104=null,bossV104Phase=1,bossV104Quality='medium',bossV104LastQualityCh
 let bossV106=null,bossV106PhaseActStart=0,bossV106PhaseActUntil=0,bossV106PhaseActPhase=1;
 let bossV106HitStart=0,bossV106HitUntil=0,bossV106HitSide=1,bossV106GestureStart=0,bossV106GestureUntil=0,bossV106Gesture='';
 let bossV106Quality='medium',bossV106LastQualityCheck=0;
-// V10.15.1 — static GLB armament stays on the hand; projectiles are pooled VFX only.
+// V10.16.1 — state-driven armament with a dedicated floating upper-back halo socket.
 let bossArmament=null;
+const BOSS_HALO_VISUAL_HEIGHT=2.74;
+const BOSS_HALO_BACK_DISTANCE=1.12;
+const BOSS_HALO_CENTER_Y=3.70;
+const BOSS_HALO_HOVER_AMPLITUDE=.055;
 const bossArmamentOrbTarget=new THREE.Vector3(),bossArmamentHaloTarget=new THREE.Vector3(),bossArmamentHandWorld=new THREE.Vector3();
+const bossArmamentOutward=new THREE.Vector3(),bossArmamentAim=new THREE.Vector3(),bossArmamentFxDummy=new THREE.Object3D();
 const bossOrbCloneVisualPos=new THREE.Vector3();
-let bossOrbProjectileStarts=new Map(),bossOrbReleasePulseUntil=0;
+let bossOrbProjectileStarts=new Map(),bossOrbReleasePulseUntil=0,bossArmamentWeaponFlightUntil=0;
+let bossArmamentHit={kind:'',start:0,until:0,dmg:0};
 // V10.7 unified visual/performance state.
 let v107Quality='medium',v107LastCheck=0,v107StableGood=0,v107StableBad=0;
 let v107CamFocusX=0,v107CamFocusZ=-1.5,v107CamFocusVelX=0,v107CamFocusVelZ=0;
@@ -1432,8 +1438,8 @@ function initSharedRenderAssets(){
  });
 
  // V7: every boss projectile is one camera-facing quad batch.
- // Kind is rendered entirely in fragment shader. V10.15.1 reserves kind 5
- // for the lightweight VFX clone of the permanent GLB hand orb.
+ // Kind is rendered entirely in fragment shader. V10.16 reserves kind 5 for
+ // small orb clones and kind 6 for the homing Spirit Weapon.
  const enemyGeo=new THREE.PlaneGeometry(.48,.48,1,1);
  enemyKindAttr=new THREE.InstancedBufferAttribute(new Float32Array(MAX_VIS_PROJECTILES),1);
  enemyColorAttr=new THREE.InstancedBufferAttribute(new Float32Array(MAX_VIS_PROJECTILES*3),3);
@@ -1576,7 +1582,7 @@ function initSharedRenderAssets(){
          col=mix(vColor,vec3(.055,.012,.095),core*.76);
          col=mix(col,vec3(1.0,.10,.26),eye*.72);
          col=mix(col,vec3(1.0,.72,.85),pupil*.55);
-       }else{
+       }else if(vKind < 5.5){
          // ORB CLONE: bright violet core + two counter-rotating energy rings.
          // This is a single billboard instance, never a clone of the GLB mesh.
          float core=sat((.245-d)*9.8);
@@ -1591,6 +1597,20 @@ function initSharedRenderAssets(){
          alpha=max(core,max(shell*.72,max(ringA*.94,max(ringB*.78,satellite))));
          col=mix(vec3(.22,.035,.48),vColor,core*.72+shell*.34);
          col=mix(col,vec3(1.0,.91,1.0),core*.64+satellite*.76);
+       }else{
+         // SPIRIT WEAPON: a larger, denser moon-orb with a readable homing eye.
+         float core=sat((.30-d)*11.0);
+         float shell=1.0-sat(abs(d-.36)*18.0);
+         float corona=sat((.50-d)*3.0);
+         float angle=atan(p.y,p.x);
+         float arc=(1.0-sat(abs(d-.445)*28.0))*sat(.55+.45*sin(angle*4.0-vPulse*2.2));
+         float eye=(1.0-sat(abs(p.y)*30.0))*sat((.18-abs(p.x))*8.0)*core;
+         float pupil=sat((.038-length(vec2(p.x*.55,p.y)))*32.0);
+         alpha=max(corona*.52,max(shell*.76,max(core,max(arc,eye))));
+         col=mix(vec3(.045,.004,.10),vColor,shell*.70+corona*.25);
+         col=mix(col,vec3(.96,.82,1.0),core*.72+arc*.40);
+         col=mix(col,vec3(1.0,.12,.48),eye*.72);
+         col=mix(col,vec3(1.0),pupil*.85);
        }
 
        // Cheap halo on all projectile kinds.
@@ -1802,11 +1822,12 @@ function kindValue(k){
  if(k==='slash')return 3;
  if(k==='night')return 4;
  if(k==='orbclone')return 5;
+ if(k==='spiritOrb')return 6;
  return 0;
 }
 function applyBossOrbCloneMuzzle(pb,x,y,z,now){
  bossOrbCloneVisualPos.set(x,y,z);
- if(pb.k!=='orbclone')return 1;
+ if(pb.k!=='orbclone'&&pb.k!=='spiritOrb')return 1;
  let launch=bossOrbProjectileStarts.get(pb.id);
  if(!launch){
    const source=new THREE.Vector3(x,y,z);
@@ -1816,9 +1837,10 @@ function applyBossOrbCloneMuzzle(pb,x,y,z,now){
    launch={source,born:now,lastSeen:now};bossOrbProjectileStarts.set(pb.id,launch);
  }
  launch.lastSeen=now;
- const p=clamp((now-launch.born)/165,0,1),ease=1-Math.pow(1-p,3);
+ const duration=pb.k==='spiritOrb'?220:165;
+ const p=clamp((now-launch.born)/duration,0,1),ease=1-Math.pow(1-p,3);
  bossOrbCloneVisualPos.lerpVectors(launch.source,bossOrbCloneVisualPos,ease);
- return .72+.28*ease;
+ return (pb.k==='spiritOrb'?.58:.72)+(pb.k==='spiritOrb'?.42:.28)*ease;
 }
 function pruneBossOrbCloneMuzzles(now){
  for(const [id,launch] of bossOrbProjectileStarts)if(now-launch.lastSeen>420)bossOrbProjectileStarts.delete(id);
@@ -2276,7 +2298,8 @@ function auditBossTree(stage){
    if(arm.degraded)visualAuditIssue(stage,'ARMAMENT_FALLBACK_ACTIVE');
    if(!arm.orbRoot.visible||!arm.haloRoot.visible)visualAuditIssue(stage,'ARMAMENT_HIDDEN');
    if(!Number.isFinite(arm.orbSocketDistance)||arm.orbSocketDistance>.025)visualAuditIssue(stage,'ORB_SOCKET_DRIFT',arm.orbSocketDistance);
-   if(!Number.isFinite(arm.orbHandDistance)||arm.orbHandDistance>1.1)visualAuditIssue(stage,'ORB_TOO_FAR_FROM_HAND',arm.orbHandDistance);
+   const stateDistanceLimit=arm.state==='ultimate'?3.8:arm.state==='aoe'?1.65:arm.state==='spinKick'?1.45:1.15;
+   if(!Number.isFinite(arm.orbHandDistance)||arm.orbHandDistance>stateDistanceLimit)visualAuditIssue(stage,'ORB_TOO_FAR_FROM_HAND',arm.orbHandDistance);
    if(!Number.isFinite(arm.haloFollowDistance)||arm.haloFollowDistance>.025)visualAuditIssue(stage,'HALO_FOLLOW_DRIFT',arm.haloFollowDistance);
    for(const [kind,root] of [['orb',arm.orbRoot],['halo',arm.haloRoot]]){
      let propMeshes=0,badPropTransforms=0;
@@ -2293,7 +2316,7 @@ function updateVisualAuditReport(){
  el.classList.add('show');el.classList.toggle('pass',visualAudit.done&&visualAudit.passed);el.classList.toggle('fail',visualAudit.done&&!visualAudit.passed);
  if(!visualAudit.done){el.textContent=`VISUAL AUDIT · ${visualAudit.stage} · ${visualAudit.checks} kiểm tra`;return}
  el.textContent=visualAudit.passed
-   ?`PASS · ${visualAudit.checks} kiểm tra · 19 clip · orb tay trái · halo độc lập`
+   ?`PASS · ${visualAudit.checks} kiểm tra · 19 clip · 8 trạng thái orb/halo · Spirit Orb`
    :`FAIL · ${visualAudit.issues.length} lỗi / ${visualAudit.checks} kiểm tra · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
 }
 async function runBossVisualAudit(){
@@ -2366,7 +2389,7 @@ function finishBossVisualAudit(){
  if(rec?.visualAccepted){enforceBossTripoVisibility(rec);playAnimationLabClip(18);animationLab.view=0;updateAnimationLab(0)}
  visualAudit.active=false;visualAudit.done=true;visualAudit.finishedAt=performance.now();visualAudit.passed=visualAudit.issues.length===0;
  visualAudit.stage=visualAudit.passed?'pass':'fail';updateVisualAuditReport();
- $('animationLabStatus').textContent=visualAudit.passed?'V10.15.1 AUDIT · PASS · orb chính cố định + đạn VFX pooled':`V10.15.1 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
+ $('animationLabStatus').textContent=visualAudit.passed?'V10.16.1 AUDIT · PASS · upper-back halo + Spirit Orb':`V10.16.1 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
  return visualAudit;
 }
 function attachObjectToRigSocket(roleName,obj,type='weapon'){
@@ -2440,7 +2463,7 @@ function ensureBossVisualSafety(now=performance.now()){
  if(!running||!gameInitialized||!boss||now-v1071BossCheckAt<850)return;
  v1071BossCheckAt=now;boss.visible=true;
  const rec=rigRuntime.records.boss;
- // V10.15.1 preserves the one-time bind-pose validation. Animated SkinnedMesh bounds
+ // V10.16.1 preserves the one-time bind-pose validation. Animated SkinnedMesh bounds
  // legitimately change every frame and must never be used as a model switch.
  if(rec?.ready&&rec.model&&rec.visualAccepted){
    enforceBossTripoVisibility(rec);updateBossArmament(0,now);return;
@@ -2473,7 +2496,7 @@ function loadGlbCandidate(loader,url,timeoutMs){
 function disposeBossArmament(){
  if(!bossArmament)return;
  const geometries=new Set(),materials=new Set(),textures=new Set();
- for(const root of [bossArmament.orbRoot,bossArmament.haloRoot]){
+ for(const root of [bossArmament.orbRoot,bossArmament.haloRoot,...(bossArmament.extraRoots||[])]){
    root?.traverse?.(o=>{
      if(o.geometry)geometries.add(o.geometry);
      const mats=Array.isArray(o.material)?o.material:[o.material];
@@ -2486,6 +2509,13 @@ function disposeBossArmament(){
 }
 function prepareBossPropModel(model,targetHeight,kind){
  const box=new THREE.Box3().setFromObject(model),size=new THREE.Vector3();box.getSize(size);
+ // Tripo halo exports are not guaranteed to use Y as the upright axis. Rotate
+ // the thinnest (normal) axis to local Z before measuring and centering it.
+ if(kind==='halo'){
+   if(size.y<=size.x&&size.y<=size.z)model.rotation.x+=Math.PI/2;
+   else if(size.x<=size.y&&size.x<=size.z)model.rotation.y+=Math.PI/2;
+   model.updateMatrixWorld(true);box.setFromObject(model);box.getSize(size);
+ }
  if(!Number.isFinite(size.y)||size.y<=.001)throw new Error(`${kind.toUpperCase()}_INVALID_BOUNDS`);
  const scale=targetHeight/size.y;model.scale.multiplyScalar(scale);model.updateMatrixWorld(true);
  box.setFromObject(model);const center=new THREE.Vector3();box.getCenter(center);model.position.sub(center);model.updateMatrixWorld(true);
@@ -2509,7 +2539,7 @@ function makeBossPropFallback(kind){
    const core=new THREE.Mesh(new THREE.SphereGeometry(.28,18,12),new THREE.MeshStandardMaterial({color:0x4d1680,emissive:0x7c36ce,emissiveIntensity:.7,metalness:.35,roughness:.24}));
    const ring=new THREE.Mesh(new THREE.TorusGeometry(.40,.025,6,30),new THREE.MeshBasicMaterial({color:0xd7bdff,transparent:true,opacity:.82,depthWrite:false}));ring.rotation.x=Math.PI/2;root.add(core,ring);
  }else{
-   const ring=new THREE.Mesh(new THREE.TorusGeometry(1.65,.075,8,48),new THREE.MeshStandardMaterial({color:0xb99048,emissive:0x5f367a,emissiveIntensity:.24,metalness:.82,roughness:.30}));root.add(ring);
+   const ring=new THREE.Mesh(new THREE.TorusGeometry(1.28,.060,8,48),new THREE.MeshStandardMaterial({color:0xb99048,emissive:0x5f367a,emissiveIntensity:.24,metalness:.82,roughness:.30}));root.add(ring);
  }
  root.name=kind==='orb'?'MoonVoidOrbFallback':'MoonHaloFallback';return root;
 }
@@ -2521,11 +2551,32 @@ function createBossOrbAura(root){
  const b=new THREE.Mesh(new THREE.TorusGeometry(.51,.011,5,36),matB);b.rotation.y=Math.PI/2;
  group.add(a,b);root.add(group);return {group,a,b,matA,matB};
 }
+function createBossArmamentStateFx(arm){
+ const additive=(color,opacity)=>new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
+ const shield=new THREE.Mesh(new THREE.SphereGeometry(.54,16,10),additive(0xd9c6ff,.0));
+ shield.name='OrbHitShieldRipple';shield.visible=false;arm.orbRoot.add(shield);
+ const haloRunes=new THREE.Group();haloRunes.name='HaloStateRunes';haloRunes.visible=false;
+ const runeA=new THREE.Mesh(new THREE.TorusGeometry(1.55,.027,6,48),additive(0xdac6ff,.0));
+ const runeB=new THREE.Mesh(new THREE.TorusGeometry(1.26,.018,5,42),additive(0x8f58d5,.0));
+ haloRunes.add(runeA,runeB);arm.haloRoot.add(haloRunes);
+ const blackMoon=new THREE.Mesh(new THREE.SphereGeometry(.72,20,14),new THREE.MeshBasicMaterial({color:0x08000f,transparent:true,opacity:0,depthWrite:false}));
+ blackMoon.name='UltimateBlackMoon';blackMoon.visible=false;blackMoon.position.z=.08;arm.haloRoot.add(blackMoon);
+ const marker=new THREE.Mesh(new THREE.TorusGeometry(1.18,.052,6,48),additive(0xc8a8ff,.0));
+ marker.name='SpinKickOrbLandingMarker';marker.rotation.x=Math.PI/2;marker.visible=false;marker.frustumCulled=false;scene.add(marker);
+ const tetherGeometry=new THREE.BufferGeometry();
+ tetherGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(6),3).setUsage(THREE.DynamicDrawUsage));
+ const tether=new THREE.Line(tetherGeometry,new THREE.LineBasicMaterial({color:0xd9c3ff,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
+ tether.name='OrbHaloUltimateTether';tether.visible=false;tether.frustumCulled=false;scene.add(tether);
+ const shards=new THREE.InstancedMesh(new THREE.TetrahedronGeometry(.11,0),additive(0xb86dff,.0),12);
+ shards.name='OrbHitDeathShards';shards.count=0;shards.visible=false;shards.frustumCulled=false;scene.add(shards);
+ arm.extraRoots=[marker,tether,shards];
+ return {shield,haloRunes,runeA,runeB,blackMoon,marker,tether,shards};
+}
 async function loadBossArmament(rec){
  disposeBossArmament();
  const loader=initRigLoader();if(!loader||!scene)return false;
- const armament={ready:false,degraded:false,orbRoot:new THREE.Group(),haloRoot:new THREE.Group(),orbModel:null,haloModel:null,orbAura:null,seeded:false,orbSocketDistance:0,haloFollowDistance:0};
- armament.orbRoot.name='BossOrbWeaponRoot';armament.haloRoot.name='BossIndependentHaloRoot';
+ const armament={ready:false,degraded:false,state:'idle',orbRoot:new THREE.Group(),haloRoot:new THREE.Group(),orbModel:null,haloModel:null,orbAura:null,stateFx:null,extraRoots:[],seeded:false,orbSocketDistance:0,haloFollowDistance:0};
+ armament.orbRoot.name='BossOrbWeaponRoot';armament.haloRoot.name='BossFloatingUpperBackHaloSocket';armament.haloRoot.userData.socket='upper-back-floating';
  scene.add(armament.haloRoot,armament.orbRoot);bossArmament=armament;
  const [orbResult,haloResult]=await Promise.allSettled([
    loadGlbCandidate(loader,BOSS_PROP_ASSETS.orb,mobileDevice?12000:15000),
@@ -2533,15 +2584,95 @@ async function loadBossArmament(rec){
  ]);
  try{
    armament.orbModel=orbResult.status==='fulfilled'?prepareBossPropModel(orbResult.value.scene||orbResult.value.scenes?.[0],.72,'orb'):makeBossPropFallback('orb');
-   armament.haloModel=haloResult.status==='fulfilled'?prepareBossPropModel(haloResult.value.scene||haloResult.value.scenes?.[0],3.62,'halo'):makeBossPropFallback('halo');
+   armament.haloModel=haloResult.status==='fulfilled'?prepareBossPropModel(haloResult.value.scene||haloResult.value.scenes?.[0],BOSS_HALO_VISUAL_HEIGHT,'halo'):makeBossPropFallback('halo');
    armament.degraded=orbResult.status!=='fulfilled'||haloResult.status!=='fulfilled';
-   armament.orbRoot.add(armament.orbModel);armament.haloRoot.add(armament.haloModel);armament.orbAura=createBossOrbAura(armament.orbRoot);
+   armament.orbRoot.add(armament.orbModel);armament.haloRoot.add(armament.haloModel);armament.orbAura=createBossOrbAura(armament.orbRoot);armament.stateFx=createBossArmamentStateFx(armament);
    armament.ready=true;updateBossArmament(1,performance.now());
-   console.info('[V10.15.1 armament]',armament.degraded?'fallback':'ready',BOSS_PROP_ASSETS);
+   console.info('[V10.16.1 halo back socket]',armament.degraded?'fallback':'ready',BOSS_PROP_ASSETS);
    return !armament.degraded;
  }catch(err){
-   console.warn('[V10.15.1 armament]',err);disposeBossArmament();return false;
+   console.warn('[V10.16.1 halo back socket]',err);disposeBossArmament();return false;
  }
+}
+function triggerBossArmamentHit(kind,dmg=0){
+ const now=performance.now(),heavy=kind==='heavy';
+ bossArmamentHit={kind:heavy?'heavy':'light',start:now,until:now+(heavy?760:300),dmg};
+}
+function bossArmamentEase(x){x=clamp(x,0,1);return x*x*(3-2*x)}
+function resolveBossArmamentState(now){
+ const rec=rigRuntime.records.boss;
+ if(animationLab.active){
+   return ({18:'idle',8:'combat',13:'quick',14:'aoe',12:'teleport',7:'spinKick',17:'ultimate',15:'death',9:'hitHeavy'})[animationLab.index]||'idle';
+ }
+ if(deathCinematicActive()||rec?.activeState==='boss_death')return'death';
+ if(now<bossArmamentHit.until)return bossArmamentHit.kind==='heavy'?'hitHeavy':'hitLight';
+ const cast=bossCastVisual.cast,serverTime=serverNow();
+ if(cast){
+   if(cast.i===0)return'quick';
+   if(cast.i===1||cast.i===2)return'aoe';
+   if(cast.i===3)return serverTime>=(cast.kickAt||cast.impactAt)?'spinKick':'teleport';
+   if(cast.i===4)return'ultimate';
+ }
+ return ({boss_idle:'idle',boss_combat_idle:'combat',boss_quick_cast:'quick',boss_aoe:'aoe',boss_teleport:'teleport',boss_spin_kick:'spinKick',boss_ultimate:'ultimate',boss_hit:'hitHeavy',boss_death:'death'})[rec?.activeState]||'combat';
+}
+function bossArmamentProgress(state,now){
+ if(animationLab.active&&animationLab.action){
+   const duration=animationLab.action.getClip()?.duration||1,p=clamp(animationLab.action.time/Math.max(.001,duration),0,1);
+   return {p,pre:p,after:0,serverTime:serverNow()};
+ }
+ if(state==='hitLight'||state==='hitHeavy'){
+   const duration=Math.max(1,bossArmamentHit.until-bossArmamentHit.start),p=clamp((now-bossArmamentHit.start)/duration,0,1);
+   return {p,pre:p,after:0,serverTime:serverNow()};
+ }
+ if(state==='death'){
+   const start=deathCinematicStart||now,p=clamp((now-start)/2400,0,1);return {p,pre:p,after:0,serverTime:serverNow()};
+ }
+ const cast=bossCastVisual.cast,serverTime=serverNow();
+ if(cast){
+   const pre=clamp((serverTime-cast.startAt)/Math.max(1,cast.impactAt-cast.startAt),0,1);
+   const after=clamp((serverTime-cast.impactAt)/Math.max(1,cast.endAt-cast.impactAt),0,1);
+   const p=clamp((serverTime-cast.startAt)/Math.max(1,cast.endAt-cast.startAt),0,1);
+   return {p,pre,after,serverTime};
+ }
+ return {p:0,pre:0,after:0,serverTime};
+}
+function updateBossArmamentShards(arm,progress,death=false){
+ const shards=arm.stateFx?.shards;if(!shards)return;
+ const visible=progress>=0&&progress<1;if(!visible){shards.visible=false;shards.count=0;return}
+ const count=death?12:8,spread=death?1.65:.72;shards.visible=true;shards.count=count;shards.material.opacity=(death?.84:.72)*(1-progress);
+ for(let i=0;i<count;i++){
+   const angle=i/count*Math.PI*2+(i%2)*.31,r=spread*bossArmamentEase(progress)*(death?.72+(.28*(i%3)):.85);
+   bossArmamentFxDummy.position.set(arm.orbRoot.position.x+Math.cos(angle)*r,arm.orbRoot.position.y+(death?.18:.05)+progress*(death?.95:.36)+(i%3)*.035,arm.orbRoot.position.z+Math.sin(angle)*r);
+   bossArmamentFxDummy.rotation.set(progress*4+i,progress*6+i*.4,progress*3+i*.7);
+   bossArmamentFxDummy.scale.setScalar(Math.max(.02,(1-progress)*(death?1.2:.85)));
+   bossArmamentFxDummy.updateMatrix();shards.setMatrixAt(i,bossArmamentFxDummy.matrix);
+ }
+ shards.instanceMatrix.needsUpdate=true;
+}
+function updateBossArmamentStateFx(arm,state,ctx,dt,now){
+ const fx=arm.stateFx;if(!fx)return 0;
+ const {p,pre,after}=ctx,pulse=.5+.5*Math.sin(now*.012);
+ fx.shield.visible=false;fx.haloRunes.visible=false;fx.blackMoon.visible=false;fx.marker.visible=false;fx.tether.visible=false;fx.shards.visible=false;fx.shards.count=0;
+ let haloJolt=0;
+ if(state==='hitLight'){
+   fx.shield.visible=true;fx.shield.scale.setScalar(.86+1.55*p);fx.shield.material.opacity=.54*(1-p);haloJolt=Math.sin(p*Math.PI*5)*.045*(1-p);
+ }else if(state==='hitHeavy'){
+   fx.shield.visible=true;fx.shield.scale.setScalar(.9+2.2*p);fx.shield.material.opacity=.72*(1-p);haloJolt=Math.sin(p*Math.PI*3)*.20*(1-p);updateBossArmamentShards(arm,p,false);
+ }else if(state==='aoe'){
+   fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.76+.48*bossArmamentEase(pre));fx.haloRunes.rotation.z+=dt*(1.5+pre*2.8);
+   fx.runeA.material.opacity=(.16+.60*pre)*(1-after*.72);fx.runeB.material.opacity=(.10+.46*pre)*(1-after*.78);fx.runeB.rotation.z-=dt*2.4;
+ }else if(state==='spinKick'){
+   const impact=bossArmamentEase(pre);fx.marker.visible=true;fx.marker.position.set(boss.position.x,.075,boss.position.z);fx.marker.scale.setScalar(.72+1.55*impact+.22*pulse);fx.marker.material.opacity=(.28+.58*impact)*(1-after);fx.marker.rotation.z+=dt*3.4;
+ }else if(state==='ultimate'){
+   const link=bossArmamentEase(clamp((pre-.18)/.72,0,1));fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.9+.42*link);fx.haloRunes.rotation.z+=dt*(1.2+link*3.1);
+   fx.runeA.material.opacity=.20+.58*link;fx.runeB.material.opacity=.14+.44*link;fx.runeB.rotation.z-=dt*2.1;
+   fx.blackMoon.visible=true;fx.blackMoon.scale.setScalar(.18+1.15*link);fx.blackMoon.material.opacity=.10+.82*link;
+   fx.tether.visible=link>.04;fx.tether.material.opacity=.22+.72*link;
+   const attr=fx.tether.geometry.attributes.position.array;attr[0]=arm.orbRoot.position.x;attr[1]=arm.orbRoot.position.y;attr[2]=arm.orbRoot.position.z;attr[3]=arm.haloRoot.position.x;attr[4]=arm.haloRoot.position.y;attr[5]=arm.haloRoot.position.z+.08;fx.tether.geometry.attributes.position.needsUpdate=true;
+ }else if(state==='death'){
+   updateBossArmamentShards(arm,p,true);haloJolt=p*.48;
+ }
+ return haloJolt;
 }
 function updateBossArmament(dt=0,now=performance.now()){
  const arm=bossArmament,rec=rigRuntime.records.boss;if(!arm?.ready||!boss)return;
@@ -2549,43 +2680,78 @@ function updateBossArmament(dt=0,now=performance.now()){
  arm.orbRoot.visible=show;arm.haloRoot.visible=show;if(!show)return;
  if(rec.orbSocket)rec.orbSocket.getWorldPosition(bossArmamentHandWorld);
  else bossArmamentHandWorld.set(boss.position.x-.78,boss.position.y+2.55,boss.position.z+.14);
- bossArmamentOrbTarget.copy(bossArmamentHandWorld);
- // Keep the orb above the palm in world Y so hand-roll tracks cannot bury it inside the wrist.
- bossArmamentOrbTarget.y+=.14;
- bossArmamentOrbTarget.x-=Math.cos(boss.rotation.y)*.035;
- bossArmamentOrbTarget.z+=Math.sin(boss.rotation.y)*.035;
- // A few long Tripo clips sweep the hand across the corset. Push only the
- // floating weapon outward, leaving the authored arm pose untouched.
- const torsoY=bossArmamentOrbTarget.y-boss.position.y,dx=bossArmamentOrbTarget.x-boss.position.x,dz=bossArmamentOrbTarget.z-boss.position.z;
- const torsoRadius=torsoY>1.45&&torsoY<3.75 ? .66 : .42,planar=Math.hypot(dx,dz);
- if(planar<torsoRadius){
-   const outX=planar>.001?dx/planar:-Math.cos(boss.rotation.y),outZ=planar>.001?dz/planar:Math.sin(boss.rotation.y);
-   bossArmamentOrbTarget.x+=outX*(torsoRadius-planar);bossArmamentOrbTarget.z+=outZ*(torsoRadius-planar);
+
+ const state=resolveBossArmamentState(now),ctx=bossArmamentProgress(state,now);arm.state=state;
+ bossArmamentOutward.set(bossArmamentHandWorld.x-boss.position.x,0,bossArmamentHandWorld.z-boss.position.z);
+ if(bossArmamentOutward.lengthSq()<.035)bossArmamentOutward.set(-Math.cos(boss.rotation.y),0,Math.sin(boss.rotation.y));
+ bossArmamentOutward.normalize();
+ bossArmamentAim.set(0,0,0);
+ const snapshot=latestState||snapshotBuffer.at(-1)?.s,players=snapshot?.players;
+ if(players){
+   const alive=['hero','princess'].map(role=>players[role]).filter(player=>player&&!player.down).sort((a,b)=>d2(a.x,a.z,boss.position.x,boss.position.z)-d2(b.x,b.z,boss.position.x,boss.position.z));
+   if(alive[0])bossArmamentAim.set(alive[0].x-boss.position.x,0,alive[0].z-boss.position.z).normalize();
  }
- const behind=.46;
+ if(bossArmamentAim.lengthSq()<.01)bossArmamentAim.set(Math.sin(boss.rotation.y),0,Math.cos(boss.rotation.y));
+
+ // The 0.53 m center separation clears the 0.42 m orb radius, leaving a real
+ // air gap instead of merely doubling a value while the palm stays inside it.
+ bossArmamentOrbTarget.copy(bossArmamentHandWorld).addScaledVector(bossArmamentOutward,.46);bossArmamentOrbTarget.y+=.26;
+ const idleWave=Math.sin(now*.0021),pulse=.5+.5*Math.sin(now*.0065);
+ if(state==='idle')bossArmamentOrbTarget.y+=idleWave*.075;
+ else if(state==='combat'){bossArmamentOrbTarget.y+=idleWave*.035;bossArmamentOrbTarget.addScaledVector(bossArmamentAim,.075)}
+
+ // Keep the floating weapon outside the torso even when a source animation
+ // sweeps the left hand through the corset.
+ let dx=bossArmamentOrbTarget.x-boss.position.x,dz=bossArmamentOrbTarget.z-boss.position.z;
+ const torsoY=bossArmamentOrbTarget.y-boss.position.y,torsoRadius=torsoY>1.45&&torsoY<3.75?.74:.48,planar=Math.hypot(dx,dz);
+ if(planar<torsoRadius){const outX=planar>.001?dx/planar:bossArmamentOutward.x,outZ=planar>.001?dz/planar:bossArmamentOutward.z;bossArmamentOrbTarget.x+=outX*(torsoRadius-planar);bossArmamentOrbTarget.z+=outZ*(torsoRadius-planar)}
+
+ // Halo is scene-owned, never a rig child. The socket stays behind the head and
+ // shoulders; a restrained world-space hover cannot be pulled to the feet by
+ // hand, hip, root-motion or skirt animation tracks.
+ const haloHover=Math.sin(now*.00115)*BOSS_HALO_HOVER_AMPLITUDE;
  bossArmamentHaloTarget.set(
-   boss.position.x-Math.sin(boss.rotation.y)*behind,
-   boss.position.y+3.08,
-   boss.position.z-Math.cos(boss.rotation.y)*behind
+   boss.position.x-Math.sin(boss.rotation.y)*BOSS_HALO_BACK_DISTANCE,
+   clamp(boss.position.y+BOSS_HALO_CENTER_Y+haloHover,boss.position.y+3.62,boss.position.y+3.78),
+   boss.position.z-Math.cos(boss.rotation.y)*BOSS_HALO_BACK_DISTANCE
  );
- const immediate=!arm.seeded||visualAudit.active||dt>=.5;
- const follow=immediate?1:1-Math.exp(-Math.max(0,dt)*26);
- arm.orbRoot.position.lerp(bossArmamentOrbTarget,follow);arm.haloRoot.position.lerp(bossArmamentHaloTarget,immediate?1:1-Math.exp(-Math.max(0,dt)*18));
- arm.haloRoot.rotation.y=boss.rotation.y;arm.seeded=true;
- const state=rec?.activeState||'',cast=/boss_(quick_cast|aoe|teleport|spin_kick|ultimate)/.test(state),hit=now<bossHitPulseUntil,release=now<bossOrbReleasePulseUntil;
- const pulse=.5+.5*Math.sin(now*.0065),energy=release ? 1.18 : cast ? 1 : hit ? .82 : .38;
- const orbScale=1+(release ? .13 : cast ? .075 : hit ? .055 : .018)*pulse;arm.orbRoot.scale.setScalar(orbScale);
- arm.orbModel.rotation.y+=Math.max(0,dt)*(release?4.8:cast?2.8:1.05);arm.orbModel.rotation.z=Math.sin(now*.0018)*.055;
- arm.haloModel.rotation.z+=Math.max(0,dt)*(cast ? .16 : .026);
- arm.haloRoot.scale.setScalar(1+(cast ? .025 : .008)*pulse);
- if(arm.orbAura){
-   arm.orbAura.a.rotation.z+=Math.max(0,dt)*(cast?4.4:1.6);arm.orbAura.b.rotation.x+=Math.max(0,dt)*(cast?3.2:1.1);
-   arm.orbAura.matA.opacity=.30+.34*energy+.10*pulse;arm.orbAura.matB.opacity=.16+.26*energy+.08*(1-pulse);
+ let orbScale=1,haloScale=1,orbSpin=state==='idle'?.72:state==='combat'?1.85:2.7,haloSpin=state==='idle'?.014:state==='combat'?.038:.11,energy=state==='idle'?.34:.58;
+ if(state==='quick'){
+   const charge=bossArmamentEase(ctx.pre),release=ctx.after<.18?Math.sin(clamp(ctx.after/.18,0,1)*Math.PI):0;
+   bossArmamentOrbTarget.y+=.18*charge;bossArmamentOrbTarget.addScaledVector(bossArmamentAim,.10);orbScale=.98-.34*charge+.48*release;orbSpin=4.8;haloSpin=.10;energy=1.08;
+ }else if(state==='aoe'){
+   const rise=bossArmamentEase(ctx.pre);bossArmamentOrbTarget.y+=.72*rise;orbScale=1+.20*rise;haloScale=1+.18*rise;orbSpin=3.9;haloSpin=.26;energy=1.12;
+ }else if(state==='teleport'){
+   const cast=bossCastVisual.cast,tpAt=cast?.teleportAt||ctx.serverTime+1;
+   if(cast&&ctx.serverTime<tpAt){const vanish=clamp((ctx.serverTime-cast.startAt)/Math.max(1,tpAt-cast.startAt),0,1);orbScale=lerp(1,.07,bossArmamentEase(vanish))}
+   else if(cast){const appear=clamp((ctx.serverTime-tpAt)/240,0,1);orbScale=.07+.93*bossArmamentEase(appear)}
+   else orbScale=.12+.88*Math.abs(Math.sin(ctx.p*Math.PI));
+   orbSpin=6.2;haloSpin=.18;energy=1.2;
+ }else if(state==='spinKick'){
+   bossArmamentOrbTarget.y+=.34;orbScale=1.08+.12*pulse;orbSpin=5.1;haloSpin=.22;energy=1.12;
+ }else if(state==='ultimate'){
+   const link=bossArmamentEase(clamp((ctx.pre-.18)/.72,0,1));bossArmamentOrbTarget.lerp(bossArmamentHaloTarget,link);bossArmamentOrbTarget.z+=.08*link;orbScale=1+1.05*link;haloScale=1+.22*link;orbSpin=1.2+link*4.2;haloSpin=.34;energy=1.35;
+ }else if(state==='hitLight'){
+   orbScale=1+.08*Math.sin(ctx.p*Math.PI);haloScale=1+.018*Math.sin(ctx.p*Math.PI);orbSpin=2.8;energy=.94;
+ }else if(state==='hitHeavy'){
+   const recoil=Math.sin(ctx.p*Math.PI)*(1-ctx.p*.22);bossArmamentOrbTarget.addScaledVector(bossArmamentOutward,.38*recoil);orbScale=1+.16*Math.sin(ctx.p*Math.PI);haloScale=1+.04*Math.sin(ctx.p*Math.PI);orbSpin=4.6;energy=1.18;
+ }else if(state==='death'){
+   orbScale=Math.max(.025,1-bossArmamentEase(clamp(ctx.p/.68,0,1)));haloScale=Math.max(.55,1-ctx.p*.42);orbSpin=lerp(1.2,.05,ctx.p);haloSpin=.04;energy=Math.max(0,.8-ctx.p);
  }
- arm.orbModel.traverse(o=>{const mats=Array.isArray(o.material)?o.material:[o.material];for(const mat of mats)if(mat?.emissive)mat.emissiveIntensity=.34+.48*energy+.14*pulse});
- arm.orbSocketDistance=arm.orbRoot.position.distanceTo(bossArmamentOrbTarget);
- arm.orbHandDistance=arm.orbRoot.position.distanceTo(bossArmamentHandWorld);
- arm.haloFollowDistance=arm.haloRoot.position.distanceTo(bossArmamentHaloTarget);
+
+ const spiritFlying=!!(snapshot?.projectiles||[]).find(projectile=>projectile.e&&projectile.k==='spiritOrb');
+ if(spiritFlying)bossArmamentWeaponFlightUntil=Math.max(bossArmamentWeaponFlightUntil,now+140);
+ if(spiritFlying||now<bossArmamentWeaponFlightUntil)orbScale=Math.min(orbScale,.09+.025*pulse);
+ const release=now<bossOrbReleasePulseUntil;if(release){orbScale*=1+.12*pulse;energy=Math.max(energy,1.2);orbSpin=Math.max(orbSpin,4.8)}
+
+ const immediate=!arm.seeded||visualAudit.active||dt>=.5,follow=immediate?1:1-Math.exp(-Math.max(0,dt)*(state==='ultimate'?16:24));
+ arm.orbRoot.position.lerp(bossArmamentOrbTarget,follow);arm.haloRoot.position.lerp(bossArmamentHaloTarget,immediate?1:1-Math.exp(-Math.max(0,dt)*22));arm.seeded=true;
+ const haloJolt=updateBossArmamentStateFx(arm,state,ctx,dt,now);
+ arm.orbRoot.scale.setScalar(orbScale);arm.haloRoot.scale.setScalar(haloScale);arm.haloRoot.rotation.y=boss.rotation.y;arm.haloRoot.rotation.z=haloJolt;
+ arm.orbModel.rotation.y+=Math.max(0,dt)*orbSpin;arm.orbModel.rotation.z=Math.sin(now*.0018)*.055;arm.haloModel.rotation.z+=Math.max(0,dt)*haloSpin;
+ if(arm.orbAura){arm.orbAura.group.rotation.y=state==='combat'?Math.atan2(bossArmamentAim.x,bossArmamentAim.z)-boss.rotation.y:0;arm.orbAura.a.rotation.z+=Math.max(0,dt)*(orbSpin*1.45);arm.orbAura.b.rotation.x+=Math.max(0,dt)*(orbSpin*.92);arm.orbAura.matA.opacity=.28+.34*energy+.10*pulse;arm.orbAura.matB.opacity=.14+.25*energy+.08*(1-pulse)}
+ arm.orbModel.traverse(o=>{const mats=Array.isArray(o.material)?o.material:[o.material];for(const mat of mats)if(mat?.emissive)mat.emissiveIntensity=.28+.50*energy+.13*pulse});
+ arm.orbSocketDistance=arm.orbRoot.position.distanceTo(bossArmamentOrbTarget);arm.orbHandDistance=arm.orbRoot.position.distanceTo(bossArmamentHandWorld);arm.haloFollowDistance=arm.haloRoot.position.distanceTo(bossArmamentHaloTarget);
 }
 
 function disposeRigAttempt(rec){
@@ -2644,11 +2810,11 @@ async function loadRigAsset(roleName){
            mats.forEach(m=>{if(m?.map){m.map.anisotropy=Math.min(2,renderer?.capabilities?.getMaxAnisotropy?.()||1);m.map.needsUpdate=true}});
          });
          validateBossRigStatic(rec);rec.visualAccepted=true;
-         // V10.15.1: the host readiness packet is sent only after the hand orb
+         // V10.16.1: the host readiness packet is sent only after the hand orb
          // and independent halo are parsed and included in the precompile.
          await loadBossArmament(rec);rec.armamentReady=!!bossArmament?.ready;
          enforceBossTripoVisibility(rec);model.visible=true;
-         try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.15.1 precompile]',e)}
+         try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.16.1 precompile]',e)}
          notifyBossAssetReady();
          setTimeout(()=>ensureBossVisualSafety(performance.now()),180);
        }
@@ -3904,7 +4070,7 @@ function clearDynamic(){
  for(const m of summonSpawnFx)m.visible=false;for(const m of summonDeathFx)m.visible=false;
  $('threeAmArtFx')?.classList.remove('show');$('eternalArtFx')?.classList.remove('show');
  if(A?.parent)scene.remove(A);if(B?.parent)scene.remove(B);if(boss?.parent)scene.remove(boss);
- predictedShots=[];bossOrbProjectileStarts.clear();bossOrbReleasePulseUntil=0;hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};
+ predictedShots=[];bossOrbProjectileStarts.clear();bossOrbReleasePulseUntil=0;bossArmamentWeaponFlightUntil=0;bossArmamentHit={kind:'',start:0,until:0,dmg:0};hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};
  camTrauma=0;bossSocketFxUntil=0;if(bossSocketFx)bossSocketFx.visible=false;
  deathCinematicStart=0;deathCinematicUntil=0;deathCinematicStats=null;deathCinematicResultShown=false;
  if(bossV10Art?.root?.parent)bossV10Art.root.parent.remove(bossV10Art.root);
@@ -4793,11 +4959,11 @@ function syncEntities(sa,sb,t){
    if(pb.e){
      const kind=kindValue(pb.k);
      const muzzleScale=applyBossOrbCloneMuzzle(pb,x,y,z,nowVisual);
-     if(pb.k==='orbclone'){x=bossOrbCloneVisualPos.x;y=bossOrbCloneVisualPos.y;z=bossOrbCloneVisualPos.z}
-     const color=pb.k==='shard'?0xf1ecff:pb.k==='thought'?0xb494ff:pb.k==='slash'?0xd8c9ff:pb.k==='night'?0x7b54b8:pb.k==='orbclone'?0xd8b8ff:0xc9afff;
-     const size=(pb.k==='shard'?.94:pb.k==='thought'?1.12:pb.k==='slash'?1.0:pb.k==='night'?1.32:pb.k==='orbclone'?1.18:.90)*(mobileDevice?1.12:1)*muzzleScale;
+     if(pb.k==='orbclone'||pb.k==='spiritOrb'){x=bossOrbCloneVisualPos.x;y=bossOrbCloneVisualPos.y;z=bossOrbCloneVisualPos.z}
+     const color=pb.k==='shard'?0xf1ecff:pb.k==='thought'?0xb494ff:pb.k==='slash'?0xd8c9ff:pb.k==='night'?0x7b54b8:pb.k==='spiritOrb'?0xf0c7ff:pb.k==='orbclone'?0xd8b8ff:0xc9afff;
+     const size=(pb.k==='shard'?.94:pb.k==='thought'?1.12:pb.k==='slash'?1.0:pb.k==='night'?1.32:pb.k==='spiritOrb'?1.82:pb.k==='orbclone'?1.18:.90)*(mobileDevice?1.12:1)*muzzleScale;
      if(setEnemyInst(enemyCount,x,y,z,color,kind,pulseBase+pb.id*.31,size))enemyCount++;
-     if(setTrailInst(trailCount,x,y,z,vx,vz,color,pb.k==='orbclone'?.92:.76))trailCount++;
+     if(setTrailInst(trailCount,x,y,z,vx,vz,color,pb.k==='spiritOrb'?1:pb.k==='orbclone'?.92:.76))trailCount++;
    }else{
      const color=foods[pb.f]?.[2]??0xffffff;
      if(setInst(projectileInst.food,foodCount,x,y,z,color,0,mobileDevice?1.18:1))foodCount++;
@@ -4879,20 +5045,32 @@ function playEvent(e,p){
    bossOrbReleasePulseUntil=Math.max(bossOrbReleasePulseUntil,performance.now()+220);
    pulseBossSocketFx(p.radial?0xe7d8ff:0xc9a6ff,p.radial?1.08:.82);
  }
+ if(e==='bossSpiritOrbLaunch'){
+   bossArmamentWeaponFlightUntil=performance.now()+clamp((p.endAt||serverNow()+3200)-serverNow(),300,3600);
+   bossOrbReleasePulseUntil=Math.max(bossOrbReleasePulseUntil,performance.now()+280);
+   pulseBossSocketFx(0xf0c4ff,1.18);
+ }
+ if(e==='bossSpiritOrbHit'){
+   bossArmamentWeaponFlightUntil=performance.now()+90;
+   if(p.role===role){playImpactScreenFx('dark','#b86cff',520);flash('#c99cff',mobileDevice?.32:.22,72);addCameraTrauma(mobileDevice?.24:.17,3.8)}
+ }
  if(e==='actionAnim'){
    if(!(p.role===role&&combatAnim[p.role]?.type))triggerCombatAnim(p.role,p.a,p.startAt);
  }
  if(e==='combatHit'){
-   triggerHitStop(p.owner,p.dmg||10);
    if(p.target==='boss'){
-     pulseBossSocketFx(p.dmg>=18?0xffd895:0xd5c0ff,clamp((p.dmg||8)/14,.65,1.35));
-     startBossV106Hit(p.dmg||8);
-     if((p.dmg||0)>=18)v104ImpactMaterialPulse('perfect');
-     addCameraTrauma(p.owner===role?(mobileDevice?.13:.10):.065,4.2);
-     // Small hits during a telegraphed cast should not cancel the boss animation.
-     if(!bossCastVisual.cast&&performance.now()-lastRigBossHitAt>280){
+     const heavy=(p.dmg||0)>=18;triggerBossArmamentHit(heavy?'heavy':'light',p.dmg||0);
+     pulseBossSocketFx(heavy?0xffd895:0xd5c0ff,clamp((p.dmg||8)/14,.65,1.35));
+     if(heavy){
+       triggerHitStop(p.owner,p.dmg||10);startBossV106Hit(p.dmg||8);v104ImpactMaterialPulse('perfect');
+       hitStopUntil=Math.max(hitStopUntil,performance.now()+clamp(58+(p.dmg||0)*.65,60,80));
+     }else bossHitPulseUntil=Math.max(bossHitPulseUntil,performance.now()+80);
+     addCameraTrauma(heavy?(p.owner===role?(mobileDevice?.13:.10):.065):.025,4.2);
+     // Light hits are absorbed by the orb shield. Only a heavy stagger plays
+     // the strongest recoil slice of clip 09 instead of all 3.625 seconds.
+     if(heavy&&!bossCastVisual.cast&&performance.now()-lastRigBossHitAt>420){
        lastRigBossHitAt=performance.now();
-       playRigAnimation('boss','boss_hit',{fade:.045,once:true,speed:1.08});
+       playRigAnimation('boss','boss_hit',{fade:.035,once:true,speed:1.42,segmentStart:.62,segmentEnd:1.48,returnState:'boss_combat_idle'});
      }
    }
  }
@@ -4972,8 +5150,8 @@ function frameBossFullBody(look,marginX=.76,marginY=.82){
  camera.updateMatrixWorld(true);
  let overflow=1;
  const bx=boss.position.x,by=boss.position.y,bz=boss.position.z;
- // Conservative envelope includes the crown, long skirt and extended kick leg.
- for(const x of [-2.15,2.15])for(const y of [by-.06,by+5.05])for(const z of [-1.35,1.35]){
+ // Conservative envelope includes the crown, upper-back halo, skirt and kick leg.
+ for(const x of [-2.15,2.15])for(const y of [by-.06,by+5.18])for(const z of [-1.55,1.55]){
    v10132FramePoint.set(bx+x,y,bz+z).project(camera);
    if(v10132FramePoint.z<-1||v10132FramePoint.z>1)overflow=Math.max(overflow,1.35);
    overflow=Math.max(overflow,Math.abs(v10132FramePoint.x)/marginX,Math.abs(v10132FramePoint.y)/marginY);

@@ -1,8 +1,29 @@
-PRINCESS RESCUE 3D — V10.15.1 ORB PROJECTILE COMBAT
+PRINCESS RESCUE 3D — V10.16.1 HALO BACK SOCKET FIX
+
+HALO POSITION REPAIR
+====================
+- Halo is normalized upright before scaling, including future Tripo exports
+  whose ring plane uses a different axis.
+- Its visual height is reduced from 3.62 m to 2.74 m so it frames the head and
+  shoulders instead of extending toward the feet.
+- A scene-owned upper-back socket keeps its center 3.70 m above the boss root
+  and 1.12 m behind the facing direction.
+- Gentle 0.055 m hover is clamped to 3.62–3.78 m above the boss root.
+- No hand, hip, skirt, root-motion or animation bone can move the halo socket.
+- Mobile full-body camera bounds include the halo top and rear depth.
+
+PRESERVED FROM V10.16
+=====================
+- Orb state machine, Spirit Orb projectile, 19 animation clips, ROOT XZ lock,
+  hitboxes, co-op synchronization and combat balance are unchanged.
 
 LATEST UPGRADE
 ==========
-- The optimized Tripo orb is always visible above the boss's left palm through all 19 clips.
+- The optimized Tripo orb now floats about 0.53 m from the left palm, leaving a visible air gap outside its 0.42 m radius.
+- Idle 18, Combat Idle 08, Quick Cast 13, AOE 14, Teleport 12, Spin Kick 07, Ultimate 17 and Death 15 each drive a distinct orb/halo state.
+- Light boss hits create an orb shield without rig recoil. Heavy hits use only clip 09 from 0.62–1.48 s with 60–80 ms hit-stop, orb spring recoil and halo shards.
+- Quick Cast releases a large pooled Spirit Orb that homes into its server-selected target; both clients receive the same projectile and hit event.
+- The permanent hand-orb GLB is never cloned, reparented or used as a projectile/hitbox.
 - The supplied ornamental halo follows the authoritative boss root without joining the skin, skeleton or hitbox.
 - Orb and halo load before the client reports `bossAssetReady`, so intro never starts with missing armament.
 - A torso-separation guard prevents long animation clips from burying the floating orb inside the corset.

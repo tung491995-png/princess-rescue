@@ -662,6 +662,24 @@ function bossOrbRadial(room,{n=10,speed=5.8,dmg=10,angleOffset=0,castId=null}={}
   broadcast(room,{type:'event',e:'bossOrbVolley',p:{ids,count:n,castId,radial:true}});
   markDirty(room);
 }
+function bossSpiritOrb(room,{targetRole=null,castId=null}={}){
+  const s=room.state,b=s.boss,target=livingBossTarget(s,targetRole);
+  if(!target)return;
+  const dx=target.x-b.x,dz=target.z-b.z,length=Math.hypot(dx,dz)||1;
+  const aimX=dx/length,aimZ=dz/length,leftX=-aimZ,leftZ=aimX;
+  const speed=4.75+b.phase*.28;
+  const projectile={
+    id:s.nextProj++,owner:null,enemy:true,kind:'spiritOrb',food:2,
+    x:b.x+leftX*.68+aimX*.12,z:b.z+leftZ*.68+aimZ*.12,y:2.62,
+    vx:aimX*speed,vz:aimZ*speed,speed,turnRate:2.55+b.phase*.24,
+    targetRole:target.role,dmg:14+b.phase*2,t:3.45,castId,bornAt:Date.now()
+  };
+  s.projectiles.push(projectile);
+  broadcast(room,{type:'event',e:'bossSpiritOrbLaunch',p:{
+    id:projectile.id,targetRole:target.role,castId,launchAt:projectile.bornAt,endAt:projectile.bornAt+3450
+  }});
+  markDirty(room);
+}
 function scheduleTask(room,delayMs,type,data={}){
   const s=room.state;
   s.tasks.push({id:s.nextTask++,dueAt:Date.now()+delayMs,type,data});
@@ -679,6 +697,8 @@ function runTask(room,task){
     bossOrbVolley(room,task.data);
   }else if(task.type==='boss_orb_radial'){
     bossOrbRadial(room,task.data);
+  }else if(task.type==='boss_spirit_orb'){
+    bossSpiritOrb(room,task.data);
   }else if(task.type==='dream_slash'){
     const p=s.players[task.data.role||'hero'];
     if(p&&!p.down){
@@ -785,6 +805,9 @@ function bossSkill(room){
       count:b.phase,speed:6.9+b.phase*.38,dmg:9+b.phase*2,
       spread:b.phase===1?0:.115,targetRole:null,castId:cast.id
     });
+    // A larger weapon-orb follows the nearest player after the small fan. It
+    // uses server steering/hit validation; the GLB hand orb is never moved.
+    scheduleTask(room,telegraphMs+320,'boss_spirit_orb',{targetRole:null,castId:cast.id});
     scheduleTask(room,telegraphMs,'start_dark_pool');
   }else if(i===1){
     // AOE 14: one synchronized ring of orb VFX clones. Later phases retain a
@@ -937,15 +960,30 @@ function tick(room,dt){
 
   for(const pr of s.projectiles){
     const x1=pr.x,z1=pr.z;
+    if(pr.enemy&&pr.kind==='spiritOrb'){
+      const target=livingBossTarget(s,pr.targetRole);
+      if(target){
+        pr.targetRole=target.role;
+        const dx=target.x-pr.x,dz=target.z-pr.z,length=Math.hypot(dx,dz)||1;
+        const desiredX=dx/length,desiredZ=dz/length,currentSpeed=Math.hypot(pr.vx,pr.vz)||pr.speed||5;
+        const currentX=pr.vx/currentSpeed,currentZ=pr.vz/currentSpeed;
+        const steer=1-Math.exp(-(pr.turnRate||2.8)*dt);
+        let nextX=currentX+(desiredX-currentX)*steer,nextZ=currentZ+(desiredZ-currentZ)*steer;
+        const nextLength=Math.hypot(nextX,nextZ)||1;nextX/=nextLength;nextZ/=nextLength;
+        pr.vx=nextX*(pr.speed||currentSpeed);pr.vz=nextZ*(pr.speed||currentSpeed);
+      }
+    }
     pr.x+=pr.vx*dt;pr.z+=pr.vz*dt;pr.t-=dt;
 
     if(pr.enemy){
       for(const role of ['hero','princess']){
         const p=s.players[role];
-        if(pr.t>0&&!p.down&&segmentCircleHit(x1,z1,pr.x,pr.z,p.x,p.z,.75)){
+        const hitRadius=pr.kind==='spiritOrb'?.98:.75;
+        if(pr.t>0&&!p.down&&segmentCircleHit(x1,z1,pr.x,pr.z,p.x,p.z,hitRadius)){
           // Damage is confirmed after a short grace window so a late-arriving dash
           // can still protect a player if it actually happened before the hit.
           queueEnemyHit(room,role,pr.dmg,now);
+          if(pr.kind==='spiritOrb')broadcast(room,{type:'event',e:'bossSpiritOrbHit',p:{id:pr.id,role,x:p.x,z:p.z,dmg:pr.dmg}});
           pr.t=0;
         }
       }
@@ -1008,7 +1046,7 @@ function snapshot(room){
     },
     boss:{...s.boss},
     projectiles:s.projectiles.map(p=>({
-      id:p.id,a:p.aid||null,o:p.owner||null,x:p.x,y:p.y,z:p.z,e:p.enemy,k:p.kind,f:p.food,c:p.castId||null,b:p.bornAt||null
+      id:p.id,a:p.aid||null,o:p.owner||null,x:p.x,y:p.y,z:p.z,e:p.enemy,k:p.kind,f:p.food,c:p.castId||null,b:p.bornAt||null,r:p.targetRole||null
     })),
     pickups:s.pickups.map(p=>({...p})),
     darkPool:s.darkPool?{...s.darkPool}:null,
@@ -1025,8 +1063,8 @@ app.get('/healthz',(_req,res)=>res.json({
   network:{
     tickHz:TICK_HZ,
     snapshotHz:SNAPSHOT_HZ,
-    renderOptimization:'V10.15.1-single-enemy-shader-batch-plus-orb-clone-projectiles',
-    combatFeel:'persistent-hand-orb-authoritative-vfx-clone-projectiles',
+    renderOptimization:'V10.16.1-upper-back-halo-socket-plus-homing-spirit-weapon',
+    combatFeel:'orb-halo-state-machine-two-tier-hit-authoritative-spirit-orb',
     rewindMs:MAX_REWIND_MS,
     hitConfirmMs:HIT_CONFIRM_DELAY_MS,
     adaptiveInterpolationMs:[80,100,140]
@@ -1246,5 +1284,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.15.1 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.16.1 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
 })();

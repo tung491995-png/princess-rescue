@@ -1,0 +1,28 @@
+PRINCESS RESCUE V10.16 — ORB STATE & SPIRIT WEAPON
+
+Persistent GLB armament
+- The orb center now floats about 0.53 m from the palm. This clears the orb's
+  approximately 0.42 m radius and creates a visible air gap instead of leaving
+  the hand inside the mesh.
+- The GLB orb and halo remain scene-owned, skeleton-independent and hitbox-free.
+
+State presentation
+- Idle 18: slow rotation, vertical hover, very light halo drift.
+- Combat Idle 08: faster rotation and visual aim toward the nearest player.
+- Quick Cast 13: charge compression, release pulse, 1/2/3 pooled orb shots.
+- AOE 14: orb rises, halo rune rings open, radial orb release.
+- Teleport 12: orb collapses to a point and reforms with the server boss.
+- Spin Kick 07: ground landing marker expands and detonates at impact.
+- Ultimate 17: orb links to the halo center and forms a black moon.
+- Death 15: orb dims, collapses and releases pooled violet shards.
+
+Hit 09
+- Light hit: no rig recoil; orb shield ripple and restrained halo vibration.
+- Heavy hit (damage >=18): 60–80 ms hit-stop, only clip 09 segment 0.62–1.48 s,
+  0.38 m orb knock-away/spring return, halo jolt and violet shards.
+
+Spirit weapon
+- Quick Cast also releases a large pooled spirit-orb visual that steers toward
+  the selected living player. The server updates its path, collision, damage,
+  dash grace and despawn. The hand orb only compresses visually and is never
+  cloned or reparented.
