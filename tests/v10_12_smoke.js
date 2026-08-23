@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 const WebSocket = require('ws');
 
 const root = path.resolve(__dirname, '..');
@@ -25,6 +26,9 @@ const fail = error => {
 const timeout = setTimeout(() => fail(new Error('V10.12 smoke test timed out')), 10000);
 
 async function run() {
+  const html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  if (!html.includes("rec.hipMotionBone=findRigNode(rec.model,['Hips','Hip','Pelvis'])")) throw new Error('Hips root-lock binding is missing');
+  if (!html.includes('[rec.hipMotionBone,rec.hipMotionBind]')) throw new Error('Hips XZ lock is not applied');
   const diag = await fetch(`http://127.0.0.1:${port}/diag`).then(response => response.json());
   if (diag.websocketPath !== '/ws') throw new Error('WebSocket diagnostic mismatch');
   const asset = await fetch(`http://127.0.0.1:${port}/assets/characters/ma_vuong_mat_ngu.glb`);
@@ -44,7 +48,7 @@ async function run() {
     const remaining = state.introUntil - Date.now();
     if (remaining < 4500 || remaining > 5100) throw new Error(`Intro lock mismatch: ${remaining}ms`);
     if (state.boss?.hp !== 2200 || state.boss?.max !== 2200) throw new Error('Boss HP mismatch');
-    console.log(`V10.12 SMOKE PASS · room ${room} · intro ${remaining}ms · boss 2200/2200 · GLB ${bytes} bytes`);
+    console.log(`V10.12.1 SMOKE PASS · Root + Hips XZ lock · room ${room} · intro ${remaining}ms · boss 2200/2200 · GLB ${bytes} bytes`);
     clearTimeout(timeout); close(); stop(0);
   };
   hero.on('error', fail); princess.on('error', fail);

@@ -1,6 +1,6 @@
 {
-  "version": "10.12.0",
-  "title": "Boss Animation Lab",
+  "version": "10.12.1",
+  "title": "Boss Animation Lab — Root + Hips Lock Hotfix",
   "bossAsset": "/assets/characters/ma_vuong_mat_ngu.glb",
   "bossAssetProfile": {
     "animations": 19,
@@ -14,7 +14,7 @@
     "speed 0.25x-2.00x",
     "play and pause",
     "loop toggle",
-    "root XZ lock",
+    "Root and Hips XZ lock",
     "timeline scrub",
     "front, right, back and left camera views"
   ],

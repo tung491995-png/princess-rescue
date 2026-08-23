@@ -1,4 +1,4 @@
-PRINCESS RESCUE V10.12 — BOSS ANIMATION LAB
+PRINCESS RESCUE V10.12.1 — BOSS ANIMATION LAB ROOT-LOCK HOTFIX
 
 MỤC TIÊU
 - Kiểm tra trực tiếp 19 animation của boss Tripo trước khi chốt Boss AI.
@@ -14,13 +14,14 @@ CÁCH MỞ
 - TỐC ĐỘ: 0.25x–2.00x.
 - Timeline: kéo tới frame cần kiểm tra.
 - PLAY / PAUSE và LOOP.
-- ROOT XZ: khóa dịch chuyển ngang của xương Root.
+- ROOT XZ: khóa dịch chuyển ngang của cả Root và Hips.
 - GÓC NHÌN: Front → Right → Back → Left.
 
 LƯU Ý ROOT MOTION
 - Bật ROOT XZ để đánh giá pose, tóc, tay và váy tại một vị trí cố định.
 - Tắt ROOT XZ để xem quãng đường thật của clip Move, Dodge hoặc Teleport.
-- Trong gameplay, root XZ luôn được khóa; server vẫn quyết định vị trí boss.
+- Trong gameplay, Root và Hips XZ luôn được khóa; server vẫn quyết định vị trí boss.
+- V10.12.1 sửa lỗi clip Tripo ghi root motion vào Hips khiến hình boss lệch khỏi hitbox.
 
 ASSET BOSS
 - public/assets/characters/ma_vuong_mat_ngu.glb
@@ -29,5 +30,5 @@ ASSET BOSS
 - Texture 4096x4096.
 
 SAU KHI TEST
-Quay video các clip cần dùng hoặc ghi lại số clip. Bước V10.12 tiếp theo sẽ
+Quay video các clip cần dùng hoặc ghi lại số clip. Bước tiếp theo sẽ
 đổi tên/cắt clip và gắn chúng vào Idle, Dodge, Teleport, Cast, Hit, Phase và Death.
