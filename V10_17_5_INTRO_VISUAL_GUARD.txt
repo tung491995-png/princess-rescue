@@ -1,0 +1,17 @@
+PRINCESS RESCUE V10.17.5 — INTRO & VISUAL GUARD
+
+Debug bundle source
+- princess_rescue_v10.17.4_debug_bundle_2026-08-23T20-39-38-648Z.zip
+- V10.17.4 reduced the previous 4,544 runtime issues to 7.
+
+Repairs
+- Preserve the authored introFinale boss_ultimate segment until it completes.
+- Prevent heavy-combat outline recovery from revealing procedural boss shells.
+- Validate the Teleport cone only before teleportAt; landing warning uses ring/rune.
+- Preserve full-body camera correction during Teleport → Spin Kick without a false jump report.
+
+Preserved
+- Tripo boss, orb, halo and all textures/GLBs.
+- ROOT XZ and authoritative hitbox.
+- Boss AI timing, damage and co-op protocol.
+- Separate JPG/JSON debug bundle format.

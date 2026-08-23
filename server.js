@@ -110,7 +110,7 @@ function ephemeralRoomFields(room){
   room.history = {hero:[],princess:[],boss:[]};
   // Runtime-only render readiness. A match may start only after both browsers
   // have parsed, normalized and precompiled the real Tripo boss.
-  room.bossAssetsReady = {hero:false,princess:false};
+  room.bossAssetsReady = {hero:false,princess:room.testMode==='boss-only-damage'};
   // Runtime-only sequence. It intentionally resets after a process restart;
   // clients reset their loss window when a session resumes.
   room.snapshotSeq = 0;
@@ -118,9 +118,10 @@ function ephemeralRoomFields(room){
 }
 function serializeRoom(room){
   return {
-    version:3,
+    version:4,
     code:room.code,
     created:room.created,
+    testMode:room.testMode||'',
     slots:{
       hero:{token:room.slots.hero.token,disconnectedAt:room.slots.hero.disconnectedAt},
       princess:{token:room.slots.princess.token,disconnectedAt:room.slots.princess.disconnectedAt}
@@ -134,6 +135,7 @@ function deserializeRoom(raw){
   const room={
     code:data.code,
     created:data.created||Date.now(),
+    testMode:data.testMode==='boss-only-damage'?'boss-only-damage':'',
     slots:{
       hero:{token:data.slots?.hero?.token||null,ws:null,disconnectedAt:data.slots?.hero?.disconnectedAt||null},
       princess:{token:data.slots?.princess?.token||null,ws:null,disconnectedAt:data.slots?.princess?.disconnectedAt||null}
@@ -283,11 +285,11 @@ async function roomExists(code){
   if(!redisReady||!redis)return false;
   return !!(await redis.exists(roomKey(code)));
 }
-async function createRoom(){
+async function createRoom(testMode=''){
   let code;
   do{code=code6()}while(await roomExists(code));
   const room=ephemeralRoomFields({
-    code,created:Date.now(),
+    code,created:Date.now(),testMode:testMode==='boss-only-damage'?'boss-only-damage':'',
     slots:{
       hero:{token:token(),ws:null,disconnectedAt:null},
       princess:{token:null,ws:null,disconnectedAt:null}
@@ -305,6 +307,9 @@ function connected(room,role){
   return !!ws&&ws.readyState===WebSocket.OPEN;
 }
 function bothConnected(room){return connected(room,'hero')&&connected(room,'princess');}
+function isCombatTest(room){return room?.testMode==='boss-only-damage'}
+function matchClientsReady(room){return connected(room,'hero')&&(isCombatTest(room)||connected(room,'princess'))}
+function matchBossAssetsReady(room){return room.bossAssetsReady.hero&&(isCombatTest(room)||room.bossAssetsReady.princess)}
 function attach(room,role,ws){
   const slot=room.slots[role];
   if(slot.ws && slot.ws!==ws && slot.ws.readyState===WebSocket.OPEN){
@@ -324,7 +329,7 @@ function detach(ws){
     room.bossAssetsReady[role]=false;
     broadcast(room,{type:'bossAssetReady',ready:{...room.bossAssetsReady}});
   }
-  if(room.state.started){
+  if(room.state.started&&!(isCombatTest(room)&&role==='princess')){
     room.state.paused=true;
     room.state.pauseRole=role;
     broadcast(room,{type:'pause',role,graceMs:SLOT_TTL_MS});
@@ -603,6 +608,14 @@ function dash(room,role,actionTs=Date.now()){
 }
 function hurt(room,role,n){
   const p=room.state.players[role];
+  if(isCombatTest(room)){
+    // Server-authoritative invulnerability for the isolated combat lab. The
+    // production co-op path below remains untouched and still applies damage.
+    p.hp=100;p.down=false;p.revive=0;p.inv=Math.max(p.inv||0,.18);
+    broadcast(room,{type:'event',e:'testGuard',p:{role,dmg:n,mode:room.testMode}});
+    markDirty(room);
+    return;
+  }
   if(p.inv>0||p.down)return;
   p.hp-=n;p.inv=.35;
   if(p.hp<=0){
@@ -1073,7 +1086,7 @@ function tick(room,dt){
 function snapshot(room){
   const s=room.state;
   return {
-    ts:Date.now(),tick:s.tick,trust:s.trust,started:s.started,paused:s.paused,pauseRole:s.pauseRole,introUntil:s.introUntil||0,
+    ts:Date.now(),tick:s.tick,trust:s.trust,started:s.started,paused:s.paused,pauseRole:s.pauseRole,introUntil:s.introUntil||0,testMode:room.testMode||'',
     bossAssetsReady:{...room.bossAssetsReady},
     connectedRoles:{hero:connected(room,'hero'),princess:connected(room,'princess')},
     players:{
@@ -1132,7 +1145,7 @@ wss.on('connection',(ws,req)=>{
     }
 
     if(m.type==='create'){
-      const room=await createRoom();
+      const room=await createRoom(m.testMode);
       attach(room,'hero',ws);
       console.log(`[ws] create room ${room.code}`);
       send(ws,{type:'created',code:room.code,role:'hero',token:room.slots.hero.token,state:snapshot(room)});
@@ -1162,7 +1175,7 @@ wss.on('connection',(ws,req)=>{
       if(!hit){send(ws,{type:'error',code:'SESSION_EXPIRED'});return}
       attach(hit.room,hit.role,ws);
       const room=hit.room;
-      if(room.state.started&&bothConnected(room)&&room.bossAssetsReady.hero&&room.bossAssetsReady.princess){
+      if(room.state.started&&matchClientsReady(room)&&matchBossAssetsReady(room)){
         room.state.paused=false;room.state.pauseRole=null;
         markDirty(room);
         await persistRoomNow(room);
@@ -1179,7 +1192,7 @@ wss.on('connection',(ws,req)=>{
     if(m.type==='bossAssetReady'){
       room.bossAssetsReady[role]=m.ready===true;
       broadcast(room,{type:'bossAssetReady',ready:{...room.bossAssetsReady}});
-      if(room.state.started&&room.state.paused&&bothConnected(room)&&room.bossAssetsReady.hero&&room.bossAssetsReady.princess){
+      if(room.state.started&&room.state.paused&&matchClientsReady(room)&&matchBossAssetsReady(room)){
         room.state.paused=false;room.state.pauseRole=null;markDirty(room);
         await persistRoomNow(room);
         broadcast(room,{type:'resumePlay',state:snapshot(room)});
@@ -1208,13 +1221,13 @@ wss.on('connection',(ws,req)=>{
     }
 
     if(m.type==='start'&&role==='hero'){
-      const princessOnline=connected(room,'princess');
+      const princessOnline=isCombatTest(room)||connected(room,'princess');
       console.log(`[ws] start requested ${room.code} princess=${princessOnline}`);
       if(!princessOnline){
         send(ws,{type:'startAck',ok:false,reason:'PRINCESS_OFFLINE'});
         return;
       }
-      if(!room.bossAssetsReady.hero||!room.bossAssetsReady.princess){
+      if(!matchBossAssetsReady(room)){
         send(ws,{type:'startAck',ok:false,reason:'BOSS_ASSET_NOT_READY',ready:{...room.bossAssetsReady}});
         return;
       }

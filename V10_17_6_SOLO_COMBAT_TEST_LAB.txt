@@ -1,0 +1,18 @@
+PRINCESS RESCUE V10.17.6 — SOLO COMBAT TEST LAB
+
+HOW TO USE
+==========
+1. From the home screen, choose `SOLO COMBAT TEST — BẤT TỬ`.
+2. Wait until the accepted Tripo boss reports ready.
+3. Choose `BẮT ĐẦU SOLO TEST`; no Princess device is required.
+4. During combat, Hero and Princess HP stay at 100 while boss HP decreases.
+5. Use Capture / Download Debug ZIP as usual when a current visual anomaly occurs.
+
+SAFETY BOUNDARY
+===============
+- Invulnerability is authorized by the server only for rooms carrying the
+  exact `boss-only-damage` test-mode flag.
+- Normal co-op rooms keep their existing damage, down and revive behavior.
+- Boss AI, skills, damage output, hitboxes, animations, VFX and 2200 HP remain
+  active so the combat test is representative.
+- The UI displays a green test badge throughout the test session.

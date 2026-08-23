@@ -12,14 +12,58 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.17.4 — Armament Runtime Hotfix</title>',
+  '<title>Princess Rescue V10.17.6 — Solo Combat Test Lab</title>',
   'TẢI DEBUG ZIP','JPG riêng · 1280px','🧪 CHECK 19 ANIMATION',
-  "window.PrincessBlackBox?.init?.({version:'10.17.4'",
+  "window.PrincessBlackBox?.init?.({version:'10.17.6'",
   'function runtimeBlackBoxTelemetry(','entities:{','hero:state?.players?.hero','princess:state?.players?.princess',
   "'INTRO_FRAMEBUFFER_CHANGED'","'INTRO_ANIMATION_MISSING'","'BOSS_OUT_OF_CAMERA'","'ROOT_XZ_DRIFT'",
   "'TRIPO_MODEL_HIDDEN'","'PLAYER_INPUT_NOT_MOVING'","'BOSS_TELEGRAPH_VFX_MISSING'","'HUD_ELEMENT_OFFSCREEN'",
   '3-hit sword combo','TẠO PHÒNG — HERO','VÀO PHÒNG — PRINCESS'
 ])if(!html.includes(fragment))throw new Error(`Current-area smoke fragment missing: ${fragment}`);
+
+for(const fragment of [
+  'const outlineRoot=rec?.visualAccepted&&rec.model?rec.model:boss;',
+  'if(rec?.visualAccepted&&rec.model)setFallback(boss,false,rec.model);',
+  '!bossIntroActive()&&!br.activeSegment&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test',
+  "const authorizedCameraReframe=bossCastVisual.cast?.i===3||/^boss_(teleport|spin_kick)$/.test",
+  'coneExpected=!cast.teleportAt||serverTime<cast.teleportAt',
+  'cone:!!bossTelegraphCone?.visible,coneExpected'
+])if(!html.includes(fragment))throw new Error(`V10.17.6 visual guard missing: ${fragment}`);
+
+const hideStart=html.indexOf('function hideBossCastVisual(){');
+const hideEnd=html.indexOf('\nfunction retriggerClass(',hideStart);
+if(hideStart<0||hideEnd<0)throw new Error('Boss cast cleanup function is missing');
+let cleanupTransitions=0,introActive=true;
+const cleanupContext={
+  rigRuntime:{records:{boss:{ready:true,activeState:'boss_ultimate',activeSegment:{state:'boss_ultimate'},active:{paused:true}}}},
+  bossIntroActive:()=>introActive,
+  bossV10Phase:1,
+  playRigAnimation:()=>{cleanupTransitions++},
+  bossCastVisual:{cast:null},
+  clearBossSkillUi(){},bossTelegraphRing:null,bossTelegraphRing2:null,bossTelegraphMoon:null,bossTelegraphCone:null,bossTelegraphRune:null,bossMoonCracks3D:null,
+  $:()=>({style:{},classList:{remove(){}}}),setVignette(){}
+};
+vm.runInNewContext(html.slice(hideStart,hideEnd),cleanupContext,{filename:'boss-cast-cleanup.js'});
+cleanupContext.hideBossCastVisual();
+if(cleanupTransitions!==0)throw new Error('Intro finale was cancelled by combat cleanup');
+introActive=false;cleanupContext.rigRuntime.records.boss.activeSegment=null;cleanupContext.hideBossCastVisual();
+if(cleanupTransitions!==1)throw new Error('Finished combat cast did not return to combat idle');
+
+const outlineStart=html.indexOf('function setBossOutlineVisible(v){');
+const outlineEnd=html.indexOf('\nfunction updateHeavyCombatMode(',outlineStart);
+if(outlineStart<0||outlineEnd<0)throw new Error('Boss outline guard function is missing');
+const placeholderOutline={userData:{isOutline:true},visible:false},tripoOutline={userData:{isOutline:true},visible:false};
+let fallbackHidden=false;
+const outlineContext={
+  bossOutlineVisible:false,
+  boss:{traverse(fn){fn(placeholderOutline)}},
+  rigRuntime:{records:{boss:{visualAccepted:true,model:{traverse(fn){fn(tripoOutline)}}}}},
+  setFallback(_boss,visible){fallbackHidden=visible===false}
+};
+vm.runInNewContext(html.slice(outlineStart,outlineEnd),outlineContext,{filename:'boss-outline-guard.js'});
+outlineContext.setBossOutlineVisible(true);
+if(placeholderOutline.visible)throw new Error('Procedural boss outline was re-enabled');
+if(!tripoOutline.visible||!fallbackHidden)throw new Error('Tripo outline guard did not preserve the accepted model');
 
 const armamentStart=html.indexOf('function bossArmamentPlayerDistanceSq(');
 const armamentEnd=html.indexOf('\nfunction updateBossArmament(',armamentStart);
@@ -98,5 +142,5 @@ box.afterRender({width:1920,height:1080},{
   const bytes=new Uint8Array(await zip.arrayBuffer()),text=Buffer.from(bytes).toString('latin1');
   if(bytes[0]!==0x50||bytes[1]!==0x4b||!text.includes('debug_log.json')||!text.includes(shot.path))throw new Error('ZIP does not contain separate log and image entries');
 
-  console.log('V10.17.4 SHORT SMOKE PASS · armament runtime · intro · boss · hero/princess · combat · UI · separate JPG files · no base64 · 20 captures max');
+  console.log('V10.17.6 SHORT SMOKE PASS · intro finale · Tripo outline guard · teleport telegraph/camera · armament runtime · combat/UI · separate JPG files');
 })().catch(error=>{console.error(error);process.exitCode=1});

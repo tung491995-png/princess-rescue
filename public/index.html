@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.17.4 — Armament Runtime Hotfix</title>
+<title>Princess Rescue V10.17.6 — Solo Combat Test Lab</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -98,6 +98,7 @@ body.envPhase3 #bossPortraitWrap{box-shadow:0 0 18px rgba(219,75,204,.32),inset 
 
 #trustHud{position:fixed;z-index:21;top:calc(64px + var(--st));left:50%;transform:translateX(-50%);width:min(34vw,220px);text-align:center;font-size:9px;font-weight:950;pointer-events:none}#trustFill{background:linear-gradient(90deg,#66deff,#c6b3ff,#ff86c8)}
 #netBadge{position:fixed;z-index:22;right:calc(10px + var(--sr));top:calc(76px + var(--st));padding:5px 9px;border-radius:999px;background:#03050dbb;border:1px solid #ffffff1d;font-size:9px;font-weight:900;pointer-events:none}
+#combatTestBadge{position:fixed;z-index:23;right:calc(10px + var(--sr));top:calc(105px + var(--st));padding:6px 10px;border-radius:999px;background:#07150ee8;border:1px solid #70ffab80;color:#9dffc5;font-size:8px;font-weight:1000;letter-spacing:.06em;box-shadow:0 0 18px #42ff8b24;pointer-events:none}
 #banner{position:fixed;z-index:45;left:50%;top:17%;transform:translateX(-50%) scale(.94);padding:10px 15px;border-radius:17px;background:#050611e8;border:1px solid #ffffff28;box-shadow:0 15px 48px #000a;font-size:12px;font-weight:1000;opacity:0;transition:.15s;pointer-events:none;white-space:nowrap}#banner.show{opacity:1;transform:translateX(-50%) scale(1)}
 #favorite{position:fixed;z-index:46;left:50%;top:30%;transform:translate(-50%,-50%) scale(.9);width:min(86vw,550px);padding:14px 18px;border-radius:23px;background:linear-gradient(135deg,#43dfaeee,#62caffee,#c69cffee);border:2px solid #fff;box-shadow:0 0 44px #8cecff99,0 18px 60px #000a;font-size:14px;font-weight:1000;text-align:center;opacity:0;transition:.18s;pointer-events:none}#favorite.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 #dialogue{position:fixed;z-index:47;left:50%;bottom:calc(48px + var(--sb));transform:translateX(-50%) translateY(8px);width:min(52vw,480px);max-width:calc(100vw - 24px);padding:6px 10px 7px;border-radius:11px;background:linear-gradient(180deg,rgba(8,8,23,.56),rgba(19,13,42,.34));border:1px solid rgba(220,205,255,.16);box-shadow:0 7px 20px rgba(0,0,0,.24),0 0 16px rgba(126,91,255,.07);backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .14s,transform .14s;overflow:hidden;will-change:opacity,transform}
@@ -168,7 +169,7 @@ body.bossIntroLock #hud,body.bossIntroLock #bossHud,body.bossIntroLock #phase,bo
 #netLab button{font-weight:900}.labBtns{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-top:7px}
 #netLabLog{margin-top:7px;height:88px;overflow:auto;padding:6px;border-radius:9px;background:#02040b;color:#bcecff;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}
 
-/* V10.17.4 — armament target-distance hotfix; separate screenshot files remain unchanged. */
+/* V10.17.6 — isolated server-authoritative solo combat test lab. */
 #qaRecorderBadge{position:fixed;z-index:74;right:calc(7px + var(--sr));top:calc(7px + var(--st));display:flex;align-items:center;gap:4px;padding:4px 5px 4px 8px;border-radius:12px;background:rgba(5,7,18,.80);border:1px solid rgba(135,255,198,.22);box-shadow:0 7px 22px rgba(0,0,0,.34);backdrop-filter:blur(8px);font-size:7px;font-weight:950;letter-spacing:.45px;color:#a9ffd2;pointer-events:auto;transition:.18s}
 #qaRecorderBadge.warning{color:#ffe0a1;border-color:rgba(255,194,94,.38);background:rgba(35,22,7,.88)}
 #qaRecorderBadge.issue{color:#ffd0dc;border-color:rgba(255,88,130,.54);background:rgba(46,8,20,.92);box-shadow:0 0 22px rgba(255,61,120,.23),0 8px 25px rgba(0,0,0,.42)}
@@ -467,6 +468,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 #trustHud{top:calc(72px + var(--st));width:min(24vw,250px);padding:4px 10px;border-radius:0 0 14px 14px;
  background:linear-gradient(90deg,transparent,rgba(28,19,55,.82),transparent);color:#f8e6a7;letter-spacing:1px}
 #netBadge{top:calc(15px + var(--st));right:calc(12px + var(--sr));border-color:#d8bb6b55;color:#a8ffbe}
+#combatTestBadge{top:calc(43px + var(--st));right:calc(12px + var(--sr))}
 #battleChat{position:fixed;z-index:24;left:50%;bottom:calc(12px + var(--sb));width:min(45vw,620px);transform:translateX(-50%);
  padding:7px 11px;border:1px solid rgba(213,185,104,.30);border-radius:4px 14px 4px 14px;background:linear-gradient(90deg,rgba(4,7,20,.74),rgba(16,12,36,.65),rgba(4,7,20,.74));
  box-shadow:0 10px 30px rgba(0,0,0,.34),inset 0 0 20px rgba(111,78,190,.08);backdrop-filter:blur(5px);pointer-events:none}
@@ -500,6 +502,7 @@ body.bossIntroLock #battleChat{opacity:.12}
  .controls.right{right:calc(5px + var(--sr));width:220px;height:164px}.attack{width:80px;height:80px}.attack .bladeIcon{transform:rotate(43deg) scale(.86)}
  .small{width:58px;height:58px}.btn .keycap{font-size:16px}.right .attack{right:0;bottom:0}.right .dash{right:86px;bottom:76px}.right .skill{right:98px;bottom:5px}
  #duoBtn{width:78px;height:78px;font-size:9px}
+ #combatTestBadge{top:calc(30px + var(--st));right:calc(4px + var(--sr));padding:4px 7px;font-size:6px}
 }
 
 </style>
@@ -599,7 +602,7 @@ body.bossIntroLock #battleChat{opacity:.12}
  </div>
 </div>
 <div id="phase" class="hidden">PHASE I · MOON QUEEN</div><div id="trustHud" class="hidden">ROYAL TRUST <span id="trustText">0%</span><div class="bar small"><div id="trustFill" class="fill"></div></div></div>
-<div id="netBadge" class="hidden">● CONNECTING</div><div id="banner"></div><div id="favorite"></div>
+<div id="netBadge" class="hidden">● CONNECTING</div><div id="combatTestBadge" class="hidden">🧪 COMBAT TEST · PLAYER HP 100% · ONLY BOSS TAKES DAMAGE</div><div id="banner"></div><div id="favorite"></div>
 <div id="dialogue"><div id="dialogueSpeaker">BOSS</div><div id="dialogueText"></div></div>
 <div id="battleChat" class="hidden"><div class="battleChatLine hero"><span class="who">Anh Hùng:</span><span>Sẵn sàng. Đòn thường dùng kiếm, skill mới bắn xa.</span></div><div class="battleChatLine princess"><span class="who">Công Chúa:</span><span>Để em giữ nhịp Royal Trust nhé ✦</span></div><div class="battleChatLine boss"><span class="who">Ma Vương:</span><span>Thử chạm được vào ta trước đã.</span></div></div>
 <div id="dreamCracks"><div class="dreamCrack"></div><div class="dreamCrack"></div><div class="dreamCrack"></div></div>
@@ -609,7 +612,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái CHÉM · Chuột phải / SHIFT NÉ · SPACE / E KIẾM KHÍ</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.17.4 RUNTIME FIX</span></h1><p style="margin-top:7px">Chỉ chụp khi có lỗi hình ảnh, exception hoặc khi bạn bấm Capture.</p><div class="logoMoon"></div><div class="badges"><span class="badge">120s black box</span><span class="badge">JPG riêng · 1280px</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Camera &amp; FPS QA</span><span class="badge">3-hit sword combo</span><span class="badge">No session data</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.17.6 COMBAT TEST LAB</span></h1><p style="margin-top:7px">Chỉ chụp khi có lỗi hình ảnh, exception hoặc khi bạn bấm Capture.</p><div class="logoMoon"></div><div class="badges"><span class="badge">120s black box</span><span class="badge">JPG riêng · 1280px</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Camera &amp; FPS QA</span><span class="badge">3-hit sword combo</span><span class="badge">No session data</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -618,7 +621,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.17.4 RUNTIME FIX</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.17.6 COMBAT TEST LAB</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -792,7 +795,7 @@ let v10142VisualErrorSignature='',v10142VisualErrorAt=0;
 const V108_STABLE_PBR=true;
 const V1012_EXTERNAL_BOSS=true;
 let v108PrewarmStarted=false,v108BossReady=false;
-let bossAssetReadyStatus={hero:false,princess:false},lobbyPeerJoined=false,hostStartPending=false;
+let bossAssetReadyStatus={hero:false,princess:false},lobbyPeerJoined=false,hostStartPending=false,combatTestMode=false;
 const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
 // V10.17.1 — the cinematic owns a fixed viewport and a deterministic camera.
 // Mobile browser chrome may emit several resize events while the address bar
@@ -817,7 +820,7 @@ const visualAudit={
  stage:'idle',checks:0,issues:[],clipResults:[],transitionResults:[],vfxResults:[],startedAt:0,finishedAt:0
 };
 window.__bossVisualAudit=visualAudit;
-const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.17.4',enabled:true})||null;
+const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.17.6',enabled:true})||null;
 window.__runtimeBlackBox=bugRecorder;
 const bugRuntime={lastSampleAt:0,lastCamera:null,bossIdentity:'',bossUrl:'',introScale:null,introViewport:null,lastCastId:null,moveProbe:null,webglLost:false};
 function visualAuditIssue(stage,code,detail=''){
@@ -1120,6 +1123,7 @@ function leaveRoom(){
  try{clearSession()}catch(err){console.warn('[leave session]',err)}
 
  connected=false;
+ combatTestMode=false;
  running=false;
  gameInitialized=false;
  clearKeyboardMove();
@@ -1148,9 +1152,15 @@ function leaveRoom(){
  // Replace removes ?room=...&join=1 from history too.
  window.location.replace(location.pathname);
 }
-function createRoom(){
+function applyCombatTestMode(s){
+ combatTestMode=s?.testMode==='boss-only-damage';
+ $('combatTestBadge')?.classList.toggle('hidden',!combatTestMode);
+ document.body.classList.toggle('combatTestMode',combatTestMode);
+}
+function createRoom(testMode=false){
  clearSession();role='hero';lobbyPeerJoined=false;hostStartPending=false;bossAssetReadyStatus={hero:false,princess:false};showScreen('hostLobby');$('hostStart').classList.add('hidden');$('hostStatus').className='status warn';$('hostStatus').textContent='Đang kết nối server…';
- connect(()=>send({type:'create'}));
+ combatTestMode=!!testMode;applyCombatTestMode({testMode:combatTestMode?'boss-only-damage':''});
+ connect(()=>send({type:'create',testMode:combatTestMode?'boss-only-damage':''}));
 }
 function joinRoom(code){
  clearSession();role='princess';code=(code||'').trim().toUpperCase();
@@ -1179,16 +1189,16 @@ function applyBossAssetReadyStatus(ready){
 }
 function updateHostStartReadiness(){
  if(role!=='hero'||running)return;
- const hasPrincess=lobbyPeerJoined||bossAssetReadyStatus.princess===true||latestState?.connectedRoles?.princess===true;
+ const hasPrincess=combatTestMode||lobbyPeerJoined||bossAssetReadyStatus.princess===true||latestState?.connectedRoles?.princess===true;
  const button=$('hostStart');if(!button)return;
  if(!hasPrincess){button.classList.add('hidden');return}
  button.classList.remove('hidden');
  if(hostStartPending){button.disabled=true;button.textContent='ĐANG VÀO TRẬN…';return}
- const ready=bossAssetReadyStatus.hero&&bossAssetReadyStatus.princess;
+ const ready=bossAssetReadyStatus.hero&&(combatTestMode||bossAssetReadyStatus.princess);
  button.disabled=!ready;
  if(ready){
-   button.textContent='BẮT ĐẦU TRẬN';
-   $('hostStatus').className='status ok';$('hostStatus').textContent='● Cả hai máy đã tải xong boss Tripo — sẵn sàng!';
+   button.textContent=combatTestMode?'BẮT ĐẦU SOLO TEST':'BẮT ĐẦU TRẬN';
+   $('hostStatus').className='status ok';$('hostStatus').textContent=combatTestMode?'● Boss Tripo đã sẵn sàng — Hero bất tử, chỉ boss mất HP.':'● Cả hai máy đã tải xong boss Tripo — sẵn sàng!';
  }else{
    button.textContent='ĐANG NẠP BOSS TRIPO…';
    $('hostStatus').className='status warn';
@@ -1289,7 +1299,7 @@ function onMessage(m){
    reconcileActionAck(m);return;
  }
  if(m.type==='event'){
-   if(['bossCast','bossEvade','bossTeleportKick','spinKickImpact','phase','summonSpawn','summonDefeated','combatHit'].includes(m.e))bugRecorder?.record?.('info',`SERVER_EVENT_${String(m.e).toUpperCase()}`,m.p||{},{capture:false});
+   if(['bossCast','bossEvade','bossTeleportKick','spinKickImpact','phase','summonSpawn','summonDefeated','combatHit','testGuard'].includes(m.e))bugRecorder?.record?.('info',`SERVER_EVENT_${String(m.e).toUpperCase()}`,m.p||{},{capture:false});
    playEvent(m.e,m.p||{});return
  }
  if(m.type==='pause'){
@@ -1948,7 +1958,13 @@ function updateDynamicResolution(rawDt,now){
 function setBossOutlineVisible(v){
  if(!boss||bossOutlineVisible===v)return;
  bossOutlineVisible=v;
- boss.traverse(o=>{if(o.userData?.isOutline)o.visible=v});
+ const rec=rigRuntime.records.boss;
+ // The old procedural boss also owns outline meshes. Once Tripo is accepted,
+ // heavy-combat quality changes may touch only the real model; otherwise the
+ // legacy outline shells can become visible over the locked Tripo silhouette.
+ const outlineRoot=rec?.visualAccepted&&rec.model?rec.model:boss;
+ outlineRoot.traverse(o=>{if(o.userData?.isOutline)o.visible=v});
+ if(rec?.visualAccepted&&rec.model)setFallback(boss,false,rec.model);
 }
 function updateHeavyCombatMode(state){
  if(!state||!boss)return;
@@ -2566,7 +2582,7 @@ function finishBossVisualAudit(){
  if(rec?.visualAccepted){enforceBossTripoVisibility(rec);playAnimationLabClip(18);animationLab.view=0;updateAnimationLab(0)}
  visualAudit.active=false;visualAudit.done=true;visualAudit.finishedAt=performance.now();visualAudit.passed=visualAudit.issues.length===0;
  visualAudit.stage=visualAudit.passed?'pass':'fail';updateVisualAuditReport();
- $('animationLabStatus').textContent=visualAudit.passed?'V10.17.4 AUDIT · PASS':`V10.17.4 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}${visualAudit.issues[0]?.detail?` · ${visualAudit.issues[0].detail}`:''}`;
+ $('animationLabStatus').textContent=visualAudit.passed?'V10.17.6 AUDIT · PASS':`V10.17.6 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}${visualAudit.issues[0]?.detail?` · ${visualAudit.issues[0].detail}`:''}`;
  bugRecorder?.record?.(visualAudit.passed?'info':'error',visualAudit.passed?'FULL_VISUAL_AUDIT_PASSED':'FULL_VISUAL_AUDIT_FAILED',{checks:visualAudit.checks,issues:visualAudit.issues.length},{capture:!visualAudit.passed});
  bugRecorder?.persistSoon?.();
  return visualAudit;
@@ -4604,12 +4620,14 @@ function showGameUI(){
 }
 function acceptInitialState(s){
  if(!s)return;
+ applyCombatTestMode(s);
  latestState=s;snapshotBuffer=[{s,recv:performance.now()}];
  syncBossCastFromSnapshot(s.cast);
  if(gameInitialized)applyImmediateState(s);
 }
 function pushSnapshot(s){
  if(!s||!Number.isFinite(s.ts))return;
+ applyCombatTestMode(s);
  if(snapshotBuffer.some(v=>v.s.tick===s.tick&&v.s.ts===s.ts))return;
  snapshotBuffer.push({s,recv:performance.now()});
  snapshotBuffer.sort((a,b)=>a.s.ts-b.s.ts);
@@ -4939,7 +4957,9 @@ function updateBossCastVisual(){
 function hideBossCastVisual(){
  clearBossSkillUi();
  const br=rigRuntime.records.boss;
- if(br?.ready&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test(br.activeState||'')){
+ // The intro finale intentionally reuses boss_ultimate as a cropped authored
+ // segment. A null combat cast must never cancel that cinematic action.
+ if(br?.ready&&!bossIntroActive()&&!br.activeSegment&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test(br.activeState||'')){
    if(br.active)br.active.paused=false;
    playRigAnimation('boss','boss_combat_idle',{fade:br.activeState==='boss_teleport'?.13:.24,speed:bossV10Phase===3?1.04:.96});
  }
@@ -5340,7 +5360,7 @@ function syncEntities(sa,sb,t){
  }
 }
 function updateUI(s){
- if(!s)return;const H=s.players.hero,P=s.players.princess;
+ if(!s)return;applyCombatTestMode(s);const H=s.players.hero,P=s.players.princess;
  $('hp1').style.width=H.hp+'%';$('hp2').style.width=P.hp+'%';$('st1').style.width=H.stamina+'%';$('st2').style.width=P.stamina+'%';
  $('food1').textContent=foods[H.food][0];$('food2').textContent=foods[P.food][0];$('foodName1').textContent=foods[H.food][1];$('foodName2').textContent=foods[P.food][1];
  const me=role==='princess'?P:H;
@@ -5614,7 +5634,7 @@ function runtimeBlackBoxTelemetry(now,wallDt=0){
  const controlsHidden=controlMode==='touch'?($('ctl1')?.classList.contains('hidden')||$('ctl2')?.classList.contains('hidden')):$('desktopHint')?.classList.contains('hidden');
  const memory=performance.memory?{usedMB:bugRound(performance.memory.usedJSHeapSize/1048576,1),limitMB:bugRound(performance.memory.jsHeapSizeLimit/1048576,1)}:null;
  return {
-   game:{running,connected,role:role||'',paused:!!state?.paused,intro:bossIntroActive(),localReady,controlMode,serverIntroRemaining:bugRound(Math.max(0,(state?.introUntil||0)-serverNow()),0)},
+   game:{running,connected,role:role||'',paused:!!state?.paused,intro:bossIntroActive(),localReady,controlMode,testMode:state?.testMode||'',serverIntroRemaining:bugRound(Math.max(0,(state?.introUntil||0)-serverNow()),0)},
    frame:{wallMs:bugRound(wallDt*1000,1),emaMs:bugRound(frameEma,1),renderScale:bugRound(renderScale,2),quality:v107Quality,calls:renderer?.info?.render?.calls??null,triangles:renderer?.info?.render?.triangles??null,memory},
    viewport:{width:innerWidth,height:innerHeight,canvasWidth:renderer?.domElement?.width||0,canvasHeight:renderer?.domElement?.height||0,dpr:bugRound(devicePixelRatio||1,2)},
    network:{rtt:bugRound(rtt,1),jitter:bugRound(rttJitter,1),snapshotJitter:bugRound(snapshotJitter,1),loss:bugRound(snapshotLoss,3),bufferMs:interpDelay,lastSnapshotAge:lastSnapshotArrival?bugRound(now-lastSnapshotArrival,0):null},
@@ -5670,7 +5690,8 @@ function updateRuntimeBlackBox(now,wallDt){
    const current={x:camera.position.x,y:camera.position.y,z:camera.position.z};
    if(bugRuntime.lastCamera){
      const distance=Math.hypot(current.x-bugRuntime.lastCamera.x,current.y-bugRuntime.lastCamera.y,current.z-bugRuntime.lastCamera.z);
-     bugRecorder.check('CAMERA_POSITION_JUMP',distance>2.8,{threshold:1,cooldown:7000,detail:()=>({distance:bugRound(distance),from:bugRuntime.lastCamera,to:bugVector3(current),intro:bossIntroActive()})});
+     const authorizedCameraReframe=bossCastVisual.cast?.i===3||/^boss_(teleport|spin_kick)$/.test(rec?.activeState||'');
+     bugRecorder.check('CAMERA_POSITION_JUMP',distance>2.8&&!authorizedCameraReframe,{threshold:1,cooldown:7000,detail:()=>({distance:bugRound(distance),from:bugRuntime.lastCamera,to:bugVector3(current),intro:bossIntroActive(),authorizedCameraReframe})});
    }
    bugRuntime.lastCamera={...current};
  }else bugRuntime.lastCamera=null;
@@ -5715,11 +5736,12 @@ function updateRuntimeBlackBox(now,wallDt){
  if(cast&&cast.id!==bugRuntime.lastCastId){bugRuntime.lastCastId=cast.id;bugRecorder.record('info','BOSS_CAST_STARTED',{id:cast.id,skill:cast.i,state:rec?.activeState},{capture:false});bugRecorder.milestone(`FIRST_SKILL_${cast.i}`,{skill:cast.i,id:cast.id},{force:true})}
  if(cast&&serverTime>=(cast.warningAt||cast.startAt||0)&&serverTime<(cast.impactAt||0)){
    let missing=!bossTelegraphRing?.visible||!bossTelegraphRune?.visible;
+   let coneExpected=false;
    if(cast.i===1)missing ||= !bossTelegraphMoon?.visible||!bossMoonCracks3D?.visible;
    if(cast.i===2)missing ||= Number($('clockFx')?.style.opacity||0)<=0;
-   if(cast.i===3)missing ||= !bossTelegraphCone?.visible;
+   if(cast.i===3){coneExpected=!cast.teleportAt||serverTime<cast.teleportAt;if(coneExpected)missing ||= !bossTelegraphCone?.visible}
    if(cast.i===4)missing ||= !bossTelegraphRing2?.visible||!$('eternalArtFx')?.classList.contains('show');
-   bugRecorder.check('BOSS_TELEGRAPH_VFX_MISSING',missing,{threshold:2,cooldown:6000,detail:()=>({skill:cast.i,id:cast.id,ring:!!bossTelegraphRing?.visible,rune:!!bossTelegraphRune?.visible})});
+   bugRecorder.check('BOSS_TELEGRAPH_VFX_MISSING',missing,{threshold:2,cooldown:6000,detail:()=>({skill:cast.i,id:cast.id,ring:!!bossTelegraphRing?.visible,rune:!!bossTelegraphRune?.visible,cone:!!bossTelegraphCone?.visible,coneExpected})});
  }else bugRecorder.check('BOSS_TELEGRAPH_VFX_MISSING',false);
  const phase=latestState?.boss?.phase;if(activeGame&&phase)bugRecorder.milestone(`PHASE_${phase}`,{phase},{force:phase>1});
 }
@@ -5898,7 +5920,8 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)clearKeyboa
 window.addEventListener('resize',()=>{if(running)updateControlMode()});
 window.addEventListener('orientationchange',()=>{if(running)updateControlMode()});
 
-$('createRoom').onclick=createRoom;
+$('createRoom').onclick=()=>createRoom(false);
+$('createCombatTest').onclick=()=>createRoom(true);
 $('joinRoom').onclick=()=>showScreen('joinLobby');
 $('fullVisualQaOpen').onclick=()=>runBossVisualAudit().catch(err=>{
  const message=String(err?.message||err||'unknown');
@@ -5931,7 +5954,7 @@ $('animationLabView').onclick=()=>{animationLab.view=(animationLab.view+1)%anima
 $('copyInvite').onclick=()=>{const text=$('inviteLink').textContent;navigator.clipboard?.writeText(text).then(()=>banner('ĐÃ COPY LINK MỜI ✓')).catch(()=>prompt('Copy link:',text))};
 $('hostStart').onclick=()=>{
  if($('hostStart').disabled)return;
- if(!bossAssetReadyStatus.hero||!bossAssetReadyStatus.princess){updateHostStartReadiness();return}
+ if(!bossAssetReadyStatus.hero||(!combatTestMode&&!bossAssetReadyStatus.princess)){updateHostStartReadiness();return}
  hostStartPending=true;
  $('hostStart').disabled=true;
  $('hostStart').textContent='ĐANG VÀO TRẬN…';

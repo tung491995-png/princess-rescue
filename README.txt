@@ -1,4 +1,26 @@
-PRINCESS RESCUE 3D — V10.17.4 ARMAMENT RUNTIME HOTFIX
+PRINCESS RESCUE 3D — V10.17.6 SOLO COMBAT TEST LAB
+
+V10.17.6 SOLO COMBAT TEST LAB
+==============================
+- Adds an isolated `SOLO COMBAT TEST — BẤT TỬ` entry from the home screen.
+- The test starts with Hero alone after the real Tripo boss is ready.
+- Hero and Princess HP are locked to 100 by the authoritative server; boss HP
+  and all boss attacks, animations, hitboxes and VFX continue normally.
+- A persistent green badge distinguishes test sessions from production co-op.
+- The mode is saved with the room, included in snapshots and debug telemetry.
+- Normal create/join co-op behavior and damage rules are unchanged.
+
+V10.17.5 VISUAL GUARD
+=====================
+- The intro finale's cropped Ultimate animation can no longer be cancelled by
+  the empty combat-cast cleanup pass.
+- Heavy-combat outline quality changes target only the accepted Tripo model;
+  legacy procedural outline shells remain hidden.
+- Skill 3 expects its directional cone only before teleport. After teleport,
+  the landing ring/rune are the correct warning and no false error is logged.
+- The required full-body camera reframe during Teleport → Spin Kick is treated
+  as an authorized transition instead of an anomaly.
+- Model, textures, server balance, hitboxes and ROOT XZ are unchanged.
 
 V10.17.4 RUNTIME FIX
 ====================

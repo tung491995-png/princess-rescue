@@ -1,12 +1,12 @@
 {
-  "name": "princess-rescue-v10-17-4-armament-runtime-hotfix",
-  "version": "10.17.4",
+  "name": "princess-rescue-v10-17-6-solo-combat-test-lab",
+  "version": "10.17.6",
   "private": true,
   "type": "commonjs",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "test": "node tests/v10_17_3_debug_smoke.js"
+    "test": "node tests/v10_17_3_debug_smoke.js && node tests/v10_17_6_combat_test_lab.js"
   },
   "dependencies": {
     "express": "^4.21.2",
