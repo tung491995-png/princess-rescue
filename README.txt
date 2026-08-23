@@ -1,4 +1,4 @@
-PRINCESS RESCUE 3D — V10.10 CHARACTER REFINEMENT PASS
+PRINCESS RESCUE 3D — V10.9 BOSS PRESENTATION REPAIR
 
 PRINCESS RESCUE 3D — SERVER MULTIPLAYER V3
 
@@ -1626,40 +1626,3 @@ CAMERA / LIGHTING
 - A no-shadow warm key light follows the boss while the existing cool rim is
   strengthened; phase grading lowers ambient flattening.
 - No post-processing pass or shadow map was added, preserving mobile cost.
-
-
-============================================================
-V10.10 — VIDEO-DRIVEN CHARACTER REFINEMENT PASS
-============================================================
-
-SOURCE REVIEW
-- Reviewed the supplied 33.39-second V10.9 gameplay recording at 2464×1440.
-- V10.9 successfully removed the idle T-pose, enlarged the boss and stabilized
-  the gameplay framing.
-- The remaining visual ceiling came from flat rear hair cards, exposed round
-  arm joints, symmetrical mannequin posture and face/hair overexposure.
-
-MODEL / SILHOUETTE
-- Replaces thirteen long rear hair cards at runtime with smoother curved,
-  layered locks while preserving the two front facial strands.
-- Adds five rounded anime fringe/temple locks attached to the Head bone.
-- Adds tailored upper/lower sleeve shells, velvet shoulders and lunar cuffs
-  attached directly to the existing animated arm bones.
-- Adds a small silver lunar collar following the Chest bone.
-- All additions follow the original 20-bone rig and 11 source clips.
-
-ACTING
-- Idle queen stance is intentionally asymmetric instead of mirrored.
-- Tiny arm, forearm and wrist breathing offsets prevent a frozen mannequin read.
-- Casts retain a larger portion of the resting stance, reducing horizontal
-  bind-pose silhouettes without weakening telegraph timing.
-- The complete rig receives a very small hover and yaw drift; server position,
-  collisions and boss logic are untouched.
-
-MATERIAL / LIGHTING
-- Hair is shifted from near-white toward moonlit lavender for separation from
-  the porcelain face.
-- Smoother nine-sided hair locks replace the previous five-sided cylinders.
-- Warm frontal key and face fill are reduced to restore facial contrast.
-- Uses built-in mobile-safe MeshStandardMaterial only; no fragile GLSL patch,
-  shadow map, physics engine or post-processing pass is added.

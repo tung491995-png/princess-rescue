@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.10 — Character Refinement Pass</title>
+<title>Princess Rescue V10.12 — Boss Animation Lab</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -167,6 +167,21 @@ body.bossIntroLock #hud,body.bossIntroLock #bossHud,body.bossIntroLock #phase,bo
 #netLab select,#netLab button{font:inherit;color:#fff;background:#10182a;border:1px solid #ffffff1c;border-radius:9px;padding:6px}
 #netLab button{font-weight:900}.labBtns{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-top:7px}
 #netLabLog{margin-top:7px;height:88px;overflow:auto;padding:6px;border-radius:9px;background:#02040b;color:#bcecff;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}
+
+/* V10.12 — touch-first boss animation inspection surface. */
+#animationLab{position:fixed;z-index:76;inset:0;display:none;pointer-events:none;background:radial-gradient(circle at 58% 45%,transparent 0 24%,rgba(3,3,12,.10) 55%,rgba(2,2,9,.62) 100%)}
+#animationLab.show{display:block}
+#animationLabPanel{position:absolute;pointer-events:auto;left:calc(9px + var(--sl));top:calc(9px + var(--st));width:min(350px,39vw);max-height:calc(100vh - 18px - var(--st) - var(--sb));overflow:auto;padding:11px;border-radius:18px;background:linear-gradient(180deg,rgba(20,14,43,.95),rgba(5,6,18,.95));border:1px solid rgba(216,194,255,.28);box-shadow:0 18px 55px #000c,0 0 28px rgba(125,76,223,.12);backdrop-filter:blur(14px);font-size:10px}
+#animationLabTop{display:flex;align-items:center;gap:8px;margin-bottom:7px}#animationLabTop h3{flex:1;margin:0;font-size:12px;letter-spacing:.8px;color:#e9deff}#animationLabClose{width:30px;height:30px;padding:0;border-radius:10px}
+#animationLabStatus{padding:7px 8px;border-radius:10px;background:#070714;border:1px solid #ffffff16;color:#cdbcf2;font-weight:850;line-height:1.35;margin-bottom:7px}
+#animationLab select,#animationLab button{font:inherit;color:#fff;background:#121126;border:1px solid #ffffff20;border-radius:10px;padding:7px;font-weight:850}#animationLab select{width:100%;margin-bottom:6px;min-height:34px}
+.animLabRow{display:grid;grid-template-columns:82px 1fr 44px;gap:7px;align-items:center;margin-top:6px}.animLabRow label{color:#b9a8da;font-weight:850}.animLabRow output{text-align:right;color:#f0e8ff;font-weight:950}
+#animationLab input[type="range"]{width:100%;accent-color:#ad83ff}#animationLabTimeline{margin-top:7px}
+#animationLabButtons{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px}#animationLabButtons button{min-height:34px;padding:6px 4px}#animationLabButtons button.active{color:#160b2d;background:linear-gradient(180deg,#f6efff,#c7adff);border-color:#fff}
+#animationLabHint{margin-top:7px;color:#9586b3;line-height:1.35;font-size:8.5px}
+#animationLabView{position:absolute;right:calc(10px + var(--sr));bottom:calc(10px + var(--sb));pointer-events:auto;padding:8px 11px;border-radius:12px;background:#090817dc;border:1px solid #ffffff1f;color:#eee5ff;font-size:9px;font-weight:950}
+body.animationLabMode #hud,body.animationLabMode #bossHud,body.animationLabMode #phase,body.animationLabMode #trustHud,body.animationLabMode #netBadge,body.animationLabMode #ctl1,body.animationLabMode #ctl2,body.animationLabMode #desktopHint,body.animationLabMode #duoWrap,body.animationLabMode #dialogue{display:none!important}
+@media(max-height:500px) and (orientation:landscape){#animationLabPanel{width:min(330px,42vw);padding:8px;font-size:9px;border-radius:14px}#animationLabTop{margin-bottom:4px}#animationLabStatus{padding:5px 7px;margin-bottom:5px}.animLabRow{margin-top:4px;grid-template-columns:72px 1fr 38px}#animationLabButtons{margin-top:5px}#animationLabButtons button{min-height:30px}#animationLabHint{margin-top:5px}}
 
 
 .controls{position:fixed;z-index:25;bottom:calc(10px + var(--sb));pointer-events:none}
@@ -522,12 +537,29 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.10 CHARACTER REFINEMENT</span></h1><p style="margin-top:7px">Tóc nhiều lớp · tay áo nữ vương · dáng đứng sống động hơn · khuôn mặt rõ chi tiết hơn.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Layered anime hair</span><span class="badge">Refined sleeves</span><span class="badge">Asymmetric queen stance</span><span class="badge">Stable controls</span><span class="badge">Mobile-safe PBR</span></div><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.12 ANIMATION LAB</span></h1><p style="margin-top:7px">Boss Tripo mới · 19 animation · kiểm tra clip, tốc độ và root motion trực tiếp trên điện thoại.</p><div class="logoMoon"></div><div class="badges"><span class="badge">19 boss clips</span><span class="badge">Root lock XZ</span><span class="badge">Touch controls</span><span class="badge">Stable PBR</span><span class="badge">Co-op preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
 <div id="result" class="screen hidden"><div class="panel"><h1 id="resultTitle"></h1><p id="resultText" style="margin-top:10px"></p><button id="backLobby" class="primary">RỜI PHÒNG</button></div></div>
 <div id="rotate" class="screen"><div class="panel"><h1>↻ Xoay ngang iPhone nha</h1><p style="margin-top:7px">Online co-op được tối ưu cho landscape.</p></div></div>
+
+<div id="animationLab" aria-hidden="true">
+ <div id="animationLabPanel">
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.12</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
+  <select id="animationLabClip" aria-label="Chọn animation"></select>
+  <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
+  <input id="animationLabTimeline" type="range" min="0" max="1000" value="0" step="1" aria-label="Tiến trình animation">
+  <div class="animLabRow"><label>THỜI GIAN</label><span id="animationLabTime">0.00 / 0.00s</span><output id="animationLabRootState">XZ</output></div>
+  <div id="animationLabButtons">
+   <button id="animationLabPrev">◀ CLIP</button><button id="animationLabPlay">Ⅱ PAUSE</button><button id="animationLabNext">CLIP ▶</button>
+   <button id="animationLabLoop" class="active">↻ LOOP</button><button id="animationLabRoot" class="active">⌖ ROOT XZ</button><button id="animationLabRestart">↺ RESTART</button>
+  </div>
+  <div id="animationLabHint">Root XZ khóa dịch chuyển ngang để kiểm tra pose. Tắt khóa để xem khoảng dash thật của clip.</div>
+ </div>
+ <button id="animationLabView">GÓC NHÌN · FRONT</button>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -567,6 +599,21 @@ const RIG_ALIASES={
  boss_phase:['phase','phasechange','transform','enrage'],boss_hit:['hit','hurt'],boss_death:['death','die','defeat']
 };
 const rigRuntime={loader:null,draco:null,records:{hero:null,princess:null,boss:null},loading:false,status:{hero:'fallback',princess:'fallback',boss:'fallback'}};
+
+// V10.12 — the Tripo GLB uses generic NlaTrack names, so the lab keeps a
+// stable index-based catalogue until every motion is visually approved.
+const V1012_ANIMATION_LABELS=[
+ 'Dự phòng · low movement','Move Forward','Approach / Gesture','Strafe · né ngang','Dodge Roll',
+ 'Long Combo / Taunt','Royal Idle','Spin Kick','Combat Idle','Stagger / Hit',
+ 'Guard / Recovery','Charge / Phase','Dash / Teleport','Quick Cast','Heavy Cast / AOE',
+ 'Death','Long Taunt / Phase 2','Ultimate Cast','Main Idle'
+];
+const V1012_BOSS_ACTION_MAP={
+ boss_idle:18,boss_move:1,boss_aoe:13,boss_shatter:14,boss_3am:11,
+ boss_teleport:12,boss_summon:17,boss_ultimate:17,boss_phase:6,boss_hit:9,boss_death:15
+};
+const animationLab={active:false,index:18,speed:1,loop:true,rootLock:true,paused:false,view:0,action:null};
+const animationLabViews=['FRONT','RIGHT','BACK','LEFT'];
 
 
 // V7.9 stable input mode. Lobby remains ordinary clickable HTML.
@@ -622,10 +669,9 @@ let v107CamFocusX=0,v107CamFocusZ=-1.5,v107CamFocusVelX=0,v107CamFocusVelZ=0;
 let v1071VisualErrors=0,v1071LastVisualError='',v1071SafeMode=false,v1071BossCheckAt=0;
 // V10.8 — reliable rig + prewarmed, fixed-anchor intro camera.
 const V108_STABLE_PBR=true;
+const V1012_EXTERNAL_BOSS=true;
 let v108PrewarmStarted=false,v108BossReady=false,v108IntroRestoreScale=0;
 const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
-// V10.10 — video-driven character silhouette refinement.
-let bossV110=null,bossV110Phase=1,bossV110Quality='medium';
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let renderScale=Math.min(devicePixelRatio||1,mobileDevice?1.10:1.35);
 const renderScaleMax=Math.min(devicePixelRatio||1,mobileDevice?1.25:1.50);
@@ -1759,8 +1805,8 @@ function polishRig(model,roleName=''){
          m.flatShading=false;m.dithering=true;m.toneMapped=true;
          let tint=null,amount=.30;
          if(/skin|faceporcelain/.test(n)){tint=0xe7b8c3;amount=.22}
-         else if(/hairmoonhighlight/.test(n)){tint=0xa8a0cc;amount=.65}
-         else if(/hair/.test(n)){tint=0x918ab8;amount=.55}
+         else if(/hairmoonhighlight/.test(n)){tint=0xd8d2f5;amount=.34}
+         else if(/hair/.test(n)){tint=0xb8b0d6;amount=.28}
          else if(/dressnight/.test(n)){tint=0x090a22;amount=.36}
          else if(/dressvelvet/.test(n)){tint=0x1b082f;amount=.34}
          else if(/dressplum/.test(n)){tint=0x421060;amount=.30}
@@ -1833,27 +1879,35 @@ function makeRigSockets(rec){
 
  // V10.6: exact rig bones for additive acting. These never alter server/root positions.
  rec.actingBones={
-   hips:findRigNode(rec.model,['Hips']),
-   spine:findRigNode(rec.model,['Spine']),
-   chest:findRigNode(rec.model,['Chest']),
+   hips:findRigNode(rec.model,['Hips','Hip','Pelvis']),
+   spine:findRigNode(rec.model,['Spine','Spine01']),
+   chest:findRigNode(rec.model,['Chest','Spine02']),
    neck:findRigNode(rec.model,['Neck']),
    head:findRigNode(rec.model,['Head']),
-   lua:findRigNode(rec.model,['LeftUpperArm']),
-   lfa:findRigNode(rec.model,['LeftForeArm']),
-   lhand:findRigNode(rec.model,['LeftHand']),
-   rua:findRigNode(rec.model,['RightUpperArm']),
-   rfa:findRigNode(rec.model,['RightForeArm']),
-   rhand:findRigNode(rec.model,['RightHand'])
+   lua:findRigNode(rec.model,['LeftUpperArm','L_Upperarm']),
+   lfa:findRigNode(rec.model,['LeftForeArm','L_Forearm']),
+   lhand:findRigNode(rec.model,['LeftHand','L_Hand']),
+   rua:findRigNode(rec.model,['RightUpperArm','R_Upperarm']),
+   rfa:findRigNode(rec.model,['RightForeArm','R_Forearm']),
+   rhand:findRigNode(rec.model,['RightHand','R_Hand'])
  };
 }
 function buildRigActions(rec,clips){
- rec.mixer=new THREE.AnimationMixer(rec.model);rec.actions={};rec.clipNames=clips.map(c=>c.name);
+ rec.mixer=new THREE.AnimationMixer(rec.model);rec.actions={};rec.rawClips=clips.slice();rec.clipNames=clips.map(c=>c.name);
+ rec.clipActions=clips.map(c=>rec.mixer.clipAction(c));
  const src=clips.map(c=>({clip:c,n:rigNorm(c.name)}));
  for(const [state,aliases] of Object.entries(RIG_ALIASES)){
    const wants=aliases.map(rigNorm);
    let hit=src.find(x=>wants.includes(x.n))||src.find(x=>wants.some(w=>x.n.includes(w)||w.includes(x.n)));
    if(hit)rec.actions[state]=rec.mixer.clipAction(hit.clip);
  }
+ if(rec.role==='boss'&&clips.length>=19){
+   for(const [state,index] of Object.entries(V1012_BOSS_ACTION_MAP)){
+     if(!rec.actions[state]&&rec.clipActions[index])rec.actions[state]=rec.clipActions[index];
+   }
+ }
+ rec.rootMotionBone=findRigNode(rec.model,['Root']);
+ if(rec.rootMotionBone)rec.rootMotionBind={position:rec.rootMotionBone.position.clone(),quaternion:rec.rootMotionBone.quaternion.clone(),scale:rec.rootMotionBone.scale.clone()};
 }
 function setFallback(root,visible,model=null){
  for(const child of root?.children||[]){if(child!==model)child.visible=visible}
@@ -1884,6 +1938,99 @@ function playRigAnimation(roleName,state,{fade=.14,once=false,speed=1}={}){
    rec.mixer.addEventListener('finished',done);
  }
  return true;
+}
+function applyBossRootLock(rec,enabled=true){
+ if(!enabled||!rec?.rootMotionBone||!rec.rootMotionBind)return;
+ rec.rootMotionBone.position.x=rec.rootMotionBind.position.x;
+ rec.rootMotionBone.position.z=rec.rootMotionBind.position.z;
+ rec.rootMotionBone.updateMatrix();
+}
+function populateAnimationLab(rec){
+ const select=$('animationLabClip');if(!select||!rec?.rawClips)return;
+ select.innerHTML='';
+ rec.rawClips.forEach((clip,index)=>{
+   const option=document.createElement('option');
+   option.value=String(index);
+   option.textContent=`${String(index).padStart(2,'0')} · ${V1012_ANIMATION_LABELS[index]||clip.name} · ${clip.duration.toFixed(2)}s`;
+   select.appendChild(option);
+ });
+ select.value=String(clamp(animationLab.index,0,rec.rawClips.length-1));
+}
+function updateAnimationLabUi(rec){
+ if(!rec?.ready||!rec.rawClips?.length){
+   if($('animationLabStatus'))$('animationLabStatus').textContent='Đang nạp boss GLB và 19 clip…';
+   return;
+ }
+ const clip=rec.rawClips[animationLab.index],action=animationLab.action;
+ if(!clip)return;
+ $('animationLabStatus').textContent=`CLIP ${String(animationLab.index).padStart(2,'0')} · ${V1012_ANIMATION_LABELS[animationLab.index]||'CHƯA GÁN'} · nguồn ${clip.name}`;
+ const time=Math.min(clip.duration,Math.max(0,action?.time||0));
+ $('animationLabTime').textContent=`${time.toFixed(2)} / ${clip.duration.toFixed(2)}s`;
+ if(document.activeElement!==$('animationLabTimeline'))$('animationLabTimeline').value=String(Math.round(time/Math.max(.001,clip.duration)*1000));
+ $('animationLabSpeedValue').textContent=`${animationLab.speed.toFixed(2)}×`;
+ $('animationLabRootState').textContent=animationLab.rootLock?'XZ':'FREE';
+ $('animationLabPlay').textContent=animationLab.paused?'▶ PLAY':'Ⅱ PAUSE';
+ $('animationLabLoop').classList.toggle('active',animationLab.loop);
+ $('animationLabRoot').classList.toggle('active',animationLab.rootLock);
+ $('animationLabView').textContent=`GÓC NHÌN · ${animationLabViews[animationLab.view]}`;
+}
+function playAnimationLabClip(index=animationLab.index){
+ const rec=rigRuntime.records.boss;
+ if(!rec?.ready||!rec.clipActions?.length){updateAnimationLabUi(rec);return false}
+ animationLab.index=(Number(index)+rec.clipActions.length)%rec.clipActions.length;
+ rec.mixer.stopAllAction();
+ const action=rec.clipActions[animationLab.index];
+ action.enabled=true;action.clampWhenFinished=!animationLab.loop;
+ action.setLoop(animationLab.loop?THREE.LoopRepeat:THREE.LoopOnce,animationLab.loop?Infinity:1);
+ action.setEffectiveWeight(1);action.setEffectiveTimeScale(animationLab.speed);action.reset().play();
+ action.paused=animationLab.paused;
+ animationLab.action=action;rec.active=action;rec.activeState='animation_lab';
+ applyBossRootLock(rec,animationLab.rootLock);
+ if($('animationLabClip'))$('animationLabClip').value=String(animationLab.index);
+ updateAnimationLabUi(rec);return true;
+}
+function openAnimationLab(){
+ document.querySelectorAll('.screen').forEach(e=>e.classList.add('hidden'));
+ document.body.classList.add('animationLabMode');
+ $('animationLab').classList.add('show');$('animationLab').setAttribute('aria-hidden','false');
+ animationLab.active=true;animationLab.paused=false;
+ ensureGame();
+ if(A)A.visible=false;if(B)B.visible=false;
+ if(boss){boss.visible=true;boss.position.set(0,0,0);boss.rotation.set(0,0,0)}
+ const rec=rigRuntime.records.boss;
+ if(rec?.ready){populateAnimationLab(rec);playAnimationLabClip(animationLab.index)}
+ else updateAnimationLabUi(rec);
+}
+function closeAnimationLab(){
+ animationLab.active=false;$('animationLab').classList.remove('show');$('animationLab').setAttribute('aria-hidden','true');
+ document.body.classList.remove('animationLabMode');
+ const rec=rigRuntime.records.boss;
+ if(animationLab.action)animationLab.action.stop();animationLab.action=null;
+ if(rec?.rootMotionBind&&rec.rootMotionBone){rec.rootMotionBone.position.copy(rec.rootMotionBind.position);rec.rootMotionBone.quaternion.copy(rec.rootMotionBind.quaternion);rec.rootMotionBone.scale.copy(rec.rootMotionBind.scale)}
+ if(A)A.visible=true;if(B)B.visible=true;
+ if(rec?.ready)playRigAnimation('boss','boss_idle',{fade:0,speed:.88});
+ showScreen('home');
+}
+function seekAnimationLab(normalized){
+ const rec=rigRuntime.records.boss,clip=rec?.rawClips?.[animationLab.index],action=animationLab.action;
+ if(!clip||!action)return;
+ action.time=clamp(Number(normalized)||0,0,1)*clip.duration;
+ rec.mixer.update(0);applyBossRootLock(rec,animationLab.rootLock);updateAnimationLabUi(rec);
+}
+function updateAnimationLab(dt){
+ if(!animationLab.active||!gameInitialized)return;
+ if(A)A.visible=false;if(B)B.visible=false;
+ if(boss){boss.visible=true;boss.position.set(0,0,0);boss.rotation.set(0,0,0)}
+ const rec=rigRuntime.records.boss;
+ if(rec?.ready&&rec.mixer){
+   if(!animationLab.action){populateAnimationLab(rec);playAnimationLabClip(animationLab.index)}
+   else{rec.mixer.update(dt);applyBossRootLock(rec,animationLab.rootLock)}
+   if(rec.secondary)updateBossV106Secondary(rec,dt,performance.now()*.001);
+ }
+ const view=animationLab.view,radius=7.6,y=3.15;
+ const positions=[[0,y,radius],[radius,y,0],[0,y,-radius],[-radius,y,0]];
+ camera.position.set(...positions[view]);camera.lookAt(0,2.15,0);
+ updateAnimationLabUi(rec);
 }
 function attachObjectToRigSocket(roleName,obj,type='weapon'){
  const rec=rigRuntime.records[roleName];if(!rec?.ready||!obj)return false;
@@ -1955,11 +2102,12 @@ function loadRigAsset(roleName){
        if(roleName==='boss'&&bossSocketFx&&rec.vfxSocket){
          rec.vfxSocket.add(bossSocketFx);bossSocketFx.position.set(0,0,0);
        }
-       if(roleName==='boss')createBossV10Art(rec);
-       if(roleName==='boss')createBossV103Refinement(rec);
-       if(roleName==='boss')createBossV104ShaderPass(rec);
+       // The new Tripo model already contains its final hair, dress, crown and
+       // 4K material. Do not stack the legacy procedural mesh overlays on it.
+       if(roleName==='boss'&&!V1012_EXTERNAL_BOSS)createBossV10Art(rec);
+       if(roleName==='boss'&&!V1012_EXTERNAL_BOSS)createBossV103Refinement(rec);
+       if(roleName==='boss'&&!V1012_EXTERNAL_BOSS)createBossV104ShaderPass(rec);
        if(roleName==='boss')createBossV106Acting(rec);
-       if(roleName==='boss')createBossV110Refinement(rec);
        if(roleName==='boss'){
          // Compile while the lobby still covers the canvas so shot one never
          // pays the GLB/PBR program creation cost.
@@ -1970,6 +2118,7 @@ function loadRigAsset(roleName){
          setTimeout(()=>ensureBossVisualSafety(performance.now()),180);
        }
        playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:0});
+       if(roleName==='boss'&&animationLab.active){populateAnimationLab(rec);playAnimationLabClip(animationLab.index)}
        console.info('[rig]',roleName,'ready',rec.clipNames);
        if(roleName==='boss')setTimeout(()=>{
          if(!bossIntroActive())banner('🌙 V10.8 — RIGGED BOSS READY ✓');
@@ -1995,7 +2144,9 @@ function updateRiggedAnimations(dt){
  const now=performance.now()*.001;
  for(const rec of Object.values(rigRuntime.records)){
    if(!rec?.ready||!rec.mixer)continue;
+   if(animationLab.active&&rec.role==='boss')continue;
    rec.mixer.update(dt);
+   if(rec.role==='boss')applyBossRootLock(rec,true);
 
    // V10.6: spring follow-through reacts to skill impact, teleport, phase and ultimate.
    if(rec.role==='boss'&&rec.secondary)updateBossV106Secondary(rec,dt,now);
@@ -2403,7 +2554,7 @@ function createV10Environment(){
  const hemi=new THREE.HemisphereLight(0x9fb7ff,0x130a24,.78);hemi.name='V10Hemi';scene.add(hemi);
  const moonKey=new THREE.DirectionalLight(0xe8e5ff,1.72);moonKey.name='V10MoonKey';moonKey.position.set(-6,11,8);scene.add(moonKey);
  const bossRim=new THREE.PointLight(0x8050e5,2.05,24);bossRim.name='V10BossRim';bossRim.position.set(0,5,-5.5);scene.add(bossRim);
- const bossKey=new THREE.PointLight(0xffd6e8,.86,14);bossKey.name='V110BossKey';bossKey.position.set(-2.2,4.7,3.8);scene.add(bossKey);
+ const bossKey=new THREE.PointLight(0xffd6e8,1.05,14);bossKey.name='V109BossKey';bossKey.position.set(-2.2,4.7,3.8);scene.add(bossKey);
  const playerFill=new THREE.PointLight(0x688cd8,.38,18);playerFill.name='V10PlayerFill';playerFill.position.set(0,3.2,6.5);scene.add(playerFill);
 
  envV10={root,sky,skyMat,moon,moonMat,base,baseMat,floor,floorMat,ruins,ruinMat,obelisks,obMat,crystals,crystalMat,crystalData,mist,mistMat,
@@ -2435,29 +2586,29 @@ function updateEnvironmentV10Phase(phase,force=false){
  const L=envV10.lights;
  if(phase===1){
    scene.fog.color.setHex(0x090b1c);scene.fog.density=.021;
-   renderer.toneMappingExposure=1.02;
+   renderer.toneMappingExposure=1.06;
    L.hemi.color.setHex(0xa7bbff);L.hemi.groundColor.setHex(0x150d29);L.hemi.intensity=.78;
    L.moonKey.color.setHex(0xe9e7ff);L.moonKey.intensity=1.72;
    L.bossRim.color.setHex(0x8051df);L.bossRim.intensity=2.05;
-   L.bossKey.color.setHex(0xffd6e8);L.bossKey.intensity=.86;
+   L.bossKey.color.setHex(0xffd6e8);L.bossKey.intensity=1.05;
    L.playerFill.color.setHex(0x668bd3);L.playerFill.intensity=.32;
    envV10.crystalMat.emissiveIntensity=.72;
  }else if(phase===2){
    scene.fog.color.setHex(0x0d0922);scene.fog.density=.024;
-   renderer.toneMappingExposure=1.00;
+   renderer.toneMappingExposure=1.04;
    L.hemi.color.setHex(0xb1a8ff);L.hemi.groundColor.setHex(0x1b0c31);L.hemi.intensity=.82;
    L.moonKey.color.setHex(0xe2d9ff);L.moonKey.intensity=1.78;
    L.bossRim.color.setHex(0x9c55f0);L.bossRim.intensity=2.35;
-   L.bossKey.color.setHex(0xffc9e5);L.bossKey.intensity=.98;
+   L.bossKey.color.setHex(0xffc9e5);L.bossKey.intensity=1.18;
    L.playerFill.color.setHex(0x7d69d4);L.playerFill.intensity=.36;
    envV10.crystalMat.emissiveIntensity=1.10;
  }else{
    scene.fog.color.setHex(0x05030e);scene.fog.density=.029;
-   renderer.toneMappingExposure=.98;
+   renderer.toneMappingExposure=1.00;
    L.hemi.color.setHex(0x755fba);L.hemi.groundColor.setHex(0x07030f);L.hemi.intensity=.62;
    L.moonKey.color.setHex(0xb7a6ef);L.moonKey.intensity=1.38;
    L.bossRim.color.setHex(0xb04ce3);L.bossRim.intensity=3.10;
-   L.bossKey.color.setHex(0xe8b6d8);L.bossKey.intensity=.78;
+   L.bossKey.color.setHex(0xe8b6d8);L.bossKey.intensity=.90;
    L.playerFill.color.setHex(0x553887);L.playerFill.intensity=.25;
    envV10.crystalMat.emissiveIntensity=1.55;
  }
@@ -2507,7 +2658,7 @@ function updateEnvironmentV10(now){
 
 
 function makeV103HairLockGeometry(){
- const g=new THREE.CylinderGeometry(.034,.108,1.42,9,8,false);
+ const g=new THREE.CylinderGeometry(.038,.105,1.42,5,5,false);
  const p=g.attributes.position;
  const colors=new Float32Array(p.count*3);
  for(let i=0;i<p.count;i++){
@@ -2544,8 +2695,8 @@ function createBossV103Refinement(rec){
 
  // Additional large hair masses. One InstancedMesh, not six draw calls.
  const hairMat=new THREE.MeshStandardMaterial({
-   color:0xaaa4d1,vertexColors:true,roughness:.38,metalness:0,
-   emissive:0x211a45,emissiveIntensity:.18
+   color:0xc9c4ed,vertexColors:true,roughness:.29,metalness:0,
+   emissive:0x251c4f,emissiveIntensity:.24
  });
  const hairLocks=new THREE.InstancedMesh(makeV103HairLockGeometry(),hairMat,6);
  hairLocks.name='V103LayeredHairLocks';hairLocks.instanceMatrix.setUsage(THREE.DynamicDrawUsage);hairRoot.add(hairLocks);
@@ -2593,7 +2744,7 @@ function createBossV103Refinement(rec){
  const chestChain=new THREE.LineSegments(chainGeo,chainMat);chestChain.name='V103ChestConstellation';chest.add(chestChain);
 
  // Small face fill follows the head; disabled first on low mobile.
- const faceFill=new THREE.PointLight(0xffdce9,.09,1.45);faceFill.name='V103FaceFill';faceFill.position.set(0,.07,.48);head.add(faceFill);
+ const faceFill=new THREE.PointLight(0xffdce9,.16,1.45);faceFill.name='V103FaceFill';faceFill.position.set(0,.07,.48);head.add(faceFill);
 
  bossV103={
    hairLocks,hairMat,crownStars,crownMat,panels,panelMat,hem,hemMat,chestChain,chainMat,faceFill,
@@ -2624,7 +2775,7 @@ function updateBossV103Phase(phase,force=false){
  bossV103.hemMat.uniforms.uPhase.value=phase;
  bossV103.hemMat.uniforms.uAlpha.value=phase===1?.10:phase===2?.22:.42;
  bossV103.chainMat.opacity=phase===1?.52:phase===2?.70:.90;
- bossV103.faceFill.intensity=phase===1?.08:phase===2?.11:.15;
+ bossV103.faceFill.intensity=phase===1?.13:phase===2?.18:.23;
  updateBossV103Quality(true);
 }
 function updateBossV103(now){
@@ -2666,109 +2817,6 @@ function updateBossV103(now){
  bossV103.hemMat.uniforms.uTime.value=t;
  bossV103.hem.rotation.y=t*(phase===3?.09:.035);
  bossV103.chestChain.rotation.z=Math.sin(t*.86)*.012;
-}
-
-
-function v110LimbShell(parent,child,material,startRadius,endRadius,coverage=.92){
- if(!parent||!child)return null;
- const dir=child.position.clone(),full=dir.length();if(full<.01)return null;
- const mesh=new THREE.Mesh(new THREE.CylinderGeometry(endRadius,startRadius,full*coverage,12,3,false),material);
- mesh.name='V110TailoredSleeve';mesh.position.copy(dir).multiplyScalar(coverage*.5);
- mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
- mesh.castShadow=false;mesh.receiveShadow=false;parent.add(mesh);return mesh;
-}
-function v110Cuff(parent,child,material,radius){
- if(!parent||!child)return null;
- const dir=child.position.clone();if(dir.length()<.01)return null;
- const mesh=new THREE.Mesh(new THREE.TorusGeometry(radius,.026,7,22),material);
- mesh.name='V110MoonCuff';mesh.position.copy(dir).multiplyScalar(.83);
- mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),dir.clone().normalize());
- mesh.castShadow=false;mesh.receiveShadow=false;parent.add(mesh);return mesh;
-}
-function v110Bang(head,points,radius,material,name){
- const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));
- const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,10,radius,7,false),material);
- mesh.name=name;mesh.castShadow=false;mesh.receiveShadow=false;head.add(mesh);return mesh;
-}
-function createBossV110Refinement(rec){
- if(bossV110||!rec?.model)return;
- const B=rec.actingBones||{},head=B.head||findRigNode(rec.model,['Head'])||rec.model;
- const chest=B.chest||findRigNode(rec.model,['Chest'])||rec.model;
-
- // The source rear hair uses thirteen flat prisms. Keep the two facial locks,
- // replace only the long back cards with curved V10.3/V10.10 hair masses.
- const hiddenHair=[];
- rec.model.traverse(o=>{
-   if(!o.isMesh||!o.geometry?.attributes?.position)return;
-   const mats=Array.isArray(o.material)?o.material:[o.material];
-   if(!mats.some(m=>/hairmoonhighlight/.test(rigNorm(m?.name||''))))return;
-   const pos=o.geometry.attributes.position;if(pos.count!==20)return;
-   if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();
-   const box=o.geometry.boundingBox;
-   if(box&&(box.max.y-box.min.y)>1.2&&box.max.z<0){o.visible=false;hiddenHair.push(o)}
- });
-
- const hairMat=new THREE.MeshStandardMaterial({color:0xa39cc9,roughness:.36,metalness:0,emissive:0x20183f,emissiveIntensity:.10});
- const velvetMat=new THREE.MeshStandardMaterial({color:0x2b0b49,roughness:.64,metalness:0,emissive:0x10031d,emissiveIntensity:.08});
- const plumMat=new THREE.MeshStandardMaterial({color:0x5a1976,roughness:.48,metalness:.02,emissive:0x1c0529,emissiveIntensity:.10});
- const silverMat=new THREE.MeshStandardMaterial({color:0xb8c1dc,roughness:.28,metalness:.70,emissive:0x17182c,emissiveIntensity:.06});
-
- const sleeves=[];
- sleeves.push(v110LimbShell(B.lua,B.lfa,plumMat,.225,.155,.94));
- sleeves.push(v110LimbShell(B.rua,B.rfa,plumMat,.225,.155,.94));
- sleeves.push(v110LimbShell(B.lfa,B.lhand,velvetMat,.125,.165,.90));
- sleeves.push(v110LimbShell(B.rfa,B.rhand,velvetMat,.125,.165,.90));
- const cuffs=[v110Cuff(B.lfa,B.lhand,silverMat,.172),v110Cuff(B.rfa,B.rhand,silverMat,.172)].filter(Boolean);
-
- const shoulders=[];
- for(const bone of [B.lua,B.rua])if(bone){
-   const q=new THREE.Mesh(new THREE.SphereGeometry(.205,12,8),velvetMat);
-   q.name='V110VelvetShoulder';q.scale.set(1.16,.74,1.0);q.position.set(0,.015,0);bone.add(q);shoulders.push(q);
- }
-
- // Five rounded anime locks replace the rigid forehead/cardboard reading.
- const bangs=[
-   v110Bang(head,[[-.24,.35,.19],[-.22,.23,.28],[-.16,.11,.31]],.050,hairMat,'V110BangL'),
-   v110Bang(head,[[ .24,.35,.19],[ .22,.23,.28],[ .16,.11,.31]],.050,hairMat,'V110BangR'),
-   v110Bang(head,[[-.045,.39,.21],[0,.27,.30],[.035,.15,.315]],.046,hairMat,'V110BangC')
- ];
- const templeLocks=[
-   v110Bang(head,[[-.29,.30,.16],[-.33,.05,.25],[-.29,-.23,.24]],.047,hairMat,'V110TempleL'),
-   v110Bang(head,[[ .29,.30,.16],[ .33,.05,.25],[ .29,-.23,.24]],.047,hairMat,'V110TempleR')
- ];
-
- const collar=new THREE.Mesh(new THREE.TorusGeometry(.29,.032,7,30,Math.PI*1.56),silverMat);
- collar.name='V110LunarCollar';collar.position.set(0,.245,.19);collar.rotation.z=-Math.PI*.28;collar.scale.set(1.16,.62,.70);chest.add(collar);
-
- bossV110={rec,model:rec.model,basePos:rec.model.position.clone(),baseRotY:rec.model.rotation.y,
-   hiddenHair,hairMat,velvetMat,plumMat,silverMat,sleeves:sleeves.filter(Boolean),cuffs,shoulders,bangs,templeLocks,collar,
-   phase:1,quality:'medium'};
- updateBossV110Quality(true);updateBossV110Phase(1,true);
-}
-function updateBossV110Quality(force=false){
- if(!bossV110)return;const q=v107Quality;if(!force&&q===bossV110Quality)return;
- bossV110Quality=q;bossV110.quality=q;
- bossV110.templeLocks.forEach(m=>m.visible=q!=='low');
- bossV110.collar.visible=q!=='low';
- bossV110.cuffs.forEach(m=>m.visible=q!=='low'||bossV110Phase===3);
-}
-function updateBossV110Phase(phase,force=false){
- phase=Math.max(1,Math.min(3,phase||1));if(!force&&phase===bossV110Phase)return;
- bossV110Phase=phase;if(!bossV110)return;bossV110.phase=phase;
- bossV110.hairMat.emissiveIntensity=phase===1?.08:phase===2?.13:.20;
- bossV110.plumMat.emissiveIntensity=phase===1?.08:phase===2?.14:.22;
- bossV110.silverMat.emissiveIntensity=phase===1?.05:phase===2?.10:.18;
- updateBossV110Quality(true);
-}
-function updateBossV110(now){
- if(!bossV110)return;updateBossV110Quality(false);
- const t=now*.001,c=bossCastVisual.cast,w=c?v106CastWeights(c,serverNow()):null;
- const hover=Math.sin(t*.82)*.018+(w?w.a*.026:0);
- bossV110.model.position.y=bossV110.basePos.y+hover;
- bossV110.model.rotation.y=bossV110.baseRotY+Math.sin(t*.34)*.014;
- bossV110.bangs.forEach((m,i)=>m.rotation.z=Math.sin(t*.66+i*.9)*.006);
- bossV110.templeLocks.forEach((m,i)=>m.rotation.z=(i?1:-1)*(.012+.008*Math.sin(t*.58+i)));
- bossV110.collar.rotation.z=-Math.PI*.28+Math.sin(t*.72)*.008;
 }
 
 
@@ -3092,22 +3140,19 @@ function v106ApplyActing(nowMs){
  const c=bossCastVisual.cast;
  const phaseAct=nowMs<bossV106PhaseActUntil;
  const summonAct=nowMs<bossV106GestureUntil&&bossV106Gesture==='summon';
- const stanceWeight=(c ? .38 : phaseAct ? .26 : summonAct ? .42 : 1)*qMult;
+ const stanceWeight=(c ? .28 : phaseAct ? .22 : summonAct ? .38 : 1)*qMult;
  // The authored Idle clip has no upper-arm channels. Add a restrained base
  // stance after mixer sampling so both arms rest naturally beside the dress.
  v106AddPose({
-   chest:[-.018,.012,0],head:[-.008,-.018,.012],
-   lua:[.035,-.055,.76],rua:[.025,.070,-.66],
-   lfa:[-.12,.035,-.24],rfa:[-.07,-.025,.27],
-   lhand:[0,-.02,-.10],rhand:[0,.03,.06]
+   chest:[-.018,0,0],head:[-.008,0,.012],
+   lua:[.035,-.04,.72],rua:[.035,.04,-.72],
+   lfa:[-.10,.02,-.20],rfa:[-.10,-.02,.20],
+   lhand:[0,0,-.05],rhand:[0,0,.05]
  },stanceWeight);
  v106AddPose({
    chest:[Math.sin(nowSec*.92)*.006, idle*.005, .004*idle],
    head:[Math.sin(nowSec*.51+.8)*.007,Math.sin(nowSec*.37)*.009,.010*idle],
-   spine:[0,phase===3?.010:0,0],
-   lua:[.003*idle,0,.010*idle],rua:[-.003*idle,0,.008*idle],
-   lfa:[.006*idle,0,-.010*idle],rfa:[-.005*idle,0,.012*idle],
-   lhand:[0,.006*idle,0],rhand:[0,-.007*idle,0]
+   spine:[0,phase===3?.010:0,0]
  },qMult);
  if(phase===3)v106AddPose({head:[-.010,-.012,.012],chest:[.015,0,0],lua:[-.018,0,-.028],rua:[-.018,0,.028]},qMult);
 
@@ -3235,7 +3280,6 @@ function v107ApplyQuality(q,force=false){
  updateBossV103Quality(true);
  updateBossV104Quality(true);
  updateBossV106Quality(true);
- updateBossV110Quality(true);
  updateEnvironmentV10Quality(true);
 }
 function v107ChooseQuality(){
@@ -3304,7 +3348,6 @@ function clearDynamic(){
  bossV103=null;bossV103Phase=1;bossV103Quality='medium';
  bossV104=null;bossV104Phase=1;bossV104Quality='medium';
  bossV106=null;bossV106PhaseActStart=0;bossV106PhaseActUntil=0;bossV106HitUntil=0;bossV106GestureUntil=0;bossV106Gesture='';
- bossV110=null;bossV110Phase=1;bossV110Quality='medium';
  v107StableGood=0;v107StableBad=0;v107CamFocusX=0;v107CamFocusZ=-1.5;v107CamFocusVelX=0;v107CamFocusVelZ=0;
  v1071VisualErrors=0;v1071LastVisualError='';v1071SafeMode=false;v1071BossCheckAt=0;
  envV10Phase=1;document.body.classList.remove('envPhase2','envPhase3');
@@ -3944,7 +3987,7 @@ function v103BossExpressionPulse(i){
  clearTimeout(v103BossExpressionPulse.t);
  v103BossExpressionPulse.t=setTimeout(()=>{
    if(iris)iris.emissiveIntensity=eyeBase;if(jewel)jewel.emissiveIntensity=jewelBase;
-   if(bossV103)bossV103.faceFill.intensity=bossV103Phase===1?.08:bossV103Phase===2?.11:.15;
+   if(bossV103)bossV103.faceFill.intensity=bossV103Phase===1?.13:bossV103Phase===2?.18:.23;
  },220);
 }
 
@@ -4179,7 +4222,7 @@ function updateUI(s){
    const bossPct=Math.max(0,s.boss.hp/s.boss.max*100);
    $('bossFill').style.width=bossPct+'%';$('bossHpText').textContent=Math.ceil(bossPct)+'%';updateBossUiPhase(s.boss.phase);
  }
- updateBossV10Phase(s.boss.phase);updateBossV103Phase(s.boss.phase);updateBossV104Phase(s.boss.phase);updateBossV110Phase(s.boss.phase);updateEnvironmentV10Phase(s.boss.phase);$('trustText').textContent=Math.round(s.trust)+'%';$('trustFill').style.width=s.trust+'%';$('duoWrap').style.display=s.trust>=100?'block':'none';
+ updateBossV10Phase(s.boss.phase);updateBossV103Phase(s.boss.phase);updateBossV104Phase(s.boss.phase);updateEnvironmentV10Phase(s.boss.phase);$('trustText').textContent=Math.round(s.trust)+'%';$('trustFill').style.width=s.trust+'%';$('duoWrap').style.display=s.trust>=100?'block':'none';
 }
 function playEvent(e,p){
  if(e==='banner')banner(p.msg);
@@ -4347,9 +4390,11 @@ function frame(now){
  try{sendInputHeartbeat(now)}catch(err){console.error('[input heartbeat]',err)}
  try{
    if(deathCinematicActive()){
-     try{updateV107Performance(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateBossV110(now);updateEnvironmentV10(now);updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-visual')}
+     try{updateV107Performance(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateEnvironmentV10(now);updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-visual')}
    }else if(deathCinematicStats&&!deathCinematicResultShown){
      try{updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-result')}
+   }else if(animationLab.active&&gameInitialized){
+     try{updateAnimationLab(dt);updateEnvironmentV10(now)}catch(err){v1071VisualFailure(err,'animation-lab')}
    }else if(running&&gameInitialized){
      const visualFrozen=now<hitStopUntil;
      if(!visualFrozen){
@@ -4361,7 +4406,7 @@ function frame(now){
        try{updateV107Performance(now)}catch(err){v1071VisualFailure(err,'quality')}
        try{updateBossCastVisual()}catch(err){v1071VisualFailure(err,'boss-cast')}
        try{updateCombatAnimations(now)}catch(err){v1071VisualFailure(err,'combat-anim')}
-       try{updateRiggedAnimations(dt);v106ApplyActing(now);updateBossV110(now)}catch(err){v1071VisualFailure(err,'rig-animation')}
+       try{updateRiggedAnimations(dt);v106ApplyActing(now)}catch(err){v1071VisualFailure(err,'rig-animation')}
        try{updateBossSocketFx(now);updateSkillArtFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now)}catch(err){v1071VisualFailure(err,'boss-art')}
        try{updateEnvironmentV10(now);updateCam(dt)}catch(err){v1071VisualFailure(err,'environment-camera')}
      }
@@ -4468,6 +4513,30 @@ window.addEventListener('orientationchange',()=>{if(running)updateControlMode()}
 
 $('createRoom').onclick=createRoom;
 $('joinRoom').onclick=()=>showScreen('joinLobby');
+$('animationLabOpen').onclick=openAnimationLab;
+$('animationLabClose').onclick=closeAnimationLab;
+$('animationLabClip').onchange=e=>playAnimationLabClip(Number(e.target.value));
+$('animationLabSpeed').oninput=e=>{
+ animationLab.speed=Number(e.target.value)||1;
+ animationLab.action?.setEffectiveTimeScale(animationLab.speed);updateAnimationLabUi(rigRuntime.records.boss);
+};
+$('animationLabTimeline').oninput=e=>seekAnimationLab((Number(e.target.value)||0)/1000);
+$('animationLabPrev').onclick=()=>playAnimationLabClip(animationLab.index-1);
+$('animationLabNext').onclick=()=>playAnimationLabClip(animationLab.index+1);
+$('animationLabPlay').onclick=()=>{
+ animationLab.paused=!animationLab.paused;if(animationLab.action)animationLab.action.paused=animationLab.paused;
+ updateAnimationLabUi(rigRuntime.records.boss);
+};
+$('animationLabLoop').onclick=()=>{
+ animationLab.loop=!animationLab.loop;
+ if(animationLab.action){animationLab.action.setLoop(animationLab.loop?THREE.LoopRepeat:THREE.LoopOnce,animationLab.loop?Infinity:1);animationLab.action.clampWhenFinished=!animationLab.loop}
+ updateAnimationLabUi(rigRuntime.records.boss);
+};
+$('animationLabRoot').onclick=()=>{
+ animationLab.rootLock=!animationLab.rootLock;applyBossRootLock(rigRuntime.records.boss,animationLab.rootLock);updateAnimationLabUi(rigRuntime.records.boss);
+};
+$('animationLabRestart').onclick=()=>playAnimationLabClip(animationLab.index);
+$('animationLabView').onclick=()=>{animationLab.view=(animationLab.view+1)%animationLabViews.length;updateAnimationLabUi(rigRuntime.records.boss)};
 $('copyInvite').onclick=()=>{const text=$('inviteLink').textContent;navigator.clipboard?.writeText(text).then(()=>banner('ĐÃ COPY LINK MỜI ✓')).catch(()=>prompt('Copy link:',text))};
 $('hostStart').onclick=()=>{
  if($('hostStart').disabled)return;
@@ -4514,7 +4583,9 @@ function prewarmV108Client(attempt=0){
 // Decode and compile the bundled boss behind the lobby, not during shot one.
 setTimeout(()=>prewarmV108Client(),180);
 const sess=loadSession();
-if(inviteRoom&&(!sess||sess.room!==inviteRoom)){
+if(bootQuery.get('animlab')==='1'){
+ setTimeout(()=>openAnimationLab(),260);
+}else if(inviteRoom&&(!sess||sess.room!==inviteRoom)){
  clearSession();$('roomInput').value=inviteRoom.slice(0,6);showScreen('joinLobby');
  if(bootQuery.get('join')==='1')setTimeout(()=>joinRoom($('roomInput').value),350);
 }else if(sess){

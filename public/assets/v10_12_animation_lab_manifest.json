@@ -1,0 +1,29 @@
+{
+  "version": "10.12.0",
+  "title": "Boss Animation Lab",
+  "bossAsset": "/assets/characters/ma_vuong_mat_ngu.glb",
+  "bossAssetProfile": {
+    "animations": 19,
+    "skeletonJoints": 44,
+    "hairBones": ["HairRoot", "HairMid", "HairTip"],
+    "texture": "4096x4096",
+    "handWeightContamination": 0
+  },
+  "labControls": [
+    "clip selector 00-18",
+    "speed 0.25x-2.00x",
+    "play and pause",
+    "loop toggle",
+    "root XZ lock",
+    "timeline scrub",
+    "front, right, back and left camera views"
+  ],
+  "gameplayChanges": false,
+  "preserved": [
+    "two-player co-op protocol",
+    "authoritative five-second intro lock",
+    "touch and desktop input",
+    "boss HP and hitbox",
+    "server combat balance"
+  ]
+}

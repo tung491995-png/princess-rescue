@@ -1,0 +1,33 @@
+PRINCESS RESCUE V10.12 — BOSS ANIMATION LAB
+
+MỤC TIÊU
+- Kiểm tra trực tiếp 19 animation của boss Tripo trước khi chốt Boss AI.
+- Không thay đổi HP, hitbox, sát thương, thời gian intro hoặc giao thức co-op.
+
+CÁCH MỞ
+1. Khởi động game như các bản trước.
+2. Ở màn hình đầu, chọn "MỞ BOSS ANIMATION LAB".
+3. Hoặc thêm ?animlab=1 vào cuối địa chỉ game.
+
+ĐIỀU KHIỂN
+- Danh sách CLIP 00–18: chọn animation.
+- TỐC ĐỘ: 0.25x–2.00x.
+- Timeline: kéo tới frame cần kiểm tra.
+- PLAY / PAUSE và LOOP.
+- ROOT XZ: khóa dịch chuyển ngang của xương Root.
+- GÓC NHÌN: Front → Right → Back → Left.
+
+LƯU Ý ROOT MOTION
+- Bật ROOT XZ để đánh giá pose, tóc, tay và váy tại một vị trí cố định.
+- Tắt ROOT XZ để xem quãng đường thật của clip Move, Dodge hoặc Teleport.
+- Trong gameplay, root XZ luôn được khóa; server vẫn quyết định vị trí boss.
+
+ASSET BOSS
+- public/assets/characters/ma_vuong_mat_ngu.glb
+- 19 animation, 44 joints.
+- HairRoot, HairMid, HairTip.
+- Texture 4096x4096.
+
+SAU KHI TEST
+Quay video các clip cần dùng hoặc ghi lại số clip. Bước V10.12 tiếp theo sẽ
+đổi tên/cắt clip và gắn chúng vào Idle, Dodge, Teleport, Cast, Hit, Phase và Death.
