@@ -1,4 +1,12 @@
-PRINCESS RESCUE 3D — V10.17.3 SEPARATE SCREENSHOT DEBUG
+PRINCESS RESCUE 3D — V10.17.4 ARMAMENT RUNTIME HOTFIX
+
+V10.17.4 RUNTIME FIX
+====================
+- Fixes `ReferenceError: d2 is not defined` in the per-frame boss armament
+  target selection revealed by both V10.17.3 debug bundles.
+- Orb and halo updates no longer stop when Hero/Princess enter the live match.
+- Model, textures, animations, camera, server balance and debug ZIP format are
+  unchanged.
 
 RUNTIME BLACK BOX
 =================

@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.17.3 — Separate Screenshot Debug</title>
+<title>Princess Rescue V10.17.4 — Armament Runtime Hotfix</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -168,7 +168,7 @@ body.bossIntroLock #hud,body.bossIntroLock #bossHud,body.bossIntroLock #phase,bo
 #netLab button{font-weight:900}.labBtns{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-top:7px}
 #netLabLog{margin-top:7px;height:88px;overflow:auto;padding:6px;border-radius:9px;background:#02040b;color:#bcecff;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}
 
-/* V10.17.3 — separate screenshot files; no room/session identifiers recorded. */
+/* V10.17.4 — armament target-distance hotfix; separate screenshot files remain unchanged. */
 #qaRecorderBadge{position:fixed;z-index:74;right:calc(7px + var(--sr));top:calc(7px + var(--st));display:flex;align-items:center;gap:4px;padding:4px 5px 4px 8px;border-radius:12px;background:rgba(5,7,18,.80);border:1px solid rgba(135,255,198,.22);box-shadow:0 7px 22px rgba(0,0,0,.34);backdrop-filter:blur(8px);font-size:7px;font-weight:950;letter-spacing:.45px;color:#a9ffd2;pointer-events:auto;transition:.18s}
 #qaRecorderBadge.warning{color:#ffe0a1;border-color:rgba(255,194,94,.38);background:rgba(35,22,7,.88)}
 #qaRecorderBadge.issue{color:#ffd0dc;border-color:rgba(255,88,130,.54);background:rgba(46,8,20,.92);box-shadow:0 0 22px rgba(255,61,120,.23),0 8px 25px rgba(0,0,0,.42)}
@@ -609,7 +609,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái CHÉM · Chuột phải / SHIFT NÉ · SPACE / E KIẾM KHÍ</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.17.3 DEBUG ZIP</span></h1><p style="margin-top:7px">Chỉ chụp khi có lỗi hình ảnh, exception hoặc khi bạn bấm Capture.</p><div class="logoMoon"></div><div class="badges"><span class="badge">120s black box</span><span class="badge">JPG riêng · 1280px</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Camera &amp; FPS QA</span><span class="badge">3-hit sword combo</span><span class="badge">No session data</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.17.4 RUNTIME FIX</span></h1><p style="margin-top:7px">Chỉ chụp khi có lỗi hình ảnh, exception hoặc khi bạn bấm Capture.</p><div class="logoMoon"></div><div class="badges"><span class="badge">120s black box</span><span class="badge">JPG riêng · 1280px</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Camera &amp; FPS QA</span><span class="badge">3-hit sword combo</span><span class="badge">No session data</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -618,7 +618,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.17.3 DEBUG</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.17.4 RUNTIME FIX</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -817,7 +817,7 @@ const visualAudit={
  stage:'idle',checks:0,issues:[],clipResults:[],transitionResults:[],vfxResults:[],startedAt:0,finishedAt:0
 };
 window.__bossVisualAudit=visualAudit;
-const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.17.3',enabled:true})||null;
+const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.17.4',enabled:true})||null;
 window.__runtimeBlackBox=bugRecorder;
 const bugRuntime={lastSampleAt:0,lastCamera:null,bossIdentity:'',bossUrl:'',introScale:null,introViewport:null,lastCastId:null,moveProbe:null,webglLost:false};
 function visualAuditIssue(stage,code,detail=''){
@@ -2566,7 +2566,7 @@ function finishBossVisualAudit(){
  if(rec?.visualAccepted){enforceBossTripoVisibility(rec);playAnimationLabClip(18);animationLab.view=0;updateAnimationLab(0)}
  visualAudit.active=false;visualAudit.done=true;visualAudit.finishedAt=performance.now();visualAudit.passed=visualAudit.issues.length===0;
  visualAudit.stage=visualAudit.passed?'pass':'fail';updateVisualAuditReport();
- $('animationLabStatus').textContent=visualAudit.passed?'V10.17.3 AUDIT · PASS':`V10.17.3 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}${visualAudit.issues[0]?.detail?` · ${visualAudit.issues[0].detail}`:''}`;
+ $('animationLabStatus').textContent=visualAudit.passed?'V10.17.4 AUDIT · PASS':`V10.17.4 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}${visualAudit.issues[0]?.detail?` · ${visualAudit.issues[0].detail}`:''}`;
  bugRecorder?.record?.(visualAudit.passed?'info':'error',visualAudit.passed?'FULL_VISUAL_AUDIT_PASSED':'FULL_VISUAL_AUDIT_FAILED',{checks:visualAudit.checks,issues:visualAudit.issues.length},{capture:!visualAudit.passed});
  bugRecorder?.persistSoon?.();
  return visualAudit;
@@ -2914,6 +2914,11 @@ function resolveBossHaloVirtualAnchor(rec,now){
  );
  return anchored;
 }
+function bossArmamentPlayerDistanceSq(player,position){
+ const px=Number(player?.x),pz=Number(player?.z),bx=Number(position?.x),bz=Number(position?.z);
+ if(![px,pz,bx,bz].every(Number.isFinite))return Number.POSITIVE_INFINITY;
+ const dx=px-bx,dz=pz-bz;return dx*dx+dz*dz;
+}
 function updateBossArmament(dt=0,now=performance.now()){
  const arm=bossArmament,rec=rigRuntime.records.boss;if(!arm?.ready||!boss)return;
  const show=!!(rec?.visualAccepted&&rec.model?.visible&&boss.visible);
@@ -2928,7 +2933,7 @@ function updateBossArmament(dt=0,now=performance.now()){
  bossArmamentAim.set(0,0,0);
  const snapshot=latestState||snapshotBuffer.at(-1)?.s,players=snapshot?.players;
  if(players){
-   const alive=['hero','princess'].map(role=>players[role]).filter(player=>player&&!player.down).sort((a,b)=>d2(a.x,a.z,boss.position.x,boss.position.z)-d2(b.x,b.z,boss.position.x,boss.position.z));
+   const alive=['hero','princess'].map(role=>players[role]).filter(player=>player&&!player.down).sort((a,b)=>bossArmamentPlayerDistanceSq(a,boss.position)-bossArmamentPlayerDistanceSq(b,boss.position));
    if(alive[0])bossArmamentAim.set(alive[0].x-boss.position.x,0,alive[0].z-boss.position.z).normalize();
  }
  if(bossArmamentAim.lengthSq()<.01)bossArmamentAim.set(Math.sin(boss.rotation.y),0,Math.cos(boss.rotation.y));

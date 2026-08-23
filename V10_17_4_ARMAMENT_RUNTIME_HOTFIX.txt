@@ -1,0 +1,16 @@
+PRINCESS RESCUE V10.17.4 — ARMAMENT RUNTIME HOTFIX
+
+Nguồn chẩn đoán
+- Hai debug bundle V10.17.3 cùng ghi nhận ReferenceError: d2 is not defined.
+- Lỗi bắt đầu khi danh sách người chơi xuất hiện và updateBossArmament chọn mục tiêu gần boss.
+
+Sửa đổi
+- Thay helper d2 không tồn tại bằng bossArmamentPlayerDistanceSq có kiểm tra dữ liệu hữu hạn.
+- Giữ nguyên model Tripo, model orb, model halo, texture, animation, camera và gameplay server.
+- Giữ nguyên debug ZIP V2: screenshot JPG riêng, tối đa 20 ảnh, JSON chỉ chứa metadata/path.
+
+Phạm vi smoke test
+- Armament target selection.
+- Intro và boss model lock.
+- Hero/Princess, combat và UI.
+- Screenshot JPG riêng và ZIP debug.
