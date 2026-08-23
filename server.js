@@ -105,6 +105,9 @@ function ephemeralRoomFields(room){
   room.dirty = false;
   room.persisting = false;
   room.history = {hero:[],princess:[],boss:[]};
+  // Runtime-only render readiness. A match may start only after both browsers
+  // have parsed, normalized and precompiled the real Tripo boss.
+  room.bossAssetsReady = {hero:false,princess:false};
   // Runtime-only sequence. It intentionally resets after a process restart;
   // clients reset their loss window when a session resumes.
   room.snapshotSeq = 0;
@@ -305,6 +308,7 @@ function attach(room,role,ws){
     try{slot.ws.close(4001,'Replaced by resumed session');}catch{}
   }
   slot.ws=ws;slot.disconnectedAt=null;
+  room.bossAssetsReady[role]=false;
   ws.room=room;ws.role=role;ws.sessionToken=slot.token;ws.isAlive=true;
   markDirty(room);
 }
@@ -314,6 +318,8 @@ function detach(ws){
   const slot=room.slots[role];
   if(slot.ws===ws){
     slot.ws=null;slot.disconnectedAt=Date.now();
+    room.bossAssetsReady[role]=false;
+    broadcast(room,{type:'bossAssetReady',ready:{...room.bossAssetsReady}});
   }
   if(room.state.started){
     room.state.paused=true;
@@ -939,6 +945,8 @@ function snapshot(room){
   const s=room.state;
   return {
     ts:Date.now(),tick:s.tick,trust:s.trust,started:s.started,paused:s.paused,pauseRole:s.pauseRole,introUntil:s.introUntil||0,
+    bossAssetsReady:{...room.bossAssetsReady},
+    connectedRoles:{hero:connected(room,'hero'),princess:connected(room,'princess')},
     players:{
       hero:{...s.players.hero,input:undefined},
       princess:{...s.players.princess,input:undefined}
@@ -1025,7 +1033,7 @@ wss.on('connection',(ws,req)=>{
       if(!hit){send(ws,{type:'error',code:'SESSION_EXPIRED'});return}
       attach(hit.room,hit.role,ws);
       const room=hit.room;
-      if(room.state.started&&bothConnected(room)){
+      if(room.state.started&&bothConnected(room)&&room.bossAssetsReady.hero&&room.bossAssetsReady.princess){
         room.state.paused=false;room.state.pauseRole=null;
         markDirty(room);
         await persistRoomNow(room);
@@ -1038,6 +1046,17 @@ wss.on('connection',(ws,req)=>{
 
     const room=ws.room,role=ws.role;
     if(!room||!role)return;
+
+    if(m.type==='bossAssetReady'){
+      room.bossAssetsReady[role]=m.ready===true;
+      broadcast(room,{type:'bossAssetReady',ready:{...room.bossAssetsReady}});
+      if(room.state.started&&room.state.paused&&bothConnected(room)&&room.bossAssetsReady.hero&&room.bossAssetsReady.princess){
+        room.state.paused=false;room.state.pauseRole=null;markDirty(room);
+        await persistRoomNow(room);
+        broadcast(room,{type:'resumePlay',state:snapshot(room)});
+      }
+      return;
+    }
 
     if(m.type==='leave'){
       const slot=room.slots[role],oldTok=slot.token;
@@ -1064,6 +1083,10 @@ wss.on('connection',(ws,req)=>{
       console.log(`[ws] start requested ${room.code} princess=${princessOnline}`);
       if(!princessOnline){
         send(ws,{type:'startAck',ok:false,reason:'PRINCESS_OFFLINE'});
+        return;
+      }
+      if(!room.bossAssetsReady.hero||!room.bossAssetsReady.princess){
+        send(ws,{type:'startAck',ok:false,reason:'BOSS_ASSET_NOT_READY',ready:{...room.bossAssetsReady}});
         return;
       }
       send(ws,{type:'startAck',ok:true});

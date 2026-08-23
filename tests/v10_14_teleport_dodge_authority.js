@@ -24,7 +24,7 @@ function run(){
     if(finished||!evade||!snapshotMatched)return;
     finished=true;
     clearTimeout(timeout);hero.close();princess.close();
-    console.log('V10.14 TELEPORT DODGE PASS · clip 12 · authoritative 3.15m relocation · snapshot/hitbox synchronized');
+    console.log('V10.14.1 TELEPORT DODGE PASS · Tripo ready gate · clip 12 · authoritative 3.15m relocation · snapshot/hitbox synchronized');
     server.kill('SIGTERM');setTimeout(()=>process.exit(0),60);
   };
   hero.on('error',fail);princess.on('error',fail);
@@ -32,7 +32,11 @@ function run(){
   princess.on('open',()=>{if(room)princess.send(JSON.stringify({type:'join',code:room}))});
   hero.on('message',buffer=>{
     const m=JSON.parse(buffer);
-    if(m.type==='created'){room=m.code;if(princess.readyState===WebSocket.OPEN)princess.send(JSON.stringify({type:'join',code:room}))}
+    if(m.type==='created'){
+      room=m.code;hero.send(JSON.stringify({type:'bossAssetReady',ready:true}));
+      if(princess.readyState===WebSocket.OPEN)princess.send(JSON.stringify({type:'join',code:room}));
+    }
+    if(m.type==='bossAssetReady'&&m.ready?.hero&&m.ready?.princess)hero.send(JSON.stringify({type:'start'}));
     if(m.type==='start'){
       startState=m.state;
       const wait=Math.max(0,startState.introUntil-Date.now()+80);
@@ -50,7 +54,7 @@ function run(){
   });
   princess.on('message',buffer=>{
     const m=JSON.parse(buffer);
-    if(m.type==='joined')hero.send(JSON.stringify({type:'start'}));
+    if(m.type==='joined')princess.send(JSON.stringify({type:'bossAssetReady',ready:true}));
   });
 }
 let output='';

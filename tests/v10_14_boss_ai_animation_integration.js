@@ -23,7 +23,7 @@ const fail = error => {
   console.error(error?.stack || error);
   stop(1);
 };
-const timeout = setTimeout(() => fail(new Error('V10.14 Boss AI Animation Integration test timed out')), 20000);
+const timeout = setTimeout(() => fail(new Error('V10.14.1 Tripo Model Lock test timed out')), 20000);
 
 function inspectGlb(buffer) {
   if (buffer.readUInt32LE(0) !== 0x46546c67 || buffer.readUInt32LE(4) !== 2 || buffer.readUInt32LE(8) !== buffer.length) {
@@ -118,6 +118,7 @@ function verifyFullBodyCameraEnvelope() {
 async function run() {
   verifyFullBodyCameraEnvelope();
   const html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
+  const serverSource = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
   if (!html.includes("rec.hipMotionBone=findExactRigNode(rec.model,['Hip','Hips'])")) throw new Error('Exact Hip root-lock binding is missing');
   if (!html.includes('rec.motionAnchorBindRoot') || !html.includes('rec.motionLockTarget.y=rec.motionLockCurrent.y')) throw new Error('World-space XZ compensation is missing');
   if (!html.includes('function frameBossFullBody(') || !html.includes('frameBossFullBody(v10132CameraLook')) throw new Error('Full-body camera guard is missing');
@@ -128,6 +129,10 @@ async function run() {
     if (!html.includes(state)) throw new Error(`Presentation clip mapping is missing: ${state}`);
   }
   if (!html.includes('V1014_PRESENTATION_SEGMENTS') || !html.includes('segmentStart:segment.start') || !html.includes('rec.activeSegment')) throw new Error('Cropped long-clip playback is missing');
+  const watchdog = html.slice(html.indexOf('function ensureBossVisualSafety'), html.indexOf('function loadGlbCandidate'));
+  if (watchdog.includes('new THREE.Box3().setFromObject(rec.model)')) throw new Error('Animated world-bounds model switching remains in the watchdog');
+  if (!html.includes('validateBossRigStatic(rec);rec.visualAccepted=true') || !html.includes("rigRuntime.status.boss='ready-locked'")) throw new Error('One-way Tripo visual lock is missing');
+  if (!html.includes("m.type==='bossAssetReady'") || !serverSource.includes("reason:'BOSS_ASSET_NOT_READY'")) throw new Error('Two-client Tripo readiness gate is missing');
   if (!html.includes("playRigAnimation('boss','boss_combat_idle'") || !html.includes("playRigAnimation('boss','boss_dodge'")) throw new Error('Combat idle/dodge runtime wiring is missing');
   if (!html.includes("if(e==='bossEvade')") || !html.includes('startBossEvadeArt(p)')) throw new Error('Boss evade client VFX event is missing');
   if (!html.includes('boss_spin_kick:7')) throw new Error('Spin Kick clip 07 mapping is missing');
@@ -167,6 +172,8 @@ async function run() {
   let heroStart = null;
   let princessStart = null;
   let startValidated = false;
+  let sawReadyGate = false;
+  let requestedStart = false;
   let sawCast = false;
   let sawTeleport = false;
   let sawImpact = false;
@@ -175,8 +182,8 @@ async function run() {
   let attackScheduled = false;
   const close = () => { try { hero.close(); princess.close(); } catch {} };
   const finishIfReady = () => {
-    if (!startValidated || !sawEvade || !sawEvadeSnapshot || !sawCast || !sawTeleport || !sawImpact) return;
-    console.log(`V10.14 SMOKE PASS · approved 18/08/13/14/09/15/17 map · Dodge 03 + Teleport 12 AI · cropped 05/06/11/16 · synchronized telegraph/VFX · 19 clips world-XZ locked · full-body camera · GLB 4K ${bytes} · 2K ${mobile2kBytes} · 1K ${mobile1kBytes} · boss 2200/2200`);
+    if (!sawReadyGate || !startValidated || !sawEvade || !sawEvadeSnapshot || !sawCast || !sawTeleport || !sawImpact) return;
+    console.log(`V10.14.1 SMOKE PASS · Tripo one-way model lock · two-client intro readiness gate · approved 18/08/13/14/09/15/17 map · Dodge 03 + Teleport 12 AI · cropped 05/06/11/16 · 19 clips world-XZ locked · full-body camera · GLB 4K ${bytes} · 2K ${mobile2kBytes} · 1K ${mobile1kBytes} · boss 2200/2200`);
     clearTimeout(timeout); close(); stop(0);
   };
   const check = () => {
@@ -195,7 +202,18 @@ async function run() {
   hero.on('open', () => hero.send(JSON.stringify({ type: 'create' })));
   hero.on('message', buffer => {
     const message = JSON.parse(buffer);
-    if (message.type === 'created') { room = message.code; if (princess.readyState === WebSocket.OPEN) princess.send(JSON.stringify({ type: 'join', code: room })); }
+    if (message.type === 'created') {
+      room = message.code;
+      hero.send(JSON.stringify({type:'bossAssetReady',ready:true}));
+      if (princess.readyState === WebSocket.OPEN) princess.send(JSON.stringify({ type: 'join', code: room }));
+    }
+    if(message.type==='startAck'&&!message.ok&&message.reason==='BOSS_ASSET_NOT_READY'){
+      sawReadyGate=true;
+      princess.send(JSON.stringify({type:'bossAssetReady',ready:true}));
+    }
+    if(message.type==='bossAssetReady'&&message.ready?.hero&&message.ready?.princess&&!requestedStart){
+      requestedStart=true;hero.send(JSON.stringify({type:'start'}));
+    }
     if (message.type === 'start') { heroStart = message.state; check(); }
     if (message.type === 'state' && message.state?.boss?.evade?.clip === 3) {
       sawEvadeSnapshot = true; finishIfReady();

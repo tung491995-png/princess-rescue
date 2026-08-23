@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.14 — Boss AI Animation Integration</title>
+<title>Princess Rescue V10.14.1 — Tripo Model Lock</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -537,7 +537,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.14 BOSS AI</span></h1><p style="margin-top:7px">Boss Tripo dùng bộ animation đã chốt · né đạn server-authoritative · telegraph và VFX đồng bộ.</p><div class="logoMoon"></div><div class="badges"><span class="badge">03 Strafe Dodge</span><span class="badge">12 Teleport Evade</span><span class="badge">Telegraph công bằng</span><span class="badge">Full-body camera</span><span class="badge">Mobile 2K → 1K</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.14.1 TRIPO LOCK</span></h1><p style="margin-top:7px">Boss Tripo được khóa xuyên suốt intro và combat · không đổi về model hình học khi animation thay pose.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Tripo model lock</span><span class="badge">Intro animation gate</span><span class="badge">03 / 12 Dodge</span><span class="badge">Full-body camera</span><span class="badge">Mobile 2K → 1K</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -546,7 +546,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.14 AI MAP</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.14.1 TRIPO LOCK</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -584,15 +584,15 @@ const RIG_ASSETS={
  hero:{url:'/assets/characters/hero.glb',targetHeight:2.30,rootBase:.90},
  princess:{url:'/assets/characters/princess.glb',targetHeight:2.32,rootBase:.90},
  boss:{
-  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14',
+  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14.1',
   mobileUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.14',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.14',
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14'
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.14.1',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.14.1',
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14.1'
   ],
   desktopUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.14'
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14.1',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.14.1'
   ],
   targetHeight:4.45,rootBase:1.12
  }
@@ -694,6 +694,7 @@ let v1071VisualErrors=0,v1071LastVisualError='',v1071SafeMode=false,v1071BossChe
 const V108_STABLE_PBR=true;
 const V1012_EXTERNAL_BOSS=true;
 let v108PrewarmStarted=false,v108BossReady=false,v108IntroRestoreScale=0;
+let bossAssetReadyStatus={hero:false,princess:false},lobbyPeerJoined=false,hostStartPending=false;
 const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
 // V10.14 keeps the V10.13.2 full-body camera guard for the 4.45 m Tripo boss.
 const v10132CameraLook=new THREE.Vector3(),v10132CameraOffset=new THREE.Vector3(),v10132FramePoint=new THREE.Vector3();
@@ -1021,7 +1022,7 @@ function leaveRoom(){
  window.location.replace(location.pathname);
 }
 function createRoom(){
- clearSession();role='hero';showScreen('hostLobby');$('hostStart').classList.add('hidden');$('hostStatus').className='status warn';$('hostStatus').textContent='Đang kết nối server…';
+ clearSession();role='hero';lobbyPeerJoined=false;hostStartPending=false;bossAssetReadyStatus={hero:false,princess:false};showScreen('hostLobby');$('hostStart').classList.add('hidden');$('hostStatus').className='status warn';$('hostStatus').textContent='Đang kết nối server…';
  connect(()=>send({type:'create'}));
 }
 function joinRoom(code){
@@ -1034,6 +1035,38 @@ function resumeSession(sess){
  role=sess.role;roomCode=sess.room;sessionToken=sess.token;
  reconnectOverlay(true,'Đang khôi phục phòng…');
  connect(()=>send({type:'resume',token:sessionToken}));
+}
+
+function notifyBossAssetReady(){
+ const accepted=!!rigRuntime.records.boss?.visualAccepted;
+ if(!accepted||!role||!connected)return false;
+ bossAssetReadyStatus[role]=true;
+ send({type:'bossAssetReady',ready:true});
+ updateHostStartReadiness();
+ return true;
+}
+function applyBossAssetReadyStatus(ready){
+ if(!ready||typeof ready!=='object')return;
+ bossAssetReadyStatus={hero:ready.hero===true,princess:ready.princess===true};
+ updateHostStartReadiness();
+}
+function updateHostStartReadiness(){
+ if(role!=='hero'||running)return;
+ const hasPrincess=lobbyPeerJoined||bossAssetReadyStatus.princess===true||latestState?.connectedRoles?.princess===true;
+ const button=$('hostStart');if(!button)return;
+ if(!hasPrincess){button.classList.add('hidden');return}
+ button.classList.remove('hidden');
+ if(hostStartPending){button.disabled=true;button.textContent='ĐANG VÀO TRẬN…';return}
+ const ready=bossAssetReadyStatus.hero&&bossAssetReadyStatus.princess;
+ button.disabled=!ready;
+ if(ready){
+   button.textContent='BẮT ĐẦU TRẬN';
+   $('hostStatus').className='status ok';$('hostStatus').textContent='● Cả hai máy đã tải xong boss Tripo — sẵn sàng!';
+ }else{
+   button.textContent='ĐANG NẠP BOSS TRIPO…';
+   $('hostStatus').className='status warn';
+   $('hostStatus').textContent=!bossAssetReadyStatus.hero?'Đang nạp boss Tripo trên máy Hero…':'Princess đang nạp boss Tripo…';
+ }
 }
 
 function onMessage(m){
@@ -1053,18 +1086,19 @@ function onMessage(m){
    roomCode=m.code;role=m.role;sessionToken=m.token;saveSession();
    $('roomCode').textContent=roomCode;$('inviteLink').textContent=inviteFor(roomCode);
    $('hostStatus').className='status warn';$('hostStatus').textContent='Phòng đã mở — đang chờ Princess…';
-   acceptInitialState(m.state);return;
+   acceptInitialState(m.state);applyBossAssetReadyStatus(m.state?.bossAssetsReady);notifyBossAssetReady();return;
  }
  if(m.type==='joined'){
    roomCode=m.code;role=m.role;sessionToken=m.token;saveSession();
    $('joinStatus').className='status ok';$('joinStatus').textContent='● Đã vào phòng!';
-   showScreen('guestWait');acceptInitialState(m.state);return;
+   showScreen('guestWait');acceptInitialState(m.state);applyBossAssetReadyStatus(m.state?.bossAssetsReady);notifyBossAssetReady();return;
  }
  if(m.type==='resumed'){
    roomCode=m.code;role=m.role;sessionToken=m.token;saveSession();reconnectOverlay(false);
-   resetLossStats();acceptInitialState(m.state);finishPendingTest(m.state,'resumed');
+   resetLossStats();acceptInitialState(m.state);applyBossAssetReadyStatus(m.state?.bossAssetsReady);notifyBossAssetReady();finishPendingTest(m.state,'resumed');
    if(m.state.started){
-     enterGameFromState(m.state,'resumed');
+     if(rigRuntime.records.boss?.visualAccepted)enterGameFromState(m.state,'resumed');
+     else reconnectOverlay(true,'Đang nạp boss Tripo trước khi tiếp tục trận…');
    }else{
      if(role==='hero'){
        showScreen('hostLobby');$('roomCode').textContent=roomCode;$('inviteLink').textContent=inviteFor(roomCode);
@@ -1078,12 +1112,15 @@ function onMessage(m){
  }
  if(m.type==='peerJoined'){
    if(role==='hero'){
-     $('hostStatus').className='status ok';$('hostStatus').textContent='● Princess đã vào phòng — sẵn sàng!';
-     $('hostStart').classList.remove('hidden');
+     lobbyPeerJoined=true;$('hostStart').classList.remove('hidden');updateHostStartReadiness();
    }
    return;
  }
+ if(m.type==='bossAssetReady'){
+   applyBossAssetReadyStatus(m.ready);return;
+ }
  if(m.type==='start'){
+   hostStartPending=false;
    enterGameFromState(m.state,'start');
    return;
  }
@@ -1094,18 +1131,20 @@ function onMessage(m){
        $('hostStatus').textContent='● Server đã nhận lệnh — đang vào trận…';
      }
    }else{
-     $('hostStart').disabled=false;
-     $('hostStart').textContent='BẮT ĐẦU TRẬN';
+     hostStartPending=false;
+     applyBossAssetReadyStatus(m.ready);updateHostStartReadiness();
      const msg=m.reason==='PRINCESS_OFFLINE'
        ?'Princess đã mất kết nối. Mở lại link mời rồi thử lại.'
-       :'Server từ chối bắt đầu trận.';
+       :m.reason==='BOSS_ASSET_NOT_READY'
+         ?'Chưa thể bắt đầu: một trong hai máy vẫn đang nạp boss Tripo.'
+         :'Server từ chối bắt đầu trận.';
      showConnectionError(msg);
    }
    return;
  }
  if(m.type==='state'){
    registerSnapshotEnvelope(Number(m.seq)||0);
-   pushSnapshot(m.state);latestState=m.state;
+   pushSnapshot(m.state);latestState=m.state;applyBossAssetReadyStatus(m.state?.bossAssetsReady);
    syncBossCastFromSnapshot(m.state.cast);
    reconcilePredictedShotsFromSnapshot(m.state);
 
@@ -1868,6 +1907,10 @@ function normalizeRig(model,cfg){
  box=new THREE.Box3().setFromObject(model);
  const c=new THREE.Vector3();box.getCenter(c);
  model.position.set(-c.x,-box.min.y,-c.z);model.updateMatrixWorld(true);
+ box=new THREE.Box3().setFromObject(model);size=new THREE.Vector3();box.getSize(size);
+ model.userData.v10141StaticBounds={
+   min:box.min.toArray(),max:box.max.toArray(),size:size.toArray()
+ };
 }
 function findRigNode(model,names){
  const wants=names.map(rigNorm);let best=null,score=-1;
@@ -2137,6 +2180,17 @@ function attachObjectToRigSocket(roleName,obj,type='weapon'){
 function setBossProceduralFallback(visible=true,reason=''){
  if(!boss)return;
  const rec=rigRuntime.records.boss;
+ // After the static bind-pose validation succeeds, never allow an animated
+ // pose, a decorative VFX exception or a transient shader probe to swap the
+ // real Tripo model back to the procedural placeholder.
+ if(visible&&rec?.visualAccepted){
+   enforceBossTripoVisibility(rec);
+   if(reason&&reason!==rec.blockedFallbackReason){
+     rec.blockedFallbackReason=reason;
+     console.warn('[boss fallback blocked: Tripo locked]',reason);
+   }
+   return false;
+ }
  boss.visible=true;
  if(rec?.model)rec.model.visible=!visible;
  setFallback(boss,visible,rec?.model||null);
@@ -2148,6 +2202,25 @@ function setBossProceduralFallback(visible=true,reason=''){
      if(running)banner('⚠ BOSS SAFE FALLBACK — ĐÃ KHÔI PHỤC HIỂN THỊ');
    }
  }
+ return true;
+}
+function validateBossRigStatic(rec){
+ const bounds=rec?.model?.userData?.v10141StaticBounds;
+ const values=[...(bounds?.min||[]),...(bounds?.max||[]),...(bounds?.size||[])];
+ let meshes=0,skinned=0;
+ rec?.model?.traverse(o=>{if(o.isMesh)meshes++;if(o.isSkinnedMesh)skinned++});
+ const height=Number(bounds?.size?.[1]);
+ if(values.length!==9||!values.every(Number.isFinite)||height<2.5||height>6.5||meshes<1||skinned<1){
+   throw new Error(`TRIPO_STATIC_VALIDATION_FAILED h=${height} meshes=${meshes} skinned=${skinned}`);
+ }
+ rec.staticBounds=bounds;
+ return true;
+}
+function enforceBossTripoVisibility(rec=rigRuntime.records.boss){
+ if(!boss||!rec?.visualAccepted||!rec.model)return false;
+ boss.visible=true;rec.model.visible=true;setFallback(boss,false,rec.model);
+ rigRuntime.status.boss='ready-locked';v108BossReady=true;
+ return true;
 }
 function bossRigProgramHealth(rec){
  if(!renderer||!rec?.model)return null;
@@ -2169,21 +2242,16 @@ function ensureBossVisualSafety(now=performance.now()){
  if(!running||!gameInitialized||!boss||now-v1071BossCheckAt<850)return;
  v1071BossCheckAt=now;boss.visible=true;
  const rec=rigRuntime.records.boss;
- // While a mobile asset is still loading, keep the already-visible safe mesh
- // without turning a recoverable load into a permanent fallback state.
+ // V10.14.1 validates the bind pose exactly once. Animated SkinnedMesh bounds
+ // legitimately change every frame and must never be used as a model switch.
+ if(rec?.ready&&rec.model&&rec.visualAccepted){
+   enforceBossTripoVisibility(rec);return;
+ }
  if(!rec?.ready||!rec.model){
    if(rigRuntime.status.boss==='loading'||rigRuntime.status.boss==='retrying')return;
    setBossProceduralFallback(true,'RIG_NOT_READY');return;
  }
- try{
-   rec.model.updateMatrixWorld(true);
-   const box=new THREE.Box3().setFromObject(rec.model),size=new THREE.Vector3();box.getSize(size);
-   const finite=[size.x,size.y,size.z,box.min.x,box.min.y,box.min.z].every(Number.isFinite);
-   if(!finite||size.y<.25||size.y>12){setBossProceduralFallback(true,'INVALID_RIG_BOUNDS');return}
- }catch(e){setBossProceduralFallback(true,'RIG_BOUNDS_ERROR');return}
- const health=bossRigProgramHealth(rec);
- if(health===false)setBossProceduralFallback(true,'BOSS_SHADER_NOT_RUNNABLE');
- else if(!v1071SafeMode){rec.model.visible=true;setFallback(boss,false,rec.model);rigRuntime.status.boss='ready'}
+ setBossProceduralFallback(true,'TRIPO_NOT_ACCEPTED');
 }
 
 function loadGlbCandidate(loader,url,timeoutMs){
@@ -2225,7 +2293,7 @@ function disposeRigAttempt(rec){
 async function loadRigAsset(roleName){
  const cfg=RIG_ASSETS[roleName],root=rigRoot(roleName),loader=initRigLoader();
  if(!cfg||!root||!loader)return false;
- const rec={role:roleName,root,model:null,mixer:null,actions:{},active:null,ready:false,weaponSocket:null,vfxSocket:null,clipNames:[],loadedUrl:'',loadAttempt:0};
+ const rec={role:roleName,root,model:null,mixer:null,actions:{},active:null,ready:false,visualAccepted:false,weaponSocket:null,vfxSocket:null,clipNames:[],loadedUrl:'',loadAttempt:0};
  rigRuntime.records[roleName]=rec;rigRuntime.status[roleName]='loading';root.userData.rigRecord=rec;
  const urls=roleName==='boss'?(mobileDevice?cfg.mobileUrls:cfg.desktopUrls):[cfg.url];
  const candidates=[...new Set((urls||[cfg.url]).filter(Boolean))];
@@ -2262,8 +2330,8 @@ async function loadRigAsset(roleName){
          // pays the GLB/PBR program creation cost.
          model.visible=true;
          try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.8 precompile]',e)}
-         setFallback(root,false,model);
-         rigRuntime.status.boss='ready';v108BossReady=true;
+         validateBossRigStatic(rec);rec.visualAccepted=true;
+         enforceBossTripoVisibility(rec);notifyBossAssetReady();
          setTimeout(()=>ensureBossVisualSafety(performance.now()),180);
        }
        playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:0});
@@ -3554,11 +3622,13 @@ function playBossIntroV9(wait=0){
 
  // The loader starts behind the lobby. On mobile, allow the 2K/1K retry chain
  // to finish before revealing the boss, without extending the server lock.
- if(!rigRuntime.records.boss?.ready&&wait<(mobileDevice?28:14)&&remaining>2100){
+ if(!rigRuntime.records.boss?.visualAccepted&&remaining>650){
    bossIntroWaits=wait+1;
    setTimeout(()=>playBossIntroV9(wait+1),100);
    return;
  }
+
+ enforceBossTripoVisibility(rigRuntime.records.boss);
 
  bossIntroV9Played=true;
  const el=$('bossIntroV9');if(!el)return;
@@ -4814,6 +4884,8 @@ $('animationLabView').onclick=()=>{animationLab.view=(animationLab.view+1)%anima
 $('copyInvite').onclick=()=>{const text=$('inviteLink').textContent;navigator.clipboard?.writeText(text).then(()=>banner('ĐÃ COPY LINK MỜI ✓')).catch(()=>prompt('Copy link:',text))};
 $('hostStart').onclick=()=>{
  if($('hostStart').disabled)return;
+ if(!bossAssetReadyStatus.hero||!bossAssetReadyStatus.princess){updateHostStartReadiness();return}
+ hostStartPending=true;
  $('hostStart').disabled=true;
  $('hostStart').textContent='ĐANG VÀO TRẬN…';
  $('hostStatus').className='status warn';
@@ -4827,8 +4899,8 @@ $('hostStart').onclick=()=>{
  // Safety reset if neither startAck nor start arrives.
  setTimeout(()=>{
    if(!running&&$('hostStart').disabled){
-     $('hostStart').disabled=false;
-     $('hostStart').textContent='THỬ LẠI';
+     hostStartPending=false;
+     updateHostStartReadiness();
      showConnectionError('Server chưa phản hồi lệnh bắt đầu sau 8 giây.');
    }
  },8000);

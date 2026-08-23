@@ -1,0 +1,51 @@
+PRINCESS RESCUE V10.14.1 — TRIPO MODEL LOCK
+============================================================
+
+USER-REPORTED FAULT
+- The boss alternated continuously between the Tripo GLB and the legacy
+  procedural placeholder during combat.
+- The intro frequently showed only the placeholder, so no approved Tripo
+  intro animation was visible.
+
+ROOT CAUSE
+- The V10.7.1 watchdog rebuilt a world-space Box3 from the animated
+  SkinnedMesh every 850 ms.
+- Skinned bounds legitimately changed across clips and poses. The watchdog
+  interpreted those changes as alternating valid/invalid rig states and
+  repeatedly toggled the two boss visuals.
+
+V10.14.1 FIX
+- Capture and validate boss bounds once in the normalized static bind pose.
+- Require a valid skinned mesh and a finite 2.5–6.5 m normalized height.
+- Mark the accepted Tripo record visualAccepted and lock it visible.
+- Remove all animated world-bounds checks from the recurring watchdog.
+- Block safe-mode/VFX recovery from replacing an accepted Tripo model.
+- Preserve the procedural model only for a genuine all-tier GLB load failure.
+
+INTRO / CO-OP ASSET GATE
+- Each browser reports bossAssetReady only after parse, normalization,
+  precompile and static validation succeed.
+- The server refuses Start until Hero and Princess are both ready.
+- The intro waits for visualAccepted and enforces the Tripo model before
+  playing cropped clips 05 and 06.
+- A resumed match stays paused until both reconnected browsers have the Tripo
+  asset ready again.
+
+PRESERVED SYSTEMS
+- 18 Idle, 08 Combat Idle, 13 Quick Cast, 14 AOE, 09 Hit, 15 Death,
+  17 Ultimate.
+- 03 Strafe Dodge and 12 Teleport Evade.
+- Cropped 05/06/11/16 presentation segments.
+- Exact-Hip world-XZ root lock and authoritative hitbox.
+- V10.13.2 full-body camera guard.
+- Desktop 4K and mobile 2K -> 1K GLB tiers.
+
+VALIDATION
+- server.js syntax: PASS
+- inline browser JavaScript syntax: PASS
+- two-client pre-start asset gate: PASS
+- 5-second authoritative intro lock: PASS
+- co-op boss AI / telegraph / VFX smoke test: PASS
+- teleport clip 12 snapshot + hitbox authority: PASS
+- all 19 animation clips remain world-XZ locked: PASS
+- boss HP remains 2200/2200: PASS

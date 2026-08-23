@@ -1,7 +1,12 @@
-PRINCESS RESCUE 3D — V10.14 BOSS AI ANIMATION INTEGRATION
+PRINCESS RESCUE 3D — V10.14.1 TRIPO MODEL LOCK
 
 LATEST UPGRADE
 ==========
+- The Tripo boss is validated once from static bind-pose bounds and then locked visible.
+- Animated SkinnedMesh bounds no longer decide between Tripo and the procedural fallback.
+- Repeated visual/VFX recovery cannot replace an already accepted Tripo model.
+- Hero can start only after both clients report that their Tripo boss is parsed and precompiled.
+- Intro waits for the accepted Tripo rig and plays cropped 05/06 segments on that rig.
 - Approved animation map: 18 Idle, 08 Combat Idle, 13 Quick Cast, 14 AOE, 09 Hit, 15 Death, 17 Ultimate.
 - Server-authoritative projectile evasion: clip 03 strafes; clip 12 teleports in later phases/crowded fire.
 - Fair warningAt → releaseAt telegraph payloads and synchronized warning/impact VFX.
