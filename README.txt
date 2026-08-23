@@ -1,4 +1,24 @@
-PRINCESS RESCUE 3D — V10.17 ROYAL BLADE COMBAT UI
+PRINCESS RESCUE 3D — V10.17.1 INTRO STABILITY HOTFIX
+
+INTRO STABILITY HOTFIX
+======================
+- Intro camera is now driven only by its 10.5 s cinematic timeline. The old
+  per-frame full-body correction no longer pulls and pushes the camera.
+- Portrait-phone camera radii were recalculated to contain the complete Tripo
+  boss, crown and halo without a dynamic correction.
+- Boss outer root is fixed to one authoritative anchor throughout the intro;
+  network snapshots and idle bob cannot move it between rendered frames.
+- Render scale and canvas size stay unchanged throughout the cinematic.
+- Mobile browser resize events are deferred and applied once after the intro.
+- Camera trauma, camera kick and stale hit-stop are cleared and blocked.
+- Rune, black-moon, tether, halo and orb programs are precompiled before reveal.
+- AnimationMixer uses cinematic frame time during the intro so clips 16/17 do
+  not fall behind the real-time camera timeline on a 20–30 FPS phone.
+
+PRESERVED FROM V10.17
+=====================
+- Hero/Princess royal swords, three-hit server-authoritative melee, Royal Bolt
+  ranged skill, concept HUD/chat/buttons, Tripo boss, orb, halo and Boss AI.
 
 ROYAL BLADE COMBAT
 ==================

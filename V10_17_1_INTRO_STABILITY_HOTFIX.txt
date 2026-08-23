@@ -1,0 +1,26 @@
+PRINCESS RESCUE V10.17.1 — INTRO STABILITY HOTFIX
+
+ROOT CAUSES FIXED
+- updateCam previously pulled toward an animated target and then
+  frameBossFullBody pushed away again every frame. This feedback loop caused
+  visible camera oscillation around the dancing silhouette.
+- The mobile framebuffer was resized at intro start/end; browser-chrome resize
+  events could resize it again during the orbit.
+- Boss Y bob and snapshot interpolation continued underneath the cinematic.
+- Rune and black-moon materials first compiled only when made visible.
+- A capped 33 ms mixer step could make animation clips lag the real-time intro.
+
+V10.17.1 BEHAVIOR
+- Deterministic four-phase camera path with continuous boundaries.
+- Fixed portrait/landscape camera radii; full boss, halo and crown stay framed.
+- Intro boss root locked to v108IntroAnchor.
+- No intro camera trauma, camera kick, hit-stop or dynamic framebuffer changes.
+- Resize is deferred until 40 ms after the 10.5 s cinematic.
+- Intro VFX WebGL programs are prewarmed behind the lobby.
+- Cinematic animation uses raw frame delta capped by the existing 80 ms guard.
+
+UNCHANGED
+- Server-authoritative 11 s co-op intro lock.
+- Clip 16 Eclipse Waltz and clip 17 finale.
+- Tripo visibility lock, ROOT XZ correction, orb/halo state machine.
+- Sword combat, Royal Bolt, boss AI, HP, damage, hitboxes and HUD.

@@ -1,12 +1,12 @@
 {
-  "name": "princess-rescue-v10-17-royal-blade-combat-ui",
-  "version": "10.17.0",
+  "name": "princess-rescue-v10-17-1-intro-stability-hotfix",
+  "version": "10.17.1",
   "private": true,
   "type": "commonjs",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "test": "node tests/v10_14_boss_ai_animation_integration.js && node tests/v10_14_teleport_dodge_authority.js && node tests/v10_14_2_visual_error_audit.js && node tests/v10_15_orb_halo_foundation.js && node tests/v10_15_1_orb_projectile_combat.js && node tests/v10_16_orb_state_spirit_weapon.js && node tests/v10_16_1_halo_back_socket_fix.js && node tests/v10_16_2_eclipse_waltz_intro.js && node tests/v10_17_royal_blade_combat_ui.js"
+    "test": "node tests/v10_14_boss_ai_animation_integration.js && node tests/v10_14_teleport_dodge_authority.js && node tests/v10_14_2_visual_error_audit.js && node tests/v10_15_orb_halo_foundation.js && node tests/v10_15_1_orb_projectile_combat.js && node tests/v10_16_orb_state_spirit_weapon.js && node tests/v10_16_1_halo_back_socket_fix.js && node tests/v10_16_2_eclipse_waltz_intro.js && node tests/v10_17_royal_blade_combat_ui.js && node tests/v10_17_1_intro_stability_hotfix.js"
   },
   "dependencies": {
     "express": "^4.21.2",

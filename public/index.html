@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.17 — Royal Blade Combat</title>
+<title>Princess Rescue V10.17.1 — Intro Stability Hotfix</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -647,22 +647,22 @@ const RIG_ASSETS={
  hero:{url:'/assets/characters/hero.glb',targetHeight:2.30,rootBase:.90},
  princess:{url:'/assets/characters/princess.glb',targetHeight:2.32,rootBase:.90},
  boss:{
-  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17',
+  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17.1',
   mobileUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.17',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.17',
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17'
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.17.1',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.17.1',
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17.1'
   ],
   desktopUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.17'
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.17.1',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.17.1'
   ],
   targetHeight:4.45,rootBase:1.12
  }
 };
 const BOSS_PROP_ASSETS={
- orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.17',
- halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.17'
+ orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.17.1',
+ halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.17.1'
 };
 const RIG_ALIASES={
  idle:['idle','stand','breathing'],run:['run','walk','jog'],dash:['dash','dodge','evade','roll'],
@@ -780,9 +780,13 @@ let v10142VisualErrorSignature='',v10142VisualErrorAt=0;
 // V10.8 — reliable rig + prewarmed, fixed-anchor intro camera.
 const V108_STABLE_PBR=true;
 const V1012_EXTERNAL_BOSS=true;
-let v108PrewarmStarted=false,v108BossReady=false,v108IntroRestoreScale=0;
+let v108PrewarmStarted=false,v108BossReady=false;
 let bossAssetReadyStatus={hero:false,princess:false},lobbyPeerJoined=false,hostStartPending=false;
 const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
+// V10.17.1 — the cinematic owns a fixed viewport and a deterministic camera.
+// Mobile browser chrome may emit several resize events while the address bar
+// collapses; applying them one-by-one visibly resizes the whole intro canvas.
+let v10171ResizePending=false;
 // V10.14 keeps the V10.13.2 full-body camera guard for the 4.45 m Tripo boss.
 const v10132CameraLook=new THREE.Vector3(),v10132CameraOffset=new THREE.Vector3(),v10132FramePoint=new THREE.Vector3();
 const mobileDevice=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -2716,6 +2720,24 @@ function createBossArmamentStateFx(arm){
  arm.extraRoots=[marker,tether,shards];
  return {shield,haloRunes,runeA,runeB,blackMoon,marker,tether,shards};
 }
+function prewarmBossIntroPrograms(arm){
+ // WebGLRenderer.compile skips invisible branches. The waltz previously made
+ // the rune shader compile on its first frame and the black-moon/tether
+ // programs compile again at the finale, which appeared as two mobile hitches.
+ if(!renderer||!scene||!camera||!arm?.stateFx)return;
+ const roots=[arm.orbRoot,arm.haloRoot];
+ const objects=[arm.stateFx.shield,arm.stateFx.haloRunes,arm.stateFx.blackMoon,arm.stateFx.marker,arm.stateFx.tether,arm.stateFx.shards].filter(Boolean);
+ const rootVisible=roots.map(root=>root.visible),objectState=objects.map(object=>({visible:object.visible,frustumCulled:object.frustumCulled,count:object.isInstancedMesh?object.count:null}));
+ try{
+   roots.forEach(root=>root.visible=true);
+   objects.forEach(object=>{object.visible=true;object.frustumCulled=false;if(object.isInstancedMesh&&object.count===0)object.count=1});
+   renderer.compile(scene,camera);
+ }catch(err){console.warn('[V10.17.1 intro prewarm]',err)}
+ finally{
+   objects.forEach((object,index)=>{const state=objectState[index];object.visible=state.visible;object.frustumCulled=state.frustumCulled;if(state.count!=null)object.count=state.count});
+   roots.forEach((root,index)=>root.visible=rootVisible[index]);
+ }
+}
 async function loadBossArmament(rec){
  disposeBossArmament();
  const loader=initRigLoader();if(!loader||!scene)return false;
@@ -2731,7 +2753,7 @@ async function loadBossArmament(rec){
    armament.haloModel=haloResult.status==='fulfilled'?prepareBossPropModel(haloResult.value.scene||haloResult.value.scenes?.[0],BOSS_HALO_VISUAL_HEIGHT,'halo'):makeBossPropFallback('halo');
    armament.degraded=orbResult.status!=='fulfilled'||haloResult.status!=='fulfilled';
    armament.orbRoot.add(armament.orbModel);armament.haloRoot.add(armament.haloModel);armament.orbAura=createBossOrbAura(armament.orbRoot);armament.stateFx=createBossArmamentStateFx(armament);
-   armament.ready=true;updateBossArmament(1,performance.now());
+   armament.ready=true;updateBossArmament(1,performance.now());prewarmBossIntroPrograms(armament);
    console.info('[V10.16.2 virtual halo]',armament.degraded?'fallback':'ready',BOSS_PROP_ASSETS);
    return !armament.degraded;
  }catch(err){
@@ -4233,6 +4255,19 @@ function updateV107CameraFocus(dt){
  [v107CamFocusZ,v107CamFocusVelZ]=v107Spring1(v107CamFocusZ,v107CamFocusVelZ,tz,dt,21,8.8);
 }
 
+function applyRendererViewportSize(){
+ if(!renderer||!camera)return;
+ const width=Math.max(1,innerWidth),height=Math.max(1,innerHeight);
+ camera.aspect=width/height;camera.updateProjectionMatrix();
+ const bounds=v107ScaleBounds();renderScale=clamp(renderScale,bounds.min,bounds.max);
+ renderer.setPixelRatio(renderScale);renderer.setSize(width,height,false);
+ v10171ResizePending=false;
+}
+function requestRendererViewportSize(){
+ if(bossIntroActive()){v10171ResizePending=true;return}
+ applyRendererViewportSize();
+}
+
 function setup3D(){
  renderer=new THREE.WebGLRenderer({antialias:!mobileDevice,powerPreference:'high-performance',alpha:false});
  v107Quality=v107DeviceTier();v107SetBodyQuality(v107Quality);
@@ -4246,7 +4281,7 @@ function setup3D(){
  createV10Environment();
  initCombatInstances();prepareSkillDom();
  renderer.render(scene,camera);
- window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();const b=v107ScaleBounds();renderScale=clamp(renderScale,b.min,b.max);renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false)})
+ window.addEventListener('resize',requestRendererViewportSize)
 }
 function clearDynamic(){
  disposeBossArmament();
@@ -4317,22 +4352,21 @@ function playBossIntroV9(wait=0){
  bossIntroV9Duration=Math.min(BOSS_INTRO_FULL_MS,Math.max(700,remaining-160));
  bossIntroV9Start=performance.now();
  bossIntroV9Until=bossIntroV9Start+bossIntroV9Duration;
- v108IntroAnchor.copy(boss.position);
+ v108IntroAnchor.set(boss.position.x,.1,boss.position.z);
+ boss.position.copy(v108IntroAnchor);
  v108IntroLook.copy(v108IntroAnchor).setY(3.0);
 
- // Pick one conservative framebuffer size before the reveal and hold it.
- // Backbuffer resizing during the camera move was a visible iPhone hitch.
- v108IntroRestoreScale=renderScale;
- if(renderer&&mobileDevice){
-   const introScale=Math.min(renderScale,.94);
-   if(Math.abs(introScale-renderScale)>.025){
-     renderScale=introScale;renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false);
-   }
- }
+ // The selected render scale, viewport and root transform stay unchanged for
+ // the full cinematic. Camera trauma/hit-stop from any stale event is cleared.
+ camTrauma=0;camShakePhase=0;cameraKick=0;hitStopUntil=0;bossHitPulseUntil=0;
+ const introPortrait=(camera.aspect||innerWidth/innerHeight)<.82;
+ const introBack=introPortrait?15.50:8.85,firstAngle=-.38,firstRadius=introBack+1.8;
+ camera.position.set(v108IntroAnchor.x+Math.sin(firstAngle)*firstRadius,5.15,v108IntroAnchor.z+Math.cos(firstAngle)*firstRadius);
+ v108IntroLook.set(v108IntroAnchor.x,2.25,v108IntroAnchor.z);camera.lookAt(v108IntroLook);
 
  lockBossIntroUI(true);
  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
- cameraZoomTarget=1;cameraKick=.015;
+ cameraZoom=1;cameraZoomTarget=1;
  setVignette(.34);
 
  // Eclipse Waltz: a clean authored dance from clip 16, then the strongest
@@ -4357,11 +4391,11 @@ function playBossIntroV9(wait=0){
      br.secondary.halo.scale.copy(br.secondaryBase.halo.scale);
    }
    playRigAnimation('boss','boss_combat_idle',{fade:.22,speed:.96});
-   if(renderer&&v108IntroRestoreScale>0&&Math.abs(renderScale-v108IntroRestoreScale)>.025){
-     const restore=v108IntroRestoreScale;
-     setTimeout(()=>{renderScale=restore;renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false)},180);
-   }
  },finishAt);
+
+ // Apply at most one browser-chrome/orientation resize after the cinematic.
+ // Deferring it avoids full-canvas jumps while the camera is orbiting.
+ setTimeout(()=>{if(v10171ResizePending)applyRendererViewportSize()},bossIntroV9Duration+40);
 
  // Reveal controls only after the authoritative server lock ends, so the
  // first visible joystick/key press can never feel dead.
@@ -4975,6 +5009,7 @@ function updateSkillArtFx(now){
 }
 
 function addCameraTrauma(amount,decay=3.0){
+ if(bossIntroActive())return;
  camTrauma=Math.min(1,Math.max(camTrauma,amount));
  camTraumaDecay=Math.max(1.4,decay);
 }
@@ -5169,7 +5204,8 @@ function syncEntities(sa,sb,t){
  updateRigLocomotion(sa,sb);
  const ra=sa.players[remoteRole],rb=sb.players[remoteRole];
  remoteMesh.position.x=lerp(ra.x,rb.x,t);remoteMesh.position.z=lerp(ra.z,rb.z,t);remoteMesh.rotation.y=lerp(ra.rot,rb.rot,t);
- boss.position.x=lerp(sa.boss.x,sb.boss.x,t);boss.position.z=lerp(sa.boss.z,sb.boss.z,t);boss.position.y=.1+Math.sin(performance.now()/1000*1.8)*.12;
+ if(bossIntroActive())boss.position.copy(v108IntroAnchor);
+ else{boss.position.x=lerp(sa.boss.x,sb.boss.x,t);boss.position.z=lerp(sa.boss.z,sb.boss.z,t);boss.position.y=.1+Math.sin(performance.now()/1000*1.8)*.12}
  if(boss.userData.orb)boss.userData.orb.rotation.y+=.028;
  // V9 character polish: subtle idle breathing, halo orbit and hair sway.
  if(boss.userData.v9){
@@ -5427,34 +5463,36 @@ function updateCam(dt){
    const sm=x=>x*x*(3-2*x);
    const bx=v108IntroAnchor.x,bz=v108IntroAnchor.z;
    const portrait=(camera.aspect||innerWidth/innerHeight)<.82;
-   const introBack=portrait?10.0:8.85;
+   // A portrait phone needs a larger radius than landscape because horizontal
+   // FOV is much narrower. These fixed radii already contain the 4.45 m rig,
+   // crown and halo, so no animated per-frame framing correction is required.
+   const introBack=portrait?15.50:8.85;
    let px,py,pz,lx=bx,ly=2.35,lz=bz;
 
    if(t<.12){
      const u=sm(t/.12),angle=lerp(-.38,-.30,u),radius=lerp(introBack+1.8,introBack,u);
-     px=bx+Math.sin(angle)*radius;py=lerp(5.15,4.45,u);pz=bz+Math.cos(angle)*radius;ly=lerp(2.25,2.62,u);
+     px=bx+Math.sin(angle)*radius;py=lerp(5.15,4.42,u);pz=bz+Math.cos(angle)*radius;ly=lerp(2.25,2.62,u);
    }else if(t<.64){
      const u=sm((t-.12)/.52),angle=lerp(-.30,.48,u),radius=introBack-.22*Math.sin(u*Math.PI);
      px=bx+Math.sin(angle)*radius;py=4.42-.28*Math.sin(u*Math.PI);pz=bz+Math.cos(angle)*radius;ly=2.62-.10*Math.sin(u*Math.PI);
    }else if(t<.84){
-     const u=sm((t-.64)/.20),angle=lerp(.48,.06,u),radius=lerp(introBack,portrait?9.35:8.15,u);
-     px=bx+Math.sin(angle)*radius;py=lerp(4.42,4.18,u);pz=bz+Math.cos(angle)*radius;ly=lerp(2.55,2.72,u);
+     const u=sm((t-.64)/.20),angle=lerp(.48,.06,u);
+     const safeRadius=lerp(introBack,portrait?14.75:8.15,u);
+     px=bx+Math.sin(angle)*safeRadius;py=lerp(4.42,4.18,u);pz=bz+Math.cos(angle)*safeRadius;ly=lerp(2.62,2.72,u);
    }else{
      const u=sm((t-.84)/.16);
      const finalY=portrait?8.75:7.95,finalBack=portrait?17.2:14.5;
-     px=lerp(bx+Math.sin(.06)*(portrait?9.35:8.15),v107CamFocusX,u);
+     px=lerp(bx+Math.sin(.06)*(portrait?14.75:8.15),v107CamFocusX,u);
      py=lerp(4.18,finalY,u);
-     pz=lerp(bz+Math.cos(.06)*(portrait?9.35:8.15),v107CamFocusZ+finalBack,u);
+     pz=lerp(bz+Math.cos(.06)*(portrait?14.75:8.15),v107CamFocusZ+finalBack,u);
      lx=lerp(bx,v107CamFocusX,u);ly=lerp(2.72,2.30,u);lz=lerp(bz,v107CamFocusZ,u);
    }
-   // Frame-rate independent damping hides uneven 30/60 Hz mobile delivery
-   // without changing the authoritative cinematic clock.
-   const follow=1-Math.exp(-dt*18);
    v108IntroCamTarget.set(px,py,pz);v108IntroLookTarget.set(lx,ly,lz);
-   camera.position.lerp(v108IntroCamTarget,follow);
-   v108IntroLook.lerp(v108IntroLookTarget,follow);
+   // Deterministic cinematic pose: the previous camera lerp pulled inward and
+   // frameBossFullBody pushed outward on the same frame, producing oscillation.
+   camera.position.copy(v108IntroCamTarget);
+   v108IntroLook.copy(v108IntroLookTarget);
    camera.lookAt(v108IntroLook);
-   frameBossFullBody(v108IntroLook,portrait?.72:.78,.82);
    return;
  }
  cameraZoom+=(cameraZoomTarget-cameraZoom)*Math.min(1,dt*4);
@@ -5524,6 +5562,7 @@ function runVisualPass(name,fn){
 
 function frame(now){
  const rawDt=Math.min(.08,(now-last)/1000||0),dt=Math.min(.033,rawDt);last=now;
+ const cinematicDt=bossIntroActive()?rawDt:dt;
  try{sendInputHeartbeat(now)}catch(err){console.error('[input heartbeat]',err)}
  try{
    if(deathCinematicActive()){
@@ -5551,8 +5590,8 @@ function frame(now){
        runVisualPass('quality',()=>updateV107Performance(now));
        runVisualPass('boss-cast',()=>updateBossCastVisual());
        runVisualPass('combat-anim',()=>updateCombatAnimations(now));
-       runVisualPass('rig-animation',()=>{updateRiggedAnimations(dt);v106ApplyActing(now)});
-       runVisualPass('boss-armament',()=>updateBossArmament(dt,now));
+       runVisualPass('rig-animation',()=>{updateRiggedAnimations(cinematicDt);v106ApplyActing(now)});
+       runVisualPass('boss-armament',()=>updateBossArmament(cinematicDt,now));
        runVisualPass('boss-socket',()=>updateBossSocketFx(now));
        runVisualPass('skill-art',()=>updateSkillArtFx(now));
        runVisualPass('boss-v10',()=>updateBossV10Art(now));
