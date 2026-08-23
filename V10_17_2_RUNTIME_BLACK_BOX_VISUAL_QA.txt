@@ -1,0 +1,37 @@
+PRINCESS RESCUE V10.17.2 — RUNTIME BLACK BOX & VISUAL QA
+
+ALWAYS-ON BLACK BOX
+- Keeps the latest 120 seconds of bounded runtime telemetry in memory.
+- Captures JavaScript errors, unhandled promises, console errors/warnings,
+  WebGL loss/restore, GLB retries/fallback, network stalls and frame stalls.
+- Does not record room codes, session tokens, invite links or battle chat text.
+
+HISTORICAL DEFECT DETECTORS
+- Tripo missing/hidden/swapped and procedural fallback visibility.
+- Non-finite transforms/materials, invalid bone scale and empty skinned model.
+- ROOT XZ residual and visual/hitbox separation.
+- Orb/hand distance, halo height/follow drift and armament fallback/visibility.
+- Boss full-body camera envelope, camera jumps and intro framebuffer changes.
+- Missing intro/combat animation and animation stuck state.
+- Hidden controls, accepted input without movement and HUD outside viewport.
+- Missing warning VFX for all five boss skills.
+- Sustained low FPS, long frames, empty WebGL frames and snapshot stalls.
+
+AUTOMATIC GRAPHICS SCREENSHOTS
+- Captures three Eclipse Waltz milestones, combat-ready, first use of each boss
+  skill, later phases and every detected error.
+- Full Visual QA captures the approved 18/08/13/14/09/12/07/17/15 clips plus
+  all five boss skill impacts.
+- The audit waits for the Tripo model, orb/halo and all 19 animation actions
+  before it begins, so a slow phone cannot trigger a false AUDIT_CRASH.
+- JPEGs are scaled to at most 960 px wide and include a diagnostic header/footer.
+- preserveDrawingBuffer remains disabled to avoid reducing mobile performance.
+
+LOCAL RECOVERY AND DOWNLOAD
+- Error reports persist in IndexedDB and remain available after reload/crash.
+- The QA badge shows recording/warning/error state.
+- Camera button requests a manual graphics capture.
+- TẢI LOG downloads one JSON containing events, telemetry and embedded JPEGs.
+- A missing GPU/WebGL context is reported explicitly as
+  WEBGL_CONTEXT_UNAVAILABLE instead of being mixed with model/animation faults.
+- The report is local-only; it never uploads data automatically.

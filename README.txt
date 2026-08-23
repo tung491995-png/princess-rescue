@@ -1,4 +1,26 @@
-PRINCESS RESCUE 3D — V10.17.1 INTRO STABILITY HOTFIX
+PRINCESS RESCUE 3D — V10.17.3 SEPARATE SCREENSHOT DEBUG
+
+RUNTIME BLACK BOX
+=================
+- Records a rolling 120-second diagnostic timeline while the game runs.
+- Detects all major historical error classes: Tripo/fallback/model swapping,
+  ROOT XZ, halo/orb, camera/full-body, animations, controls, VFX, WebGL,
+  networking, HUD bounds, frame stalls and low FPS.
+- Captures only on an exception, a detected visual anomaly, or manual Capture.
+- Each capture is a separate JPEG file, at most 1280 px wide, quality 0.75.
+- Maximum 20 screenshots per run. The JSON stores only filename/path,
+  timestamp, game state, camera, entity transforms and the triggering event.
+- Reports survive a reload through device-local IndexedDB.
+- Press TẢI DEBUG ZIP and upload the ZIP containing debug_log.json plus the
+  separate screenshots/ directory.
+- Session tokens, room codes, invite links and battle chat are never recorded.
+
+FULL VISUAL QA
+==============
+- The home-screen QA button scans all 19 source animations, nine gameplay
+  transitions, presentation segments and five boss-skill VFX timelines.
+- A successful audit does not create screenshots; only a detected anomaly does.
+- The recorder keeps preserveDrawingBuffer disabled to protect phone FPS.
 
 INTRO STABILITY HOTFIX
 ======================

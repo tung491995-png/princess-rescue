@@ -10,7 +10,7 @@ for (const [index, match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\
 }
 
 for (const fragment of [
-  '<title>Princess Rescue V10.17.1 — Intro Stability Hotfix</title>',
+  '<title>Princess Rescue V10.17.2 — Runtime Black Box &amp; Visual QA</title>',
   'function prewarmBossIntroPrograms(arm)',
   'renderer.compile(scene,camera)',
   'if(bossIntroActive()){v10171ResizePending=true;return}',

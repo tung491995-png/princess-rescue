@@ -13,7 +13,7 @@ for (const [index, match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\
 }
 
 for (const fragment of [
-  '<title>Princess Rescue V10.17.1 — Intro Stability Hotfix</title>',
+  '<title>Princess Rescue V10.17.2 — Runtime Black Box &amp; Visual QA</title>',
   'function makeRoyalBlade(holder,role)',
   "root.name=hero?'HeroRoyalBlade':'PrincessRoyalBlade'",
   "new THREE.OctahedronGeometry(.18,0)",

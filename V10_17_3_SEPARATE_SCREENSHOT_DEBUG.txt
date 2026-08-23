@@ -1,0 +1,11 @@
+PRINCESS RESCUE V10.17.3 — SEPARATE SCREENSHOT DEBUG
+
+- Removed data-URL/base64 screenshot storage from the JSON report.
+- Canvas frames are encoded directly with toBlob as separate JPEG files.
+- Capture policy: exception, visual anomaly or manual Capture only.
+- Maximum 20 screenshots per run, maximum width 1280 px, JPEG quality 0.75.
+- Each screenshot record contains filename/path, timestamp, game state,
+  camera, Hero/Princess/Boss/Orb/Halo transforms and the triggering event.
+- TẢI DEBUG ZIP exports one JSON log plus a screenshots/ directory.
+- No automatic intro, phase, skill or successful visual-audit screenshots.
+- Existing boss, player, combat, UI and asset files are unchanged.
