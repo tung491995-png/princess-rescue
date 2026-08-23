@@ -1,0 +1,25 @@
+PRINCESS RESCUE V10.15 — ORB WEAPON & HALO FOUNDATION
+
+FOUNDATION
+==========
+- Optimized mystical orb GLB follows a dedicated LeftHandOrbSocket.
+- The orb remains a world-space prop so animation scale and hand-roll cannot deform it.
+- A small torso-separation guard keeps the orb near the palm without intersecting the boss body.
+- Ornamental halo is a scene-level follower behind the boss, independent from skeleton and hitbox.
+- Orb/halo are loaded and precompiled before the multiplayer boss-ready packet is sent.
+
+MOBILE ASSETS
+=============
+- Orb: 1,894,640 -> 31,387 triangles; 58 MB -> ~1.2 MB; three 1K textures.
+- Halo: 14,160 triangles; ~1.6 MB; three 1K textures.
+
+ANIMATION AUDIT
+===============
+The `?visualaudit=1` route samples all 19 clips at 0%, 20%, 50%, 80% and 98%.
+Every sample checks Tripo visibility, finite prop transforms, orb socket drift,
+distance from the left hand, halo root following and ROOT XZ hitbox lock.
+
+NEXT
+====
+V10.15.1 can add projectile emission from the persistent hand orb. The original
+weapon stays in the palm; only lightweight VFX clones become gameplay projectiles.

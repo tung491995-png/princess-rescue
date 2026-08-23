@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.14.1 — Tripo Model Lock</title>
+<title>Princess Rescue V10.15.1 — Orb Projectile Combat</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -179,6 +179,8 @@ body.bossIntroLock #hud,body.bossIntroLock #bossHud,body.bossIntroLock #phase,bo
 #animationLab input[type="range"]{width:100%;accent-color:#ad83ff}#animationLabTimeline{margin-top:7px}
 #animationLabButtons{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px}#animationLabButtons button{min-height:34px;padding:6px 4px}#animationLabButtons button.active{color:#160b2d;background:linear-gradient(180deg,#f6efff,#c7adff);border-color:#fff}
 #animationLabHint{margin-top:7px;color:#9586b3;line-height:1.35;font-size:8.5px}
+#visualAuditReport{display:none;margin-top:7px;padding:7px 8px;border-radius:10px;background:#090917;border:1px solid #ffffff18;font-size:8.5px;font-weight:850;line-height:1.4;color:#cdbcf2}
+#visualAuditReport.show{display:block}#visualAuditReport.pass{color:#9fffd6;border-color:#6affbd55;background:#082019cc}#visualAuditReport.fail{color:#ffb3c3;border-color:#ff6d8d66;background:#240914cc}
 #animationLabView{position:absolute;right:calc(10px + var(--sr));bottom:calc(10px + var(--sb));pointer-events:auto;padding:8px 11px;border-radius:12px;background:#090817dc;border:1px solid #ffffff1f;color:#eee5ff;font-size:9px;font-weight:950}
 body.animationLabMode #hud,body.animationLabMode #bossHud,body.animationLabMode #phase,body.animationLabMode #trustHud,body.animationLabMode #netBadge,body.animationLabMode #ctl1,body.animationLabMode #ctl2,body.animationLabMode #desktopHint,body.animationLabMode #duoWrap,body.animationLabMode #dialogue{display:none!important}
 @media(max-height:500px) and (orientation:landscape){#animationLabPanel{width:min(330px,42vw);padding:8px;font-size:9px;border-radius:14px}#animationLabTop{margin-bottom:4px}#animationLabStatus{padding:5px 7px;margin-bottom:5px}.animLabRow{margin-top:4px;grid-template-columns:72px 1fr 38px}#animationLabButtons{margin-top:5px}#animationLabButtons button{min-height:30px}#animationLabHint{margin-top:5px}}
@@ -537,7 +539,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.14.1 TRIPO LOCK</span></h1><p style="margin-top:7px">Boss Tripo được khóa xuyên suốt intro và combat · không đổi về model hình học khi animation thay pose.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Tripo model lock</span><span class="badge">Intro animation gate</span><span class="badge">03 / 12 Dodge</span><span class="badge">Full-body camera</span><span class="badge">Mobile 2K → 1K</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.15.1 ORB PROJECTILES</span></h1><p style="margin-top:7px">Orb chính luôn ở tay trái; Quick Cast và AOE bắn các bản sao VFX nhẹ do server đồng bộ.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Persistent hand orb</span><span class="badge">GPU orb clones</span><span class="badge">Server hit validation</span><span class="badge">Tripo model lock</span><span class="badge">ROOT XZ preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -546,7 +548,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.14.1 TRIPO LOCK</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.15.1 ORB PROJECTILE AUDIT</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -557,6 +559,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
    <button id="animationLabLoop" class="active">↻ LOOP</button><button id="animationLabRoot" class="active">⌖ ROOT XZ</button><button id="animationLabRestart">↺ RESTART</button>
   </div>
   <div id="animationLabHint">Root XZ khóa dịch chuyển ngang để kiểm tra pose. Tắt khóa để xem khoảng dash thật của clip.</div>
+  <div id="visualAuditReport" aria-live="polite"></div>
  </div>
  <button id="animationLabView">GÓC NHÌN · FRONT</button>
 </div>
@@ -584,18 +587,22 @@ const RIG_ASSETS={
  hero:{url:'/assets/characters/hero.glb',targetHeight:2.30,rootBase:.90},
  princess:{url:'/assets/characters/princess.glb',targetHeight:2.32,rootBase:.90},
  boss:{
-  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14.1',
+  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.15.1',
   mobileUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.14.1',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.14.1',
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14.1'
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.15.1',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.15.1',
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.15.1'
   ],
   desktopUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.14.1',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.14.1'
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.15.1',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.15.1'
   ],
   targetHeight:4.45,rootBase:1.12
  }
+};
+const BOSS_PROP_ASSETS={
+ orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.15.1',
+ halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.15.1'
 };
 const RIG_ALIASES={
  idle:['idle','stand','breathing'],run:['run','walk','jog'],dash:['dash','dodge','evade','roll'],
@@ -685,11 +692,17 @@ let bossV104=null,bossV104Phase=1,bossV104Quality='medium',bossV104LastQualityCh
 let bossV106=null,bossV106PhaseActStart=0,bossV106PhaseActUntil=0,bossV106PhaseActPhase=1;
 let bossV106HitStart=0,bossV106HitUntil=0,bossV106HitSide=1,bossV106GestureStart=0,bossV106GestureUntil=0,bossV106Gesture='';
 let bossV106Quality='medium',bossV106LastQualityCheck=0;
+// V10.15.1 — static GLB armament stays on the hand; projectiles are pooled VFX only.
+let bossArmament=null;
+const bossArmamentOrbTarget=new THREE.Vector3(),bossArmamentHaloTarget=new THREE.Vector3(),bossArmamentHandWorld=new THREE.Vector3();
+const bossOrbCloneVisualPos=new THREE.Vector3();
+let bossOrbProjectileStarts=new Map(),bossOrbReleasePulseUntil=0;
 // V10.7 unified visual/performance state.
 let v107Quality='medium',v107LastCheck=0,v107StableGood=0,v107StableBad=0;
 let v107CamFocusX=0,v107CamFocusZ=-1.5,v107CamFocusVelX=0,v107CamFocusVelZ=0;
 // V10.7.1 stability watchdog.
 let v1071VisualErrors=0,v1071LastVisualError='',v1071SafeMode=false,v1071BossCheckAt=0;
+let v10142VisualErrorSignature='',v10142VisualErrorAt=0;
 // V10.8 — reliable rig + prewarmed, fixed-anchor intro camera.
 const V108_STABLE_PBR=true;
 const V1012_EXTERNAL_BOSS=true;
@@ -710,6 +723,15 @@ const netTest={
  blockReconnectUntil:0,
  pending:null
 };
+const visualAudit={
+ enabled:bootQuery.get('visualaudit')==='1',active:false,done:false,passed:false,
+ stage:'idle',checks:0,issues:[],clipResults:[],transitionResults:[],vfxResults:[],startedAt:0,finishedAt:0
+};
+window.__bossVisualAudit=visualAudit;
+function visualAuditIssue(stage,code,detail=''){
+ const item={stage,code,detail:String(detail||''),at:Math.round(performance.now())};
+ visualAudit.issues.push(item);return item;
+}
 const foods=[['🧆','Nem chua rán',0xffbd57],['🍢','Xiên bẩn',0xff6250],['🧋','Trà sữa matcha',0x91e474],['🍗','Gà rán Jollibee',0xffd45c],['🍡','Tteokbokki',0xff5058],['🍟','Khoai lắc phô mai',0xffe56c],['🌮','Bánh tráng trộn',0xff9a64],['🍓','Crepe dâu',0xff85bf],['🍦','Kem dâu',0x94eaff],['🍲','Lẩu cay',0xff764c]];
 
 function banner(t){let e=$('banner');e.textContent=t;e.classList.add('show');clearTimeout(banner.t);banner.t=setTimeout(()=>e.classList.remove('show'),1100)}
@@ -1410,10 +1432,8 @@ function initSharedRenderAssets(){
  });
 
  // V7: every boss projectile is one camera-facing quad batch.
- // Kind is rendered entirely in fragment shader:
- // 0 = orb / generic
- // 1 = silver dream shard
- // 2 = thought ring
+ // Kind is rendered entirely in fragment shader. V10.15.1 reserves kind 5
+ // for the lightweight VFX clone of the permanent GLB hand orb.
  const enemyGeo=new THREE.PlaneGeometry(.48,.48,1,1);
  enemyKindAttr=new THREE.InstancedBufferAttribute(new Float32Array(MAX_VIS_PROJECTILES),1);
  enemyColorAttr=new THREE.InstancedBufferAttribute(new Float32Array(MAX_VIS_PROJECTILES*3),3);
@@ -1546,7 +1566,7 @@ function initSharedRenderAssets(){
          alpha=cres*cut*taper;
          float hot=sat((.055-outer)*17.0);
          col=mix(col,vec3(1.0),.56+hot*.25);
-       }else{
+       }else if(vKind < 4.5){
          // VĨNH DẠ: black-moon projectile with red eye slit and purple corona.
          float corona=sat((.49-d)*5.5);
          float core=sat((.25-d)*10.0);
@@ -1556,6 +1576,21 @@ function initSharedRenderAssets(){
          col=mix(vColor,vec3(.055,.012,.095),core*.76);
          col=mix(col,vec3(1.0,.10,.26),eye*.72);
          col=mix(col,vec3(1.0,.72,.85),pupil*.55);
+       }else{
+         // ORB CLONE: bright violet core + two counter-rotating energy rings.
+         // This is a single billboard instance, never a clone of the GLB mesh.
+         float core=sat((.245-d)*9.8);
+         float shell=1.0-sat(abs(d-.305)*19.0);
+         float angle=atan(p.y,p.x);
+         float ringA=(1.0-sat(abs(d-.405)*27.0))*sat(.62+.38*sin(angle*3.0+vPulse*1.7));
+         vec2 q=vec2(p.x*cos(.72)-p.y*sin(.72),p.x*sin(.72)+p.y*cos(.72));
+         float ellipse=abs(length(vec2(q.x*.66,q.y*1.55))-.315);
+         float ringB=(1.0-sat(ellipse*24.0))*sat(.58+.42*sin(angle*2.0-vPulse*1.35));
+         vec2 mote=vec2(cos(vPulse*.82),sin(vPulse*.82))*.42;
+         float satellite=sat((.052-length(p-mote))*28.0);
+         alpha=max(core,max(shell*.72,max(ringA*.94,max(ringB*.78,satellite))));
+         col=mix(vec3(.22,.035,.48),vColor,core*.72+shell*.34);
+         col=mix(col,vec3(1.0,.91,1.0),core*.64+satellite*.76);
        }
 
        // Cheap halo on all projectile kinds.
@@ -1766,7 +1801,27 @@ function kindValue(k){
  if(k==='thought')return 2;
  if(k==='slash')return 3;
  if(k==='night')return 4;
+ if(k==='orbclone')return 5;
  return 0;
+}
+function applyBossOrbCloneMuzzle(pb,x,y,z,now){
+ bossOrbCloneVisualPos.set(x,y,z);
+ if(pb.k!=='orbclone')return 1;
+ let launch=bossOrbProjectileStarts.get(pb.id);
+ if(!launch){
+   const source=new THREE.Vector3(x,y,z);
+   // Capture only the world position. The permanent GLB orb remains scene-owned
+   // and is never detached, cloned or parented to the projectile/hitbox.
+   if(bossArmament?.ready&&bossArmament.orbRoot?.visible)source.copy(bossArmament.orbRoot.position);
+   launch={source,born:now,lastSeen:now};bossOrbProjectileStarts.set(pb.id,launch);
+ }
+ launch.lastSeen=now;
+ const p=clamp((now-launch.born)/165,0,1),ease=1-Math.pow(1-p,3);
+ bossOrbCloneVisualPos.lerpVectors(launch.source,bossOrbCloneVisualPos,ease);
+ return .72+.28*ease;
+}
+function pruneBossOrbCloneMuzzles(now){
+ for(const [id,launch] of bossOrbProjectileStarts)if(now-launch.lastSeen>420)bossOrbProjectileStarts.delete(id);
 }
 
 function setTrailInst(index,x,y,z,vx,vz,colorHex,alpha=.75){
@@ -1934,8 +1989,10 @@ function findExactRigNode(model,names){
 function makeRigSockets(rec){
  const hand=findRigNode(rec.model,['RightHand','Hand_R','mixamorigRightHand','R_Hand','wrist_r'])
    ||findRigNode(rec.model,['LeftHand','Hand_L','mixamorigLeftHand','L_Hand','wrist_l'])||rec.model;
+ const orbHand=findRigNode(rec.model,['LeftHand','Hand_L','mixamorigLeftHand','L_Hand','wrist_l'])||hand;
  const chest=findRigNode(rec.model,['UpperChest','Chest','Spine2','Spine_2','mixamorigSpine2'])||rec.model;
  rec.weaponSocket=new THREE.Group();rec.weaponSocket.name='WeaponSocket';hand.add(rec.weaponSocket);
+ rec.orbSocket=new THREE.Group();rec.orbSocket.name='LeftHandOrbSocket';orbHand.add(rec.orbSocket);
  rec.vfxSocket=new THREE.Group();rec.vfxSocket.name='VFXSocket';chest.add(rec.vfxSocket);
  rec.secondary={
    hair:findRigNode(rec.model,['HairRoot']),
@@ -2019,7 +2076,15 @@ function playRigAnimation(roleName,state,{fade=.14,once=false,speed=1,segmentSta
    action.time=clamp(segmentStart,0,Math.max(0,duration-.001));
    rec.activeSegment={action,state,end:Math.min(segmentEnd,duration),returnState:returnState||(roleName==='boss'?bossRestAnimationState():'idle'),fade};
  }
- action.play();if(prev&&prev!==action)prev.crossFadeTo(action,fade,false);
+ action.play();
+ if(prev&&prev!==action){
+   clearTimeout(prev.userData?.v10142StopTimer);
+   prev.crossFadeTo(action,fade,false);
+   prev.userData ||= {};
+   prev.userData.v10142StopTimer=setTimeout(()=>{
+     if(rec.active!==prev){prev.stop();prev.enabled=false}
+   },Math.max(40,fade*1000+35));
+ }
  rec.active=action;rec.activeState=state;
  if(once&&!hasSegment){
    const done=e=>{
@@ -2114,6 +2179,7 @@ function playAnimationLabClip(index=animationLab.index){
  const rec=rigRuntime.records.boss;
  if(!rec?.ready||!rec.clipActions?.length){updateAnimationLabUi(rec);return false}
  animationLab.index=(Number(index)+rec.clipActions.length)%rec.clipActions.length;
+ v106ClearLastBoneOffsets();if(bossV106)bossV106.mixerPrepared=false;
  rec.mixer.stopAllAction();
  const action=rec.clipActions[animationLab.index];
  action.enabled=true;action.clampWhenFinished=!animationLab.loop;
@@ -2169,7 +2235,139 @@ function updateAnimationLab(dt){
  const view=animationLab.view,radius=mobileDevice?9.4:8.6,y=4.05;
  const positions=[[0,y,radius],[radius,y,0],[0,y,-radius],[-radius,y,0]];
  camera.position.set(...positions[view]);v10132CameraLook.set(0,2.30,0);camera.lookAt(v10132CameraLook);frameBossFullBody(v10132CameraLook,.76,.82);
+ updateBossArmament(dt,performance.now());
  updateAnimationLabUi(rec);
+}
+function visualAuditPaint(){return new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))}
+function auditBossTree(stage){
+ const rec=rigRuntime.records.boss;
+ visualAudit.stage=stage;visualAudit.checks++;
+ if(!rec?.ready||!rec.visualAccepted||!rec.model){visualAuditIssue(stage,'TRIPO_NOT_READY');return false}
+ enforceBossTripoVisibility(rec);
+ updateBossArmament(.025,performance.now());
+ if(!boss?.visible||!rec.model.visible)visualAuditIssue(stage,'TRIPO_HIDDEN');
+ const placeholderVisible=[...(boss?.children||[])].some(child=>child!==rec.model&&child.visible);
+ if(placeholderVisible)visualAuditIssue(stage,'PROCEDURAL_PLACEHOLDER_VISIBLE');
+ let nodes=0,meshes=0,badTransforms=0,badBoneScales=0,badMaterials=0;
+ rec.model.traverse(o=>{
+   nodes++;if(o.isMesh)meshes++;
+   const transform=[o.position.x,o.position.y,o.position.z,o.quaternion.x,o.quaternion.y,o.quaternion.z,o.quaternion.w,o.scale.x,o.scale.y,o.scale.z];
+   if(!transform.every(Number.isFinite))badTransforms++;
+   if(o.isBone&&(Math.min(o.scale.x,o.scale.y,o.scale.z)<.5||Math.max(o.scale.x,o.scale.y,o.scale.z)>1.5))badBoneScales++;
+   if(o.isMesh){
+     const mats=Array.isArray(o.material)?o.material:[o.material];
+     for(const mat of mats){
+       if(!mat)continue;
+       if('opacity' in mat&&!Number.isFinite(Number(mat.opacity)))badMaterials++;
+       for(const uniform of Object.values(mat.uniforms||{})){
+         if(typeof uniform?.value==='number'&&!Number.isFinite(uniform.value))badMaterials++;
+       }
+     }
+   }
+ });
+ if(nodes<2||meshes<1)visualAuditIssue(stage,'EMPTY_TRIPO_TREE',`nodes=${nodes} meshes=${meshes}`);
+ if(badTransforms)visualAuditIssue(stage,'NONFINITE_TRANSFORM',badTransforms);
+ if(badBoneScales)visualAuditIssue(stage,'BONE_SCALE_OUT_OF_RANGE',badBoneScales);
+ if(badMaterials)visualAuditIssue(stage,'NONFINITE_MATERIAL',badMaterials);
+ if(!Number.isFinite(rec.motionLockResidual||0)||(rec.motionLockResidual||0)>.015)visualAuditIssue(stage,'ROOT_XZ_RESIDUAL',rec.motionLockResidual);
+ const arm=bossArmament;
+ if(!arm?.ready)visualAuditIssue(stage,'ARMAMENT_NOT_READY');
+ else{
+   if(arm.degraded)visualAuditIssue(stage,'ARMAMENT_FALLBACK_ACTIVE');
+   if(!arm.orbRoot.visible||!arm.haloRoot.visible)visualAuditIssue(stage,'ARMAMENT_HIDDEN');
+   if(!Number.isFinite(arm.orbSocketDistance)||arm.orbSocketDistance>.025)visualAuditIssue(stage,'ORB_SOCKET_DRIFT',arm.orbSocketDistance);
+   if(!Number.isFinite(arm.orbHandDistance)||arm.orbHandDistance>1.1)visualAuditIssue(stage,'ORB_TOO_FAR_FROM_HAND',arm.orbHandDistance);
+   if(!Number.isFinite(arm.haloFollowDistance)||arm.haloFollowDistance>.025)visualAuditIssue(stage,'HALO_FOLLOW_DRIFT',arm.haloFollowDistance);
+   for(const [kind,root] of [['orb',arm.orbRoot],['halo',arm.haloRoot]]){
+     let propMeshes=0,badPropTransforms=0;
+     root.traverse(o=>{if(o.isMesh)propMeshes++;if(![o.position.x,o.position.y,o.position.z,o.quaternion.x,o.quaternion.y,o.quaternion.z,o.quaternion.w,o.scale.x,o.scale.y,o.scale.z].every(Number.isFinite))badPropTransforms++});
+     if(!propMeshes)visualAuditIssue(stage,`${kind.toUpperCase()}_MESH_MISSING`);
+     if(badPropTransforms)visualAuditIssue(stage,`${kind.toUpperCase()}_NONFINITE_TRANSFORM`,badPropTransforms);
+   }
+ }
+ try{renderer?.render(scene,camera)}catch(err){visualAuditIssue(stage,'RENDER_FAILED',err?.message||err)}
+ return !visualAudit.issues.some(issue=>issue.stage===stage);
+}
+function updateVisualAuditReport(){
+ const el=$('visualAuditReport');if(!el)return;
+ el.classList.add('show');el.classList.toggle('pass',visualAudit.done&&visualAudit.passed);el.classList.toggle('fail',visualAudit.done&&!visualAudit.passed);
+ if(!visualAudit.done){el.textContent=`VISUAL AUDIT · ${visualAudit.stage} · ${visualAudit.checks} kiểm tra`;return}
+ el.textContent=visualAudit.passed
+   ?`PASS · ${visualAudit.checks} kiểm tra · 19 clip · orb tay trái · halo độc lập`
+   :`FAIL · ${visualAudit.issues.length} lỗi / ${visualAudit.checks} kiểm tra · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
+}
+async function runBossVisualAudit(){
+ if(visualAudit.active||visualAudit.done)return visualAudit;
+ visualAudit.active=true;visualAudit.startedAt=performance.now();visualAudit.stage='load';updateVisualAuditReport();
+ openAnimationLab();
+ const loadUntil=performance.now()+20000;
+ while((!rigRuntime.records.boss?.visualAccepted||!bossArmament?.ready)&&performance.now()<loadUntil){await new Promise(r=>setTimeout(r,80))}
+ const rec=rigRuntime.records.boss;
+ if(!rec?.visualAccepted||!bossArmament?.ready){visualAuditIssue('load','TRIPO_OR_ARMAMENT_LOAD_TIMEOUT');return finishBossVisualAudit()}
+ populateAnimationLab(rec);animationLab.rootLock=true;animationLab.loop=false;animationLab.paused=true;
+ const samples=[0,.2,.5,.8,.98];
+ for(let index=0;index<rec.rawClips.length;index++){
+   const before=visualAudit.issues.length;playAnimationLabClip(index);animationLab.action.paused=true;
+   for(const sample of samples){
+     seekAnimationLab(sample);updateAnimationLab(0);enforceBossTripoVisibility(rec);
+     auditBossTree(`clip-${String(index).padStart(2,'0')}@${sample.toFixed(2)}`);
+   }
+   visualAudit.clipResults.push({index,passed:visualAudit.issues.length===before});updateVisualAuditReport();await visualAuditPaint();
+ }
+
+ animationLab.active=false;if(animationLab.action)animationLab.action.stop();animationLab.action=null;
+ const transitions=['boss_idle','boss_combat_idle','boss_quick_cast','boss_aoe','boss_hit','boss_teleport','boss_spin_kick','boss_ultimate','boss_death'];
+ for(const state of transitions){
+   const before=visualAudit.issues.length;playRigAnimation('boss',state,{fade:.08,once:!/_idle$/.test(state),speed:1});
+   for(let frameIndex=0;frameIndex<8;frameIndex++){
+     updateRiggedAnimations(.025);v106ApplyActing(performance.now());
+     auditBossTree(`transition-${state}-${frameIndex}`);
+   }
+   visualAudit.transitionResults.push({state,passed:visualAudit.issues.length===before});updateVisualAuditReport();await visualAuditPaint();
+ }
+ for(const segment of Object.keys(V1014_PRESENTATION_SEGMENTS)){
+   const before=visualAudit.issues.length;playBossPresentationSegment(segment,{fade:.04});
+   for(let frameIndex=0;frameIndex<6;frameIndex++){
+     updateRiggedAnimations(.03);v106ApplyActing(performance.now());
+     auditBossTree(`presentation-${segment}-${frameIndex}`);
+   }
+   visualAudit.transitionResults.push({state:segment,passed:visualAudit.issues.length===before});await visualAuditPaint();
+ }
+
+ for(let i=0;i<5;i++){
+   const before=visualAudit.issues.length,now=serverNow(),base={i,targetRole:'hero',endAt:now+1300};
+   setBossCast({...base,id:1000+i*2,startAt:now-420,warningAt:now-20,impactAt:now+500,teleportAt:i===3?now+240:undefined,kickAt:i===3?now+410:undefined});
+   updateBossCastVisual();updateBossSocketFx(performance.now());updateSkillArtFx(performance.now());
+   if(!bossTelegraphRing?.visible||!bossTelegraphRune?.visible)visualAuditIssue(`vfx-${i}-pre`,'BASE_TELEGRAPH_MISSING');
+   if(i===1&&(!bossTelegraphMoon?.visible||!bossMoonCracks3D?.visible))visualAuditIssue(`vfx-${i}-pre`,'MOON_VFX_MISSING');
+   if(i===2&&Number($('clockFx')?.style.opacity||0)<=0)visualAuditIssue(`vfx-${i}-pre`,'CLOCK_VFX_MISSING');
+   if(i===3&&!bossTelegraphCone?.visible)visualAuditIssue(`vfx-${i}-pre`,'TELEPORT_CONE_MISSING');
+   if(i===4&&(!bossTelegraphRing2?.visible||!$('eternalArtFx')?.classList.contains('show')))visualAuditIssue(`vfx-${i}-pre`,'ULTIMATE_VFX_MISSING');
+   auditBossTree(`vfx-${i}-pre`);
+   const impactNow=serverNow();
+   setBossCast({...base,id:1001+i*2,startAt:impactNow-1100,warningAt:impactNow-900,impactAt:impactNow-5,endAt:impactNow+650,teleportAt:i===3?impactNow-240:undefined,kickAt:i===3?impactNow-100:undefined});
+   updateBossCastVisual();updateBossSocketFx(performance.now());updateSkillArtFx(performance.now());auditBossTree(`vfx-${i}-impact`);
+   visualAudit.vfxResults.push({skill:i,passed:visualAudit.issues.length===before});hideBossCastVisual();bossCastVisual.cast=null;
+   updateVisualAuditReport();await visualAuditPaint();
+ }
+ const evadeBefore=visualAudit.issues.length;
+ startBossEvadeArt({kind:'strafe',fromX:NaN,fromZ:undefined,toX:'bad',toZ:null});updateSkillArtFx(performance.now()+80);auditBossTree('vfx-evade-strafe');
+ startBossEvadeArt({kind:'teleport',fromX:Infinity,fromZ:-Infinity,toX:undefined,toZ:'bad'});updateSkillArtFx(performance.now()+80);auditBossTree('vfx-evade-teleport');
+ startSummonSpawnFx([{x:-1,z:-1},{x:0,z:-1.5},{x:1,z:-1}]);updateSkillArtFx(performance.now()+100);auditBossTree('vfx-summon-spawn');
+ startSummonDeathFx({x:0,y:1,z:-1});updateSkillArtFx(performance.now()+100);auditBossTree('vfx-summon-death');
+ visualAudit.vfxResults.push({skill:'evade-summon',passed:visualAudit.issues.length===evadeBefore});
+ return finishBossVisualAudit();
+}
+function finishBossVisualAudit(){
+ const rec=rigRuntime.records.boss;
+ bossCastVisual.cast=null;hideBossCastVisual();
+ for(const fx of [...summonSpawnFx,...summonDeathFx])fx.visible=false;if(dreamSlashArt)dreamSlashArt.visible=false;
+ animationLab.active=true;animationLab.index=18;animationLab.loop=true;animationLab.paused=false;animationLab.action=null;
+ if(rec?.visualAccepted){enforceBossTripoVisibility(rec);playAnimationLabClip(18);animationLab.view=0;updateAnimationLab(0)}
+ visualAudit.active=false;visualAudit.done=true;visualAudit.finishedAt=performance.now();visualAudit.passed=visualAudit.issues.length===0;
+ visualAudit.stage=visualAudit.passed?'pass':'fail';updateVisualAuditReport();
+ $('animationLabStatus').textContent=visualAudit.passed?'V10.15.1 AUDIT · PASS · orb chính cố định + đạn VFX pooled':`V10.15.1 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
+ return visualAudit;
 }
 function attachObjectToRigSocket(roleName,obj,type='weapon'){
  const rec=rigRuntime.records[roleName];if(!rec?.ready||!obj)return false;
@@ -2242,10 +2440,10 @@ function ensureBossVisualSafety(now=performance.now()){
  if(!running||!gameInitialized||!boss||now-v1071BossCheckAt<850)return;
  v1071BossCheckAt=now;boss.visible=true;
  const rec=rigRuntime.records.boss;
- // V10.14.1 validates the bind pose exactly once. Animated SkinnedMesh bounds
+ // V10.15.1 preserves the one-time bind-pose validation. Animated SkinnedMesh bounds
  // legitimately change every frame and must never be used as a model switch.
  if(rec?.ready&&rec.model&&rec.visualAccepted){
-   enforceBossTripoVisibility(rec);return;
+   enforceBossTripoVisibility(rec);updateBossArmament(0,now);return;
  }
  if(!rec?.ready||!rec.model){
    if(rigRuntime.status.boss==='loading'||rigRuntime.status.boss==='retrying')return;
@@ -2272,7 +2470,126 @@ function loadGlbCandidate(loader,url,timeoutMs){
  });
 }
 
+function disposeBossArmament(){
+ if(!bossArmament)return;
+ const geometries=new Set(),materials=new Set(),textures=new Set();
+ for(const root of [bossArmament.orbRoot,bossArmament.haloRoot]){
+   root?.traverse?.(o=>{
+     if(o.geometry)geometries.add(o.geometry);
+     const mats=Array.isArray(o.material)?o.material:[o.material];
+     for(const mat of mats){if(!mat)continue;materials.add(mat);for(const value of Object.values(mat))if(value?.isTexture)textures.add(value)}
+   });
+   root?.removeFromParent?.();
+ }
+ textures.forEach(t=>t.dispose?.());materials.forEach(m=>m.dispose?.());geometries.forEach(g=>g.dispose?.());
+ bossArmament=null;
+}
+function prepareBossPropModel(model,targetHeight,kind){
+ const box=new THREE.Box3().setFromObject(model),size=new THREE.Vector3();box.getSize(size);
+ if(!Number.isFinite(size.y)||size.y<=.001)throw new Error(`${kind.toUpperCase()}_INVALID_BOUNDS`);
+ const scale=targetHeight/size.y;model.scale.multiplyScalar(scale);model.updateMatrixWorld(true);
+ box.setFromObject(model);const center=new THREE.Vector3();box.getCenter(center);model.position.sub(center);model.updateMatrixWorld(true);
+ model.name=kind==='orb'?'MoonVoidOrbVisual':'MoonHaloVisual';
+ model.traverse(o=>{
+   if(!o.isMesh)return;o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;
+   const mats=Array.isArray(o.material)?o.material:[o.material];
+   for(const mat of mats){
+     if(!mat)continue;mat.toneMapped=true;mat.dithering=true;
+     if(mat.map){mat.map.encoding=THREE.sRGBEncoding;mat.map.anisotropy=Math.min(2,renderer?.capabilities?.getMaxAnisotropy?.()||1);mat.map.needsUpdate=true}
+     if(mat.emissive){mat.emissive.setHex(kind==='orb'?0x3d126e:0x4a2b66);mat.emissiveIntensity=kind==='orb'?.48:.20}
+     if(kind==='halo'){mat.metalness=Math.max(.52,Number(mat.metalness)||0);mat.roughness=clamp(Number(mat.roughness)||.42,.28,.58)}
+     mat.needsUpdate=true;
+   }
+ });
+ return model;
+}
+function makeBossPropFallback(kind){
+ const root=new THREE.Group();
+ if(kind==='orb'){
+   const core=new THREE.Mesh(new THREE.SphereGeometry(.28,18,12),new THREE.MeshStandardMaterial({color:0x4d1680,emissive:0x7c36ce,emissiveIntensity:.7,metalness:.35,roughness:.24}));
+   const ring=new THREE.Mesh(new THREE.TorusGeometry(.40,.025,6,30),new THREE.MeshBasicMaterial({color:0xd7bdff,transparent:true,opacity:.82,depthWrite:false}));ring.rotation.x=Math.PI/2;root.add(core,ring);
+ }else{
+   const ring=new THREE.Mesh(new THREE.TorusGeometry(1.65,.075,8,48),new THREE.MeshStandardMaterial({color:0xb99048,emissive:0x5f367a,emissiveIntensity:.24,metalness:.82,roughness:.30}));root.add(ring);
+ }
+ root.name=kind==='orb'?'MoonVoidOrbFallback':'MoonHaloFallback';return root;
+}
+function createBossOrbAura(root){
+ const group=new THREE.Group();group.name='OrbWeaponAura';
+ const matA=new THREE.MeshBasicMaterial({color:0xe8ddff,transparent:true,opacity:.54,depthWrite:false,blending:THREE.AdditiveBlending});
+ const matB=new THREE.MeshBasicMaterial({color:0x8f51dc,transparent:true,opacity:.32,depthWrite:false,blending:THREE.AdditiveBlending});
+ const a=new THREE.Mesh(new THREE.TorusGeometry(.44,.018,6,36),matA);a.rotation.x=Math.PI/2;
+ const b=new THREE.Mesh(new THREE.TorusGeometry(.51,.011,5,36),matB);b.rotation.y=Math.PI/2;
+ group.add(a,b);root.add(group);return {group,a,b,matA,matB};
+}
+async function loadBossArmament(rec){
+ disposeBossArmament();
+ const loader=initRigLoader();if(!loader||!scene)return false;
+ const armament={ready:false,degraded:false,orbRoot:new THREE.Group(),haloRoot:new THREE.Group(),orbModel:null,haloModel:null,orbAura:null,seeded:false,orbSocketDistance:0,haloFollowDistance:0};
+ armament.orbRoot.name='BossOrbWeaponRoot';armament.haloRoot.name='BossIndependentHaloRoot';
+ scene.add(armament.haloRoot,armament.orbRoot);bossArmament=armament;
+ const [orbResult,haloResult]=await Promise.allSettled([
+   loadGlbCandidate(loader,BOSS_PROP_ASSETS.orb,mobileDevice?12000:15000),
+   loadGlbCandidate(loader,BOSS_PROP_ASSETS.halo,mobileDevice?12000:15000)
+ ]);
+ try{
+   armament.orbModel=orbResult.status==='fulfilled'?prepareBossPropModel(orbResult.value.scene||orbResult.value.scenes?.[0],.72,'orb'):makeBossPropFallback('orb');
+   armament.haloModel=haloResult.status==='fulfilled'?prepareBossPropModel(haloResult.value.scene||haloResult.value.scenes?.[0],3.62,'halo'):makeBossPropFallback('halo');
+   armament.degraded=orbResult.status!=='fulfilled'||haloResult.status!=='fulfilled';
+   armament.orbRoot.add(armament.orbModel);armament.haloRoot.add(armament.haloModel);armament.orbAura=createBossOrbAura(armament.orbRoot);
+   armament.ready=true;updateBossArmament(1,performance.now());
+   console.info('[V10.15.1 armament]',armament.degraded?'fallback':'ready',BOSS_PROP_ASSETS);
+   return !armament.degraded;
+ }catch(err){
+   console.warn('[V10.15.1 armament]',err);disposeBossArmament();return false;
+ }
+}
+function updateBossArmament(dt=0,now=performance.now()){
+ const arm=bossArmament,rec=rigRuntime.records.boss;if(!arm?.ready||!boss)return;
+ const show=!!(rec?.visualAccepted&&rec.model?.visible&&boss.visible);
+ arm.orbRoot.visible=show;arm.haloRoot.visible=show;if(!show)return;
+ if(rec.orbSocket)rec.orbSocket.getWorldPosition(bossArmamentHandWorld);
+ else bossArmamentHandWorld.set(boss.position.x-.78,boss.position.y+2.55,boss.position.z+.14);
+ bossArmamentOrbTarget.copy(bossArmamentHandWorld);
+ // Keep the orb above the palm in world Y so hand-roll tracks cannot bury it inside the wrist.
+ bossArmamentOrbTarget.y+=.14;
+ bossArmamentOrbTarget.x-=Math.cos(boss.rotation.y)*.035;
+ bossArmamentOrbTarget.z+=Math.sin(boss.rotation.y)*.035;
+ // A few long Tripo clips sweep the hand across the corset. Push only the
+ // floating weapon outward, leaving the authored arm pose untouched.
+ const torsoY=bossArmamentOrbTarget.y-boss.position.y,dx=bossArmamentOrbTarget.x-boss.position.x,dz=bossArmamentOrbTarget.z-boss.position.z;
+ const torsoRadius=torsoY>1.45&&torsoY<3.75 ? .66 : .42,planar=Math.hypot(dx,dz);
+ if(planar<torsoRadius){
+   const outX=planar>.001?dx/planar:-Math.cos(boss.rotation.y),outZ=planar>.001?dz/planar:Math.sin(boss.rotation.y);
+   bossArmamentOrbTarget.x+=outX*(torsoRadius-planar);bossArmamentOrbTarget.z+=outZ*(torsoRadius-planar);
+ }
+ const behind=.46;
+ bossArmamentHaloTarget.set(
+   boss.position.x-Math.sin(boss.rotation.y)*behind,
+   boss.position.y+3.08,
+   boss.position.z-Math.cos(boss.rotation.y)*behind
+ );
+ const immediate=!arm.seeded||visualAudit.active||dt>=.5;
+ const follow=immediate?1:1-Math.exp(-Math.max(0,dt)*26);
+ arm.orbRoot.position.lerp(bossArmamentOrbTarget,follow);arm.haloRoot.position.lerp(bossArmamentHaloTarget,immediate?1:1-Math.exp(-Math.max(0,dt)*18));
+ arm.haloRoot.rotation.y=boss.rotation.y;arm.seeded=true;
+ const state=rec?.activeState||'',cast=/boss_(quick_cast|aoe|teleport|spin_kick|ultimate)/.test(state),hit=now<bossHitPulseUntil,release=now<bossOrbReleasePulseUntil;
+ const pulse=.5+.5*Math.sin(now*.0065),energy=release ? 1.18 : cast ? 1 : hit ? .82 : .38;
+ const orbScale=1+(release ? .13 : cast ? .075 : hit ? .055 : .018)*pulse;arm.orbRoot.scale.setScalar(orbScale);
+ arm.orbModel.rotation.y+=Math.max(0,dt)*(release?4.8:cast?2.8:1.05);arm.orbModel.rotation.z=Math.sin(now*.0018)*.055;
+ arm.haloModel.rotation.z+=Math.max(0,dt)*(cast ? .16 : .026);
+ arm.haloRoot.scale.setScalar(1+(cast ? .025 : .008)*pulse);
+ if(arm.orbAura){
+   arm.orbAura.a.rotation.z+=Math.max(0,dt)*(cast?4.4:1.6);arm.orbAura.b.rotation.x+=Math.max(0,dt)*(cast?3.2:1.1);
+   arm.orbAura.matA.opacity=.30+.34*energy+.10*pulse;arm.orbAura.matB.opacity=.16+.26*energy+.08*(1-pulse);
+ }
+ arm.orbModel.traverse(o=>{const mats=Array.isArray(o.material)?o.material:[o.material];for(const mat of mats)if(mat?.emissive)mat.emissiveIntensity=.34+.48*energy+.14*pulse});
+ arm.orbSocketDistance=arm.orbRoot.position.distanceTo(bossArmamentOrbTarget);
+ arm.orbHandDistance=arm.orbRoot.position.distanceTo(bossArmamentHandWorld);
+ arm.haloFollowDistance=arm.haloRoot.position.distanceTo(bossArmamentHaloTarget);
+}
+
 function disposeRigAttempt(rec){
+ if(rec?.role==='boss')disposeBossArmament();
  if(rec?.mixer)try{rec.mixer.stopAllAction()}catch{}
  if(rec?.model){
    rec.model.removeFromParent?.();
@@ -2293,7 +2610,7 @@ function disposeRigAttempt(rec){
 async function loadRigAsset(roleName){
  const cfg=RIG_ASSETS[roleName],root=rigRoot(roleName),loader=initRigLoader();
  if(!cfg||!root||!loader)return false;
- const rec={role:roleName,root,model:null,mixer:null,actions:{},active:null,ready:false,visualAccepted:false,weaponSocket:null,vfxSocket:null,clipNames:[],loadedUrl:'',loadAttempt:0};
+ const rec={role:roleName,root,model:null,mixer:null,actions:{},active:null,ready:false,visualAccepted:false,weaponSocket:null,orbSocket:null,vfxSocket:null,clipNames:[],loadedUrl:'',loadAttempt:0};
  rigRuntime.records[roleName]=rec;rigRuntime.status[roleName]='loading';root.userData.rigRecord=rec;
  const urls=roleName==='boss'?(mobileDevice?cfg.mobileUrls:cfg.desktopUrls):[cfg.url];
  const candidates=[...new Set((urls||[cfg.url]).filter(Boolean))];
@@ -2326,12 +2643,13 @@ async function loadRigAsset(roleName){
            const mats=Array.isArray(o.material)?o.material:[o.material];
            mats.forEach(m=>{if(m?.map){m.map.anisotropy=Math.min(2,renderer?.capabilities?.getMaxAnisotropy?.()||1);m.map.needsUpdate=true}});
          });
-         // Compile while the lobby still covers the canvas so shot one never
-         // pays the GLB/PBR program creation cost.
-         model.visible=true;
-         try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.8 precompile]',e)}
          validateBossRigStatic(rec);rec.visualAccepted=true;
-         enforceBossTripoVisibility(rec);notifyBossAssetReady();
+         // V10.15.1: the host readiness packet is sent only after the hand orb
+         // and independent halo are parsed and included in the precompile.
+         await loadBossArmament(rec);rec.armamentReady=!!bossArmament?.ready;
+         enforceBossTripoVisibility(rec);model.visible=true;
+         try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.15.1 precompile]',e)}
+         notifyBossAssetReady();
          setTimeout(()=>ensureBossVisualSafety(performance.now()),180);
        }
        playRigAnimation(roleName,roleName==='boss'?'boss_idle':'idle',{fade:0});
@@ -2369,6 +2687,7 @@ function updateRiggedAnimations(dt){
  for(const rec of Object.values(rigRuntime.records)){
    if(!rec?.ready||!rec.mixer)continue;
    if(animationLab.active&&rec.role==='boss')continue;
+   if(rec.role==='boss')v106PrepareMixerFrame(rec);
    rec.mixer.update(dt);
    if(rec.activeSegment&&rec.active===rec.activeSegment.action&&rec.active.time>=rec.activeSegment.end-.001){
      const segment=rec.activeSegment;
@@ -3266,7 +3585,7 @@ function createBossV106Acting(rec){
    idleSeed:(performance.now()%997)/997,
    lastState:'boss_idle',
    quality:'medium',
-   actionSpeedBase:1
+   actionSpeedBase:1,mixerPrepared:false
  };
  updateBossV106Quality(true);
 }
@@ -3285,6 +3604,13 @@ function v106ClearLastBoneOffsets(){
    b.rotation.x-=o.x;b.rotation.y-=o.y;b.rotation.z-=o.z;
    o.x=o.y=o.z=0;
  }
+}
+function v106PrepareMixerFrame(rec){
+ if(!bossV106||rec!==bossV106.rec)return;
+ // Clear last frame's additive pose before AnimationMixer samples the next
+ // source pose. Clearing after mixer sampling subtracts offsets from tracked
+ // bones twice and causes shoulders/head to twitch during cross-fades.
+ v106ClearLastBoneOffsets();bossV106.mixerPrepared=true;
 }
 function v106AddPose(pose,weight=1){
  if(!bossV106||weight<=0)return;
@@ -3361,7 +3687,8 @@ function startBossV106Gesture(kind,dur=1100){
 function v106ApplyActing(nowMs){
  if(!bossV106)return;
  updateBossV106Quality(false);
- v106ClearLastBoneOffsets();
+ if(!bossV106.mixerPrepared)v106ClearLastBoneOffsets();
+ bossV106.mixerPrepared=false;
 
  const nowSec=nowMs*.001;
  const qMult=bossV106Quality==='low'?.68:bossV106Quality==='medium'?.86:1;
@@ -3568,6 +3895,7 @@ function setup3D(){
  window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();const b=v107ScaleBounds();renderScale=clamp(renderScale,b.min,b.max);renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight,false)})
 }
 function clearDynamic(){
+ disposeBossArmament();
  if(projectileInst.food)projectileInst.food.count=0;if(projectileInst.enemy)projectileInst.enemy.count=0;if(projectileInst.trail)projectileInst.trail.count=0;
  if(pickupInst)pickupInst.count=0;if(darkPoolMesh)darkPoolMesh.visible=false;
  if(bossTelegraphRing)bossTelegraphRing.visible=false;if(bossTelegraphRing2)bossTelegraphRing2.visible=false;if(bossTelegraphMoon)bossTelegraphMoon.visible=false;if(bossTelegraphCone)bossTelegraphCone.visible=false;
@@ -3576,7 +3904,7 @@ function clearDynamic(){
  for(const m of summonSpawnFx)m.visible=false;for(const m of summonDeathFx)m.visible=false;
  $('threeAmArtFx')?.classList.remove('show');$('eternalArtFx')?.classList.remove('show');
  if(A?.parent)scene.remove(A);if(B?.parent)scene.remove(B);if(boss?.parent)scene.remove(boss);
- predictedShots=[];hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};
+ predictedShots=[];bossOrbProjectileStarts.clear();bossOrbReleasePulseUntil=0;hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};
  camTrauma=0;bossSocketFxUntil=0;if(bossSocketFx)bossSocketFx.visible=false;
  deathCinematicStart=0;deathCinematicUntil=0;deathCinematicStats=null;deathCinematicResultShown=false;
  if(bossV10Art?.root?.parent)bossV10Art.root.parent.remove(bossV10Art.root);
@@ -3622,7 +3950,7 @@ function playBossIntroV9(wait=0){
 
  // The loader starts behind the lobby. On mobile, allow the 2K/1K retry chain
  // to finish before revealing the boss, without extending the server lock.
- if(!rigRuntime.records.boss?.visualAccepted&&remaining>650){
+ if((!rigRuntime.records.boss?.visualAccepted||!bossArmament?.ready)&&remaining>650){
    bossIntroWaits=wait+1;
    setTimeout(()=>playBossIntroV9(wait+1),100);
    return;
@@ -3992,11 +4320,24 @@ function reconcilePredictedShotsFromSnapshot(s){
    return true;
  });
 }
+function normalizeBossCastPayload(c){
+ const now=serverNow(),i=clamp(Math.round(Number(c?.i)||0),0,4);
+ const startAt=Number.isFinite(Number(c?.startAt))?Number(c.startAt):now;
+ const impactAt=Math.max(startAt+1,Number.isFinite(Number(c?.impactAt))?Number(c.impactAt):startAt+900);
+ const endAt=Math.max(impactAt+1,Number.isFinite(Number(c?.endAt))?Number(c.endAt):impactAt+650);
+ const safe={...c,i,startAt,impactAt,endAt,targetRole:c?.targetRole==='princess'?'princess':'hero'};
+ for(const key of ['warningAt','releaseAt','teleportAt','kickAt']){
+   const value=Number(c?.[key]);
+   if(Number.isFinite(value))safe[key]=clamp(value,startAt,endAt);else delete safe[key];
+ }
+ return safe;
+}
 function setBossCast(c){
  if(!c){bossCastVisual.cast=null;clearBossSkillUi();return}
  if(bossCastVisual.cast?.id===c.id)return;
- bossCastVisual={cast:{...c},impactShown:false,kickShown:false,teleportShown:false,warningShown:false};setBossSkillUi(c.i);
- if(c.i===4){
+ const safe=normalizeBossCastPayload(c);
+ bossCastVisual={cast:safe,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};setBossSkillUi(safe.i);
+ if(safe.i===4){
    for(let j=0;j<eyeEls.length;j++){
      const seed=(c.id*92821+j*68917)%100000;
      const rx=(seed*0.61803398875)%1,ry=(seed*0.41421356237)%1;
@@ -4012,7 +4353,7 @@ function syncBossCastFromSnapshot(c){
 }
 function updateBossCastVisual(){
  const c=bossCastVisual.cast;
- if(!c||!bossTelegraphRing)return hideBossCastVisual();
+ if(!c||!boss||!bossTelegraphRing)return hideBossCastVisual();
  const now=serverNow();
  if(now>c.endAt+100){bossCastVisual.cast=null;return hideBossCastVisual()}
  const pre=clamp((now-c.startAt)/Math.max(1,c.impactAt-c.startAt),0,1);
@@ -4043,14 +4384,14 @@ function updateBossCastVisual(){
  }
  bossTelegraphRing.material.opacity=now<c.impactAt?(mobileDevice?.42:.25)+(mobileDevice?.58:.65)*pre:(mobileDevice?.88:.72)*(1-after);
  bossTelegraphRing.scale.setScalar((mobileDevice?1.16:1)*(1+.9*pre+.25*Math.sin(performance.now()*.018)));
- bossTelegraphRing2.visible=c.i===4||(now>=warningAt&&now<c.impactAt);
- if(bossTelegraphRing2.visible){
+ if(bossTelegraphRing2)bossTelegraphRing2.visible=c.i===4||(now>=warningAt&&now<c.impactAt);
+ if(bossTelegraphRing2?.visible){
    bossTelegraphRing2.position.set(boss.position.x,.07,boss.position.z);
    bossTelegraphRing2.material.opacity=(c.i===4?.20:.12)+(c.i===4?.42:.32)*pre;
    bossTelegraphRing2.material.opacity*=1-after;
    bossTelegraphRing2.scale.setScalar((c.i===4?1:.84)+(c.i===4?.35:.48)*pre);
  }
- bossTelegraphMoon.visible=false;bossTelegraphCone.visible=false;
+ if(bossTelegraphMoon)bossTelegraphMoon.visible=false;if(bossTelegraphCone)bossTelegraphCone.visible=false;
  if(bossMoonCracks3D)bossMoonCracks3D.visible=false;
  $('clockFx').style.opacity=0;$('blackmoon').style.opacity=0;$('eyes').style.opacity=0;$('dreamCracks').style.opacity=0;
  if(c.i===0){
@@ -4060,10 +4401,12 @@ function updateBossCastVisual(){
  }else if(c.i===1){
    bossTelegraphRing.material.color.setHex(0xe2ddff);
    if(bossTelegraphRune)bossTelegraphRune.material.uniforms.uColor.value.setHex(0xe4dcff);
-   bossTelegraphMoon.visible=true;bossTelegraphMoon.position.set(boss.position.x,5.0,boss.position.z);
-   bossTelegraphMoon.material.opacity=(mobileDevice?.42:.25)+(mobileDevice?.58:.70)*pre;bossTelegraphMoon.scale.setScalar((mobileDevice?1.18:1)*(.65+.55*pre));
+   if(bossTelegraphMoon){
+     bossTelegraphMoon.visible=true;bossTelegraphMoon.position.set(boss.position.x,5.0,boss.position.z);
+     bossTelegraphMoon.material.opacity=(mobileDevice?.42:.25)+(mobileDevice?.58:.70)*pre;bossTelegraphMoon.scale.setScalar((mobileDevice?1.18:1)*(.65+.55*pre));
+   }
    if(bossMoonCracks3D){
-     bossMoonCracks3D.visible=true;bossMoonCracks3D.position.copy(bossTelegraphMoon.position);
+     bossMoonCracks3D.visible=true;bossMoonCracks3D.position.copy(bossTelegraphMoon?.position||boss.position);
      bossMoonCracks3D.position.z+=.73;bossMoonCracks3D.rotation.z=pre*.12;
      bossMoonCracks3D.scale.setScalar(.75+.9*pre);bossMoonCracks3D.material.opacity=.18+.82*pre;
    }
@@ -4078,12 +4421,14 @@ function updateBossCastVisual(){
    if(bossTelegraphRune)bossTelegraphRune.material.uniforms.uColor.value.setHex(0xc1a4ff);
    if(!c.teleportAt||now<c.teleportAt){
      const target=c.targetRole==='princess'?B:A;
-     const dx=target.position.x-boss.position.x,dz=target.position.z-boss.position.z;
-     const ang=Math.atan2(dz,dx);
-     bossTelegraphCone.visible=true;bossTelegraphCone.position.set((boss.position.x+target.position.x)*.5,.065,(boss.position.z+target.position.z)*.5);
-     bossTelegraphCone.rotation.y=-ang;bossTelegraphCone.material.opacity=.18+.36*pre;
+     if(bossTelegraphCone&&target){
+       const dx=target.position.x-boss.position.x,dz=target.position.z-boss.position.z;
+       const ang=Math.atan2(dz,dx);
+       bossTelegraphCone.visible=true;bossTelegraphCone.position.set((boss.position.x+target.position.x)*.5,.065,(boss.position.z+target.position.z)*.5);
+       bossTelegraphCone.rotation.y=-ang;bossTelegraphCone.material.opacity=.18+.36*pre;
+     }
    }else{
-     bossTelegraphCone.visible=false;
+     if(bossTelegraphCone)bossTelegraphCone.visible=false;
      const kickPre=clamp((now-(c.kickAt||c.teleportAt))/Math.max(1,c.impactAt-(c.kickAt||c.teleportAt)),0,1);
      bossTelegraphRing.scale.setScalar(1.38+1.02*kickPre);
      bossTelegraphRing.material.opacity=.44+.50*kickPre;
@@ -4140,6 +4485,7 @@ function playThreeAmArtFx(){
 function startDreamSlashArt(c){
  if(!dreamSlashArt||!boss)return;
  const target=c.targetRole==='princess'?B:A;
+ if(!target)return;
  const dx=target.position.x-boss.position.x,dz=target.position.z-boss.position.z;
  const ang=Math.atan2(dz,dx);
  dreamSlashArt.position.set((boss.position.x+target.position.x)*.5,.10,(boss.position.z+target.position.z)*.5);
@@ -4147,7 +4493,7 @@ function startDreamSlashArt(c){
  dreamSlashArt.scale.setScalar(.42);
  dreamSlashArt.userData.start=performance.now();dreamSlashArt.userData.until=dreamSlashArt.userData.start+430;
  dreamSlashArt.visible=true;
- for(const m of dreamSlashArt.children)m.material.opacity=0;
+ for(const m of dreamSlashArt.children)if(m.material)m.material.opacity=0;
 }
 function startSpinKickArt(){
  if(!dreamSlashArt||!boss)return;
@@ -4155,13 +4501,13 @@ function startSpinKickArt(){
  dreamSlashArt.rotation.set(0,0,0);dreamSlashArt.scale.setScalar(.36);
  dreamSlashArt.userData.start=performance.now();dreamSlashArt.userData.until=dreamSlashArt.userData.start+520;
  dreamSlashArt.visible=true;
- for(const m of dreamSlashArt.children)m.material.opacity=0;
+ for(const m of dreamSlashArt.children)if(m.material)m.material.opacity=0;
 }
 function startBossEvadeArt(p){
  if(!dreamSlashArt||!boss||!p)return;
- const fx=p.kind==='teleport'?p:{
-   ...p,toX:Number.isFinite(p.toX)?p.toX:boss.position.x,toZ:Number.isFinite(p.toZ)?p.toZ:boss.position.z,
-   fromX:Number.isFinite(p.fromX)?p.fromX:boss.position.x,fromZ:Number.isFinite(p.fromZ)?p.fromZ:boss.position.z
+ const fx={...p,
+   toX:Number.isFinite(Number(p.toX))?Number(p.toX):boss.position.x,toZ:Number.isFinite(Number(p.toZ))?Number(p.toZ):boss.position.z,
+   fromX:Number.isFinite(Number(p.fromX))?Number(p.fromX):boss.position.x,fromZ:Number.isFinite(Number(p.fromZ))?Number(p.fromZ):boss.position.z
  };
  const mx=(fx.fromX+fx.toX)*.5,mz=(fx.fromZ+fx.toZ)*.5;
  dreamSlashArt.position.set(p.kind==='teleport'?fx.toX:mx,.11,p.kind==='teleport'?fx.toZ:mz);
@@ -4170,7 +4516,7 @@ function startBossEvadeArt(p){
  dreamSlashArt.userData.start=performance.now();
  dreamSlashArt.userData.until=dreamSlashArt.userData.start+(p.kind==='teleport'?440:360);
  dreamSlashArt.visible=true;
- for(const m of dreamSlashArt.children)m.material.opacity=0;
+ for(const m of dreamSlashArt.children)if(m.material)m.material.opacity=0;
 }
 function startSummonSpawnFx(points=[]){
  for(let i=0;i<summonSpawnFx.length;i++){
@@ -4181,11 +4527,12 @@ function startSummonSpawnFx(points=[]){
  }
 }
 function startSummonDeathFx(p){
- if(!p)return;
+ if(!p||!summonDeathFx.length)return;
  let fx=summonDeathFx.find(x=>!x.visible)||summonDeathFx[0];
+ if(!fx)return;
  fx.position.set(p.x,p.y||1.1,p.z);fx.scale.setScalar(.55);
  fx.userData.start=performance.now();fx.userData.until=fx.userData.start+620;fx.visible=true;
- for(const q of fx.children){q.position.set(0,0,0);q.material.opacity=.95}
+ for(const q of fx.children){q.position.set(0,0,0);if(q.material)q.material.opacity=.95}
 }
 function updateSkillArtFx(now){
  if(sharedMat.darkPool?.uniforms)sharedMat.darkPool.uniforms.uTime.value=now*.001;
@@ -4194,8 +4541,8 @@ function updateSkillArtFx(now){
    const p=clamp((now-dreamSlashArt.userData.start)/Math.max(1,dreamSlashArt.userData.until-dreamSlashArt.userData.start),0,1);
    if(now>=dreamSlashArt.userData.until)dreamSlashArt.visible=false;
    else{
-     const e=1-Math.pow(1-p,3);dreamSlashArt.scale.setScalar(.42+1.35*e);
-     for(let i=0;i<dreamSlashArt.children.length;i++)dreamSlashArt.children[i].material.opacity=(i? .55:.88)*(1-p);
+   const e=1-Math.pow(1-p,3);dreamSlashArt.scale.setScalar(.42+1.35*e);
+     for(let i=0;i<dreamSlashArt.children.length;i++)if(dreamSlashArt.children[i]?.material)dreamSlashArt.children[i].material.opacity=(i? .55:.88)*(1-p);
    }
  }
 
@@ -4206,14 +4553,15 @@ function updateSkillArtFx(now){
    if(now>=fx.userData.until){fx.visible=false;continue}
    const e=1-Math.pow(1-p,3);fx.scale.setScalar(.25+1.1*e);
    const ring=fx.children[0],col=fx.children[1];
-   ring.rotation.z+=.075;ring.material.opacity=.82*(1-p);
-   col.scale.set(1,1+1.8*(1-p),1);col.material.opacity=.28*Math.sin(Math.PI*p);
+   if(ring?.material){ring.rotation.z+=.075;ring.material.opacity=.82*(1-p)}
+   if(col?.material){col.scale.set(1,1+1.8*(1-p),1);col.material.opacity=.28*Math.sin(Math.PI*p)}
  }
  for(const fx of summonDeathFx){
    if(!fx.visible)continue;
    const p=clamp((now-fx.userData.start)/Math.max(1,fx.userData.until-fx.userData.start),0,1);
    if(now>=fx.userData.until){fx.visible=false;continue}
    for(const q of fx.children){
+     if(!q?.material||!q.userData?.dir)continue;
      q.position.copy(q.userData.dir).multiplyScalar(1.35*p);
      q.rotation.x+=.12;q.rotation.y+=.15;
      q.material.opacity=.90*(1-p);
@@ -4272,11 +4620,11 @@ function v103BossExpressionPulse(i){
  const mult=i===4?1.46:i===2?1.28:1.16;
  if(iris)iris.emissiveIntensity=eyeBase*mult;
  if(jewel)jewel.emissiveIntensity=jewelBase*mult;
- bossV103.faceFill.intensity*=i===4?1.35:1.16;
+ if(bossV103.faceFill)bossV103.faceFill.intensity*=i===4?1.35:1.16;
  clearTimeout(v103BossExpressionPulse.t);
  v103BossExpressionPulse.t=setTimeout(()=>{
    if(iris)iris.emissiveIntensity=eyeBase;if(jewel)jewel.emissiveIntensity=jewelBase;
-   if(bossV103)bossV103.faceFill.intensity=bossV103Phase===1?.13:bossV103Phase===2?.18:.23;
+   if(bossV103?.faceFill)bossV103.faceFill.intensity=bossV103Phase===1?.13:bossV103Phase===2?.18:.23;
  },220);
 }
 
@@ -4438,22 +4786,25 @@ function syncEntities(sa,sb,t){
 
  for(const pb of sb.projectiles){
    const pa=aMap.get(pb.id)||pb;
-   const x=lerp(pa.x,pb.x,t),y=lerp(pa.y,pb.y,t),z=lerp(pa.z,pb.z,t);
+   let x=lerp(pa.x,pb.x,t),y=lerp(pa.y,pb.y,t),z=lerp(pa.z,pb.z,t);
    const snapDt=Math.max(.016,((sb.ts||0)-(sa.ts||0))/1000||.067);
    const vx=(pb.x-pa.x)/snapDt,vz=(pb.z-pa.z)/snapDt;
 
    if(pb.e){
      const kind=kindValue(pb.k);
-     const color=pb.k==='shard'?0xf1ecff:pb.k==='thought'?0xb494ff:pb.k==='slash'?0xd8c9ff:pb.k==='night'?0x7b54b8:0xc9afff;
-     const size=(pb.k==='shard'?.94:pb.k==='thought'?1.12:pb.k==='slash'?1.0:pb.k==='night'?1.32:.90)*(mobileDevice?1.12:1);
+     const muzzleScale=applyBossOrbCloneMuzzle(pb,x,y,z,nowVisual);
+     if(pb.k==='orbclone'){x=bossOrbCloneVisualPos.x;y=bossOrbCloneVisualPos.y;z=bossOrbCloneVisualPos.z}
+     const color=pb.k==='shard'?0xf1ecff:pb.k==='thought'?0xb494ff:pb.k==='slash'?0xd8c9ff:pb.k==='night'?0x7b54b8:pb.k==='orbclone'?0xd8b8ff:0xc9afff;
+     const size=(pb.k==='shard'?.94:pb.k==='thought'?1.12:pb.k==='slash'?1.0:pb.k==='night'?1.32:pb.k==='orbclone'?1.18:.90)*(mobileDevice?1.12:1)*muzzleScale;
      if(setEnemyInst(enemyCount,x,y,z,color,kind,pulseBase+pb.id*.31,size))enemyCount++;
-     if(setTrailInst(trailCount,x,y,z,vx,vz,color,.76))trailCount++;
+     if(setTrailInst(trailCount,x,y,z,vx,vz,color,pb.k==='orbclone'?.92:.76))trailCount++;
    }else{
      const color=foods[pb.f]?.[2]??0xffffff;
      if(setInst(projectileInst.food,foodCount,x,y,z,color,0,mobileDevice?1.18:1))foodCount++;
      if(setTrailInst(trailCount,x,y,z,vx,vz,color,.68))trailCount++;
    }
  }
+ pruneBossOrbCloneMuzzles(nowVisual);
 
  // Append predicted local shots into the player projectile batch.
  for(const p of predictedShots){
@@ -4523,6 +4874,10 @@ function playEvent(e,p){
    }
    const names=['🌙 BÓNG ĐÊM LAN RA','💠 GIẤC MƠ VỠ','🕒 BA GIỜ SÁNG','🌀 ẢO ẢNH LUÂN VŨ','🌑 VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC'];
    banner(names[p.i]||'BOSS CAST');
+ }
+ if(e==='bossOrbVolley'){
+   bossOrbReleasePulseUntil=Math.max(bossOrbReleasePulseUntil,performance.now()+220);
+   pulseBossSocketFx(p.radial?0xe7d8ff:0xc9a6ff,p.radial?1.08:.82);
  }
  if(e==='actionAnim'){
    if(!(p.role===role&&combatAnim[p.role]?.type))triggerCombatAnim(p.role,p.a,p.startAt);
@@ -4618,7 +4973,7 @@ function frameBossFullBody(look,marginX=.76,marginY=.82){
  let overflow=1;
  const bx=boss.position.x,by=boss.position.y,bz=boss.position.z;
  // Conservative envelope includes the crown, long skirt and extended kick leg.
- for(const x of [-2.15,2.15])for(const y of [by-.06,by+4.82])for(const z of [-1.35,1.35]){
+ for(const x of [-2.15,2.15])for(const y of [by-.06,by+5.05])for(const z of [-1.35,1.35]){
    v10132FramePoint.set(bx+x,y,bz+z).project(camera);
    if(v10132FramePoint.z<-1||v10132FramePoint.z>1)overflow=Math.max(overflow,1.35);
    overflow=Math.max(overflow,Math.abs(v10132FramePoint.x)/marginX,Math.abs(v10132FramePoint.y)/marginY);
@@ -4712,13 +5067,20 @@ document.addEventListener('visibilitychange',()=>{
 
 
 function v1071VisualFailure(err,where='visual'){
- const msg=String(err?.message||err||'unknown');v1071VisualErrors++;v1071LastVisualError=`${where}: ${msg}`;
+ const msg=String(err?.message||err||'unknown'),now=performance.now(),signature=`${where}: ${msg}`;
+ if(visualAudit.active)visualAuditIssue(visualAudit.stage,`RUNTIME_${where}`,msg);
+ // A single transient fault repeated on adjacent frames counts once. This
+ // prevents harmless VFX timing races from forcing global low quality.
+ if(signature!==v10142VisualErrorSignature||now-v10142VisualErrorAt>1200){
+   v1071VisualErrors++;v10142VisualErrorSignature=signature;v10142VisualErrorAt=now;
+ }
+ v1071LastVisualError=signature;
  console.error('[V10.7.1 visual recovery]',where,err);
  if(v1071VisualErrors>=2&&!v1071SafeMode){
    v1071SafeMode=true;v107Quality='low';v107SetBodyQuality('low');
    try{v107ApplyQuality('low',true)}catch(_){}
-   setBossProceduralFallback(true,'VISUAL_SAFE_MODE');
-   banner('⚠ VISUAL SAFE MODE — GAMEPLAY VẪN HOẠT ĐỘNG');
+   enforceBossTripoVisibility(rigRuntime.records.boss);
+   banner('⚠ VISUAL SAFE MODE — TRIPO BOSS ĐƯỢC GIỮ');
  }
 }
 function sendInputHeartbeat(now){
@@ -4728,13 +5090,24 @@ function sendInputHeartbeat(now){
  pendingInputs.push(q);if(pendingInputs.length>60)pendingInputs.shift();
  send({type:'input',seq:q.seq,x:q.x,y:q.y});
 }
+function runVisualPass(name,fn){
+ try{fn()}catch(err){v1071VisualFailure(err,name)}
+}
 
 function frame(now){
  const rawDt=Math.min(.08,(now-last)/1000||0),dt=Math.min(.033,rawDt);last=now;
  try{sendInputHeartbeat(now)}catch(err){console.error('[input heartbeat]',err)}
  try{
    if(deathCinematicActive()){
-     try{updateV107Performance(now);updateRiggedAnimations(dt);v106ApplyActing(now);updateBossSocketFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now);updateEnvironmentV10(now);updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-visual')}
+     runVisualPass('death-quality',()=>updateV107Performance(now));
+     runVisualPass('death-rig',()=>{updateRiggedAnimations(dt);v106ApplyActing(now)});
+     runVisualPass('death-armament',()=>updateBossArmament(dt,now));
+     runVisualPass('death-socket',()=>updateBossSocketFx(now));
+     runVisualPass('death-boss-v10',()=>updateBossV10Art(now));
+     runVisualPass('death-boss-v103',()=>updateBossV103(now));
+     runVisualPass('death-boss-v104',()=>updateBossV104(now));
+     runVisualPass('death-environment',()=>updateEnvironmentV10(now));
+     runVisualPass('death-cinematic',()=>updateDeathCinematic(now,dt));
    }else if(deathCinematicStats&&!deathCinematicResultShown){
      try{updateDeathCinematic(now,dt)}catch(err){v1071VisualFailure(err,'death-result')}
    }else if(animationLab.active&&gameInitialized){
@@ -4747,12 +5120,18 @@ function frame(now){
          const it=interpolatedState();
          if(it&&it.a){syncEntities(it.a,it.b,it.t);if(now-uiLast>50){uiLast=now;updateUI(latestState||it.b)}}
        }catch(err){console.error('[core visual sync]',err)}
-       try{updateV107Performance(now)}catch(err){v1071VisualFailure(err,'quality')}
-       try{updateBossCastVisual()}catch(err){v1071VisualFailure(err,'boss-cast')}
-       try{updateCombatAnimations(now)}catch(err){v1071VisualFailure(err,'combat-anim')}
-       try{updateRiggedAnimations(dt);v106ApplyActing(now)}catch(err){v1071VisualFailure(err,'rig-animation')}
-       try{updateBossSocketFx(now);updateSkillArtFx(now);updateBossV10Art(now);updateBossV103(now);updateBossV104(now)}catch(err){v1071VisualFailure(err,'boss-art')}
-       try{updateEnvironmentV10(now);updateCam(dt)}catch(err){v1071VisualFailure(err,'environment-camera')}
+       runVisualPass('quality',()=>updateV107Performance(now));
+       runVisualPass('boss-cast',()=>updateBossCastVisual());
+       runVisualPass('combat-anim',()=>updateCombatAnimations(now));
+       runVisualPass('rig-animation',()=>{updateRiggedAnimations(dt);v106ApplyActing(now)});
+       runVisualPass('boss-armament',()=>updateBossArmament(dt,now));
+       runVisualPass('boss-socket',()=>updateBossSocketFx(now));
+       runVisualPass('skill-art',()=>updateSkillArtFx(now));
+       runVisualPass('boss-v10',()=>updateBossV10Art(now));
+       runVisualPass('boss-v103',()=>updateBossV103(now));
+       runVisualPass('boss-v104',()=>updateBossV104(now));
+       runVisualPass('environment',()=>updateEnvironmentV10(now));
+       runVisualPass('camera',()=>updateCam(dt));
      }
      try{ensureBossVisualSafety(now)}catch(err){console.error('[boss watchdog]',err)}
    }
@@ -4929,7 +5308,9 @@ function prewarmV108Client(attempt=0){
 // Decode and compile the bundled boss behind the lobby, not during shot one.
 setTimeout(()=>prewarmV108Client(),180);
 const sess=loadSession();
-if(bootQuery.get('animlab')==='1'){
+if(visualAudit.enabled){
+ setTimeout(()=>runBossVisualAudit().catch(err=>{visualAuditIssue(visualAudit.stage,'AUDIT_CRASH',err?.message||err);finishBossVisualAudit()}),260);
+}else if(bootQuery.get('animlab')==='1'){
  setTimeout(()=>openAnimationLab(),260);
 }else if(inviteRoom&&(!sess||sess.room!==inviteRoom)){
  clearSession();$('roomInput').value=inviteRoom.slice(0,6);showScreen('joinLobby');
@@ -4941,10 +5322,12 @@ if(bootQuery.get('animlab')==='1'){
 }
 window.addEventListener('error',e=>{
  console.error('[runtime]',e.error||e.message);
+ if(visualAudit.active)visualAuditIssue(visualAudit.stage,'WINDOW_ERROR',e.message||e.error||'unknown');
  if(role==='hero'&&!running)showConnectionError('Runtime: '+(e.message||'unknown error'));
 });
 window.addEventListener('unhandledrejection',e=>{
  console.error('[promise]',e.reason);
+ if(visualAudit.active)visualAuditIssue(visualAudit.stage,'UNHANDLED_REJECTION',e.reason?.message||e.reason||'unknown');
  if(role==='hero'&&!running)showConnectionError('Promise: '+(e.reason?.message||e.reason||'unknown'));
 });
 if(!window.THREE)alert('Game cần Internet để tải Three.js.');

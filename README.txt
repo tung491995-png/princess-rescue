@@ -1,8 +1,22 @@
-PRINCESS RESCUE 3D — V10.14.1 TRIPO MODEL LOCK
+PRINCESS RESCUE 3D — V10.15.1 ORB PROJECTILE COMBAT
 
 LATEST UPGRADE
 ==========
+- The optimized Tripo orb is always visible above the boss's left palm through all 19 clips.
+- The supplied ornamental halo follows the authoritative boss root without joining the skin, skeleton or hitbox.
+- Orb and halo load before the client reports `bossAssetReady`, so intro never starts with missing armament.
+- A torso-separation guard prevents long animation clips from burying the floating orb inside the corset.
+- Halo-inclusive camera bounds keep the complete body and crown ring inside the mobile frame.
+- Orb source reduced from 1,894,640 to 31,387 triangles and from 58 MB to 1.2 MB; all textures are 1K.
+- Halo remains 14,160 triangles and 1.6 MB with 1K textures.
+- The built-in `?visualaudit=1` route now validates Tripo + orb + halo at five samples across every source clip.
 - The Tripo boss is validated once from static bind-pose bounds and then locked visible.
+- All 19 source clips, nine gameplay transitions, five presentation segments and five skill VFX have a built-in visual audit route (`?visualaudit=1`).
+- Additive shoulder/head/arm acting is cleared before AnimationMixer sampling, eliminating crossfade pose contamination.
+- Faded actions are stopped and disabled after their transition instead of remaining active in the mixer.
+- Cast and evade payloads sanitize non-finite coordinates/timestamps before they can reach Three.js transforms.
+- Boss VFX subsystems are isolated so one failed effect cannot skip every later pose, material, environment or camera update.
+- Runtime recovery keeps the accepted Tripo model and never swaps to the procedural placeholder.
 - Animated SkinnedMesh bounds no longer decide between Tripo and the procedural fallback.
 - Repeated visual/VFX recovery cannot replace an already accepted Tripo model.
 - Hero can start only after both clients report that their Tripo boss is parsed and precompiled.

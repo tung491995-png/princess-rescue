@@ -6,7 +6,9 @@ const path = require('path');
 const crypto = require('crypto');
 const { createClient } = require('redis');
 
-const PORT = process.env.PORT || 3000;
+const cliValue = name => { const index=process.argv.indexOf(name); return index>=0?process.argv[index+1]:''; };
+const PORT = Number(cliValue('--port') || process.env.PORT || 3000);
+const HOST = cliValue('--host') || process.env.HOST || undefined;
 const REDIS_URL = process.env.REDIS_URL || '';
 const KEY_PREFIX = process.env.REDIS_PREFIX || 'princess-rescue:v3:';
 
@@ -619,6 +621,47 @@ function radial(room,n,speed,dmg,kind,angleOffset=0,y=2.65){
   }
   markDirty(room);
 }
+function livingBossTarget(s,preferredRole=null){
+  const preferred=preferredRole&&s.players[preferredRole];
+  if(preferred&&!preferred.down)return preferred;
+  const alive=['hero','princess'].map(role=>s.players[role]).filter(player=>player&&!player.down);
+  if(!alive.length)return null;
+  const b=s.boss;
+  return alive.sort((a,c)=>d2(a.x,a.z,b.x,b.z)-d2(c.x,c.z,b.x,b.z))[0];
+}
+function bossOrbVolley(room,{count=1,spread=.13,speed=7.2,dmg=11,targetRole=null,castId=null}={}){
+  const s=room.state,b=s.boss,target=livingBossTarget(s,targetRole);
+  if(!target)return;
+  const dx=target.x-b.x,dz=target.z-b.z,length=Math.hypot(dx,dz)||1;
+  const aimX=dx/length,aimZ=dz/length,leftX=-aimZ,leftZ=aimX;
+  const originX=b.x+leftX*.68+aimX*.10,originZ=b.z+leftZ*.68+aimZ*.10;
+  const ids=[];
+  for(let shot=0;shot<count;shot++){
+    const angle=Math.atan2(aimZ,aimX)+(shot-(count-1)*.5)*spread;
+    const projectile={
+      id:s.nextProj++,owner:null,enemy:true,kind:'orbclone',food:2,
+      x:originX,z:originZ,y:2.62,vx:Math.cos(angle)*speed,vz:Math.sin(angle)*speed,
+      dmg,t:2.45,castId,bornAt:Date.now()
+    };
+    s.projectiles.push(projectile);ids.push(projectile.id);
+  }
+  broadcast(room,{type:'event',e:'bossOrbVolley',p:{ids,count,targetRole:target.role,castId,radial:false}});
+  markDirty(room);
+}
+function bossOrbRadial(room,{n=10,speed=5.8,dmg=10,angleOffset=0,castId=null}={}){
+  const s=room.state,b=s.boss,ids=[];
+  for(let shot=0;shot<n;shot++){
+    const angle=angleOffset+shot/n*Math.PI*2;
+    const projectile={
+      id:s.nextProj++,owner:null,enemy:true,kind:'orbclone',food:2,
+      x:b.x,z:b.z,y:2.62,vx:Math.cos(angle)*speed,vz:Math.sin(angle)*speed,
+      dmg,t:3,castId,bornAt:Date.now()
+    };
+    s.projectiles.push(projectile);ids.push(projectile.id);
+  }
+  broadcast(room,{type:'event',e:'bossOrbVolley',p:{ids,count:n,castId,radial:true}});
+  markDirty(room);
+}
 function scheduleTask(room,delayMs,type,data={}){
   const s=room.state;
   s.tasks.push({id:s.nextTask++,dueAt:Date.now()+delayMs,type,data});
@@ -632,6 +675,10 @@ function runTask(room,task){
     s.darkPool={x:b.x,z:b.z,r:.5,t:1.6};
   }else if(task.type==='boss_radial'){
     radial(room,task.data.n,task.data.speed,task.data.dmg,task.data.kind,task.data.angleOffset||0,task.data.y||2.65);
+  }else if(task.type==='boss_orb_volley'){
+    bossOrbVolley(room,task.data);
+  }else if(task.type==='boss_orb_radial'){
+    bossOrbRadial(room,task.data);
   }else if(task.type==='dream_slash'){
     const p=s.players[task.data.role||'hero'];
     if(p&&!p.down){
@@ -732,9 +779,17 @@ function bossSkill(room){
   castDialogue(room,i,b.phase);
 
   if(i===0){
+    // Quick Cast 13: the permanent hand orb charges, while lightweight
+    // authoritative orb-clone bullets fan toward the nearest living player.
+    scheduleTask(room,telegraphMs,'boss_orb_volley',{
+      count:b.phase,speed:6.9+b.phase*.38,dmg:9+b.phase*2,
+      spread:b.phase===1?0:.115,targetRole:null,castId:cast.id
+    });
     scheduleTask(room,telegraphMs,'start_dark_pool');
   }else if(i===1){
-    scheduleTask(room,telegraphMs,'boss_radial',{n:12,speed:6.1+b.phase*.55,dmg:9+b.phase,kind:'shard',angleOffset:Math.random()*.3,y:2.7});
+    // AOE 14: one synchronized ring of orb VFX clones. Later phases retain a
+    // delayed shard counter-wave so the player can read the two patterns.
+    scheduleTask(room,telegraphMs,'boss_orb_radial',{n:10+b.phase*2,speed:5.55+b.phase*.38,dmg:9+b.phase,angleOffset:Math.random()*.3,castId:cast.id});
     if(b.phase>=2)scheduleTask(room,telegraphMs+520,'boss_radial',{n:10,speed:6.6,dmg:10+b.phase,kind:'shard',angleOffset:.26,y:2.5});
   }else if(i===2){
     scheduleTask(room,telegraphMs,'three_am_edges');
@@ -953,7 +1008,7 @@ function snapshot(room){
     },
     boss:{...s.boss},
     projectiles:s.projectiles.map(p=>({
-      id:p.id,a:p.aid||null,o:p.owner||null,x:p.x,y:p.y,z:p.z,e:p.enemy,k:p.kind,f:p.food
+      id:p.id,a:p.aid||null,o:p.owner||null,x:p.x,y:p.y,z:p.z,e:p.enemy,k:p.kind,f:p.food,c:p.castId||null,b:p.bornAt||null
     })),
     pickups:s.pickups.map(p=>({...p})),
     darkPool:s.darkPool?{...s.darkPool}:null,
@@ -970,8 +1025,8 @@ app.get('/healthz',(_req,res)=>res.json({
   network:{
     tickHz:TICK_HZ,
     snapshotHz:SNAPSHOT_HZ,
-    renderOptimization:'V8.1-single-enemy-shader-batch-plus-lightweight-dream-summons',
-    combatFeel:'sync-cast-hitstop-action-prediction',
+    renderOptimization:'V10.15.1-single-enemy-shader-batch-plus-orb-clone-projectiles',
+    combatFeel:'persistent-hand-orb-authoritative-vfx-clone-projectiles',
     rewindMs:MAX_REWIND_MS,
     hitConfirmMs:HIT_CONFIRM_DELAY_MS,
     adaptiveInterpolationMs:[80,100,140]
@@ -1191,5 +1246,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,()=>console.log(`Princess Rescue V8.0 server on :${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.15.1 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
 })();

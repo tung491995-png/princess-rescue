@@ -23,7 +23,7 @@ const fail = error => {
   console.error(error?.stack || error);
   stop(1);
 };
-const timeout = setTimeout(() => fail(new Error('V10.14.1 Tripo Model Lock test timed out')), 20000);
+const timeout = setTimeout(() => fail(new Error('V10.15 Orb Halo Foundation test timed out')), 20000);
 
 function inspectGlb(buffer) {
   if (buffer.readUInt32LE(0) !== 0x46546c67 || buffer.readUInt32LE(4) !== 2 || buffer.readUInt32LE(8) !== buffer.length) {
@@ -98,7 +98,7 @@ function verifyFullBodyCameraEnvelope() {
       camera.lookAt(look); camera.updateMatrixWorld(true);
       const measure = () => {
         let overflow = 0;
-        for (const x of [-2.15, 2.15]) for (const y of [boss.y - 0.06, boss.y + 4.82]) for (const z of [-1.35, 1.35]) {
+        for (const x of [-2.15, 2.15]) for (const y of [boss.y - 0.06, boss.y + 5.05]) for (const z of [-1.35, 1.35]) {
           const projected = new THREE.Vector3(boss.x + x, y, boss.z + z).project(camera);
           overflow = Math.max(overflow, Math.abs(projected.x) / 0.72, Math.abs(projected.y) / 0.82);
         }
@@ -183,7 +183,7 @@ async function run() {
   const close = () => { try { hero.close(); princess.close(); } catch {} };
   const finishIfReady = () => {
     if (!sawReadyGate || !startValidated || !sawEvade || !sawEvadeSnapshot || !sawCast || !sawTeleport || !sawImpact) return;
-    console.log(`V10.14.1 SMOKE PASS · Tripo one-way model lock · two-client intro readiness gate · approved 18/08/13/14/09/15/17 map · Dodge 03 + Teleport 12 AI · cropped 05/06/11/16 · 19 clips world-XZ locked · full-body camera · GLB 4K ${bytes} · 2K ${mobile2kBytes} · 1K ${mobile1kBytes} · boss 2200/2200`);
+    console.log(`V10.15 SMOKE PASS · Tripo one-way model lock · orb/halo readiness gate · approved 18/08/13/14/09/15/17 map · Dodge 03 + Teleport 12 AI · cropped 05/06/11/16 · 19 clips world-XZ locked · halo-aware full-body camera · GLB 4K ${bytes} · 2K ${mobile2kBytes} · 1K ${mobile1kBytes} · boss 2200/2200`);
     clearTimeout(timeout); close(); stop(0);
   };
   const check = () => {

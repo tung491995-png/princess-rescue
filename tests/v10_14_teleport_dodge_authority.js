@@ -24,7 +24,7 @@ function run(){
     if(finished||!evade||!snapshotMatched)return;
     finished=true;
     clearTimeout(timeout);hero.close();princess.close();
-    console.log('V10.14.1 TELEPORT DODGE PASS · Tripo ready gate · clip 12 · authoritative 3.15m relocation · snapshot/hitbox synchronized');
+    console.log('V10.15 TELEPORT DODGE PASS · Tripo + armament ready gate · clip 12 · authoritative 3.15m relocation · snapshot/hitbox synchronized');
     server.kill('SIGTERM');setTimeout(()=>process.exit(0),60);
   };
   hero.on('error',fail);princess.on('error',fail);

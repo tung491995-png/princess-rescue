@@ -1,5 +1,5 @@
 {
-  "version": "10.14.1",
+  "version": "10.15.0",
   "files": {
     "hero": "hero.glb",
     "princess": "princess.glb",
@@ -74,5 +74,12 @@
     "presentationSegments": [5, 6, 11, 16],
     "authority": "Server owns dodge decisions, position, invulnerability window and hitbox. Clips are visual-only."
   },
-  "fallback": "The procedural boss is retained only while loading or after all same-origin GLB tiers fail."
+  "fallback": "The procedural boss is retained only while loading or after all same-origin GLB tiers fail.",
+  "visualAudit": "All 19 clips, pose transitions, orb socket and independent halo are checked without allowing an accepted Tripo model to be replaced.",
+  "armament": {
+    "orb": "../props/ma_vuong_orb_mobile.glb",
+    "halo": "../props/ma_vuong_halo_mobile.glb",
+    "socket": "L_Hand",
+    "hitboxIndependent": true
+  }
 }

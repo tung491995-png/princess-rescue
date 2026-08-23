@@ -1,0 +1,22 @@
+PRINCESS RESCUE V10.14.2 — VISUAL ERROR AUDIT
+
+FIXED
+=====
+- Clears V10.6 additive bone offsets before the AnimationMixer samples a new frame.
+- Stops and disables the faded-out action after every pose transition.
+- Keeps the accepted Tripo GLB visible through all VFX/recovery errors.
+- Sanitizes boss cast timing and evade coordinates before updating 3D transforms.
+- Guards Moon, Teleport, Spin Kick, Summon and Death VFX against missing objects/materials.
+- Runs every VFX subsystem independently so one exception cannot cascade.
+
+BUILT-IN AUDIT
+==============
+Open the game with `?visualaudit=1` to run:
+- 19 clips at five timeline samples each.
+- 9 gameplay animation transitions.
+- 5 cropped intro/phase presentation segments.
+- 5 boss skill telegraphs and impacts.
+- Strafe, Teleport, Summon spawn and Summon death VFX.
+
+Every sample verifies finite transforms/material values, safe bone scale, world-XZ
+residual, Tripo visibility and absence of the procedural placeholder.

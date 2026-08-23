@@ -1,0 +1,16 @@
+PRINCESS RESCUE V10.15.1 — ORB PROJECTILE COMBAT
+
+- The optimized GLB orb remains permanently attached to the left-hand world socket.
+- No projectile clones or reparents the GLB orb, skeleton, boss root or hitbox.
+- Enemy orb bullets are a dedicated kind=orbclone path inside the existing GPU
+  InstancedMesh projectile batch: one billboard quad per shot, zero GLB copies.
+- The client captures the main orb world position once when each authoritative
+  orbclone first appears and eases the lightweight visual into the server path
+  over 165 ms.
+- Quick Cast 13 fires an aimed 1/2/3-shot fan in phases 1/2/3.
+- AOE 14 releases a readable 12/14/16-shot radial orb ring. Phase 2+ retains a
+  delayed shard counter-wave.
+- Damage, dash checks, despawn and collision remain server-authoritative and are
+  synchronized to both clients in normal snapshots.
+- ROOT XZ compensation, Tripo one-way model lock, full-body camera, halo and all
+  V10.15 animation/armament guards are unchanged.
