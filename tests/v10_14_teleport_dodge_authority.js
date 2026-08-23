@@ -15,7 +15,7 @@ const stop = code => {
   finished = true;server.kill('SIGTERM');setTimeout(() => process.exit(code), 60);
 };
 const fail = error => { if(finished)return;console.error(error?.stack || error);stop(1); };
-const timeout = setTimeout(() => fail(new Error('Teleport dodge authority test timed out')), 10000);
+const timeout = setTimeout(() => fail(new Error('Teleport dodge authority test timed out')), 22000);
 
 function run(){
   const hero=new WebSocket(`ws://127.0.0.1:${port}/ws`),princess=new WebSocket(`ws://127.0.0.1:${port}/ws`);

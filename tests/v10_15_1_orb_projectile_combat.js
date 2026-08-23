@@ -57,7 +57,7 @@ const stop = code => {
   setTimeout(() => process.exit(code), 80);
 };
 const fail = error => { console.error(error?.stack || error); stop(1); };
-const timeout = setTimeout(() => fail(new Error('V10.15.1 orb projectile test timed out')), 15000);
+const timeout = setTimeout(() => fail(new Error('V10.15.1 orb projectile test timed out')), 27000);
 
 async function run() {
   const hero = new WebSocket(`ws://127.0.0.1:${port}/ws`);

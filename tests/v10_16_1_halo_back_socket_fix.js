@@ -30,9 +30,8 @@ for (const fragment of [
   "armament.haloRoot.userData.socket='upper-back-floating'",
   'scene.add(armament.haloRoot,armament.orbRoot)',
   'Math.sin(now*.00115)*BOSS_HALO_HOVER_AMPLITUDE',
-  'boss.position.x-Math.sin(boss.rotation.y)*BOSS_HALO_BACK_DISTANCE',
-  'boss.position.z-Math.cos(boss.rotation.y)*BOSS_HALO_BACK_DISTANCE',
-  'boss.position.y+3.62,boss.position.y+3.78',
+  'function resolveBossHaloVirtualAnchor(',
+  'resolveBossHaloVirtualAnchor(rec,now)',
   "if(kind==='halo')",
   'model.rotation.x+=Math.PI/2',
   'model.rotation.y+=Math.PI/2',
@@ -47,8 +46,8 @@ if (/boss\.add\(armament\.haloRoot\)|orbSocket\.add\(armament\.haloRoot\)|hipMot
 const updateStart = html.indexOf('function updateBossArmament(');
 const updateEnd = html.indexOf('\nfunction disposeRigAttempt', updateStart);
 const updateSource = html.slice(updateStart, updateEnd);
-if ((updateSource.match(/bossArmamentHaloTarget\.set\(/g) || []).length !== 1) throw new Error('Halo target has more than one positional authority');
-if (/bossArmamentHaloTarget[^\n;]*orbSocket|getWorldPosition\(bossArmamentHaloTarget|activeState[^\n;]*bossArmamentHaloTarget/.test(updateSource)) throw new Error('Halo position depends on a hand, bone or animation state');
+if ((html.match(/bossArmamentHaloTarget\.set\(/g) || []).length !== 1) throw new Error('Halo target has more than one positional authority');
+if (/bossArmamentHaloTarget[^\n;]*orbSocket|getWorldPosition\(bossArmamentHaloTarget/.test(updateSource)) throw new Error('Halo position depends on the hand/orb socket');
 
 // Validate the exact world-space socket for every source clip index, multiple
 // boss rotations and hover phases. The animation index must not affect it.
@@ -60,7 +59,7 @@ for (let clip = 0; clip < 19; clip++) {
     const hover = Math.sin(now * .00115) * hoverAmplitude;
     const target = {
       x: boss.x - Math.sin(yaw) * backDistance,
-      y: Math.max(boss.y + 3.62, Math.min(boss.y + 3.78, boss.y + centerY + hover)),
+      y: Math.max(boss.y + 3.30, Math.min(boss.y + 4.18, boss.y + centerY + hover)),
       z: boss.z - Math.cos(yaw) * backDistance
     };
     const dx = target.x - boss.x, dz = target.z - boss.z;

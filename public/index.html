@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.16.1 — Halo Back Socket Fix</title>
+<title>Princess Rescue V10.16.2 — Eclipse Waltz Intro</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -111,31 +111,31 @@ body.envPhase3 #bossPortraitWrap{box-shadow:0 0 18px rgba(219,75,204,.32),inset 
 #bossIntroV9 .introBar.top{top:0;transform-origin:top}
 #bossIntroV9 .introBar.bottom{bottom:0;transform-origin:bottom}
 #bossIntroV9.show .introBar{transform:scaleY(1)}
-#bossIntroV9 .introVeil{position:absolute;inset:0;background:radial-gradient(circle at 52% 48%,transparent 16%,rgba(7,3,20,.17) 42%,rgba(1,1,7,.62) 100%);opacity:0;animation:introVeilV95 4.25s ease both;will-change:opacity}
+#bossIntroV9 .introVeil{position:absolute;inset:0;background:radial-gradient(circle at 52% 48%,transparent 16%,rgba(7,3,20,.17) 42%,rgba(1,1,7,.62) 100%);opacity:0;animation:introVeilV95 10.5s ease both;will-change:opacity}
 #bossIntroV9 .sig{position:absolute;left:50%;top:45%;width:min(47vw,420px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.58);border:1px solid rgba(227,218,255,.28);box-shadow:0 0 52px rgba(172,127,255,.24),0 0 130px rgba(91,58,180,.26),inset 0 0 70px rgba(204,181,255,.09);opacity:0;will-change:transform,opacity}
-#bossIntroV9.show .sig{animation:introSigV95 4.15s cubic-bezier(.16,.8,.22,1) both}
+#bossIntroV9.show .sig{animation:introSigV95 10.5s cubic-bezier(.16,.8,.22,1) both}
 #bossIntroV9 .sig:before,#bossIntroV9 .sig:after{content:"";position:absolute;border-radius:50%;inset:13%;border:1px dashed rgba(238,231,255,.27)}
 #bossIntroV9 .sig:before{animation:bossSigSpin 9s linear infinite}
 #bossIntroV9 .sig:after{inset:28%;border-style:solid;border-color:rgba(165,121,255,.30);box-shadow:0 0 30px rgba(178,143,255,.18);animation:bossSigSpinRev 7s linear infinite}
 #bossIntroV9 .moonCrescent{position:absolute;left:50%;top:45%;width:min(26vw,235px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.68);background:radial-gradient(circle at 37% 36%,#fffdec 0 18%,#dcd4ff 46%,#7768bd 74%,#332750 100%);box-shadow:0 0 45px rgba(221,209,255,.48),0 0 105px rgba(125,83,220,.32);opacity:0}
 #bossIntroV9 .moonCrescent:after{content:"";position:absolute;width:82%;height:82%;border-radius:50%;left:30%;top:5%;background:#070718}
-#bossIntroV9.show .moonCrescent{animation:introMoonV95 4.0s ease both}
+#bossIntroV9.show .moonCrescent{animation:introMoonV95 10.5s ease both}
 #bossIntroV9 .introCard{position:absolute;left:50%;bottom:13%;width:min(92vw,860px);transform:translateX(-50%) translateY(14px);text-align:center;text-shadow:0 4px 20px #000;opacity:0;will-change:transform,opacity}
-#bossIntroV9.show .introCard{animation:introCardV95 4.15s cubic-bezier(.16,.8,.22,1) both}
+#bossIntroV9.show .introCard{animation:introCardV95 10.5s cubic-bezier(.16,.8,.22,1) both}
 #bossIntroV9 .kicker{font-size:clamp(8px,1.1vw,11px);font-weight:1000;color:#cdbbff;letter-spacing:5px}
 #bossIntroV9 .title{margin-top:6px;font-family:Georgia,serif;font-size:clamp(30px,5.4vw,64px);font-weight:950;color:#f5efff;letter-spacing:.5px;text-shadow:0 0 20px rgba(224,207,255,.50),0 5px 28px #000}
 #bossIntroV9 .sub{margin-top:5px;font-size:clamp(8px,1.2vw,12px);font-weight:900;color:#bea9e9;letter-spacing:4px}
 #bossIntroV9 .battleChip{display:inline-block;margin-top:10px;padding:5px 12px;border-radius:999px;border:1px solid rgba(239,229,255,.28);background:rgba(9,7,27,.56);font-size:9px;font-weight:1000;letter-spacing:2px;color:#f8e9ff;opacity:0}
-#bossIntroV9.show .battleChip{animation:introChipV95 4.15s ease both}
+#bossIntroV9.show .battleChip{animation:introChipV95 10.5s ease both}
 body.bossIntroLock #ctl1,body.bossIntroLock #ctl2,body.bossIntroLock #desktopHint,body.bossIntroLock #duoWrap{opacity:0!important;pointer-events:none!important}
 body.bossIntroLock #hud,body.bossIntroLock #bossHud,body.bossIntroLock #phase,body.bossIntroLock #trustHud,body.bossIntroLock #netBadge{opacity:.18;transition:opacity .28s}
 @keyframes bossSigSpin{to{transform:rotate(360deg)}}
 @keyframes bossSigSpinRev{to{transform:rotate(-360deg)}}
-@keyframes introVeilV95{0%{opacity:0}10%{opacity:1}76%{opacity:1}100%{opacity:0}}
-@keyframes introSigV95{0%{opacity:0;transform:translate(-50%,-50%) scale(.45) rotate(-16deg)}18%{opacity:.92}62%{opacity:.62;transform:translate(-50%,-50%) scale(1.06) rotate(8deg)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.22) rotate(20deg)}}
-@keyframes introMoonV95{0%{opacity:0;transform:translate(-50%,-50%) scale(.55)}18%{opacity:.82}58%{opacity:.48;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.18)}}
-@keyframes introCardV95{0%,15%{opacity:0;transform:translateX(-50%) translateY(16px)}28%,76%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-4px)}}
-@keyframes introChipV95{0%,42%{opacity:0;transform:scale(.9)}52%,78%{opacity:1;transform:scale(1)}100%{opacity:0}}
+@keyframes introVeilV95{0%{opacity:0}5%{opacity:1}90%{opacity:1}100%{opacity:0}}
+@keyframes introSigV95{0%{opacity:0;transform:translate(-50%,-50%) scale(.42) rotate(-20deg)}9%{opacity:.82}66%{opacity:.46;transform:translate(-50%,-50%) scale(1.02) rotate(12deg)}86%{opacity:.78;transform:translate(-50%,-50%) scale(1.12) rotate(20deg)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.28) rotate(28deg)}}
+@keyframes introMoonV95{0%{opacity:0;transform:translate(-50%,-50%) scale(.50)}8%{opacity:.74}64%{opacity:.34;transform:translate(-50%,-50%) scale(.96)}84%{opacity:.68;transform:translate(-50%,-50%) scale(1.06)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.22)}}
+@keyframes introCardV95{0%,69%{opacity:0;transform:translateX(-50%) translateY(18px)}76%,93%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-5px)}}
+@keyframes introChipV95{0%,78%{opacity:0;transform:scale(.88)}84%,94%{opacity:1;transform:scale(1)}100%{opacity:0}}
 @media (pointer:coarse){
  #bossIntroV9 .sig{width:min(58vw,380px);top:43%}
  #bossIntroV9 .moonCrescent{width:min(31vw,205px);top:43%}
@@ -459,7 +459,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
  <div class="introBar top"></div><div class="introBar bottom"></div>
  <div class="sig"></div><div class="moonCrescent"></div>
  <div class="introCard">
-  <div class="kicker">BOSS ENCOUNTER</div>
+  <div class="kicker">THE ECLIPSE WALTZ</div>
   <div class="title">MA VƯƠNG MẤT NGỦ</div>
   <div class="sub">THE SLEEPLESS MOON</div>
   <div class="battleChip">PHASE I · ĐÊM KHÔNG NGỦ</div>
@@ -539,7 +539,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái ATTACK · Chuột phải / SHIFT DASH · SPACE / E SKILL</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.16.1 HALO BACK SOCKET FIX</span></h1><p style="margin-top:7px">Halo lơ lửng sau đầu–vai, cách lưng rõ ràng và không còn rơi xuống chân.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Upper-back halo socket</span><span class="badge">8-state orb/halo</span><span class="badge">Homing spirit orb</span><span class="badge">Server hit validation</span><span class="badge">ROOT XZ preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#d9caff">V10.16.2 ECLIPSE WALTZ INTRO</span></h1><p style="margin-top:7px">Boss múa dưới nguyệt thực trước khi vào trận; halo theo thân trên bằng socket ảo độc lập.</p><div class="logoMoon"></div><div class="badges"><span class="badge">10.5s Eclipse Waltz</span><span class="badge">Virtual chest/head halo</span><span class="badge">Homing spirit orb</span><span class="badge">Server-synced intro</span><span class="badge">ROOT XZ preserved</span></div><button id="animationLabOpen" class="primary">🎬 MỞ BOSS ANIMATION LAB</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tạo room mới trên server.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Nhập mã hoặc mở link mời.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -548,7 +548,7 @@ body.v107Low #bossPortraitWrap:before{display:none}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.16.1 HALO BACK-SOCKET AUDIT</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.16.2 ECLIPSE WALTZ AUDIT</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -587,22 +587,22 @@ const RIG_ASSETS={
  hero:{url:'/assets/characters/hero.glb',targetHeight:2.30,rootBase:.90},
  princess:{url:'/assets/characters/princess.glb',targetHeight:2.32,rootBase:.90},
  boss:{
-  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.1',
+  url:'/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.2',
   mobileUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.16.1',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.16.1',
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.1'
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.16.2',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_1k.glb?v=10.16.2',
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.2'
   ],
   desktopUrls:[
-   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.1',
-   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.16.1'
+   '/assets/characters/ma_vuong_mat_ngu_root_locked.glb?v=10.16.2',
+   '/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.16.2'
   ],
   targetHeight:4.45,rootBase:1.12
  }
 };
 const BOSS_PROP_ASSETS={
- orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.16.1',
- halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.16.1'
+ orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.16.2',
+ halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.16.2'
 };
 const RIG_ALIASES={
  idle:['idle','stand','breathing'],run:['run','walk','jog'],dash:['dash','dodge','evade','roll'],
@@ -638,10 +638,13 @@ const V1012_BOSS_ACTION_MAP={
 const V1014_PRESENTATION_SEGMENTS={
  introRise:{state:'boss_intro_rise',start:6.65,end:8.15,speed:.92},
  introRoyal:{state:'boss_intro_royal',start:.15,end:2.45,speed:.94},
+ introWaltz:{state:'boss_phase_eternal',start:.55,end:7.10,speed:.90},
+ introFinale:{state:'boss_ultimate',start:.10,end:3.24,speed:.92},
  phase2Charge:{state:'boss_phase_charge',start:.08,end:.78,speed:.55},
  phase2Royal:{state:'boss_intro_royal',start:.15,end:1.05,speed:.72},
  phase3Eternal:{state:'boss_phase_eternal',start:9.60,end:12.10,speed:1.04}
 };
+const BOSS_INTRO_FULL_MS=10500;
 const animationLab={active:false,index:18,speed:1,loop:true,rootLock:true,paused:false,view:0,action:null};
 const animationLabViews=['FRONT','RIGHT','BACK','LEFT'];
 
@@ -672,7 +675,7 @@ let bossSocketFx=null,bossSocketFxStart=0,bossSocketFxUntil=0,bossSocketFxBaseCo
 let deathCinematicStart=0,deathCinematicUntil=0,deathCinematicStats=null,deathCinematicResultShown=false;
 const combatAnim={hero:{type:null,start:0,dur:0},princess:{type:null,start:0,dur:0}};
 let bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};
-let bossIntroV9Until=0,bossIntroV9Played=false,bossIntroV9Start=0,bossIntroV9Duration=4250,bossIntroWaits=0;
+let bossIntroV9Until=0,bossIntroV9Played=false,bossIntroV9Start=0,bossIntroV9Duration=BOSS_INTRO_FULL_MS,bossIntroWaits=0;
 
 // V7.5: mobile-safe scene transition.
 let enteringGame=false,enterRetry=0,enterStateQueued=null,enterSource='',enterTimer=null;
@@ -692,17 +695,20 @@ let bossV104=null,bossV104Phase=1,bossV104Quality='medium',bossV104LastQualityCh
 let bossV106=null,bossV106PhaseActStart=0,bossV106PhaseActUntil=0,bossV106PhaseActPhase=1;
 let bossV106HitStart=0,bossV106HitUntil=0,bossV106HitSide=1,bossV106GestureStart=0,bossV106GestureUntil=0,bossV106Gesture='';
 let bossV106Quality='medium',bossV106LastQualityCheck=0;
-// V10.16.1 — state-driven armament with a dedicated floating upper-back halo socket.
+// V10.16.2 — scene-owned halo follows a virtual Spine02/Head anchor.
 let bossArmament=null;
 const BOSS_HALO_VISUAL_HEIGHT=2.74;
 const BOSS_HALO_BACK_DISTANCE=1.12;
 const BOSS_HALO_CENTER_Y=3.70;
 const BOSS_HALO_HOVER_AMPLITUDE=.055;
 const bossArmamentOrbTarget=new THREE.Vector3(),bossArmamentHaloTarget=new THREE.Vector3(),bossArmamentHandWorld=new THREE.Vector3();
+const bossArmamentHaloChestWorld=new THREE.Vector3(),bossArmamentHaloHeadWorld=new THREE.Vector3(),bossArmamentHaloAnchorWorld=new THREE.Vector3();
+const bossArmamentHaloSpineWorld=new THREE.Vector3(),bossArmamentHaloRightWorld=new THREE.Vector3();
 const bossArmamentOutward=new THREE.Vector3(),bossArmamentAim=new THREE.Vector3(),bossArmamentFxDummy=new THREE.Object3D();
 const bossOrbCloneVisualPos=new THREE.Vector3();
 let bossOrbProjectileStarts=new Map(),bossOrbReleasePulseUntil=0,bossArmamentWeaponFlightUntil=0;
 let bossArmamentHit={kind:'',start:0,until:0,dmg:0};
+let bossArmamentHaloTilt=0,bossArmamentHaloTiltTarget=0;
 // V10.7 unified visual/performance state.
 let v107Quality='medium',v107LastCheck=0,v107StableGood=0,v107StableBad=0;
 let v107CamFocusX=0,v107CamFocusZ=-1.5,v107CamFocusVelX=0,v107CamFocusVelZ=0;
@@ -2389,7 +2395,7 @@ function finishBossVisualAudit(){
  if(rec?.visualAccepted){enforceBossTripoVisibility(rec);playAnimationLabClip(18);animationLab.view=0;updateAnimationLab(0)}
  visualAudit.active=false;visualAudit.done=true;visualAudit.finishedAt=performance.now();visualAudit.passed=visualAudit.issues.length===0;
  visualAudit.stage=visualAudit.passed?'pass':'fail';updateVisualAuditReport();
- $('animationLabStatus').textContent=visualAudit.passed?'V10.16.1 AUDIT · PASS · upper-back halo + Spirit Orb':`V10.16.1 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
+ $('animationLabStatus').textContent=visualAudit.passed?'V10.16.2 AUDIT · PASS · Eclipse Waltz + virtual halo':`V10.16.2 AUDIT · FAIL · ${visualAudit.issues[0]?.code||'UNKNOWN'}`;
  return visualAudit;
 }
 function attachObjectToRigSocket(roleName,obj,type='weapon'){
@@ -2463,7 +2469,7 @@ function ensureBossVisualSafety(now=performance.now()){
  if(!running||!gameInitialized||!boss||now-v1071BossCheckAt<850)return;
  v1071BossCheckAt=now;boss.visible=true;
  const rec=rigRuntime.records.boss;
- // V10.16.1 preserves the one-time bind-pose validation. Animated SkinnedMesh bounds
+ // V10.16.2 preserves the one-time bind-pose validation. Animated SkinnedMesh bounds
  // legitimately change every frame and must never be used as a model switch.
  if(rec?.ready&&rec.model&&rec.visualAccepted){
    enforceBossTripoVisibility(rec);updateBossArmament(0,now);return;
@@ -2588,10 +2594,10 @@ async function loadBossArmament(rec){
    armament.degraded=orbResult.status!=='fulfilled'||haloResult.status!=='fulfilled';
    armament.orbRoot.add(armament.orbModel);armament.haloRoot.add(armament.haloModel);armament.orbAura=createBossOrbAura(armament.orbRoot);armament.stateFx=createBossArmamentStateFx(armament);
    armament.ready=true;updateBossArmament(1,performance.now());
-   console.info('[V10.16.1 halo back socket]',armament.degraded?'fallback':'ready',BOSS_PROP_ASSETS);
+   console.info('[V10.16.2 virtual halo]',armament.degraded?'fallback':'ready',BOSS_PROP_ASSETS);
    return !armament.degraded;
  }catch(err){
-   console.warn('[V10.16.1 halo back socket]',err);disposeBossArmament();return false;
+   console.warn('[V10.16.2 virtual halo]',err);disposeBossArmament();return false;
  }
 }
 function triggerBossArmamentHit(kind,dmg=0){
@@ -2603,6 +2609,10 @@ function resolveBossArmamentState(now){
  const rec=rigRuntime.records.boss;
  if(animationLab.active){
    return ({18:'idle',8:'combat',13:'quick',14:'aoe',12:'teleport',7:'spinKick',17:'ultimate',15:'death',9:'hitHeavy'})[animationLab.index]||'idle';
+ }
+ if(bossIntroActive()){
+   const t=clamp((now-bossIntroV9Start)/Math.max(1,bossIntroV9Duration),0,1);
+   return t<.64?'introWaltz':'introFinale';
  }
  if(deathCinematicActive()||rec?.activeState==='boss_death')return'death';
  if(now<bossArmamentHit.until)return bossArmamentHit.kind==='heavy'?'hitHeavy':'hitLight';
@@ -2616,6 +2626,11 @@ function resolveBossArmamentState(now){
  return ({boss_idle:'idle',boss_combat_idle:'combat',boss_quick_cast:'quick',boss_aoe:'aoe',boss_teleport:'teleport',boss_spin_kick:'spinKick',boss_ultimate:'ultimate',boss_hit:'hitHeavy',boss_death:'death'})[rec?.activeState]||'combat';
 }
 function bossArmamentProgress(state,now){
+ if(state==='introWaltz'||state==='introFinale'){
+   const p=clamp((now-bossIntroV9Start)/Math.max(1,bossIntroV9Duration),0,1);
+   const pre=state==='introFinale'?clamp((p-.64)/.26,0,1):clamp(p/.64,0,1);
+   return {p,pre,after:state==='introFinale'?clamp((p-.90)/.10,0,1):0,serverTime:serverNow()};
+ }
  if(animationLab.active&&animationLab.action){
    const duration=animationLab.action.getClip()?.duration||1,p=clamp(animationLab.action.time/Math.max(.001,duration),0,1);
    return {p,pre:p,after:0,serverTime:serverNow()};
@@ -2658,12 +2673,15 @@ function updateBossArmamentStateFx(arm,state,ctx,dt,now){
    fx.shield.visible=true;fx.shield.scale.setScalar(.86+1.55*p);fx.shield.material.opacity=.54*(1-p);haloJolt=Math.sin(p*Math.PI*5)*.045*(1-p);
  }else if(state==='hitHeavy'){
    fx.shield.visible=true;fx.shield.scale.setScalar(.9+2.2*p);fx.shield.material.opacity=.72*(1-p);haloJolt=Math.sin(p*Math.PI*3)*.20*(1-p);updateBossArmamentShards(arm,p,false);
+ }else if(state==='introWaltz'){
+   fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.88+.10*Math.sin(ctx.pre*Math.PI));fx.haloRunes.rotation.z+=dt*.72;
+   fx.runeA.material.opacity=.10+.18*ctx.pre;fx.runeB.material.opacity=.07+.14*ctx.pre;fx.runeB.rotation.z-=dt*.54;
  }else if(state==='aoe'){
    fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.76+.48*bossArmamentEase(pre));fx.haloRunes.rotation.z+=dt*(1.5+pre*2.8);
    fx.runeA.material.opacity=(.16+.60*pre)*(1-after*.72);fx.runeB.material.opacity=(.10+.46*pre)*(1-after*.78);fx.runeB.rotation.z-=dt*2.4;
  }else if(state==='spinKick'){
    const impact=bossArmamentEase(pre);fx.marker.visible=true;fx.marker.position.set(boss.position.x,.075,boss.position.z);fx.marker.scale.setScalar(.72+1.55*impact+.22*pulse);fx.marker.material.opacity=(.28+.58*impact)*(1-after);fx.marker.rotation.z+=dt*3.4;
- }else if(state==='ultimate'){
+ }else if(state==='ultimate'||state==='introFinale'){
    const link=bossArmamentEase(clamp((pre-.18)/.72,0,1));fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.9+.42*link);fx.haloRunes.rotation.z+=dt*(1.2+link*3.1);
    fx.runeA.material.opacity=.20+.58*link;fx.runeB.material.opacity=.14+.44*link;fx.runeB.rotation.z-=dt*2.1;
    fx.blackMoon.visible=true;fx.blackMoon.scale.setScalar(.18+1.15*link);fx.blackMoon.material.opacity=.10+.82*link;
@@ -2673,6 +2691,36 @@ function updateBossArmamentStateFx(arm,state,ctx,dt,now){
    updateBossArmamentShards(arm,p,true);haloJolt=p*.48;
  }
  return haloJolt;
+}
+function resolveBossHaloVirtualAnchor(rec,now){
+ const chest=rec?.actingBones?.chest,head=rec?.actingBones?.head;
+ const hover=Math.sin(now*.00115)*BOSS_HALO_HOVER_AMPLITUDE;
+ let anchored=false;
+ if(chest&&head&&rec?.model){
+   rec.model.updateMatrixWorld(true);
+   chest.getWorldPosition(bossArmamentHaloChestWorld);head.getWorldPosition(bossArmamentHaloHeadWorld);
+   if([bossArmamentHaloChestWorld.x,bossArmamentHaloChestWorld.y,bossArmamentHaloChestWorld.z,bossArmamentHaloHeadWorld.x,bossArmamentHaloHeadWorld.y,bossArmamentHaloHeadWorld.z].every(Number.isFinite)){
+     bossArmamentHaloAnchorWorld.lerpVectors(bossArmamentHaloChestWorld,bossArmamentHaloHeadWorld,.54);
+     // The mesh's anatomical head pivot sits below the visual crown. This
+     // calibrated lift centers the ring on the visible head/shoulder silhouette.
+     bossArmamentHaloAnchorWorld.y+=.72;
+     let dx=bossArmamentHaloAnchorWorld.x-boss.position.x,dz=bossArmamentHaloAnchorWorld.z-boss.position.z;
+     const span=Math.hypot(dx,dz),maxSpan=.58;
+     if(span>maxSpan){dx*=maxSpan/span;dz*=maxSpan/span;bossArmamentHaloAnchorWorld.x=boss.position.x+dx;bossArmamentHaloAnchorWorld.z=boss.position.z+dz}
+     bossArmamentHaloAnchorWorld.y=clamp(bossArmamentHaloAnchorWorld.y,boss.position.y+3.35,boss.position.y+4.12);
+     bossArmamentHaloSpineWorld.copy(bossArmamentHaloHeadWorld).sub(bossArmamentHaloChestWorld).normalize();
+     bossArmamentHaloRightWorld.set(Math.cos(boss.rotation.y),0,-Math.sin(boss.rotation.y));
+     bossArmamentHaloTiltTarget=clamp(-bossArmamentHaloSpineWorld.dot(bossArmamentHaloRightWorld)*.30,-.14,.14);
+     anchored=true;
+   }
+ }
+ if(!anchored){bossArmamentHaloAnchorWorld.set(boss.position.x,boss.position.y+BOSS_HALO_CENTER_Y,boss.position.z);bossArmamentHaloTiltTarget=0}
+ bossArmamentHaloTarget.set(
+   bossArmamentHaloAnchorWorld.x-Math.sin(boss.rotation.y)*BOSS_HALO_BACK_DISTANCE,
+   clamp(bossArmamentHaloAnchorWorld.y+hover,boss.position.y+3.30,boss.position.y+4.18),
+   bossArmamentHaloAnchorWorld.z-Math.cos(boss.rotation.y)*BOSS_HALO_BACK_DISTANCE
+ );
+ return anchored;
 }
 function updateBossArmament(dt=0,now=performance.now()){
  const arm=bossArmament,rec=rigRuntime.records.boss;if(!arm?.ready||!boss)return;
@@ -2706,17 +2754,18 @@ function updateBossArmament(dt=0,now=performance.now()){
  const torsoY=bossArmamentOrbTarget.y-boss.position.y,torsoRadius=torsoY>1.45&&torsoY<3.75?.74:.48,planar=Math.hypot(dx,dz);
  if(planar<torsoRadius){const outX=planar>.001?dx/planar:bossArmamentOutward.x,outZ=planar>.001?dz/planar:bossArmamentOutward.z;bossArmamentOrbTarget.x+=outX*(torsoRadius-planar);bossArmamentOrbTarget.z+=outZ*(torsoRadius-planar)}
 
- // Halo is scene-owned, never a rig child. The socket stays behind the head and
- // shoulders; a restrained world-space hover cannot be pulled to the feet by
- // hand, hip, root-motion or skirt animation tracks.
- const haloHover=Math.sin(now*.00115)*BOSS_HALO_HOVER_AMPLITUDE;
- bossArmamentHaloTarget.set(
-   boss.position.x-Math.sin(boss.rotation.y)*BOSS_HALO_BACK_DISTANCE,
-   clamp(boss.position.y+BOSS_HALO_CENTER_Y+haloHover,boss.position.y+3.62,boss.position.y+3.78),
-   boss.position.z-Math.cos(boss.rotation.y)*BOSS_HALO_BACK_DISTANCE
- );
+ // Sample the animated upper torso without parenting the halo to the rig.
+ // This keeps it visually attached during the waltz while retaining its own
+ // transform, spring motion, rendering lifecycle and hitbox independence.
+ resolveBossHaloVirtualAnchor(rec,now);
  let orbScale=1,haloScale=1,orbSpin=state==='idle'?.72:state==='combat'?1.85:2.7,haloSpin=state==='idle'?.014:state==='combat'?.038:.11,energy=state==='idle'?.34:.58;
- if(state==='quick'){
+ if(state==='introWaltz'){
+   bossArmamentOrbTarget.y+=.10+.08*Math.sin(ctx.pre*Math.PI*3);bossArmamentOrbTarget.addScaledVector(bossArmamentAim,.035);
+   orbScale=1+.07*Math.sin(ctx.pre*Math.PI*4);haloScale=1+.045*Math.sin(ctx.pre*Math.PI);orbSpin=2.35;haloSpin=.13;energy=.88;
+ }else if(state==='introFinale'){
+   const link=bossArmamentEase(ctx.pre);bossArmamentOrbTarget.lerp(bossArmamentHaloTarget,.72*link);bossArmamentOrbTarget.z+=.08*link;
+   orbScale=1+.76*link;haloScale=1+.16*link;orbSpin=2.1+link*3.6;haloSpin=.31;energy=1.28;
+ }else if(state==='quick'){
    const charge=bossArmamentEase(ctx.pre),release=ctx.after<.18?Math.sin(clamp(ctx.after/.18,0,1)*Math.PI):0;
    bossArmamentOrbTarget.y+=.18*charge;bossArmamentOrbTarget.addScaledVector(bossArmamentAim,.10);orbScale=.98-.34*charge+.48*release;orbSpin=4.8;haloSpin=.10;energy=1.08;
  }else if(state==='aoe'){
@@ -2745,9 +2794,10 @@ function updateBossArmament(dt=0,now=performance.now()){
  const release=now<bossOrbReleasePulseUntil;if(release){orbScale*=1+.12*pulse;energy=Math.max(energy,1.2);orbSpin=Math.max(orbSpin,4.8)}
 
  const immediate=!arm.seeded||visualAudit.active||dt>=.5,follow=immediate?1:1-Math.exp(-Math.max(0,dt)*(state==='ultimate'?16:24));
- arm.orbRoot.position.lerp(bossArmamentOrbTarget,follow);arm.haloRoot.position.lerp(bossArmamentHaloTarget,immediate?1:1-Math.exp(-Math.max(0,dt)*22));arm.seeded=true;
+ arm.orbRoot.position.lerp(bossArmamentOrbTarget,follow);arm.haloRoot.position.lerp(bossArmamentHaloTarget,immediate?1:1-Math.exp(-Math.max(0,dt)*11));arm.seeded=true;
  const haloJolt=updateBossArmamentStateFx(arm,state,ctx,dt,now);
- arm.orbRoot.scale.setScalar(orbScale);arm.haloRoot.scale.setScalar(haloScale);arm.haloRoot.rotation.y=boss.rotation.y;arm.haloRoot.rotation.z=haloJolt;
+ bossArmamentHaloTilt=lerp(bossArmamentHaloTilt,bossArmamentHaloTiltTarget,immediate?1:1-Math.exp(-Math.max(0,dt)*10));
+ arm.orbRoot.scale.setScalar(orbScale);arm.haloRoot.scale.setScalar(haloScale);arm.haloRoot.rotation.y=boss.rotation.y;arm.haloRoot.rotation.z=haloJolt+bossArmamentHaloTilt;
  arm.orbModel.rotation.y+=Math.max(0,dt)*orbSpin;arm.orbModel.rotation.z=Math.sin(now*.0018)*.055;arm.haloModel.rotation.z+=Math.max(0,dt)*haloSpin;
  if(arm.orbAura){arm.orbAura.group.rotation.y=state==='combat'?Math.atan2(bossArmamentAim.x,bossArmamentAim.z)-boss.rotation.y:0;arm.orbAura.a.rotation.z+=Math.max(0,dt)*(orbSpin*1.45);arm.orbAura.b.rotation.x+=Math.max(0,dt)*(orbSpin*.92);arm.orbAura.matA.opacity=.28+.34*energy+.10*pulse;arm.orbAura.matB.opacity=.14+.25*energy+.08*(1-pulse)}
  arm.orbModel.traverse(o=>{const mats=Array.isArray(o.material)?o.material:[o.material];for(const mat of mats)if(mat?.emissive)mat.emissiveIntensity=.28+.50*energy+.13*pulse});
@@ -2810,11 +2860,11 @@ async function loadRigAsset(roleName){
            mats.forEach(m=>{if(m?.map){m.map.anisotropy=Math.min(2,renderer?.capabilities?.getMaxAnisotropy?.()||1);m.map.needsUpdate=true}});
          });
          validateBossRigStatic(rec);rec.visualAccepted=true;
-         // V10.16.1: the host readiness packet is sent only after the hand orb
+         // V10.16.2: the host readiness packet is sent only after the hand orb
          // and independent halo are parsed and included in the precompile.
          await loadBossArmament(rec);rec.armamentReady=!!bossArmament?.ready;
          enforceBossTripoVisibility(rec);model.visible=true;
-         try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.16.1 precompile]',e)}
+         try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.16.2 precompile]',e)}
          notifyBossAssetReady();
          setTimeout(()=>ensureBossVisualSafety(performance.now()),180);
        }
@@ -4126,7 +4176,7 @@ function playBossIntroV9(wait=0){
 
  bossIntroV9Played=true;
  const el=$('bossIntroV9');if(!el)return;
- bossIntroV9Duration=Math.min(4250,Math.max(2700,remaining-100));
+ bossIntroV9Duration=Math.min(BOSS_INTRO_FULL_MS,Math.max(700,remaining-160));
  bossIntroV9Start=performance.now();
  bossIntroV9Until=bossIntroV9Start+bossIntroV9Duration;
  v108IntroAnchor.copy(boss.position);
@@ -4147,18 +4197,19 @@ function playBossIntroV9(wait=0){
  cameraZoomTarget=1;cameraKick=.015;
  setVignette(.34);
 
- startBossV106PhaseAct(1);
- playBossPresentationSegment('introRise',{fade:.06,returnState:'boss_idle'});
- setTimeout(()=>{
-   if(bossIntroActive())playBossPresentationSegment('introRoyal',{fade:.10,returnState:'boss_idle'});
- },1640);
+ // Eclipse Waltz: a clean authored dance from clip 16, then the strongest
+ // final pose from clip 17. Additive acting stays disabled so it cannot
+ // contaminate the dance silhouette.
+ playBossPresentationSegment('introWaltz',{fade:.08,returnState:'boss_idle'});
+ const introAt=(fraction,fn)=>setTimeout(()=>{if(bossIntroActive())fn()},Math.max(0,bossIntroV9Duration*fraction));
+ introAt(.64,()=>playBossPresentationSegment('introFinale',{fade:.16,returnState:'boss_idle'}));
 
- setTimeout(()=>flash('#d8c9ff',mobileDevice?.28:.20,110),360);
- setTimeout(()=>showDialogue('boss','Lại thêm hai kẻ muốn cướp giấc đêm của ta sao?',1750),720);
- setTimeout(()=>flash('#fff6d8',mobileDevice?.18:.12,85),1860);
- setTimeout(()=>showDialogue('hero','Hai người vào một trận boss. Nghe cũng hợp lý đấy.',1550),2460);
+ introAt(.04,()=>flash('#d8c9ff',mobileDevice?.24:.18,120));
+ introAt(.20,()=>showDialogue('boss','Hãy để vũ khúc nguyệt thực ru các ngươi vào giấc ngủ vĩnh hằng.',2450));
+ introAt(.68,()=>flash('#8f60ff',mobileDevice?.30:.22,135));
+ introAt(.82,()=>flash('#fff3d2',mobileDevice?.22:.15,95));
 
- const finishAt=Math.max(2200,bossIntroV9Duration-240);
+ const finishAt=Math.max(600,bossIntroV9Duration-320);
  setTimeout(()=>{
    el.classList.remove('show');
    setVignette(.12);
@@ -5168,34 +5219,25 @@ function updateCam(dt){
    const sm=x=>x*x*(3-2*x);
    const bx=v108IntroAnchor.x,bz=v108IntroAnchor.z;
    const portrait=(camera.aspect||innerWidth/innerHeight)<.82;
-   const introBack=portrait?9.7:8.6;
+   const introBack=portrait?10.0:8.85;
    let px,py,pz,lx=bx,ly=2.35,lz=bz;
 
-   if(t<.24){
-     const u=sm(t/.24);
-     px=lerp(bx-3.5,bx-1.8,u);
-     py=lerp(4.7,4.35,u);
-     pz=lerp(bz+introBack+1.0,bz+introBack,u);
-     ly=lerp(2.20,2.45,u);
-   }else if(t<.53){
-     const u=sm((t-.24)/.29);
-     px=lerp(bx-1.8,bx+.65,u);
-     py=lerp(4.35,4.15,u);
-     pz=lerp(bz+introBack,bz+introBack-.3,u);
-     ly=lerp(2.45,2.38,u);
-   }else if(t<.78){
-     const u=sm((t-.53)/.25);
-     px=lerp(bx+.65,bx+3.1,u);
-     py=lerp(4.15,4.85,u);
-     pz=lerp(bz+introBack-.3,bz+introBack+.8,u);
-     ly=lerp(2.38,2.30,u);
+   if(t<.12){
+     const u=sm(t/.12),angle=lerp(-.38,-.30,u),radius=lerp(introBack+1.8,introBack,u);
+     px=bx+Math.sin(angle)*radius;py=lerp(5.15,4.45,u);pz=bz+Math.cos(angle)*radius;ly=lerp(2.25,2.62,u);
+   }else if(t<.64){
+     const u=sm((t-.12)/.52),angle=lerp(-.30,.48,u),radius=introBack-.22*Math.sin(u*Math.PI);
+     px=bx+Math.sin(angle)*radius;py=4.42-.28*Math.sin(u*Math.PI);pz=bz+Math.cos(angle)*radius;ly=2.62-.10*Math.sin(u*Math.PI);
+   }else if(t<.84){
+     const u=sm((t-.64)/.20),angle=lerp(.48,.06,u),radius=lerp(introBack,portrait?9.35:8.15,u);
+     px=bx+Math.sin(angle)*radius;py=lerp(4.42,4.18,u);pz=bz+Math.cos(angle)*radius;ly=lerp(2.55,2.72,u);
    }else{
-     const u=sm((t-.78)/.22);
+     const u=sm((t-.84)/.16);
      const finalY=portrait?8.75:7.95,finalBack=portrait?17.2:14.5;
-     px=lerp(bx+3.1,v107CamFocusX,u);
-     py=lerp(4.85,finalY,u);
-     pz=lerp(bz+introBack+.8,v107CamFocusZ+finalBack,u);
-     lx=lerp(bx,v107CamFocusX,u);ly=lerp(2.30,2.30,u);lz=lerp(bz,v107CamFocusZ,u);
+     px=lerp(bx+Math.sin(.06)*(portrait?9.35:8.15),v107CamFocusX,u);
+     py=lerp(4.18,finalY,u);
+     pz=lerp(bz+Math.cos(.06)*(portrait?9.35:8.15),v107CamFocusZ+finalBack,u);
+     lx=lerp(bx,v107CamFocusX,u);ly=lerp(2.72,2.30,u);lz=lerp(bz,v107CamFocusZ,u);
    }
    // Frame-rate independent damping hides uneven 30/60 Hz mobile delivery
    // without changing the authoritative cinematic clock.

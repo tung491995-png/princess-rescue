@@ -1,12 +1,12 @@
 {
-  "name": "princess-rescue-v10-16-1-halo-back-socket-fix",
-  "version": "10.16.1",
+  "name": "princess-rescue-v10-16-2-eclipse-waltz-intro",
+  "version": "10.16.2",
   "private": true,
   "type": "commonjs",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "test": "node tests/v10_14_boss_ai_animation_integration.js && node tests/v10_14_teleport_dodge_authority.js && node tests/v10_14_2_visual_error_audit.js && node tests/v10_15_orb_halo_foundation.js && node tests/v10_15_1_orb_projectile_combat.js && node tests/v10_16_orb_state_spirit_weapon.js && node tests/v10_16_1_halo_back_socket_fix.js"
+    "test": "node tests/v10_14_boss_ai_animation_integration.js && node tests/v10_14_teleport_dodge_authority.js && node tests/v10_14_2_visual_error_audit.js && node tests/v10_15_orb_halo_foundation.js && node tests/v10_15_1_orb_projectile_combat.js && node tests/v10_16_orb_state_spirit_weapon.js && node tests/v10_16_1_halo_back_socket_fix.js && node tests/v10_16_2_eclipse_waltz_intro.js"
   },
   "dependencies": {
     "express": "^4.21.2",

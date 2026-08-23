@@ -30,6 +30,7 @@ const SLOT_TTL_MS = 120000;
 const ROOM_TTL_MS = 6 * 60 * 60 * 1000;
 const ROOM_TTL_SEC = Math.ceil(ROOM_TTL_MS / 1000);
 const PERSIST_INTERVAL_MS = 250;
+const BOSS_INTRO_MS = 11000;
 
 // Lag compensation.
 const HISTORY_MS = 1000;
@@ -848,9 +849,9 @@ function reset(room){
 }
 function startMatch(room){
   reset(room);room.state.started=true;room.state.paused=false;room.state.pauseRole=null;
-  // V10.8 gives prewarmed clients enough synchronized grace to finish the
-  // complete 4.25s reveal before the server unlocks gameplay.
-  room.state.introUntil=Date.now()+5000;
+  // V10.16.2 keeps movement, attacks, boss AI and timers locked while both
+  // clients watch the complete 10.5s Eclipse Waltz cinematic.
+  room.state.introUntil=Date.now()+BOSS_INTRO_MS;
   markDirty(room);
 
   // Start gameplay immediately. Persistence must never block the match transition.
@@ -1063,7 +1064,7 @@ app.get('/healthz',(_req,res)=>res.json({
   network:{
     tickHz:TICK_HZ,
     snapshotHz:SNAPSHOT_HZ,
-    renderOptimization:'V10.16.1-upper-back-halo-socket-plus-homing-spirit-weapon',
+    renderOptimization:'V10.16.2-eclipse-waltz-plus-virtual-upper-body-halo',
     combatFeel:'orb-halo-state-machine-two-tier-hit-authoritative-spirit-orb',
     rewindMs:MAX_REWIND_MS,
     hitConfirmMs:HIT_CONFIRM_DELAY_MS,
@@ -1284,5 +1285,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.16.1 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.16.2 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
 })();

@@ -64,7 +64,7 @@ const server = spawn(process.execPath, ['server.js'], {
 let finished = false, started = false;
 const stop = code => { if (finished) return; finished = true; server.kill('SIGTERM'); setTimeout(() => process.exit(code), 80); };
 const fail = error => { console.error(error?.stack || error); stop(1); };
-const timeout = setTimeout(() => fail(new Error('V10.16 orb state/spirit weapon test timed out')), 18000);
+const timeout = setTimeout(() => fail(new Error('V10.16 orb state/spirit weapon test timed out')), 30000);
 
 async function run() {
   const hero = new WebSocket(`ws://127.0.0.1:${port}/ws`);

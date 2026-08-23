@@ -23,7 +23,7 @@ const fail = error => {
   console.error(error?.stack || error);
   stop(1);
 };
-const timeout = setTimeout(() => fail(new Error('V10.15 Orb Halo Foundation test timed out')), 20000);
+const timeout = setTimeout(() => fail(new Error('V10.15 Orb Halo Foundation test timed out')), 34000);
 
 function inspectGlb(buffer) {
   if (buffer.readUInt32LE(0) !== 0x46546c67 || buffer.readUInt32LE(4) !== 2 || buffer.readUInt32LE(8) !== buffer.length) {
@@ -190,7 +190,7 @@ async function run() {
     if (!heroStart || !princessStart) return;
     const state = heroStart;
     const remaining = state.introUntil - Date.now();
-    if (remaining < 4500 || remaining > 5100) throw new Error(`Intro lock mismatch: ${remaining}ms`);
+    if (remaining < 10400 || remaining > 11100) throw new Error(`Intro lock mismatch: ${remaining}ms`);
     if (state.boss?.hp !== 2200 || state.boss?.max !== 2200) throw new Error('Boss HP mismatch');
     if (!attackScheduled) {
       attackScheduled = true;

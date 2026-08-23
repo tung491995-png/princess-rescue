@@ -1,0 +1,19 @@
+PRINCESS RESCUE V10.16.2 — ECLIPSE WALTZ INTRO
+
+Intro timeline
+- 0.0–1.2 s: moon/halo reveal.
+- 1.2–6.7 s: clip 16 Eclipse Waltz with slow camera orbit.
+- 6.7–9.9 s: clip 17 finale, orb/halo link and black-moon buildup.
+- 9.9–10.5 s: boss title climax and return to gameplay camera.
+
+Halo repair
+- Scene-owned; not parented to any animated bone.
+- Virtual anchor blends Spine02 and Head world positions every frame.
+- Follows torso sway using a 90 ms spring and restrained roll.
+- Rear offset, height and lateral clamps preserve the floating silhouette.
+
+Preserved
+- 19 source animations and ROOT XZ lock.
+- Orb weapon states and server-authoritative Spirit Orb.
+- Boss HP, AI, damage, hitboxes, co-op snapshots and mobile asset tiers.
+- No demon/familiar integration in this version.

@@ -1,4 +1,28 @@
-PRINCESS RESCUE 3D — V10.16.1 HALO BACK SOCKET FIX
+PRINCESS RESCUE 3D — V10.16.2 ECLIPSE WALTZ INTRO
+
+ECLIPSE WALTZ CINEMATIC
+=======================
+- Replaces the 4.25 s reveal with a 10.5 s synchronized boss cinematic.
+- Clip 16 supplies the authored dance; clip 17 supplies the final pose.
+- The title waits until the climax instead of covering the first animation.
+- A slow 50–60 degree camera orbit holds the complete boss and halo in frame.
+- The server locks movement, attacks, boss AI and timers for 11.0 seconds.
+
+VIRTUAL HALO ATTACHMENT
+=======================
+- Halo remains scene-owned and never becomes a child of the skeleton.
+- Each rendered frame samples Spine02 and Head world positions.
+- Their blended position becomes a virtual upper-body anchor, so the halo
+  follows leaning, turning and dance motion with a soft 90 ms spring.
+- Vertical and horizontal safety clamps prevent extreme clips from pulling the
+  halo into the skirt, feet or outside the mobile camera.
+- A restrained roll follows upper-body tilt while halo runes spin independently.
+
+SCOPE
+=====
+- No demon/familiar model was added.
+- Combat AI, damage, hitboxes, orb weapon, Spirit Orb, ROOT XZ and co-op
+  synchronization remain unchanged.
 
 HALO POSITION REPAIR
 ====================
