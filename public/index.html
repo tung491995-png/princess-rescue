@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.17.8 — Lobby Connection First</title>
+<title>Princess Rescue V10.17.9 — Parallel Boss Warmup</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -612,7 +612,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái CHÉM · Chuột phải / SHIFT NÉ · SPACE / E KIẾM KHÍ</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.17.8 CONNECTION FIRST</span></h1><p style="margin-top:7px">Kết nối phòng trước, sau đó mới nạp boss Tripo để lobby luôn phản hồi.</p><div class="logoMoon"></div><div class="badges"><span class="badge">120s black box</span><span class="badge">JPG riêng · 1280px</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Camera &amp; FPS QA</span><span class="badge">3-hit sword combo</span><span class="badge">No session data</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.17.9 PARALLEL WARMUP</span></h1><p style="margin-top:7px">Kết nối phòng trước, tải song song boss–orb–halo và chỉ biên dịch một lượt.</p><div class="logoMoon"></div><div class="badges"><span class="badge">120s black box</span><span class="badge">JPG riêng · 1280px</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Camera &amp; FPS QA</span><span class="badge">3-hit sword combo</span><span class="badge">No session data</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div class="logoMoon"></div></div></div>
@@ -621,7 +621,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 
 <div id="animationLab" aria-hidden="true">
  <div id="animationLabPanel">
-  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.17.8 CONNECTION FIRST</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
+  <div id="animationLabTop"><h3>BOSS ANIMATION LAB · V10.17.9 PARALLEL WARMUP</h3><button id="animationLabClose" aria-label="Đóng Animation Lab">✕</button></div>
   <div id="animationLabStatus">Đang nạp boss GLB và 19 clip…</div>
   <select id="animationLabClip" aria-label="Chọn animation"></select>
   <div class="animLabRow"><label for="animationLabSpeed">TỐC ĐỘ</label><input id="animationLabSpeed" type="range" min="0.25" max="2" value="1" step="0.05"><output id="animationLabSpeedValue">1.00×</output></div>
@@ -651,7 +651,7 @@ let interpDelay=100,interpCandidate=100,interpCandidateSince=0;
 let ws=null,role=null,roomCode='',sessionToken='',connected=false,intentionalClose=false,reconnectAttempt=0,reconnectTimer=null;
 let rtt=0,rttJitter=0,lastRttSample=0,serverOffset=0,lastPingSent=0;
 let snapshotJitter=0,lastSnapshotArrival=0,lastStateSeq=0,lossWindow=[],snapshotLoss=0;
-let renderer,scene,camera,A,B,boss,running=false,last=0,cameraZoom=1,cameraZoomTarget=1;
+let renderer,scene,camera,A,B,boss,running=false,last=0,lobbyLastRender=0,cameraZoom=1,cameraZoomTarget=1;
 let latestState=null,snapshotBuffer=[];
 let localInput={x:0,y:0},inputSeq=0,lastInputSend=0,pendingInputs=[],pred={x:0,z:0,rot:0,dashT:0,dashVX:0,dashVZ:0};
 let localReady=false,gameInitialized=false;
@@ -675,6 +675,10 @@ const RIG_ASSETS={
  }
 };
 const BOSS_PROP_ASSETS={
+ orb:'/assets/props/ma_vuong_orb_startup_512.glb?v=10.17.9',
+ halo:'/assets/props/ma_vuong_halo_startup_512.glb?v=10.17.9'
+};
+const BOSS_PROP_FALLBACK_ASSETS={
  orb:'/assets/props/ma_vuong_orb_mobile.glb?v=10.17.2',
  halo:'/assets/props/ma_vuong_halo_mobile.glb?v=10.17.2'
 };
@@ -795,6 +799,7 @@ let v10142VisualErrorSignature='',v10142VisualErrorAt=0;
 const V108_STABLE_PBR=true;
 const V1012_EXTERNAL_BOSS=true;
 let v108PrewarmStarted=false,v108BossReady=false,lobbyPrewarmQueued=false;
+let bossArmamentBufferPromise=null;
 let bossAssetReadyStatus={hero:false,princess:false},lobbyPeerJoined=false,hostStartPending=false,combatTestMode=false;
 const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
 // V10.17.1 — the cinematic owns a fixed viewport and a deterministic camera.
@@ -820,7 +825,7 @@ const visualAudit={
  stage:'idle',checks:0,issues:[],clipResults:[],transitionResults:[],vfxResults:[],startedAt:0,finishedAt:0
 };
 window.__bossVisualAudit=visualAudit;
-const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.17.8',enabled:true})||null;
+const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.17.9',enabled:true})||null;
 window.__runtimeBlackBox=bugRecorder;
 const bugRuntime={lastSampleAt:0,lastCamera:null,bossIdentity:'',bossUrl:'',introScale:null,introViewport:null,lastCastId:null,moveProbe:null,webglLost:false};
 let ignoredExternalRuntimeErrors=0;
@@ -2678,7 +2683,7 @@ function ensureBossVisualSafety(now=performance.now()){
  setBossProceduralFallback(true,'TRIPO_NOT_ACCEPTED');
 }
 
-function loadGlbCandidate(loader,url,timeoutMs){
+function fetchGlbBuffer(url,timeoutMs){
  return new Promise((resolve,reject)=>{
    const controller=typeof AbortController!=='undefined'?new AbortController():null;
    let settled=false;
@@ -2690,10 +2695,30 @@ function loadGlbCandidate(loader,url,timeoutMs){
    fetch(url,{cache:'force-cache',signal:controller?.signal}).then(response=>{
      if(!response.ok)throw new Error(`GLB_HTTP_${response.status}`);
      return response.arrayBuffer();
-   }).then(buffer=>{
-     loader.parse(buffer,'/',gltf=>finish(resolve,gltf),error=>finish(reject,error||new Error('GLB_PARSE_FAILED')));
-   }).catch(error=>finish(reject,error));
+   }).then(buffer=>finish(resolve,buffer)).catch(error=>finish(reject,error));
  });
+}
+function parseGlbBuffer(loader,buffer,timeoutMs){
+ return new Promise((resolve,reject)=>{
+   let settled=false;
+   const finish=(fn,value)=>{if(settled)return;settled=true;clearTimeout(timer);fn(value)};
+   const timer=setTimeout(()=>finish(reject,new Error('GLB_PARSE_TIMEOUT')),timeoutMs);
+   try{loader.parse(buffer,'/',gltf=>finish(resolve,gltf),error=>finish(reject,error||new Error('GLB_PARSE_FAILED')))}
+   catch(error){finish(reject,error)}
+ });
+}
+function loadGlbCandidate(loader,url,timeoutMs){
+ return fetchGlbBuffer(url,timeoutMs).then(buffer=>parseGlbBuffer(loader,buffer,timeoutMs));
+}
+function prefetchBossArmamentBuffers(){
+ if(!bossArmamentBufferPromise){
+   const timeout=mobileDevice?12000:15000;
+   bossArmamentBufferPromise=Promise.allSettled([
+     fetchGlbBuffer(BOSS_PROP_ASSETS.orb,timeout),
+     fetchGlbBuffer(BOSS_PROP_ASSETS.halo,timeout)
+   ]);
+ }
+ return bossArmamentBufferPromise;
 }
 
 function disposeBossArmament(){
@@ -2793,22 +2818,37 @@ function prewarmBossIntroPrograms(arm){
    roots.forEach((root,index)=>root.visible=rootVisible[index]);
  }
 }
-async function loadBossArmament(rec){
+async function loadBossArmament(rec,prefetchedBuffers=null){
  disposeBossArmament();
  const loader=initRigLoader();if(!loader||!scene)return false;
  const armament={ready:false,degraded:false,state:'idle',orbRoot:new THREE.Group(),haloRoot:new THREE.Group(),orbModel:null,haloModel:null,orbAura:null,stateFx:null,extraRoots:[],seeded:false,orbSocketDistance:0,haloFollowDistance:0};
  armament.orbRoot.name='BossOrbWeaponRoot';armament.haloRoot.name='BossFloatingUpperBackHaloSocket';armament.haloRoot.userData.socket='upper-back-floating';
  scene.add(armament.haloRoot,armament.orbRoot);bossArmament=armament;
+ const timeout=mobileDevice?12000:15000;
+ const buffers=prefetchedBuffers?await prefetchedBuffers:null;
+ const loadProp=async(index,url,fallbackUrl)=>{
+   try{
+     if(buffers){
+       const prefetched=buffers[index];
+       if(prefetched?.status!=='fulfilled')throw prefetched?.reason||new Error('PROP_PREFETCH_FAILED');
+       return await parseGlbBuffer(loader,prefetched.value,timeout);
+     }
+     return await loadGlbCandidate(loader,url,timeout);
+   }catch(primaryError){
+     console.warn('[V10.17.9 prop startup fallback]',url,primaryError);
+     return loadGlbCandidate(loader,fallbackUrl,timeout);
+   }
+ };
  const [orbResult,haloResult]=await Promise.allSettled([
-   loadGlbCandidate(loader,BOSS_PROP_ASSETS.orb,mobileDevice?12000:15000),
-   loadGlbCandidate(loader,BOSS_PROP_ASSETS.halo,mobileDevice?12000:15000)
+   loadProp(0,BOSS_PROP_ASSETS.orb,BOSS_PROP_FALLBACK_ASSETS.orb),
+   loadProp(1,BOSS_PROP_ASSETS.halo,BOSS_PROP_FALLBACK_ASSETS.halo)
  ]);
  try{
    armament.orbModel=orbResult.status==='fulfilled'?prepareBossPropModel(orbResult.value.scene||orbResult.value.scenes?.[0],.72,'orb'):makeBossPropFallback('orb');
    armament.haloModel=haloResult.status==='fulfilled'?prepareBossPropModel(haloResult.value.scene||haloResult.value.scenes?.[0],BOSS_HALO_VISUAL_HEIGHT,'halo'):makeBossPropFallback('halo');
    armament.degraded=orbResult.status!=='fulfilled'||haloResult.status!=='fulfilled';
    armament.orbRoot.add(armament.orbModel);armament.haloRoot.add(armament.haloModel);armament.orbAura=createBossOrbAura(armament.orbRoot);armament.stateFx=createBossArmamentStateFx(armament);
-   armament.ready=true;updateBossArmament(1,performance.now());prewarmBossIntroPrograms(armament);
+   armament.ready=true;updateBossArmament(1,performance.now());
    console.info('[V10.16.2 virtual halo]',armament.degraded?'fallback':'ready',BOSS_PROP_ASSETS);
    return !armament.degraded;
  }catch(err){
@@ -3048,6 +3088,11 @@ async function loadRigAsset(roleName){
  if(!cfg||!root||!loader)return false;
  const rec={role:roleName,root,model:null,mixer:null,actions:{},active:null,ready:false,visualAccepted:false,weaponSocket:null,orbSocket:null,vfxSocket:null,clipNames:[],loadedUrl:'',loadAttempt:0};
  rigRuntime.records[roleName]=rec;rigRuntime.status[roleName]='loading';root.userData.rigRecord=rec;
+ const loadStartedAt=performance.now();
+ // Download the two prop GLBs while the boss body is downloading. Parsing is
+ // still sequenced after the boss, keeping main-thread spikes small while
+ // removing the previous boss -> orb/halo network waterfall.
+ const armamentBuffers=roleName==='boss'?prefetchBossArmamentBuffers():null;
  const urls=roleName==='boss'?(mobileDevice?cfg.mobileUrls:cfg.desktopUrls):[cfg.url];
  const candidates=[...new Set((urls||[cfg.url]).filter(Boolean))];
  for(let attempt=0;attempt<candidates.length;attempt++){
@@ -3082,9 +3127,15 @@ async function loadRigAsset(roleName){
          validateBossRigStatic(rec);rec.visualAccepted=true;
          // V10.16.2: the host readiness packet is sent only after the hand orb
          // and independent halo are parsed and included in the precompile.
-         await loadBossArmament(rec);rec.armamentReady=!!bossArmament?.ready;
+         await loadBossArmament(rec,armamentBuffers);rec.armamentReady=!!bossArmament?.ready;
          enforceBossTripoVisibility(rec);model.visible=true;
-         try{renderer?.compile?.(scene,camera)}catch(e){console.warn('[V10.16.2 precompile]',e)}
+         // One combined compile replaces the old armament compile followed by
+         // a second full-scene compile.
+         prewarmBossIntroPrograms(bossArmament);
+         bugRecorder?.record?.('info','BOSS_ASSET_READY',{
+           ms:Math.round(performance.now()-loadStartedAt),url,armamentReady:rec.armamentReady,
+           quality:url.includes('_1k')?'1K':url.includes('_2k')?'2K':'4K'
+         },{capture:false});
          notifyBossAssetReady();
          setTimeout(()=>ensureBossVisualSafety(performance.now()),180);
        }
@@ -5849,7 +5900,10 @@ function frame(now){
      }
      try{ensureBossVisualSafety(now)}catch(err){console.error('[boss watchdog]',err)}
    }
-   if(renderer){
+   const activeRender=running||animationLab.active||visualAudit.active||deathCinematicActive();
+   const shouldRender=activeRender||now-lobbyLastRender>=160||!!bugRecorder?.pendingCapture;
+   if(renderer&&shouldRender){
+     if(!activeRender)lobbyLastRender=now;
      try{renderer.render(scene,camera)}catch(err){v1071VisualFailure(err,'renderer')}
      try{updateRuntimeBlackBox(now,wallDt)}catch(err){bugRecorder?.record?.('error','BLACK_BOX_TICK_FAILED',err,{capture:false})}
      try{bugRecorder?.afterRender?.(renderer.domElement,bugRuntime.lastTelemetry||runtimeBlackBoxTelemetry(now,wallDt))}catch(err){console.warn('[black box capture]',err)}

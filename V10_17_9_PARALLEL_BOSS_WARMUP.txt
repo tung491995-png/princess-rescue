@@ -1,0 +1,16 @@
+PRINCESS RESCUE V10.17.9 — PARALLEL BOSS WARMUP
+
+- Boss body, orb and halo network downloads now overlap.
+- Startup orb/halo use 512px embedded textures while preserving every mesh,
+  node, skin, accessor and animation entry from the mobile GLBs.
+- The original 1K orb/halo remain automatic retry assets if a startup GLB
+  cannot be fetched or parsed.
+- Prop buffers are parsed after the boss to avoid one large main-thread spike.
+- Boss and armament shaders compile together in one pass instead of two.
+- The inactive lobby WebGL background is throttled to about 6 FPS while loading.
+- Versioned GLB and Three.js files use a 30-day immutable browser cache.
+- V10.17.8 connection-first room flow and extension-error filter remain intact.
+
+STARTUP ASSET SIZE
+- Orb: 1,184,716 -> 940,672 bytes.
+- Halo: 1,628,472 -> 725,392 bytes.

@@ -16,7 +16,14 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server, path:'/ws' });
 
-app.use(express.static(path.join(__dirname, 'public')));
+const PUBLIC_DIR = path.join(__dirname, 'public');
+const STATIC_ASSET_OPTIONS = { maxAge:'30d', immutable:true, etag:true };
+// Versioned GLB/vendor URLs are immutable. Returning them directly from the
+// browser cache makes every room after the first load nearly instant, while
+// HTML remains revalidated so new game versions still appear immediately.
+app.use('/assets',express.static(path.join(PUBLIC_DIR,'assets'),STATIC_ASSET_OPTIONS));
+app.use('/vendor',express.static(path.join(PUBLIC_DIR,'vendor'),STATIC_ASSET_OPTIONS));
+app.use(express.static(PUBLIC_DIR,{maxAge:0,etag:true}));
 
 const rooms = new Map();
 let redis = null;

@@ -6,8 +6,8 @@ const root=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'public','index.html'),'utf8');
 
 for(const fragment of [
-  '<title>Princess Rescue V10.17.8 — Lobby Connection First</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.17.8'",
+  '<title>Princess Rescue V10.17.9 — Parallel Boss Warmup</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.17.9'",
   "function scheduleLobbyPrewarm(reason='lobby')",
   "scheduleLobbyPrewarm('created')",
   "scheduleLobbyPrewarm('joined')",

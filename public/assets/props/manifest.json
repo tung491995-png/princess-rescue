@@ -1,18 +1,24 @@
 {
-  "version": "10.15.0",
+  "version": "10.17.9",
   "orb": {
     "file": "ma_vuong_orb_mobile.glb",
+    "startupFile": "ma_vuong_orb_startup_512.glb",
     "sourceTriangles": 1894640,
     "mobileTriangles": 31387,
     "mobileVertices": 17509,
     "textureSize": "1024x1024",
+    "startupTextureSize": "512x512",
+    "startupGeometry": "preserved",
     "socket": "L_Hand"
   },
   "halo": {
     "file": "ma_vuong_halo_mobile.glb",
+    "startupFile": "ma_vuong_halo_startup_512.glb",
     "triangles": 14160,
     "vertices": 10122,
     "textureSize": "1024x1024",
+    "startupTextureSize": "512x512",
+    "startupGeometry": "preserved",
     "attachment": "world-follow, hitbox-independent"
   }
 }
