@@ -12,9 +12,9 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.17.6 — Solo Combat Test Lab</title>',
+  '<title>Princess Rescue V10.17.8 — Lobby Connection First</title>',
   'TẢI DEBUG ZIP','JPG riêng · 1280px','🧪 CHECK 19 ANIMATION',
-  "window.PrincessBlackBox?.init?.({version:'10.17.6'",
+  "window.PrincessBlackBox?.init?.({version:'10.17.8'",
   'function runtimeBlackBoxTelemetry(','entities:{','hero:state?.players?.hero','princess:state?.players?.princess',
   "'INTRO_FRAMEBUFFER_CHANGED'","'INTRO_ANIMATION_MISSING'","'BOSS_OUT_OF_CAMERA'","'ROOT_XZ_DRIFT'",
   "'TRIPO_MODEL_HIDDEN'","'PLAYER_INPUT_NOT_MOVING'","'BOSS_TELEGRAPH_VFX_MISSING'","'HUD_ELEMENT_OFFSCREEN'",
@@ -28,7 +28,7 @@ for(const fragment of [
   "const authorizedCameraReframe=bossCastVisual.cast?.i===3||/^boss_(teleport|spin_kick)$/.test",
   'coneExpected=!cast.teleportAt||serverTime<cast.teleportAt',
   'cone:!!bossTelegraphCone?.visible,coneExpected'
-])if(!html.includes(fragment))throw new Error(`V10.17.6 visual guard missing: ${fragment}`);
+])if(!html.includes(fragment))throw new Error(`V10.17.7 visual guard missing: ${fragment}`);
 
 const hideStart=html.indexOf('function hideBossCastVisual(){');
 const hideEnd=html.indexOf('\nfunction retriggerClass(',hideStart);
@@ -142,5 +142,5 @@ box.afterRender({width:1920,height:1080},{
   const bytes=new Uint8Array(await zip.arrayBuffer()),text=Buffer.from(bytes).toString('latin1');
   if(bytes[0]!==0x50||bytes[1]!==0x4b||!text.includes('debug_log.json')||!text.includes(shot.path))throw new Error('ZIP does not contain separate log and image entries');
 
-  console.log('V10.17.6 SHORT SMOKE PASS · intro finale · Tripo outline guard · teleport telegraph/camera · armament runtime · combat/UI · separate JPG files');
+  console.log('V10.17.8 SHORT SMOKE PASS · intro finale · Tripo outline guard · teleport telegraph/camera · armament runtime · combat/UI · separate JPG files');
 })().catch(error=>{console.error(error);process.exitCode=1});

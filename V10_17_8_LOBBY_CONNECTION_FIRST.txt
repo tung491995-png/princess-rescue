@@ -1,0 +1,8 @@
+PRINCESS RESCUE V10.17.8 — LOBBY CONNECTION FIRST
+
+- WebSocket now opens and returns the room code before Three.js scene creation.
+- Boss, orb and halo loading starts only after the created/joined/resumed response has painted.
+- Mobile tries the 1K Tripo boss first; desktop tries the 2K boss first.
+- Chrome/Firefox/Safari extension errors are ignored by the game error UI and debug recorder.
+- The lobby shows a truthful "connected — creating/joining room" transition.
+- V10.17.7 intro synchronization and Ultimate motion recovery remain unchanged.

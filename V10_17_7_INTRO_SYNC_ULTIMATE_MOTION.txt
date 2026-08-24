@@ -1,0 +1,19 @@
+PRINCESS RESCUE V10.17.7 — INTRO SYNC & ULTIMATE MOTION
+
+DEBUG BUNDLE RESULT
+===================
+- 114 seconds recorded in `boss-only-damage` test mode.
+- Hero and Princess remained at 100 HP; boss fell from 2200 to about 101 HP.
+- Tripo identity stayed constant, procedural fallback stayed hidden and ROOT XZ
+  residual stayed exactly zero.
+- Orb and halo stayed visible; boss remained fully inside the camera envelope.
+
+REPAIRS
+=======
+- Controls unlock by polling the live authoritative intro lock rather than a
+  stale start-snapshot estimate.
+- Intro begins without the 180 ms combat-camera flash and resets the camera
+  diagnostic baseline before the first authored shot.
+- Ultimate no longer holds a frozen final frame: it cross-fades to a slow
+  channeling idle for the remaining VFX recovery window.
+- Cooldown/down rejection includes a server reason and is diagnostic info.

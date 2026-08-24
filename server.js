@@ -520,7 +520,7 @@ function fastForwardPlayerProjectile(room,pr,ms){
 }
 function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
   const s=room.state,p=s.players[role],b=s.boss,f=FOODS[p.food];
-  if(p.down)return{accepted:false,projectiles:[]};
+  if(p.down)return{accepted:false,projectiles:[],reason:'DOWN'};
   actionTs=clampActionTs(actionTs);
   const shooter=sampleHistory(room,role,actionTs);
   const target=sampleHistory(room,'boss',actionTs);
@@ -530,7 +530,7 @@ function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
   // V10.17: the basic action is a true server-authoritative sword strike.
   // Only the Skill action creates ranged projectiles.
   if(!skill){
-    if(p.atkCd>0)return{accepted:false,projectiles:[]};
+    if(p.atkCd>0)return{accepted:false,projectiles:[],reason:'COOLDOWN'};
     p.atkCd=.32;
     const comboNow=Date.now();
     p.combo=comboNow<=(p.comboUntil||0)?((p.combo||0)+1)%3:0;
@@ -568,7 +568,7 @@ function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
     return{accepted:true,projectiles:[],melee:true,hit,combo,target:targetType};
   }
 
-  if(p.skillCd>0)return{accepted:false,projectiles:[]};
+  if(p.skillCd>0)return{accepted:false,projectiles:[],reason:'COOLDOWN'};
   p.skillCd=2.8;
   const base=Math.atan2(dz,dx),n=5;
   const latencyMs=Math.max(0,Date.now()-actionTs);
@@ -1257,7 +1257,7 @@ wss.on('connection',(ws,req)=>{
       }
       if(m.a==='attack'||m.a==='skill'){
         const result=spawnShot(room,role,m.a==='skill',actionTs,aid);
-        send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,melee:!!result.melee,hit:!!result.hit,combo:result.combo,target:result.target,serverTs:Date.now()});
+        send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,melee:!!result.melee,hit:!!result.hit,combo:result.combo,target:result.target,serverTs:Date.now(),reason:result.reason||''});
       }else if(m.a==='dash'){
         dash(room,role,actionTs);
       }else if(m.a==='duo'){

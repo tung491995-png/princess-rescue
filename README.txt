@@ -1,4 +1,16 @@
-PRINCESS RESCUE 3D — V10.17.6 SOLO COMBAT TEST LAB
+PRINCESS RESCUE 3D — V10.17.7 INTRO SYNC & ULTIMATE MOTION
+
+V10.17.7 DEBUG REPAIR
+======================
+- Intro controls now unlock from the continuously corrected server clock,
+  preventing touch/desktop controls from staying hidden after combat begins.
+- The cinematic begins immediately after the game surface is ready and resets
+  the camera diagnostic baseline before its authored opening shot.
+- Ultimate clip 17 cross-fades into a slow channeling idle after its last
+  animated frame while the synchronized Ultimate VFX continue.
+- Expected cooldown/down input rejection is logged as information with an
+  explicit reason instead of flooding the report with warnings.
+- No model, texture, hitbox, ROOT XZ, boss balance or asset changes.
 
 V10.17.6 SOLO COMBAT TEST LAB
 ==============================
