@@ -1,0 +1,12 @@
+PRINCESS RESCUE V10.17.9.1 — DESKTOP 1K STARTUP
+
+- Desktop and mobile both use the 1K Tripo boss in the critical startup path.
+- The desktop startup candidate list no longer contains the 2K boss.
+- The active match never parses, compiles or swaps to the 2K model.
+- After 20 seconds, the 2K file may download at low priority only when:
+  the intro is over, the boss/orb/halo are ready, FPS is stable, the tab is
+  visible and Data Saver / 2G is not active.
+- The 2K response is consumed as a Blob so the browser can retain its immutable
+  HTTP cache entry without constructing another Three.js model.
+- V10.17.9 parallel boss/orb/halo startup, 512px props and all combat/debug
+  behavior remain unchanged.

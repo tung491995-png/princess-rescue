@@ -1,12 +1,12 @@
 {
-  "name": "princess-rescue-v10-17-9-parallel-boss-warmup",
-  "version": "10.17.9",
+  "name": "princess-rescue-v10-17-9-1-desktop-1k-startup",
+  "version": "10.17.9-1",
   "private": true,
   "type": "commonjs",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "test": "node tests/v10_17_3_debug_smoke.js && node tests/v10_17_6_combat_test_lab.js && node tests/v10_17_7_debug_repair.js && node tests/v10_17_8_lobby_connection_first.js && node tests/v10_17_9_parallel_boss_warmup.js"
+    "test": "node tests/v10_17_3_debug_smoke.js && node tests/v10_17_6_combat_test_lab.js && node tests/v10_17_7_debug_repair.js && node tests/v10_17_8_lobby_connection_first.js && node tests/v10_17_9_parallel_boss_warmup.js && node tests/v10_17_9_1_desktop_1k_startup.js"
   },
   "dependencies": {
     "express": "^4.21.2",

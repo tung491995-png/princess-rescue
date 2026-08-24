@@ -18,8 +18,8 @@ function readGlbJson(file){
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.17.9 — Parallel Boss Warmup</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.17.9'",
+  '<title>Princess Rescue V10.17.9.1 — Desktop 1K Startup</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.17.9.1'",
   'function fetchGlbBuffer(url,timeoutMs)',
   'function parseGlbBuffer(loader,buffer,timeoutMs)',
   'function prefetchBossArmamentBuffers()',
