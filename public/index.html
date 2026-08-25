@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.19 — Cinematic Camera &amp; Pose Synchronization</title>
+<title>Princess Rescue V10.19.1 — Pause &amp; Exit Match</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -197,6 +197,22 @@ body.bossIntroLock #qaRecorderBadge{opacity:.42}body.animationLabMode #qaRecorde
 body.animationLabMode #hud,body.animationLabMode #bossHud,body.animationLabMode #phase,body.animationLabMode #trustHud,body.animationLabMode #netBadge,body.animationLabMode #battleChat,body.animationLabMode #ctl1,body.animationLabMode #ctl2,body.animationLabMode #desktopHint,body.animationLabMode #duoWrap,body.animationLabMode #dialogue{display:none!important}
 @media(max-height:500px) and (orientation:landscape){#animationLabPanel{width:min(330px,42vw);padding:8px;font-size:9px;border-radius:14px}#animationLabTop{margin-bottom:4px}#animationLabStatus{padding:5px 7px;margin-bottom:5px}.animLabRow{margin-top:4px;grid-template-columns:72px 1fr 38px}#animationLabButtons{margin-top:5px}#animationLabButtons button{min-height:30px}#animationLabHint{margin-top:5px}}
 
+
+/* V10.19.1 — authoritative in-match pause / exit menu. */
+#pauseGameBtn{position:fixed;z-index:64;right:calc(8px + var(--sr));top:calc(40px + var(--st));width:42px;height:42px;border-radius:14px;border:1px solid rgba(235,226,255,.28);background:linear-gradient(180deg,rgba(24,20,49,.94),rgba(7,8,22,.94));color:#f5f0ff;font:inherit;font-size:17px;font-weight:1000;box-shadow:0 10px 30px rgba(0,0,0,.38),inset 0 0 0 1px rgba(255,255,255,.035);backdrop-filter:blur(10px);pointer-events:auto;touch-action:manipulation}
+#pauseGameBtn:disabled{opacity:.35;filter:saturate(.6);pointer-events:none}
+#gamePauseOverlay{position:fixed;z-index:68;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,3,11,.68);backdrop-filter:blur(8px);pointer-events:auto}
+#gamePauseOverlay.show{display:flex}
+#gamePauseCard{width:min(92vw,430px);padding:22px;border-radius:26px;border:1px solid rgba(225,211,255,.26);background:linear-gradient(180deg,rgba(29,23,59,.97),rgba(7,8,21,.98));box-shadow:0 28px 90px rgba(0,0,0,.64),0 0 42px rgba(135,99,225,.10);text-align:center}
+#gamePauseCard h2{font-size:24px;letter-spacing:.4px}
+#pauseStatus{margin:8px auto 15px;max-width:340px;color:#cfc3e9;font-size:12px;font-weight:750;line-height:1.45}
+#pauseMenuActions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#pauseMenuActions button{min-height:48px;margin:0;border-radius:15px}
+#pauseExitBtn{border:1px solid rgba(255,121,145,.34);background:linear-gradient(180deg,rgba(107,24,48,.74),rgba(48,10,25,.90));color:#ffdbe3}
+#pauseHint{margin-top:11px;color:#9186aa;font-size:9px;font-weight:800}
+body.bossIntroLock #pauseGameBtn{opacity:.30;pointer-events:none}
+body.gameManualPaused #ctl1,body.gameManualPaused #ctl2,body.gameManualPaused #desktopHint,body.gameManualPaused #duoWrap{pointer-events:none!important;filter:saturate(.7)}
+@media(max-height:500px) and (orientation:landscape){#pauseGameBtn{top:calc(31px + var(--st));right:calc(5px + var(--sr));width:38px;height:38px;border-radius:12px;font-size:15px}#gamePauseCard{width:min(78vw,410px);padding:16px 18px;border-radius:20px}#gamePauseCard h2{font-size:20px}#pauseStatus{margin:6px auto 11px;font-size:10px}#pauseMenuActions button{min-height:42px}}
 
 .controls{position:fixed;z-index:25;bottom:calc(10px + var(--sb));pointer-events:none}
 .controls.left{left:calc(8px + var(--sl));width:182px;height:188px}
@@ -607,6 +623,15 @@ body.bossIntroLock #battleChat{opacity:.12}
 <div id="netBadge" class="hidden">● CONNECTING</div><div id="combatTestBadge" class="hidden">🧪 COMBAT TEST · PLAYER HP 100% · ONLY BOSS TAKES DAMAGE</div><div id="banner"></div><div id="favorite"></div>
 <div id="dialogue"><div id="dialogueSpeaker">BOSS</div><div id="dialogueText"></div></div>
 <div id="battleChat" class="hidden"><div class="battleChatLine hero"><span class="who">Anh Hùng:</span><span>Sẵn sàng. Đòn thường dùng kiếm, skill mới bắn xa.</span></div><div class="battleChatLine princess"><span class="who">Công Chúa:</span><span>Để em giữ nhịp Royal Trust nhé ✦</span></div><div class="battleChatLine boss"><span class="who">Ma Vương:</span><span>Thử chạm được vào ta trước đã.</span></div></div>
+<button id="pauseGameBtn" class="hidden" aria-label="Tạm dừng trận" title="Pause (ESC)">Ⅱ</button>
+<div id="gamePauseOverlay" aria-hidden="true">
+ <div id="gamePauseCard">
+  <h2>TRẬN ĐẤU ĐÃ TẠM DỪNG</h2>
+  <div id="pauseStatus">Đang đồng bộ trạng thái tạm dừng…</div>
+  <div id="pauseMenuActions"><button id="pauseResumeBtn" class="primary">▶ TIẾP TỤC</button><button id="pauseExitBtn">THOÁT TRẬN</button></div>
+  <div id="pauseHint">PC: ESC để Pause / tiếp tục · Mobile: chạm nút Ⅱ ở góc phải</div>
+ </div>
+</div>
 <div id="dreamCracks"><div class="dreamCrack"></div><div class="dreamCrack"></div><div class="dreamCrack"></div></div>
 
 <div class="controls left hidden" id="ctl1"><div class="ctlLabel">MOVE</div><div class="joy"><div class="stick"></div></div></div>
@@ -614,7 +639,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái CHÉM · Chuột phải / SHIFT NÉ · SPACE / E KIẾM KHÍ</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.19 CINEMATIC SYNC</span></h1><p style="margin-top:7px">Camera bám timeline animation, nối pose mượt và luôn giữ trọn boss Tripo, orb cùng halo.</p><div class="logoMoon"></div><div class="badges"><span class="badge">8.6s authored intro</span><span class="badge">Smooth pose bridge</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Full-body camera</span><span class="badge">JPG riêng · 1280px</span><span class="badge">Buffered sword combo</span><span class="badge">Server-authoritative combat</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.19.1 PAUSE + EXIT</span></h1><p style="margin-top:7px">Camera bám timeline animation, nối pose mượt và luôn giữ trọn boss Tripo, orb cùng halo.</p><div class="logoMoon"></div><div class="badges"><span class="badge">8.6s authored intro</span><span class="badge">Smooth pose bridge</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Full-body camera</span><span class="badge">JPG riêng · 1280px</span><span class="badge">Buffered sword combo</span><span class="badge">Server-authoritative combat</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><div id="hostAssetGate" class="assetGate"><div class="assetGateTop"><span id="hostAssetLabel">Kết nối máy chủ</span><span id="hostAssetPct">0%</span></div><div class="assetGateTrack"><div id="hostAssetFill" class="assetGateFill"></div></div></div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div id="guestAssetGate" class="assetGate"><div class="assetGateTop"><span id="guestAssetLabel">Kết nối máy chủ</span><span id="guestAssetPct">0%</span></div><div class="assetGateTrack"><div id="guestAssetFill" class="assetGateFill"></div></div></div><div class="logoMoon"></div></div></div>
@@ -758,6 +783,7 @@ let uiLast=0;
 // V6 combat-feel state. No per-hit geometry allocations.
 let actionId=0,predictedShots=[],predictedSwordAids=new Set(),hitStopUntil=0,cameraKick=0,bossHitPulseUntil=0;
 let attackBufferTimer=null,matchResultHandled=false;
+let manualPausePending=false,manualResumePending=false;
 const localActionGate={attackAt:0,skillAt:0,dashAt:0};
 const damageNumberPool=[];
 const damageNumberWorld=new THREE.Vector3();
@@ -842,7 +868,7 @@ const visualAudit={
  stage:'idle',checks:0,issues:[],clipResults:[],transitionResults:[],vfxResults:[],startedAt:0,finishedAt:0
 };
 window.__bossVisualAudit=visualAudit;
-const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.19.0',enabled:true})||null;
+const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.19.1',enabled:true})||null;
 window.__runtimeBlackBox=bugRecorder;
 const bugRuntime={lastSampleAt:0,lastCamera:null,bossIdentity:'',bossUrl:'',introScale:null,introViewport:null,lastCastId:null,moveProbe:null,webglLost:false};
 let ignoredExternalRuntimeErrors=0;
@@ -1153,6 +1179,10 @@ function leaveRoom(){
  combatTestMode=false;
  running=false;
  resetMatchFlow();
+ manualPausePending=false;manualResumePending=false;
+ document.body.classList.remove('gameManualPaused');
+ $('gamePauseOverlay')?.classList.remove('show');$('gamePauseOverlay')?.setAttribute('aria-hidden','true');
+ $('pauseGameBtn')?.classList.add('hidden');
  gameInitialized=false;
  clearKeyboardMove();
  $('desktopHint')?.classList.add('hidden');
@@ -1327,6 +1357,7 @@ function onMessage(m){
    pushSnapshot(m.state);latestState=m.state;applyBossAssetReadyStatus(m.state?.bossAssetsReady);
    syncBossCastFromSnapshot(m.state.cast);
    reconcilePredictedShotsFromSnapshot(m.state);
+   if(running)syncManualPauseUi(m.state);
 
    // If `start` raced with mobile scene creation or UI lifecycle, the next authoritative
    // state snapshot repairs the transition automatically. No manual reload required.
@@ -1349,6 +1380,25 @@ function onMessage(m){
    if(['bossCast','bossEvade','bossTeleportKick','spinKickImpact','phase','summonSpawn','summonDefeated','combatHit','testGuard'].includes(m.e))bugRecorder?.record?.('info',`SERVER_EVENT_${String(m.e).toUpperCase()}`,m.p||{},{capture:false});
    playEvent(m.e,m.p||{});return
  }
+ if(m.type==='manualPause'){
+   if(m.state){pushSnapshot(m.state);latestState=m.state}
+   clearKeyboardMove();clearBufferedPlayerAction();localInput.x=0;localInput.y=0;manualPausePending=false;manualResumePending=false;
+   reconnectOverlay(false);syncManualPauseUi(latestState);banner('TRẬN ĐÃ TẠM DỪNG');
+   return;
+ }
+ if(m.type==='manualResume'){
+   if(m.state){pushSnapshot(m.state);latestState=m.state}
+   manualPausePending=false;manualResumePending=false;syncManualPauseUi(latestState);banner('TIẾP TỤC TRẬN');
+   return;
+ }
+ if(m.type==='pauseAck'){
+   if(!m.ok){manualPausePending=false;manualResumePending=false;syncManualPauseUi(latestState);banner(m.reason==='INTRO'?'PAUSE MỞ SAU INTRO':'KHÔNG THỂ PAUSE LÚC NÀY')}
+   return;
+ }
+ if(m.type==='resumeAck'){
+   if(!m.ok){manualResumePending=false;syncManualPauseUi(latestState);banner('CHƯA THỂ TIẾP TỤC')}
+   return;
+ }
  if(m.type==='pause'){
    if(running)reconnectOverlay(true,`${m.role==='princess'?'Princess':'Hero'} mất mạng — trận đang tạm dừng…`);
    return;
@@ -1356,6 +1406,7 @@ function onMessage(m){
  if(m.type==='resumePlay'){
    resetLossStats();
    finishPendingTest(m.state,'resumePlay');
+   if(m.state){latestState=m.state;manualPausePending=false;manualResumePending=false;syncManualPauseUi(m.state)}
    enterGameFromState(m.state,'resumePlay');
    return;
  }
@@ -4785,7 +4836,48 @@ function gameplayIntroLocked(){
  return !!(until&&serverNow()<until);
 }
 function gameplayInputEnabled(){
- return !!(running&&connected&&role&&!gameplayIntroLocked());
+ return !!(running&&connected&&role&&!gameplayIntroLocked()&&!latestState?.paused);
+}
+function pauseRoleLabel(value){return value==='princess'?'Princess':'Hero'}
+function syncManualPauseUi(state=latestState){
+ const button=$('pauseGameBtn'),overlay=$('gamePauseOverlay'),resume=$('pauseResumeBtn'),status=$('pauseStatus');
+ const manual=!!(state?.paused&&state?.manualPause);
+ if(button){
+   button.classList.toggle('hidden',!running);
+   button.disabled=!running||!connected||gameplayIntroLocked()||!!state?.paused||manualPausePending;
+ }
+ if(!overlay)return;
+ if(!running||!manual){
+   overlay.classList.remove('show');overlay.setAttribute('aria-hidden','true');document.body.classList.remove('gameManualPaused');
+   manualPausePending=false;manualResumePending=false;
+   return;
+ }
+ const owner=state.manualPauseRole||state.pauseRole;
+ const mine=owner===role;
+ overlay.classList.add('show');overlay.setAttribute('aria-hidden','false');document.body.classList.add('gameManualPaused');
+ if(status)status.textContent=mine?'Bạn đã tạm dừng trận. Boss, timer và cả hai người chơi đang đứng yên.':`${pauseRoleLabel(owner)} đang tạm dừng trận. Chờ người đó tiếp tục hoặc bạn có thể thoát trận.`;
+ if(resume){resume.disabled=!mine||manualResumePending;resume.textContent=mine?(manualResumePending?'ĐANG TIẾP TỤC…':'▶ TIẾP TỤC'):'ĐANG CHỜ…'}
+}
+function requestManualPause(){
+ if(!running||!connected)return;
+ if(gameplayIntroLocked()){banner('PAUSE MỞ SAU INTRO');return}
+ if(latestState?.paused){syncManualPauseUi(latestState);return}
+ clearKeyboardMove();clearBufferedPlayerAction();localInput.x=0;localInput.y=0;
+ manualPausePending=true;
+ $('pauseGameBtn')?.setAttribute('disabled','');
+ $('gamePauseOverlay')?.classList.add('show');$('gamePauseOverlay')?.setAttribute('aria-hidden','false');document.body.classList.add('gameManualPaused');
+ if($('pauseStatus'))$('pauseStatus').textContent='Đang gửi lệnh Pause tới server…';
+ if($('pauseResumeBtn')){$('pauseResumeBtn').disabled=true;$('pauseResumeBtn').textContent='ĐANG ĐỒNG BỘ…'}
+ send({type:'pauseRequest'});
+}
+function requestManualResume(){
+ if(!running||!connected||!latestState?.paused||!latestState?.manualPause)return;
+ const owner=latestState.manualPauseRole||latestState.pauseRole;if(owner!==role)return;
+ manualResumePending=true;syncManualPauseUi(latestState);send({type:'resumeRequest'});
+}
+function exitMatchFromPause(){
+ clearKeyboardMove();clearBufferedPlayerAction();localInput.x=0;localInput.y=0;
+ leaveRoom();
 }
 
 function preferredControlMode(){
@@ -4896,11 +4988,13 @@ function bindDesktopCanvas(){
 
 function showGameUI(){
  ['hud','bossHud','phase','trustHud','netBadge','battleChat'].forEach(id=>$(id).classList.remove('hidden'));
+ $('pauseGameBtn')?.classList.remove('hidden');
  showScreen('home');$('home').classList.add('hidden');
  rebind();
  bindDesktopCanvas();
  updateControlMode();
  netLabel();
+ syncManualPauseUi(latestState);
 }
 function acceptInitialState(s){
  if(!s)return;
@@ -5454,7 +5548,8 @@ function startBossDeathCinematic(stats){
  deathCinematicStats=stats;deathCinematicResultShown=false;
  deathCinematicStart=performance.now();deathCinematicUntil=deathCinematicStart+3800;
  running=false;clearKeyboardMove();document.body.classList.add('bossDeathLock');
- ['ctl1','ctl2','desktopHint','duoWrap'].forEach(id=>$(id)?.classList.add('hidden'));
+ ['ctl1','ctl2','desktopHint','duoWrap','pauseGameBtn'].forEach(id=>$(id)?.classList.add('hidden'));
+ $('gamePauseOverlay')?.classList.remove('show');document.body.classList.remove('gameManualPaused');
  $('bossDeathFx')?.classList.add('show');
  $('bossHud')?.classList.add('hidden');$('phase')?.classList.add('hidden');$('trustHud')?.classList.add('hidden');
  playRigAnimation('boss','boss_death',{fade:.055,once:true,speed:.82});
@@ -5469,7 +5564,8 @@ function showFinalResult(win,stats){
  document.body.classList.remove('bossDeathLock');
  $('bossDeathFx')?.classList.remove('show');
  setVignette(.12);cameraZoomTarget=1;resetBossVisualAfterDeath();
- ['hud','bossHud','phase','trustHud','netBadge','battleChat','ctl1','ctl2','desktopHint'].forEach(id=>$(id)?.classList.add('hidden'));
+ ['hud','bossHud','phase','trustHud','netBadge','battleChat','ctl1','ctl2','desktopHint','pauseGameBtn'].forEach(id=>$(id)?.classList.add('hidden'));
+ $('gamePauseOverlay')?.classList.remove('show');document.body.classList.remove('gameManualPaused');
  $('duoWrap').style.display='none';$('royalFx')?.classList.remove('show');clearKeyboardMove();
  $('resultTitle').textContent=win?'VICTORY — BÌNH MINH ✨':'VĨNH DẠ NUỐT CHỬNG 💀';
  $('resultText').innerHTML=win?`Hai người đã cùng hạ Ma Vương Mất Ngủ.<br>Damage: Hero ${stats.hero} · Princess ${stats.princess}<br>Perfect Dash: ${stats.perfect} · Rescue: ${stats.saves}`:'Hai người bị hạ. Room/session nằm trong Redis nên refresh hoặc server restart vẫn có thể reconnect trong thời hạn session.';
@@ -6099,7 +6195,7 @@ function frame(now){
    }else if(animationLab.active&&gameInitialized){
      try{updateAnimationLab(dt);updateEnvironmentV10(now)}catch(err){v1071VisualFailure(err,'animation-lab')}
    }else if(running&&gameInitialized){
-     const visualFrozen=now<hitStopUntil;
+     const visualFrozen=now<hitStopUntil||!!latestState?.paused;
      if(!visualFrozen){
        try{
          simulatePrediction(dt);simulatePredictedShots(dt);
@@ -6196,7 +6292,14 @@ function finish(win,stats){
 
 
 window.addEventListener('keydown',e=>{
- if(!running||controlMode!=='desktop'||gameplayIntroLocked())return;
+ if(!running)return;
+ if(e.code==='Escape'){
+   if(e.repeat)return;
+   if(latestState?.paused&&latestState?.manualPause&&(latestState.manualPauseRole||latestState.pauseRole)===role)requestManualResume();
+   else if(!latestState?.paused)requestManualPause();
+   e.preventDefault();return;
+ }
+ if(controlMode!=='desktop'||gameplayIntroLocked()||latestState?.paused)return;
  const t=e.target;
  if(t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable))return;
 
@@ -6236,6 +6339,9 @@ $('fullVisualQaOpen').onclick=()=>runBossVisualAudit().catch(err=>{
  visualAuditIssue(visualAudit.stage,/webgl context/i.test(message)?'WEBGL_CONTEXT_UNAVAILABLE':'AUDIT_CRASH',message);finishBossVisualAudit();
 });
 $('animationLabOpen').onclick=openAnimationLab;
+$('pauseGameBtn').onclick=requestManualPause;
+$('pauseResumeBtn').onclick=requestManualResume;
+$('pauseExitBtn').onclick=exitMatchFromPause;
 $('animationLabClose').onclick=closeAnimationLab;
 $('animationLabClip').onchange=e=>playAnimationLabClip(Number(e.target.value));
 $('animationLabSpeed').oninput=e=>{

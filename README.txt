@@ -1,4 +1,14 @@
-PRINCESS RESCUE 3D — V10.17.7 INTRO SYNC & ULTIMATE MOTION
+PRINCESS RESCUE 3D — V10.19.1 PAUSE & EXIT MATCH
+
+V10.19.1 PAUSE & EXIT MATCH
+=============================
+- Adds an in-match Pause button on mobile and ESC shortcut on desktop.
+- Pause is server-authoritative: boss AI, player combat, scheduled attacks and timers freeze for both clients.
+- The player who pauses owns Resume; the other client sees a waiting state but can still leave the match.
+- The pause menu contains TIẾP TỤC and THOÁT TRẬN. Exit reuses the existing safe leave/session cleanup path.
+- Pause is locked during the V10.19 cinematic intro so camera/pose synchronization cannot desync.
+- Resume shifts absolute combat timestamps by the paused duration, preserving active casts, tasks, hits, evade locks and combo windows.
+- Manual Pause survives reconnect without unexpectedly auto-resuming.
 
 V10.17.7 DEBUG REPAIR
 ======================

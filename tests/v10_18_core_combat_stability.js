@@ -11,10 +11,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.19.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.19.1')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.19 — Cinematic Camera &amp; Pose Synchronization</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.19.0'",
+  '<title>Princess Rescue V10.19.1 — Pause &amp; Exit Match</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.19.1'",
   'id="hostAssetGate"','id="guestAssetGate"','function setAssetLoadProgress(value,label,state=',
   "setAssetLoadProgress(32,'Đang tải boss Tripo 1K')",
   "setAssetLoadProgress(72,'Boss đã sẵn sàng · đang gắn orb/halo')",

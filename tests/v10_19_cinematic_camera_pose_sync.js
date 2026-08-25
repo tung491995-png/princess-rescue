@@ -11,10 +11,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.19.0')throw new Error(`Wrong V10.19 package version: ${pkg.version}`);
+if(pkg.version!=='10.19.1')throw new Error(`Wrong V10.19 package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.19 — Cinematic Camera &amp; Pose Synchronization</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.19.0'",
+  '<title>Princess Rescue V10.19.1 — Pause &amp; Exit Match</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.19.1'",
   'const BOSS_INTRO_FULL_MS=8600',
   'revealEnd:700,danceStart:700,danceOrbit:1100,danceCross:2800,danceSettle:4300',
   'queenHold:4900,finaleStart:5350,finaleOrbit:5800,finaleHold:7750,combatStart:8150,end:8600',

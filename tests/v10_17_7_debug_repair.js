@@ -7,7 +7,7 @@ const html=fs.readFileSync(path.join(root,'public','index.html'),'utf8');
 const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 
 for(const fragment of [
-  '<title>Princess Rescue V10.19 — Cinematic Camera &amp; Pose Synchronization</title>',
+  '<title>Princess Rescue V10.19.1 — Pause &amp; Exit Match</title>',
   'function scheduleBossIntroUiUnlock(minDelay=0)',
   'scheduleBossIntroUiUnlock(finishAt)',
   'bugRuntime.lastCamera=null',

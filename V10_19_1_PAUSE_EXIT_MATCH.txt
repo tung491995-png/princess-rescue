@@ -1,0 +1,18 @@
+PRINCESS RESCUE V10.19.1 — PAUSE & EXIT MATCH
+
+Mục tiêu
+- Thêm nút Pause khi đang ở trong trận.
+- Menu Pause có TIẾP TỤC và THOÁT TRẬN.
+- Pause là server-authoritative: boss AI, combat simulation và timer dừng cho cả hai máy.
+- Chỉ người đã chủ động Pause mới có quyền Resume; người còn lại thấy trạng thái chờ nhưng vẫn có thể thoát trận.
+- PC hỗ trợ phím ESC; mobile dùng nút Ⅱ góc phải.
+
+Bảo vệ cinematic
+- Nút Pause bị khóa trong intro cinematic để không phá đồng bộ camera/pose V10.19.
+
+Đồng bộ timer
+- Khi Resume, server dịch các timestamp đang hoạt động theo đúng thời lượng Pause: boss cast, scheduled tasks, pending hits, evade/phase locks, combo window, projectile timestamps và intro timer.
+- Mất mạng/reconnect vẫn dùng pause server; manual Pause không bị tự Resume sau reconnect.
+
+Thoát trận
+- THOÁT TRẬN dùng luồng leaveRoom hiện có: gửi leave lên server, dọn session/input/render state và quay về URL game sạch.

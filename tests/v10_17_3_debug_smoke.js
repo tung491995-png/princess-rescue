@@ -12,9 +12,9 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.19 — Cinematic Camera &amp; Pose Synchronization</title>',
+  '<title>Princess Rescue V10.19.1 — Pause &amp; Exit Match</title>',
   'TẢI DEBUG ZIP','JPG riêng · 1280px','🧪 CHECK 19 ANIMATION',
-  "window.PrincessBlackBox?.init?.({version:'10.19.0'",
+  "window.PrincessBlackBox?.init?.({version:'10.19.1'",
   'function runtimeBlackBoxTelemetry(','entities:{','hero:state?.players?.hero','princess:state?.players?.princess',
   "'INTRO_FRAMEBUFFER_CHANGED'","'INTRO_ANIMATION_MISSING'","'BOSS_OUT_OF_CAMERA'","'ROOT_XZ_DRIFT'",
   "'TRIPO_MODEL_HIDDEN'","'PLAYER_INPUT_NOT_MOVING'","'BOSS_TELEGRAPH_VFX_MISSING'","'HUD_ELEMENT_OFFSCREEN'",

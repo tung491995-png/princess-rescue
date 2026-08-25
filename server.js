@@ -97,7 +97,7 @@ function player(role){
 }
 function freshState(){
   return {
-    started:false,paused:false,pauseRole:null,introUntil:0,
+    started:false,paused:false,pauseRole:null,manualPause:false,manualPauseRole:null,pauseStartedAt:0,introUntil:0,
     trust:0,tick:0,
     players:{hero:player('hero'),princess:player('princess')},
     boss:{
@@ -150,6 +150,9 @@ function deserializeRoom(raw){
     state:data.state
   };
   // Runtime-only arrays introduced by newer schemas.
+  room.state.manualPause = room.state.manualPause===true;
+  room.state.manualPauseRole ||= null;
+  room.state.pauseStartedAt ||= 0;
   room.state.pendingHits ||= [];
   room.state.tasks ||= [];
   room.state.nextHit ||= 1;
@@ -168,9 +171,10 @@ function deserializeRoom(raw){
 
   // A process restart drops all sockets. Freeze a running match until both sessions resume.
   if(room.state.started){
+    const now=Date.now();
     room.state.paused=true;
     room.state.pauseRole='server_restart';
-    const now=Date.now();
+    room.state.pauseStartedAt ||= now;
     for(const role of ['hero','princess']){
       if(room.slots[role].token && !room.slots[role].disconnectedAt) room.slots[role].disconnectedAt=now;
     }
@@ -327,6 +331,43 @@ function attach(room,role,ws){
   ws.room=room;ws.role=role;ws.sessionToken=slot.token;ws.isAlive=true;
   markDirty(room);
 }
+function shiftPauseClock(room,delta){
+  if(!(delta>0))return;
+  const s=room.state,shift=v=>Number.isFinite(v)&&v>0?v+delta:v;
+  s.introUntil=shift(s.introUntil);
+  for(const role of ['hero','princess']){
+    const p=s.players?.[role];if(!p)continue;
+    p.comboUntil=shift(p.comboUntil);
+    p.lastDashTs=shift(p.lastDashTs);
+  }
+  const b=s.boss||{};
+  b.evadeInvUntil=shift(b.evadeInvUntil);b.dodgeReadyAt=shift(b.dodgeReadyAt);b.phaseLockUntil=shift(b.phaseLockUntil);
+  if(b.evade){b.evade.startAt=shift(b.evade.startAt);b.evade.endAt=shift(b.evade.endAt)}
+  if(s.activeCast){
+    for(const key of ['startAt','warningAt','impactAt','releaseAt','endAt','teleportAt','kickAt'])s.activeCast[key]=shift(s.activeCast[key]);
+  }
+  for(const hit of s.pendingHits||[]){hit.hitTs=shift(hit.hitTs);hit.applyAt=shift(hit.applyAt)}
+  for(const task of s.tasks||[]){
+    task.dueAt=shift(task.dueAt);
+    if(task.data){for(const key of ['kickAt','impactAt','launchAt','endAt','startAt'])task.data[key]=shift(task.data[key])}
+  }
+  for(const pr of s.projectiles||[])pr.bornAt=shift(pr.bornAt);
+  for(const list of Object.values(room.history||{}))for(const sample of list||[])sample.ts=shift(sample.ts);
+}
+function beginRoomPause(room,role,{manual=false}={}){
+  const s=room.state,now=Date.now();
+  if(!s.paused)s.pauseStartedAt=now;
+  s.paused=true;s.pauseRole=role;
+  if(manual){s.manualPause=true;s.manualPauseRole=role}
+  markDirty(room);
+}
+function resumeRoomPause(room){
+  const s=room.state,now=Date.now();
+  const delta=s.pauseStartedAt?Math.max(0,now-s.pauseStartedAt):0;
+  shiftPauseClock(room,delta);
+  s.paused=false;s.pauseRole=null;s.manualPause=false;s.manualPauseRole=null;s.pauseStartedAt=0;
+  markDirty(room);
+}
 function detach(ws){
   const room=ws.room,role=ws.role;
   if(!room||!role)return;
@@ -337,8 +378,7 @@ function detach(ws){
     broadcast(room,{type:'bossAssetReady',ready:{...room.bossAssetsReady}});
   }
   if(room.state.started&&!(isCombatTest(room)&&role==='princess')){
-    room.state.paused=true;
-    room.state.pauseRole=role;
+    beginRoomPause(room,role);
     broadcast(room,{type:'pause',role,graceMs:SLOT_TTL_MS});
   }
   markDirty(room);
@@ -903,7 +943,7 @@ function reset(room){
   markDirty(room);
 }
 function startMatch(room){
-  reset(room);room.state.started=true;room.state.paused=false;room.state.pauseRole=null;
+  reset(room);room.state.started=true;room.state.paused=false;room.state.pauseRole=null;room.state.manualPause=false;room.state.manualPauseRole=null;room.state.pauseStartedAt=0;
   // V10.19 keeps movement, attacks, boss AI and timers locked for the complete
   // 8.6s synchronized camera/pose timeline plus a 400ms network safety margin.
   room.state.introUntil=Date.now()+BOSS_INTRO_MS;
@@ -1093,7 +1133,7 @@ function tick(room,dt){
 function snapshot(room){
   const s=room.state;
   return {
-    ts:Date.now(),tick:s.tick,trust:s.trust,started:s.started,paused:s.paused,pauseRole:s.pauseRole,introUntil:s.introUntil||0,testMode:room.testMode||'',
+    ts:Date.now(),tick:s.tick,trust:s.trust,started:s.started,paused:s.paused,pauseRole:s.pauseRole,manualPause:!!s.manualPause,manualPauseRole:s.manualPauseRole||null,introUntil:s.introUntil||0,testMode:room.testMode||'',
     bossAssetsReady:{...room.bossAssetsReady},
     connectedRoles:{hero:connected(room,'hero'),princess:connected(room,'princess')},
     players:{
@@ -1183,10 +1223,15 @@ wss.on('connection',(ws,req)=>{
       attach(hit.room,hit.role,ws);
       const room=hit.room;
       if(room.state.started&&matchClientsReady(room)&&matchBossAssetsReady(room)){
-        room.state.paused=false;room.state.pauseRole=null;
-        markDirty(room);
-        await persistRoomNow(room);
-        broadcast(room,{type:'resumePlay',state:snapshot(room)});
+        if(room.state.manualPause){
+          room.state.paused=true;room.state.pauseRole=room.state.manualPauseRole;markDirty(room);
+          await persistRoomNow(room);
+          broadcast(room,{type:'manualPause',role:room.state.manualPauseRole,state:snapshot(room)});
+        }else{
+          resumeRoomPause(room);
+          await persistRoomNow(room);
+          broadcast(room,{type:'resumePlay',state:snapshot(room)});
+        }
       }
       send(ws,{type:'resumed',code:room.code,role:hit.role,token:room.slots[hit.role].token,state:snapshot(room)});
       if(hit.role==='princess')send(room.slots.hero.ws,{type:'peerJoined',role:'princess'});
@@ -1199,11 +1244,35 @@ wss.on('connection',(ws,req)=>{
     if(m.type==='bossAssetReady'){
       room.bossAssetsReady[role]=m.ready===true;
       broadcast(room,{type:'bossAssetReady',ready:{...room.bossAssetsReady}});
-      if(room.state.started&&room.state.paused&&matchClientsReady(room)&&matchBossAssetsReady(room)){
-        room.state.paused=false;room.state.pauseRole=null;markDirty(room);
+      if(room.state.started&&room.state.paused&&!room.state.manualPause&&matchClientsReady(room)&&matchBossAssetsReady(room)){
+        resumeRoomPause(room);
         await persistRoomNow(room);
         broadcast(room,{type:'resumePlay',state:snapshot(room)});
       }
+      return;
+    }
+
+    if(m.type==='pauseRequest'){
+      const s=room.state;
+      if(!s.started){send(ws,{type:'pauseAck',ok:false,reason:'NOT_STARTED'});return}
+      if(s.introUntil&&Date.now()<s.introUntil){send(ws,{type:'pauseAck',ok:false,reason:'INTRO'});return}
+      if(s.paused){send(ws,{type:'pauseAck',ok:false,reason:'ALREADY_PAUSED'});return}
+      beginRoomPause(room,role,{manual:true});
+      await persistRoomNow(room);
+      broadcast(room,{type:'manualPause',role,state:snapshot(room)});
+      send(ws,{type:'pauseAck',ok:true});
+      return;
+    }
+
+    if(m.type==='resumeRequest'){
+      const s=room.state;
+      if(!s.started||!s.paused||!s.manualPause){send(ws,{type:'resumeAck',ok:false,reason:'NOT_MANUAL_PAUSE'});return}
+      if(s.manualPauseRole!==role){send(ws,{type:'resumeAck',ok:false,reason:'NOT_OWNER'});return}
+      if(!matchClientsReady(room)||!matchBossAssetsReady(room)){send(ws,{type:'resumeAck',ok:false,reason:'PEER_NOT_READY'});return}
+      resumeRoomPause(room);
+      await persistRoomNow(room);
+      broadcast(room,{type:'manualResume',role,state:snapshot(room)});
+      send(ws,{type:'resumeAck',ok:true});
       return;
     }
 
@@ -1212,7 +1281,7 @@ wss.on('connection',(ws,req)=>{
       slot.token=null;slot.ws=null;slot.disconnectedAt=null;
       await deleteSession(oldTok);
       if(room.state.started){
-        room.state.started=false;room.state.paused=false;
+        room.state.started=false;room.state.paused=false;room.state.pauseRole=null;room.state.manualPause=false;room.state.manualPauseRole=null;room.state.pauseStartedAt=0;
         broadcast(room,{type:'peerLeft',role});
       }
       if(role==='hero'){
@@ -1312,7 +1381,7 @@ setInterval(async()=>{
         slot.token=null;slot.disconnectedAt=null;
         await deleteSession(oldTok);
         if(room.state.started){
-          room.state.started=false;room.state.paused=false;
+          room.state.started=false;room.state.paused=false;room.state.pauseRole=null;room.state.manualPause=false;room.state.manualPauseRole=null;room.state.pauseStartedAt=0;
           broadcast(room,{type:'peerLeft',role});
         }
         markDirty(room);
@@ -1340,5 +1409,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.16.2 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.19.1 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
 })();
