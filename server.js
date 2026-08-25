@@ -580,7 +580,7 @@ function reaction(a,b){
 }
 function hitBoss(room,pr){
   const s=room.state,b=s.boss,f=FOODS[pr.food],owner=s.players[pr.owner];
-  const now=Date.now(),exposed=now<(b.exposedUntil||0);
+  const now=Number.isFinite(pr.hitTs)?pr.hitTs:Date.now(),exposed=now<(b.exposedUntil||0);
   let weak=f.el==='fresh'?1.25:1,bonus=1;
   if(b.lastEl&&b.lastEl!==f.el&&b.lastElT>0){
     const r=reaction(b.lastEl,f.el);
@@ -612,6 +612,39 @@ function fastForwardPlayerProjectile(room,pr,ms){
     pr.x=x2;pr.z=z2;pr.t-=dt;
   }
 }
+function resolvePlayerSwordImpact(room,strike){
+  const s=room.state,p=s.players[strike.role],b=s.boss;
+  let hit=false,targetType='air',hitX=strike.x+strike.dx*strike.reach,hitZ=strike.z+strike.dz*strike.reach;
+  const endX=hitX,endZ=hitZ;
+  if(p&&!p.down){
+    let nearestSummon=null,nearestSummonDistance=Infinity;
+    for(const summon of s.summons||[]){
+      if(summon.hp<=0||!segmentCircleHit(strike.x,strike.z,endX,endZ,summon.x,summon.z,.66))continue;
+      const distance=Math.hypot(summon.x-strike.x,summon.z-strike.z);
+      if(distance<nearestSummonDistance){nearestSummon=summon;nearestSummonDistance=distance}
+    }
+    const bossDistance=Math.hypot(b.x-strike.x,b.z-strike.z);
+    const bossHit=b.hp>0&&bossCanBeHit(b,strike.impactAt)&&segmentCircleHit(strike.x,strike.z,endX,endZ,b.x,b.z,1.55);
+    if(nearestSummon&&(!bossHit||nearestSummonDistance<bossDistance)){
+      const damage=strike.damage;
+      nearestSummon.hp-=damage;hit=true;targetType='summon';hitX=nearestSummon.x;hitZ=nearestSummon.z;
+      broadcast(room,{type:'event',e:'summonHit',p:{id:nearestSummon.id,dmg:Math.round(damage),hp:Math.max(0,nearestSummon.hp)}});
+      if(nearestSummon.hp<=0){
+        broadcast(room,{type:'event',e:'summonDefeated',p:{id:nearestSummon.id,x:nearestSummon.x,z:nearestSummon.z,y:nearestSummon.y}});
+        s.trust=Math.min(100,s.trust+4);
+      }
+    }else if(bossHit){
+      hit=true;targetType='boss';hitX=b.x;hitZ=b.z;
+      hitBoss(room,{owner:strike.role,aid:strike.aid,food:strike.food,dmg:strike.damage,kind:'sword',combo:strike.combo,finisher:strike.finisher,hitTs:strike.impactAt});
+      s.trust=Math.min(100,s.trust+(strike.finisher?3:1));
+    }
+  }
+  broadcast(room,{type:'event',e:'swordImpact',p:{
+    role:strike.role,aid:strike.aid,combo:strike.combo,finisher:strike.finisher,hit,target:targetType,
+    x:strike.x,z:strike.z,targetX:hitX,targetZ:hitZ,startAt:strike.startAt,impactAt:strike.impactAt
+  }});
+  markDirty(room);
+}
 function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
   const s=room.state,p=s.players[role],b=s.boss,f=FOODS[p.food];
   if(p.down)return{accepted:false,projectiles:[],reason:'DOWN'};
@@ -632,36 +665,17 @@ function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
     p.atkCd=[.27,.30,.40][combo];
     const reach=[2.70,2.78,3.02][combo];
     const damageScale=[1.06,1.18,1.48][combo];
-    let hit=false,targetType='air',hitX=shooter.x+dx*reach,hitZ=shooter.z+dz*reach;
-
-    let nearestSummon=null,nearestSummonDistance=Infinity;
-    for(const summon of s.summons||[]){
-      if(summon.hp<=0)continue;
-      const distance=Math.hypot(summon.x-shooter.x,summon.z-shooter.z);
-      if(distance<=reach&&distance<nearestSummonDistance){
-        nearestSummon=summon;nearestSummonDistance=distance;
-      }
-    }
-    const bossDistance=Math.hypot(target.x-shooter.x,target.z-shooter.z);
-    if(nearestSummon&&nearestSummonDistance<bossDistance){
-      const damage=f.dmg*damageScale;
-      nearestSummon.hp-=damage;hit=true;targetType='summon';hitX=nearestSummon.x;hitZ=nearestSummon.z;
-      broadcast(room,{type:'event',e:'summonHit',p:{id:nearestSummon.id,dmg:Math.round(damage),hp:Math.max(0,nearestSummon.hp)}});
-      if(nearestSummon.hp<=0){
-        broadcast(room,{type:'event',e:'summonDefeated',p:{id:nearestSummon.id,x:nearestSummon.x,z:nearestSummon.z,y:nearestSummon.y}});
-        s.trust=Math.min(100,s.trust+4);
-      }
-    }else if(bossDistance<=reach&&bossCanBeHit(b,actionTs)){
-      hit=true;targetType='boss';hitX=target.x;hitZ=target.z;
-      hitBoss(room,{owner:role,aid,food:p.food,dmg:f.dmg*damageScale,kind:'sword',combo,finisher});
-      s.trust=Math.min(100,s.trust+(finisher?3:1));
-    }
+    const impactDelayMs=[118,138,205][combo],impactAt=actionTs+impactDelayMs;
+    scheduleTask(room,Math.max(0,impactAt-Date.now()),'player_sword_impact',{
+      role,aid,food:p.food,combo,finisher,reach,damage:f.dmg*damageScale,
+      x:shooter.x,z:shooter.z,dx,dz,startAt:actionTs,impactAt
+    });
     broadcast(room,{type:'event',e:'swordSlash',p:{
-      role,aid,combo,finisher,hit,target:targetType,x:shooter.x,z:shooter.z,
-      targetX:hitX,targetZ:hitZ,startAt:actionTs
+      role,aid,combo,finisher,pending:true,x:shooter.x,z:shooter.z,
+      targetX:shooter.x+dx*reach,targetZ:shooter.z+dz*reach,startAt:actionTs,impactAt
     }});
     markDirty(room);
-    return{accepted:true,projectiles:[],melee:true,hit,combo,finisher,target:targetType};
+    return{accepted:true,projectiles:[],melee:true,scheduled:true,combo,finisher,impactAt};
   }
 
   if(p.skillCd>0)return{accepted:false,projectiles:[],reason:'COOLDOWN'};
@@ -704,7 +718,7 @@ function dash(room,role,actionTs=Date.now(),aid=null){
   if(Math.hypot(x,z)<.1){x=Math.sin(p.rot);z=Math.cos(p.rot);}
   [x,z]=norm(x,z);
   p.stamina-=22;p.vx=x*13;p.vz=z*13;p.dash=.25;p.inv=.34;p.lastDashTs=actionTs;
-  broadcast(room,{type:'event',e:'dash',p:{role,x,z,aid}});
+  broadcast(room,{type:'event',e:'dash',p:{role,x,z,aid,startAt:actionTs}});
   markDirty(room);
   return{accepted:true,reason:''};
 }
@@ -720,6 +734,7 @@ function hurt(room,role,n){
   }
   if(p.inv>0||p.down)return;
   p.hp-=n;p.inv=.35;
+  broadcast(room,{type:'event',e:'playerHit',p:{role,dmg:n,hp:Math.max(0,p.hp),ts:Date.now()}});
   if(p.hp<=0){
     p.hp=0;p.down=true;p.revive=3.2;
     broadcast(room,{type:'event',e:'banner',p:{msg:`${role==='princess'?'Công chúa':'Hero'} bị hạ!`}});
@@ -839,7 +854,9 @@ function scheduleTask(room,delayMs,type,data={}){
 function runTask(room,task){
   const s=room.state,b=s.boss;
   if(!s.started||s.paused)return;
-  if(task.type==='start_dark_pool'){
+  if(task.type==='player_sword_impact'){
+    resolvePlayerSwordImpact(room,task.data);
+  }else if(task.type==='start_dark_pool'){
     const b=s.boss;
     s.darkPool={x:b.x,z:b.z,r:.5,t:1.6};
   }else if(task.type==='boss_radial'){
@@ -1277,7 +1294,7 @@ app.get('/healthz',(_req,res)=>res.json({
     tickHz:TICK_HZ,
     snapshotHz:SNAPSHOT_HZ,
     renderOptimization:'V10.16.2-eclipse-waltz-plus-virtual-upper-body-halo',
-    combatFeel:'v10.21-three-phase-boss-combat-director-punish-windows',
+    combatFeel:'v10.22-server-timed-sword-impact-player-animation-vfx',
     bossDirector:{thresholds:[70,35],exposedDamageMultiplier:BOSS_EXPOSE_DAMAGE_MULTIPLIER},
     rewindMs:MAX_REWIND_MS,
     hitConfirmMs:HIT_CONFIRM_DELAY_MS,
@@ -1452,7 +1469,7 @@ wss.on('connection',(ws,req)=>{
       }
       if(m.a==='attack'||m.a==='skill'){
         const result=spawnShot(room,role,m.a==='skill',actionTs,aid);
-        send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,melee:!!result.melee,hit:!!result.hit,combo:result.combo,finisher:!!result.finisher,target:result.target,style:result.style||'',serverTs:Date.now(),reason:result.reason||''});
+        send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,melee:!!result.melee,scheduled:!!result.scheduled,hit:!!result.hit,combo:result.combo,finisher:!!result.finisher,target:result.target,impactAt:result.impactAt||0,style:result.style||'',serverTs:Date.now(),reason:result.reason||''});
       }else if(m.a==='dash'){
         const result=dash(room,role,actionTs,aid);
         send(ws,{type:'actionAck',a:'dash',aid,accepted:result.accepted,projectiles:[],serverTs:Date.now(),reason:result.reason||''});
@@ -1529,5 +1546,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.21 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.22 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
 })();

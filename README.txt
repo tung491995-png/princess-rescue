@@ -1,4 +1,13 @@
-PRINCESS RESCUE 3D — V10.21 BOSS PHASE & COMBAT DIRECTOR
+PRINCESS RESCUE 3D — V10.22 PLAYER COMBAT ANIMATION & SKILL VFX
+
+V10.22 PLAYER COMBAT ANIMATION & SKILL VFX
+===========================================
+- Schedules sword damage at the authored contact frame instead of applying it at button-down.
+- Keeps movement unlocked while blending three distinct sword poses and recovery arcs.
+- Adds pooled world-space slash crescents, dash afterimages and player hit-reaction rings.
+- Gives Hero a blue Stellar Crescent launch bloom and Princess a pink-gold seven-petal Rose Bloom.
+- Adds server-authoritative playerHit events so both clients see the same recoil timing.
+- Preserves V10.21 boss patterns, punish windows, movement separation, Pause/Exit and cinematic camera.
 
 V10.21 BOSS PHASE & COMBAT DIRECTOR
 ====================================

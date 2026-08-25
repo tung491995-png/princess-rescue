@@ -1,0 +1,27 @@
+PRINCESS RESCUE V10.22 — PLAYER COMBAT ANIMATION & SKILL VFX
+==============================================================
+
+MỤC TIÊU
+- Làm đòn đánh của Hero và Princess có nhịp chém, điểm va chạm và phản hồi rõ như một game hành động thật.
+- Giữ nguyên boss director V10.21, di chuyển, Pause/Exit, cinematic và toàn bộ asset không liên quan.
+
+THAY ĐỔI CHÍNH
+1. Kiếm cận chiến gây sát thương đúng contact frame: 118 ms, 138 ms và 205 ms cho ba nhát combo.
+2. Ba nhát chém có pose, hướng quét, thời gian hồi và vệt kiếm khác nhau; nhát thứ ba là finisher mạnh nhất.
+3. Vệt chém world-space được lấy từ pool 5 phần tử, không tạo geometry mới trong mỗi frame.
+4. Dash có pool 6 afterimage để tăng cảm giác tốc độ mà vẫn phù hợp thiết bị di động.
+5. Hero có Stellar Crescent màu lam: 3 kiếm khí tập trung.
+6. Princess có Rose Bloom hồng-vàng: cụm 7 cánh hoa dẫn vào 5 kiếm khí tỏa quạt.
+7. Khi người chơi nhận sát thương, server phát playerHit để cả hai máy đồng bộ recoil và vòng va chạm.
+8. Pause dịch cả startAt/impactAt của đòn kiếm đang chờ, tránh sát thương chạy trong lúc tạm dừng.
+
+KHÔNG THAY ĐỔI
+- HP, hitbox, boss phase, pattern, punish window x1.30.
+- Camera intro/cinematic, model Tripo, orb/halo và các asset môi trường.
+- Hệ thống Pause + Exit Match và chế độ Solo Combat Test.
+
+KIỂM TRA
+- Cú pháp server và toàn bộ JavaScript nhúng trong trang.
+- Sát thương cận chiến không xảy ra ngay lúc bấm mà chỉ xảy ra tại contact frame.
+- Combo 0 → 1 → 2, finisher, skill riêng của hai vai trò và giới hạn khoảng cách boss.
+- Di chuyển/dash gần boss, Pause/Exit, boss director, debug recorder và asset startup không hồi quy.

@@ -11,10 +11,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.21.0')throw new Error(`Wrong V10.21 package version: ${pkg.version}`);
+if(pkg.version!=='10.22.0')throw new Error(`Wrong V10.22 package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.21'",
+  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.22'",
   'const BOSS_INTRO_FULL_MS=8600',
   'const V10192_CAMERA_KEYS=Object.freeze([',
   'function v10192CameraTangent(keys,index,property)',

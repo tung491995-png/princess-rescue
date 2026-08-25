@@ -13,10 +13,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.21.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.22.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.21'",
+  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.22'",
   "let actionId=0,predictedShots=[],predictedSwordAids=new Set(),predictedDashAid=''",
   "const aid=`${role}-dash-${++actionId}`",
   "send({type:'action',a:'dash',aid,st:Date.now()+serverOffset})",
@@ -37,7 +37,7 @@ for(const fragment of [
   'if(outwardVelocity<0){player.vx-=outwardVelocity*nx;player.vz-=outwardVelocity*nz}',
   'if(p.lastInputAt&&now-p.lastInputAt>INPUT_STALE_MS)',
   'resolvePlayerBossOverlap(H,b);resolvePlayerBossOverlap(P,b)',
-  "broadcast(room,{type:'event',e:'dash',p:{role,x,z,aid}})",
+  "broadcast(room,{type:'event',e:'dash',p:{role,x,z,aid,startAt:actionTs}})",
   "send(ws,{type:'actionAck',a:'dash',aid,accepted:result.accepted"
 ])if(!serverSource.includes(fragment))throw new Error(`V10.19.4 server movement guard missing: ${fragment}`);
 

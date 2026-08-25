@@ -13,10 +13,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(!['10.20.0','10.21.0'].includes(pkg.version))throw new Error(`Wrong package version: ${pkg.version}`);
+if(!['10.20.0','10.21.0','10.22.0'].includes(pkg.version))throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  pkg.version==='10.21.0'?'<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>':'<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
-  pkg.version==='10.21.0'?"window.PrincessBlackBox?.init?.({version:'10.21'":"window.PrincessBlackBox?.init?.({version:'10.20'",
+  pkg.version==='10.22.0'?'<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>':pkg.version==='10.21.0'?'<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>':'<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
+  pkg.version==='10.22.0'?"window.PrincessBlackBox?.init?.({version:'10.22'":pkg.version==='10.21.0'?"window.PrincessBlackBox?.init?.({version:'10.21'":"window.PrincessBlackBox?.init?.({version:'10.20'",
   'id="combatLock"',
   'id="comboFeedback"',
   'function combatLockCandidates(s)',
@@ -62,23 +62,26 @@ function run(){
   const hero=new WebSocket(`ws://127.0.0.1:${port}/ws`);
   const princess=new WebSocket(`ws://127.0.0.1:${port}/ws`);
   let room='',startRequested=false,introScheduled=false,seq=0,latest=null,approachTimer=null,comboScheduled=false;
-  const slashByAid=new Map(),hitByAid=new Map(),ackByAid=new Map();
+  const slashByAid=new Map(),impactByAid=new Map(),hitByAid=new Map(),ackByAid=new Map();
   let heroSkillAck=null,princessSkillAck=null,heroSkillStyle=false,princessSkillStyle=false,minGap=Infinity;
 
   const finish=()=>{
     if(done)return;
     const attacks=['v1020-slash-0','v1020-slash-1','v1020-slash-2'];
-    if(!attacks.every(a=>slashByAid.has(a)&&ackByAid.has(a)))return;
+    if(!attacks.every(a=>slashByAid.has(a)&&impactByAid.has(a)&&ackByAid.has(a)))return;
     if(!heroSkillAck||!princessSkillAck||!heroSkillStyle||!princessSkillStyle)return;
     const slashes=attacks.map(a=>slashByAid.get(a));
     if(slashes.map(s=>s.combo).join(',')!=='0,1,2')throw new Error(`Unexpected combo order: ${JSON.stringify(slashes)}`);
     if(slashes[0].finisher||slashes[1].finisher||!slashes[2].finisher)throw new Error(`Finisher flags are wrong: ${JSON.stringify(slashes)}`);
-    if(!slashes.every(s=>s.target==='boss'&&s.hit))throw new Error(`Sword lock/range failed: ${JSON.stringify(slashes)}`);
-    if(!attacks.every(a=>ackByAid.get(a).melee&&ackByAid.get(a).projectiles.length===0))throw new Error('Melee ack created projectiles');
+    const impacts=attacks.map(a=>impactByAid.get(a));
+    if(!impacts.every(s=>s.target==='boss'&&s.hit))throw new Error(`Sword lock/range failed: ${JSON.stringify(impacts)}`);
+    if(!attacks.every(a=>ackByAid.get(a).melee&&ackByAid.get(a).scheduled&&ackByAid.get(a).impactAt>0&&ackByAid.get(a).projectiles.length===0))throw new Error('Timed melee ack is incomplete or created projectiles');
     const finisherHit=hitByAid.get('v1020-slash-2');
     if(!finisherHit?.finisher||finisherHit.combo!==2||finisherHit.kind!=='sword')throw new Error(`Finisher hit metadata missing: ${JSON.stringify(finisherHit)}`);
-    if(heroSkillAck.style!=='STELLAR_CRESCENT'||heroSkillAck.projectiles.length!==3||!heroSkillAck.projectiles.every(p=>p.kind==='starWave'))throw new Error(`Hero skill profile mismatch: ${JSON.stringify(heroSkillAck)}`);
-    if(princessSkillAck.style!=='ROSE_FAN'||princessSkillAck.projectiles.length!==5||!princessSkillAck.projectiles.every(p=>p.kind==='roseWave'))throw new Error(`Princess skill profile mismatch: ${JSON.stringify(princessSkillAck)}`);
+    // A lag-compensated skill may hit the boss during fast-forward, so its
+    // projectiles legitimately disappear before the ACK snapshot is built.
+    if(!heroSkillAck.accepted||heroSkillAck.style!=='STELLAR_CRESCENT'||heroSkillAck.projectiles.length>3||!heroSkillAck.projectiles.every(p=>p.kind==='starWave'))throw new Error(`Hero skill profile mismatch: ${JSON.stringify(heroSkillAck)}`);
+    if(!princessSkillAck.accepted||princessSkillAck.style!=='ROSE_FAN'||princessSkillAck.projectiles.length>5||!princessSkillAck.projectiles.every(p=>p.kind==='roseWave'))throw new Error(`Princess skill profile mismatch: ${JSON.stringify(princessSkillAck)}`);
     if(minGap<.985)throw new Error(`V10.19.4 boss separation regressed: ${minGap}`);
     clearInterval(approachTimer);hero.close();princess.close();
     console.log(`V10.20 COMBAT FEEL PASS · soft lock HUD · combo 0→1→2 finisher · Hero 3 focused waves · Princess 5 rose waves · boss gap ${minGap.toFixed(2)}m`);
@@ -114,6 +117,7 @@ function run(){
       if(message.aid==='v1020-princess-skill')princessSkillAck=message;
     }
     if(message.type==='event'&&message.e==='swordSlash')slashByAid.set(message.p?.aid,message.p);
+    if(message.type==='event'&&message.e==='swordImpact')impactByAid.set(message.p?.aid,message.p);
     if(message.type==='event'&&message.e==='combatHit')hitByAid.set(message.p?.aid,message.p);
     if(message.type==='event'&&message.e==='actionAnim'&&message.p?.aid==='v1020-hero-skill'&&message.p.style==='STELLAR_CRESCENT')heroSkillStyle=true;
     if(message.type==='event'&&message.e==='actionAnim'&&message.p?.aid==='v1020-princess-skill'&&message.p.style==='ROSE_FAN')princessSkillStyle=true;

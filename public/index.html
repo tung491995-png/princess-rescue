@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>
+<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -652,7 +652,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái CHÉM · Chuột phải / SHIFT NÉ · SPACE / E KIẾM KHÍ</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.21 BOSS DIRECTOR</span></h1><p style="margin-top:7px">Ba phase có chuỗi đòn riêng · báo hiệu rõ · phản công gây thêm 30% sát thương.</p><div class="logoMoon"></div><div class="badges"><span class="badge">3 authored boss phases</span><span class="badge">Pattern director</span><span class="badge">Punish window · x1.30</span><span class="badge">No immediate skill repeat</span><span class="badge">Soft target lock</span><span class="badge">3-hit finisher chain</span><span class="badge">Buffered sword combo</span><span class="badge">Hero · Stellar Crescent</span><span class="badge">Princess · Rose Fan</span><span class="badge">Dash echo dedupe</span><span class="badge">Boss collision slide</span><span class="badge">JPG riêng · 1280px</span><span class="badge">Pause + Exit</span><span class="badge">Server-authoritative combat</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tinh Nguyệt Trảm · ba kiếm khí hội tụ.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Hoàng Gia Hoa Vũ · năm kiếm khí tỏa quạt.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.22 PLAYER COMBAT</span></h1><p style="margin-top:7px">Nhát chém khớp hit · dash có afterimage · Hero/Princess có skill VFX riêng.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Server-timed sword impact</span><span class="badge">3 distinct slash arcs</span><span class="badge">Dash afterimage pool</span><span class="badge">Player hit reaction</span><span class="badge">Hero · Stellar Crescent</span><span class="badge">Princess · Rose Bloom</span><span class="badge">3 authored boss phases</span><span class="badge">Punish window · x1.30</span><span class="badge">Soft target lock</span><span class="badge">Buffered sword combo</span><span class="badge">Boss collision slide</span><span class="badge">JPG riêng · 1280px</span><span class="badge">Pause + Exit</span><span class="badge">Server-authoritative combat</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tinh Nguyệt Trảm · ba kiếm khí hội tụ.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Hoàng Gia Hoa Vũ · năm kiếm khí tỏa quạt.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><div id="hostAssetGate" class="assetGate"><div class="assetGateTop"><span id="hostAssetLabel">Kết nối máy chủ</span><span id="hostAssetPct">0%</span></div><div class="assetGateTrack"><div id="hostAssetFill" class="assetGateFill"></div></div></div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div id="guestAssetGate" class="assetGate"><div class="assetGateTop"><span id="guestAssetLabel">Kết nối máy chủ</span><span id="guestAssetPct">0%</span></div><div class="assetGateTrack"><div id="guestAssetFill" class="assetGateFill"></div></div></div><div class="logoMoon"></div></div></div>
@@ -819,6 +819,7 @@ const localSwordCombo={hero:{combo:-1,until:0},princess:{combo:-1,until:0}};
 const combatLockProjection=new THREE.Vector3();
 let combatLockTargetKey='',combatLockLastTarget=null,comboFeedbackTimer=null,comboFeedbackToken=0;
 let lastRigBossHitAt=0;
+const playerSkillFxAids=new Set();
 let bossExposedUntil=0,bossExposeStartedAt=0,bossExposeDuration=0,bossPatternName='';
 
 // V9.6 presentation state.
@@ -903,7 +904,7 @@ const visualAudit={
  stage:'idle',checks:0,issues:[],clipResults:[],transitionResults:[],vfxResults:[],startedAt:0,finishedAt:0
 };
 window.__bossVisualAudit=visualAudit;
-const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.21',enabled:true})||null;
+const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.22',enabled:true})||null;
 window.__runtimeBlackBox=bugRecorder;
 const bugRuntime={lastSampleAt:0,lastCamera:null,bossIdentity:'',bossUrl:'',introScale:null,introViewport:null,lastCastId:null,moveProbe:null,webglLost:false};
 let ignoredExternalRuntimeErrors=0;
@@ -1537,6 +1538,42 @@ function makeRoyalBlade(holder,role){
  };
  return holder.userData.royalBlade;
 }
+function makePlayerCombatFx(character,roleName){
+ const hero=roleName==='hero',primary=hero?0x72ddff:0xff8bd5,accent=hero?0xe7faff:0xffdda3;
+ const root=new THREE.Group();root.name=`${roleName}_CombatFxPool`;scene.add(root);
+ const slash=[];
+ for(let i=0;i<5;i++){
+   const group=new THREE.Group(),mat=new THREE.MeshBasicMaterial({color:primary,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+   const hotMat=new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+   const arc=new THREE.Mesh(new THREE.TorusGeometry(1.02,.065,6,38,Math.PI*1.38),mat);
+   const hot=new THREE.Mesh(new THREE.TorusGeometry(1.02,.020,5,38,Math.PI*1.38),hotMat);hot.position.z=.012;
+   group.add(arc,hot);group.visible=false;group.userData={arc,hot,mat,hotMat,start:0,until:0,combo:0,hit:false};root.add(group);slash.push(group);
+ }
+ const dash=[];
+ for(let i=0;i<6;i++){
+   const group=new THREE.Group(),mat=new THREE.MeshBasicMaterial({color:primary,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending});
+   const body=new THREE.Mesh(new THREE.ConeGeometry(.34,1.42,10),mat);body.position.y=.82;
+   const head=new THREE.Mesh(new THREE.SphereGeometry(.29,12,8),mat);head.position.y=1.67;
+   group.add(body,head);group.visible=false;group.userData={mat,start:0,until:0};root.add(group);dash.push(group);
+ }
+ const skill=new THREE.Group(),skillMat=new THREE.MeshBasicMaterial({color:primary,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+ const skillHotMat=new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+ const skillRing=new THREE.Mesh(new THREE.TorusGeometry(.62,.045,6,40),skillMat);skillRing.rotation.x=Math.PI/2;skill.add(skillRing);
+ if(hero){
+   const crescent=new THREE.Mesh(new THREE.TorusGeometry(.82,.075,6,44,Math.PI*1.46),skillHotMat);crescent.position.y=1.25;crescent.rotation.z=-2.35;skill.add(crescent);skill.userData.shape=crescent;
+ }else{
+   const petals=new THREE.Group();
+   for(let i=0;i<7;i++){
+     const a=i/7*Math.PI*2,petal=new THREE.Mesh(new THREE.SphereGeometry(.15,10,7),i%2?skillHotMat:skillMat);
+     petal.scale.set(.50,1.35,.26);petal.position.set(Math.cos(a)*.72,1.18+Math.sin(a)*.72,0);petal.rotation.z=a-Math.PI/2;petals.add(petal);
+   }
+   skill.add(petals);skill.userData.shape=petals;
+ }
+ skill.visible=false;skill.userData={...skill.userData,ring:skillRing,mat:skillMat,hotMat:skillHotMat,start:0,until:0,role:roleName};root.add(skill);
+ const hitMat=new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+ const hit=new THREE.Mesh(new THREE.TorusGeometry(.42,.035,6,30),hitMat);hit.rotation.x=Math.PI/2;hit.visible=false;hit.userData={mat:hitMat,start:0,until:0};root.add(hit);
+ const fx={root,slash,dash,skill,hit,primary,accent,role:roleName};character.userData.combatFx=fx;character.userData.combatFxRoot=root;return fx;
+}
 function makeChar(role){
  const r=new THREE.Group(),h=role==='hero',skin=0xffd9c7;
  const hairCol=h?0x17243f:0x8a4d73,coat=h?0x244e84:0x9f477e;
@@ -1586,6 +1623,7 @@ function makeChar(role){
    for(const x of [-.16,0,.16])add(cg,new THREE.ConeGeometry(.045,.18,6),std(0xffdf78,0xffb52f,.5,.28),[x,.08,0],undefined,false);
  }
  makeRoyalBlade(r,role);
+ makePlayerCombatFx(r,role);
  r.scale.setScalar(.88);scene.add(r);return r;
 }
 function makeBoss(){
@@ -4726,8 +4764,9 @@ function clearDynamic(){
  for(const m of summonMeshes)m.visible=false;
  for(const m of summonSpawnFx)m.visible=false;for(const m of summonDeathFx)m.visible=false;
  $('threeAmArtFx')?.classList.remove('show');$('eternalArtFx')?.classList.remove('show');
+ if(A?.userData?.combatFxRoot?.parent)A.userData.combatFxRoot.removeFromParent();if(B?.userData?.combatFxRoot?.parent)B.userData.combatFxRoot.removeFromParent();
  if(A?.parent)scene.remove(A);if(B?.parent)scene.remove(B);if(boss?.parent)scene.remove(boss);
- predictedShots=[];predictedSwordAids.clear();predictedDashAid='';pred.dashT=0;pred.dashVX=0;pred.dashVZ=0;bossOrbProjectileStarts.clear();bossOrbReleasePulseUntil=0;bossArmamentWeaponFlightUntil=0;bossArmamentHit={kind:'',start:0,until:0,dmg:0};hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};bossExposedUntil=0;bossExposeStartedAt=0;bossExposeDuration=0;bossPatternName='';$('bossExposeUi')?.classList.remove('show');
+ predictedShots=[];predictedSwordAids.clear();playerSkillFxAids.clear();predictedDashAid='';pred.dashT=0;pred.dashVX=0;pred.dashVZ=0;bossOrbProjectileStarts.clear();bossOrbReleasePulseUntil=0;bossArmamentWeaponFlightUntil=0;bossArmamentHit={kind:'',start:0,until:0,dmg:0};hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};bossExposedUntil=0;bossExposeStartedAt=0;bossExposeDuration=0;bossPatternName='';$('bossExposeUi')?.classList.remove('show');
  camTrauma=0;bossSocketFxUntil=0;if(bossSocketFx)bossSocketFx.visible=false;
  deathCinematicStart=0;deathCinematicUntil=0;deathCinematicStats=null;deathCinematicResultShown=false;
  if(bossV10Art?.root?.parent)bossV10Art.root.parent.remove(bossV10Art.root);
@@ -5087,6 +5126,7 @@ function triggerPlayerAction(act,fromBuffer=false){
    predictedDashAid=aid;
    pred.dashT=.25;pred.dashVX=x*13;pred.dashVZ=z*13;
    triggerCombatAnim(role,'dash');
+   spawnPlayerDashFx(role,x,z);
    send({type:'action',a:'dash',aid,st:Date.now()+serverOffset});
    return;
  }
@@ -5216,9 +5256,9 @@ function triggerCombatAnim(who,type,startServerTs=null,meta={}){
  const a=combatAnim[who];if(!a)return;
  const localStart=startServerTs?performance.now()+(startServerTs-serverNow()):performance.now();
  const combo=Number(meta.combo)||0;
- const attackProfiles=[{dur:350,fade:.035,speed:1.28},{dur:380,fade:.040,speed:1.22},{dur:520,fade:.052,speed:1.04}];
- const profile=type==='skill'?{dur:760,fade:.075,speed:.96}:type==='dash'?{dur:300,fade:.035,speed:1.18}:attackProfiles[combo%3];
- a.type=type;a.start=localStart;a.dur=profile.dur;a.combo=combo;a.hit=!!meta.hit;a.finisher=meta.finisher===true||combo===2;
+ const attackProfiles=[{dur:360,fade:.035,speed:1.30},{dur:400,fade:.040,speed:1.24},{dur:560,fade:.052,speed:1.02}];
+ const profile=type==='skill'?{dur:760,fade:.075,speed:.96}:type==='dash'?{dur:300,fade:.035,speed:1.18}:type==='hit'?{dur:330,fade:.035,speed:1.30}:attackProfiles[combo%3];
+ a.type=type;a.start=localStart;a.dur=profile.dur;a.combo=combo;a.hit=!!meta.hit;a.finisher=meta.finisher===true||combo===2;a.aid=meta.aid||'';
  playRigAnimation(who,type,{fade:profile.fade,once:true,speed:profile.speed});
 }
 function updateCombatAnimations(now){
@@ -5238,15 +5278,15 @@ function updateCombatAnimations(now){
      const p=clamp((now-a.start)/a.dur,0,1);
      if(p>=1){a.type=null}
      else if(a.type==='attack'){
-       const combo=a.combo%3,swing=1-Math.pow(1-clamp((p-.10)/(combo===2?.68:.60),0,1),3),fade=Math.sin(Math.PI*clamp(p,0,1));
+       const combo=a.combo%3,impactP=[.328,.345,.366][combo],windup=clamp(p/impactP,0,1),recover=clamp((p-impactP)/Math.max(.01,1-impactP),0,1);
+       const swing=Math.pow(windup,2)*(1+.055*Math.sin(recover*Math.PI)),fade=Math.sin(Math.PI*clamp(p,0,1));
        const starts=[-1.20,1.08,-1.72],ends=[1.06,-1.17,1.68];
-       if(p<.22){const q=p/.22;sx=.98;sy=1-.07*q;sz=1.04;tilt=.10*q;lean=(combo===1?-.08:.08)*q}
-       else if(p<.70){const q=(p-.22)/.48;sx=1+.08*(1-q);sy=.93+.08*(1-q);tilt=-.13*(1-q);lean=(combo===1?.13:-.13)*(1-q)}
-       else{const q=(p-.70)/.30;sx=1+.025*(1-q);sy=1-.015*(1-q);tilt=-.035*(1-q);lean*=1-q}
+       if(p<impactP){sx=.98+.08*windup;sy=1-.09*windup;sz=1+.08*windup;tilt=.11*windup;lean=(combo===1?-.12:.12)*windup}
+       else{sx=1+.09*(1-recover);sy=.91+.09*recover;sz=1+.09*(1-recover);tilt=-.15*(1-recover);lean=(combo===1?.16:-.16)*(1-recover)}
        if(weapon){
          weapon.root.rotation.z=weapon.bindRot.z+lerp(starts[combo],ends[combo],swing);
-         weapon.root.rotation.x=.16*Math.sin(p*Math.PI)*(combo===1?-1:1);
-         weapon.root.position.z=.10+(combo===2?.23:.16)*Math.sin(Math.PI*p);
+         weapon.root.rotation.x=.20*Math.sin(p*Math.PI)*(combo===1?-1:1);
+         weapon.root.position.z=.10+(combo===2?.28:.18)*Math.sin(Math.PI*p);
          weapon.bladeMat.emissiveIntensity=1.65+fade*(a.hit?(combo===2?3.35:2.5):(combo===2?2.25:1.65));weapon.innerMat.opacity=.82+fade*.18;
          weapon.trail.visible=true;weapon.trailHot.visible=true;
          weapon.trail.rotation.z=-2.45+(combo===1?.32:combo===2?-.24:0)+swing*.34;
@@ -5256,15 +5296,19 @@ function updateCombatAnimations(now){
          weapon.sparkles.visible=true;weapon.sparkleMat.opacity=fade*(a.hit?.88:.52);weapon.sparkles.rotation.y=p*4.2*(combo===1?-1:1);
        }
      }else if(a.type==='dash'){
-       if(p<.22){const q=p/.22;sx=1+.08*q;sy=1-.10*q;sz=1+.16*q;tilt=-.08*q}
-       else{const q=(p-.22)/.78;sx=1+.08*(1-q);sy=.90+.10*q;sz=1+.16*(1-q);tilt=-.08*(1-q)}
+       if(p<.22){const q=p/.22;sx=1+.11*q;sy=1-.13*q;sz=1+.20*q;tilt=-.13*q}
+       else{const q=(p-.22)/.78;sx=1+.11*(1-q);sy=.87+.13*q;sz=1+.20*(1-q);tilt=-.13*(1-q)}
+     }else if(a.type==='hit'){
+       const recoil=Math.sin(Math.PI*p);sx=1+.07*recoil;sy=1-.10*recoil;sz=1+.04*recoil;tilt=.10*recoil;lean=(who==='hero'?-1:1)*.12*recoil;
+       if(weapon){weapon.root.rotation.z=weapon.bindRot.z+(who==='hero'?-.20:.20)*recoil;weapon.bladeMat.emissiveIntensity=1.65+.8*recoil}
      }else{
-       if(p<.35){const q=p/.35;sx=1-.05*q;sy=1+.08*q;sz=1-.05*q;tilt=.10*q}
-       else if(p<.58){const q=(p-.35)/.23;sx=1+.11*(1-q);sy=.93+.12*(1-q);sz=1+.11*(1-q);tilt=-.13*(1-q)}
-       else{const q=(p-.58)/.42;sx=1+.04*(1-q);sy=1-.02*(1-q);tilt=-.04*(1-q)}
+       const hero=who==='hero';
+       if(p<.35){const q=p/.35;sx=1-.05*q;sy=1+.08*q;sz=1-.05*q;tilt=(hero ? .12 : .08)*q;lean=(hero ? -.05 : .08)*q}
+       else if(p<.58){const q=(p-.35)/.23;sx=1+.11*(1-q);sy=.93+.12*(1-q);sz=1+.11*(1-q);tilt=(hero ? -.16 : -.10)*(1-q);lean=(hero ? .08 : -.13)*(1-q)}
+       else{const q=(p-.58)/.42;sx=1+.04*(1-q);sy=1-.02*(1-q);tilt=-.04*(1-q);lean*=1-q}
        if(weapon){
          const charge=Math.sin(Math.PI*p);
-         weapon.root.rotation.z=weapon.bindRot.z+lerp(-.45,.18,p);weapon.root.position.y=weapon.bindPos.y+.18*charge;
+         weapon.root.rotation.z=weapon.bindRot.z+(hero?lerp(-.72,.34,p):lerp(.58,-.72,p));weapon.root.position.y=weapon.bindPos.y+(hero ? .24 : .16)*charge;
          weapon.bladeMat.emissiveIntensity=1.65+charge*3.2;weapon.innerMat.opacity=.82+charge*.18;
          weapon.skillRing.visible=true;weapon.skillMat.opacity=charge*.86;weapon.skillRing.rotation.z=p*5.2*(who==='hero'?1:-1);
          weapon.skillRing.scale.setScalar(.52+charge*1.15);
@@ -5283,13 +5327,78 @@ function updateCombatAnimations(now){
    boss.scale.set(bbase*(1+.035*q),bbase*(1-.045*q),bbase*(1+.035*q));
  }else boss.scale.setScalar(bbase);
 }
+function playerCombatFx(who){return (who==='hero'?A:B)?.userData?.combatFx||null}
+function spawnPlayerSlashFx(p){
+ const fx=playerCombatFx(p.role);if(!fx)return;
+ const now=performance.now(),group=fx.slash.find(item=>!item.visible)||fx.slash.reduce((a,b)=>a.userData.until<=b.userData.until?a:b);
+ const source=p.role==='hero'?A:B,dx=(p.targetX??source.position.x)-p.x,dz=(p.targetZ??source.position.z)-p.z;
+ const facing=Math.hypot(dx,dz)>.01?Math.atan2(dx,dz):source.rotation.y,combo=(Number(p.combo)||0)%3;
+ group.position.set(p.x,.72,p.z);group.rotation.set(0,facing,0);group.scale.setScalar(.55);
+ group.userData.arc.rotation.z=[-2.38,-.52,-2.72][combo];group.userData.hot.rotation.z=group.userData.arc.rotation.z;
+ group.userData.start=now;group.userData.until=now+(p.finisher?390:300);group.userData.combo=combo;group.userData.hit=!!p.hit;group.visible=true;
+}
+function spawnPlayerDashFx(who,dirX=0,dirZ=0){
+ const fx=playerCombatFx(who),source=who==='hero'?A:B;if(!fx||!source)return;
+ let length=Math.hypot(dirX,dirZ);if(length<.05){dirX=Math.sin(source.rotation.y);dirZ=Math.cos(source.rotation.y);length=1}
+ dirX/=length;dirZ/=length;const now=performance.now();
+ for(let i=0;i<fx.dash.length;i++){
+   const echo=fx.dash[i],distance=.18+i*.19;
+   echo.position.set(source.position.x-dirX*distance,.06,source.position.z-dirZ*distance);echo.rotation.y=source.rotation.y;
+   echo.scale.setScalar(.88-i*.045);echo.userData.start=now+i*13;echo.userData.until=echo.userData.start+210+i*10;echo.visible=true;
+ }
+}
+function triggerPlayerSkillFx(who,aid=''){
+ if(aid&&playerSkillFxAids.has(aid))return;
+ if(aid){playerSkillFxAids.add(aid);setTimeout(()=>playerSkillFxAids.delete(aid),1300)}
+ const fx=playerCombatFx(who),source=who==='hero'?A:B;if(!fx||!source)return;
+ const now=performance.now(),skill=fx.skill;skill.position.set(source.position.x,.18,source.position.z);skill.rotation.set(0,source.rotation.y,0);skill.scale.setScalar(.38);
+ skill.userData.start=now;skill.userData.until=now+760;skill.visible=true;
+}
+function triggerPlayerHitFx(who){
+ const fx=playerCombatFx(who),source=who==='hero'?A:B;if(!fx||!source)return;
+ const now=performance.now(),hit=fx.hit;hit.position.set(source.position.x,.09,source.position.z);hit.scale.setScalar(.45);hit.userData.start=now;hit.userData.until=now+330;hit.visible=true;
+}
+function updatePlayerCombatFx(now){
+ for(const who of ['hero','princess']){
+   const fx=playerCombatFx(who);if(!fx)continue;
+   for(const group of fx.slash){
+     if(!group.visible)continue;const data=group.userData,p=clamp((now-data.start)/Math.max(1,data.until-data.start),0,1);
+     if(now>=data.until){group.visible=false;continue}
+     const appear=clamp(p/.16,0,1),fade=1-clamp((p-.46)/.54,0,1),expand=1-Math.pow(1-p,3);
+     group.scale.setScalar(.55+expand*(data.combo===2?1.18:.88));group.position.y=.72+.30*p;
+     data.mat.opacity=appear*fade*(data.hit ? .88 : .58);data.hotMat.opacity=appear*fade*(data.hit ? 1 : .70);
+   }
+   for(const echo of fx.dash){
+     if(!echo.visible)continue;const p=clamp((now-echo.userData.start)/Math.max(1,echo.userData.until-echo.userData.start),0,1);
+     if(now>=echo.userData.until){echo.visible=false;continue}
+     echo.userData.mat.opacity=.24*(1-p)*(1-p);echo.position.y=.06+.08*p;echo.scale.multiplyScalar(1+.012*(1-p));
+   }
+   const skill=fx.skill;
+   if(skill.visible){
+     const p=clamp((now-skill.userData.start)/Math.max(1,skill.userData.until-skill.userData.start),0,1);
+     if(now>=skill.userData.until){skill.visible=false;skill.userData.mat.opacity=0;skill.userData.hotMat.opacity=0}
+     else{
+       const charge=clamp(p/.46,0,1),release=1-clamp((p-.46)/.54,0,1),pulse=Math.sin(Math.PI*clamp(p,0,1));
+       skill.scale.setScalar(.38+charge*.92+(1-release)*.42);skill.rotation.y+=(who==='hero' ? .035 : -.045);
+       skill.userData.ring.rotation.z+=(who==='hero' ? .08 : -.10);skill.userData.shape.rotation.z+=(who==='hero' ? .035 : .065);
+       skill.userData.mat.opacity=(.18+.66*pulse)*release;skill.userData.hotMat.opacity=(.24+.74*pulse)*release;
+     }
+   }
+   const hit=fx.hit;
+   if(hit.visible){
+     const p=clamp((now-hit.userData.start)/Math.max(1,hit.userData.until-hit.userData.start),0,1);
+     if(now>=hit.userData.until){hit.visible=false;hit.userData.mat.opacity=0}
+     else{hit.scale.setScalar(.45+1.5*(1-Math.pow(1-p,3)));hit.userData.mat.opacity=.92*(1-p)}
+   }
+ }
+}
 function predictPlayerProjectiles(kind,aid){
  const food=localFood(),skill=kind==='skill';
  if(!skill){
    const comboState=localSwordCombo[role],now=performance.now();
    comboState.combo=now<=comboState.until?(comboState.combo+1)%3:0;comboState.until=now+880;
    predictedSwordAids.add(aid);setTimeout(()=>predictedSwordAids.delete(aid),1400);
-   triggerCombatAnim(role,'attack',null,{combo:comboState.combo,hit:false,finisher:comboState.combo===2});
+   triggerCombatAnim(role,'attack',null,{combo:comboState.combo,hit:false,finisher:comboState.combo===2,aid});
    showComboFeedback(role,comboState.combo,false,comboState.combo===2);
    return;
  }
@@ -5310,7 +5419,7 @@ function predictPlayerProjectiles(kind,aid){
      t:1.0,acked:false
    });
  }
- triggerCombatAnim(role,'skill');
+ triggerCombatAnim(role,'skill',null,{aid});triggerPlayerSkillFx(role,aid);
 }
 function simulatePredictedShots(dt){
  if(!predictedShots.length)return;
@@ -5976,16 +6085,26 @@ function playEvent(e,p){
    if(p.role===role){playImpactScreenFx('dark','#b86cff',520);flash('#c99cff',mobileDevice?.32:.22,72);addCameraTrauma(mobileDevice?.24:.17,3.8)}
  }
  if(e==='actionAnim'){
-   if(!(p.role===role&&combatAnim[p.role]?.type))triggerCombatAnim(p.role,p.a,p.startAt);
+   if(!(p.role===role&&combatAnim[p.role]?.type))triggerCombatAnim(p.role,p.a,p.startAt,{aid:p.aid||''});
+   if(p.a==='skill')triggerPlayerSkillFx(p.role,p.aid||'');
  }
  if(e==='swordSlash'){
    const predicted=p.role===role&&predictedSwordAids.has(p.aid);
    if(predicted){
      predictedSwordAids.delete(p.aid);
-     const localAnim=combatAnim[p.role];if(localAnim){localAnim.combo=p.combo||0;localAnim.hit=!!p.hit;localAnim.finisher=!!p.finisher}
-   }else triggerCombatAnim(p.role,'attack',p.startAt,{combo:p.combo||0,hit:!!p.hit,finisher:!!p.finisher});
-   showComboFeedback(p.role,p.combo||0,!!p.hit,!!p.finisher);if(p.hit)pulseCombatLock(!!p.finisher);
+     const localAnim=combatAnim[p.role];if(localAnim){localAnim.combo=p.combo||0;localAnim.finisher=!!p.finisher;localAnim.aid=p.aid||''}
+   }else triggerCombatAnim(p.role,'attack',p.startAt,{combo:p.combo||0,hit:false,finisher:!!p.finisher,aid:p.aid||''});
+   showComboFeedback(p.role,p.combo||0,false,!!p.finisher);
+ }
+ if(e==='swordImpact'){
+   const anim=combatAnim[p.role];if(anim&&(!anim.aid||anim.aid===p.aid))anim.hit=!!p.hit;
+   spawnPlayerSlashFx(p);showComboFeedback(p.role,p.combo||0,!!p.hit,!!p.finisher);
+   if(p.hit)pulseCombatLock(!!p.finisher);
    if(p.finisher&&p.hit)appendBattleChat(p.role,p.role==='hero'?'Tinh Nguyệt—đoạn!':'Hoàng Gia Hoa Vũ—khai!');
+ }
+ if(e==='playerHit'){
+   triggerCombatAnim(p.role,'hit',p.ts);triggerPlayerHitFx(p.role);
+   if(p.role===role){playImpactScreenFx('pulse','#ff7895',310);flash('#ff5f7e',mobileDevice?.22:.15,54);addCameraTrauma(mobileDevice?.12:.08,5.0)}
  }
  if(e==='combatHit'){
    if(p.target==='boss'){
@@ -6075,9 +6194,11 @@ function playEvent(e,p){
  }
  if(e==='perfect')banner('PERFECT DASH ⚡');
  if(e==='pickup')banner((p.role==='hero'?'Hero':'Công chúa')+' nhặt '+foods[p.food][1]+'!');
- if(e==='dash'&&p.role===role){
-   if(p.aid&&p.aid===predictedDashAid)predictedDashAid='';
-   else{pred.dashT=.25;pred.dashVX=p.x*13;pred.dashVZ=p.z*13}
+ if(e==='dash'){
+   if(p.role===role){
+     if(p.aid&&p.aid===predictedDashAid)predictedDashAid='';
+     else{pred.dashT=.25;pred.dashVX=p.x*13;pred.dashVZ=p.z*13;spawnPlayerDashFx(p.role,p.x,p.z)}
+   }else{triggerCombatAnim(p.role,'dash',p.startAt||null);spawnPlayerDashFx(p.role,p.x,p.z)}
  }
  if(e==='royal'){
    playRigAnimation('hero','royal',{fade:.08,once:true});
@@ -6406,6 +6527,7 @@ function frame(now){
        runVisualPass('quality',()=>updateV107Performance(now));
        runVisualPass('boss-cast',()=>updateBossCastVisual());
        runVisualPass('combat-anim',()=>updateCombatAnimations(now));
+       runVisualPass('player-combat-fx',()=>updatePlayerCombatFx(now));
        runVisualPass('rig-animation',()=>{updateRiggedAnimations(cinematicDt);v106ApplyActing(now)});
        runVisualPass('boss-armament',()=>updateBossArmament(cinematicDt,now));
        runVisualPass('boss-socket',()=>updateBossSocketFx(now));

@@ -12,10 +12,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.21.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.22.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.21'",
+  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.22'",
   'id="bossExposeUi"',
   'CƠ HỘI PHẢN CÔNG',
   'function updateBossExposeUi(now=serverNow())',
@@ -37,7 +37,7 @@ for(const fragment of [
   'exposed?BOSS_EXPOSE_DAMAGE_MULTIPLIER:1',
   'function enterBossPhase(room,next,now)',
   'targetPhase=ratio>BOSS_PHASE_THRESHOLDS[1]?1:ratio>BOSS_PHASE_THRESHOLDS[2]?2:3',
-  "combatFeel:'v10.21-three-phase-boss-combat-director-punish-windows'"
+  "combatFeel:'v10.22-server-timed-sword-impact-player-animation-vfx'"
 ])if(!serverSource.includes(fragment))throw new Error(`V10.21 server feature missing: ${fragment}`);
 
 const directorStart=serverSource.indexOf('const BOSS_COMBAT_DIRECTOR=');
@@ -99,7 +99,7 @@ child.stdout.on('data',async chunk=>{
   if(!done&&output.includes('server on')){
     try{
       const health=await fetch(`http://127.0.0.1:${port}/healthz`).then(response=>response.json());
-      if(health.network?.combatFeel!=='v10.21-three-phase-boss-combat-director-punish-windows')throw new Error(`Health label mismatch: ${JSON.stringify(health)}`);
+      if(health.network?.combatFeel!=='v10.22-server-timed-sword-impact-player-animation-vfx')throw new Error(`Health label mismatch: ${JSON.stringify(health)}`);
       if(health.network?.bossDirector?.thresholds?.join(',')!=='70,35'||health.network?.bossDirector?.exposedDamageMultiplier!==1.3)throw new Error(`Health director metadata mismatch: ${JSON.stringify(health.network?.bossDirector)}`);
       console.log('V10.21 BOSS DIRECTOR PASS · 3 authored phase decks · no immediate repeats · 70/35 thresholds · phase lock · x1.30 punish window · HUD timer');
       stop(0);
