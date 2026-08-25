@@ -47,6 +47,8 @@ const HIT_CONFIRM_DELAY_MS = 90;
 const DASH_IFRAME_MS = 340;
 const INPUT_STALE_MS = 500;
 const PLAYER_BOSS_MIN_GAP = 1.02;
+const BOSS_PHASE_THRESHOLDS = [1,.70,.35];
+const BOSS_EXPOSE_DAMAGE_MULTIPLIER = 1.30;
 const TEST_FAST_BOSS = process.env.BOSS_TEST_FAST === '1';
 const TEST_BOSS_SKILL = /^\d+$/.test(process.env.BOSS_TEST_SKILL || '') ? Number(process.env.BOSS_TEST_SKILL) : null;
 const TEST_BOSS_DODGE = /^(3|12)$/.test(process.env.BOSS_TEST_DODGE || '') ? process.env.BOSS_TEST_DODGE : null;
@@ -105,7 +107,9 @@ function freshState(){
     players:{hero:player('hero'),princess:player('princess')},
     boss:{
       x:0,z:-4.7,hp:2200,max:2200,phase:1,skillIndex:-1,skillT:TEST_FAST_BOSS?.12:1.8,lastEl:null,lastElT:0,
-      evade:null,evadeInvUntil:0,dodgeReadyAt:0,dodgeSeq:0,phaseLockUntil:0
+      evade:null,evadeInvUntil:0,dodgeReadyAt:0,dodgeSeq:0,phaseLockUntil:0,
+      patternIndex:-1,patternStep:0,patternId:'',patternName:'',lastSkill:-1,pendingPhase:0,
+      exposedUntil:0,exposedCastId:0,exposedHitCount:0
     },
     projectiles:[],pickups:[],darkPool:null,summons:[],
     activeCast:null,
@@ -169,6 +173,15 @@ function deserializeRoom(raw){
   room.state.boss.dodgeReadyAt ||= 0;
   room.state.boss.dodgeSeq ||= 0;
   room.state.boss.phaseLockUntil ||= 0;
+  room.state.boss.patternIndex ??= -1;
+  room.state.boss.patternStep ||= 0;
+  room.state.boss.patternId ||= '';
+  room.state.boss.patternName ||= '';
+  room.state.boss.lastSkill ??= -1;
+  room.state.boss.pendingPhase ||= 0;
+  room.state.boss.exposedUntil ||= 0;
+  room.state.boss.exposedCastId ||= 0;
+  room.state.boss.exposedHitCount ||= 0;
   room.state.players.hero.lastDashTs ||= 0;
   room.state.players.princess.lastDashTs ||= 0;
   room.state.players.hero.lastInputAt ||= 0;
@@ -346,7 +359,7 @@ function shiftPauseClock(room,delta){
     p.lastDashTs=shift(p.lastDashTs);
   }
   const b=s.boss||{};
-  b.evadeInvUntil=shift(b.evadeInvUntil);b.dodgeReadyAt=shift(b.dodgeReadyAt);b.phaseLockUntil=shift(b.phaseLockUntil);
+  b.evadeInvUntil=shift(b.evadeInvUntil);b.dodgeReadyAt=shift(b.dodgeReadyAt);b.phaseLockUntil=shift(b.phaseLockUntil);b.exposedUntil=shift(b.exposedUntil);
   if(b.evade){b.evade.startAt=shift(b.evade.startAt);b.evade.endAt=shift(b.evade.endAt)}
   if(s.activeCast){
     for(const key of ['startAt','warningAt','impactAt','releaseAt','endAt','teleportAt','kickAt'])s.activeCast[key]=shift(s.activeCast[key]);
@@ -523,7 +536,7 @@ function bossEvadeDestination(room,threat,distance){
 }
 function tryBossEvade(room,now){
   const s=room.state,b=s.boss;
-  if(b.hp<=0||b.evade||s.activeCast||now<(b.phaseLockUntil||0)||now<(b.dodgeReadyAt||0))return false;
+  if(b.hp<=0||b.evade||s.activeCast||b.pendingPhase||now<(b.phaseLockUntil||0)||now<(b.dodgeReadyAt||0))return false;
   const threats=incomingBossThreats(room);
   if(!threats.length)return false;
   const chance=b.phase===1?.24:b.phase===2?.38:.54;
@@ -549,7 +562,7 @@ function tryBossEvade(room,now){
   return true;
 }
 function bossCanBeHit(b,now=Date.now()){
-  return now>=(b.evadeInvUntil||0);
+  return now>=(b.evadeInvUntil||0)&&now>=(b.phaseLockUntil||0);
 }
 
 function spawnPickup(room,food=null){
@@ -567,6 +580,7 @@ function reaction(a,b){
 }
 function hitBoss(room,pr){
   const s=room.state,b=s.boss,f=FOODS[pr.food],owner=s.players[pr.owner];
+  const now=Date.now(),exposed=now<(b.exposedUntil||0);
   let weak=f.el==='fresh'?1.25:1,bonus=1;
   if(b.lastEl&&b.lastEl!==f.el&&b.lastElT>0){
     const r=reaction(b.lastEl,f.el);
@@ -576,11 +590,13 @@ function hitBoss(room,pr){
     }
   }
   b.lastEl=f.el;b.lastElT=1.15;
-  const dmg=pr.dmg*weak*bonus;
+  const dmg=pr.dmg*weak*bonus*(exposed?BOSS_EXPOSE_DAMAGE_MULTIPLIER:1);
   b.hp-=dmg;owner.score+=dmg;
+  if(exposed)b.exposedHitCount=(b.exposedHitCount||0)+1;
   broadcast(room,{type:'event',e:'combatHit',p:{
     target:'boss',owner:pr.owner,aid:pr.aid||null,kind:pr.kind||'projectile',dmg:Math.round(dmg),
-    combo:Number(pr.combo)||0,finisher:pr.finisher===true,x:b.x,z:b.z,ts:Date.now()
+    combo:Number(pr.combo)||0,finisher:pr.finisher===true,exposed,damageMultiplier:exposed?BOSS_EXPOSE_DAMAGE_MULTIPLIER:1,
+    x:b.x,z:b.z,ts:now
   }});
   markDirty(room);
 }
@@ -906,30 +922,65 @@ function processTasks(room,now){
   }
   s.tasks=keep;
 }
+const BOSS_COMBAT_DIRECTOR={
+  1:{name:'MOON LESSON',cooldown:4.05,patterns:[
+    {id:'crescent_lesson',name:'CRESCENT LESSON',skills:[0,3]},
+    {id:'royal_circle',name:'ROYAL CIRCLE',skills:[1,3]}
+  ]},
+  2:{name:'SLEEPLESS WALTZ',cooldown:3.45,patterns:[
+    {id:'blink_barrage',name:'BLINK BARRAGE',skills:[3,0,1]},
+    {id:'sleepless_clock',name:'SLEEPLESS CLOCK',skills:[2,3,1]}
+  ]},
+  3:{name:'ETERNAL ECLIPSE',cooldown:3.15,patterns:[
+    {id:'eclipse_hunt',name:'ECLIPSE HUNT',skills:[3,0,4]},
+    {id:'final_waltz',name:'FINAL WALTZ',skills:[1,2,3,4]}
+  ]}
+};
+function chooseBossDirectorSkill(room){
+  const b=room.state.boss;
+  if(Number.isInteger(TEST_BOSS_SKILL)&&TEST_BOSS_SKILL>=0&&TEST_BOSS_SKILL<=4){
+    return{skill:TEST_BOSS_SKILL,pattern:{id:'test_skill',name:'TEST SKILL',skills:[TEST_BOSS_SKILL]},step:0,isPatternStart:true};
+  }
+  const director=BOSS_COMBAT_DIRECTOR[b.phase]||BOSS_COMBAT_DIRECTOR[1];
+  let isPatternStart=false;
+  if(b.patternIndex<0||b.patternStep>=(director.patterns[b.patternIndex]?.skills.length||0)){
+    b.patternIndex=(b.patternIndex+1)%director.patterns.length;b.patternStep=0;isPatternStart=true;
+  }
+  const pattern=director.patterns[b.patternIndex];
+  let skill=pattern.skills[b.patternStep];
+  // Never repeat the same move on both sides of a phase/pattern boundary.
+  if(skill===b.lastSkill&&pattern.skills.length>1){
+    b.patternStep=(b.patternStep+1)%pattern.skills.length;skill=pattern.skills[b.patternStep];
+  }
+  const step=b.patternStep;b.patternStep++;
+  b.patternId=pattern.id;b.patternName=pattern.name;b.lastSkill=skill;b.skillIndex=skill;
+  return{skill,pattern,step,isPatternStart};
+}
 function bossSkill(room){
   const s=room.state,b=s.boss;
-  const phaseAllowed=b.phase===1?[0,1,3]:b.phase===2?[0,1,2,3]:[0,1,2,3,4];
-  const allowed=Number.isInteger(TEST_BOSS_SKILL)&&TEST_BOSS_SKILL>=0&&TEST_BOSS_SKILL<=4?[TEST_BOSS_SKILL]:phaseAllowed;
-  const nextPos=(b.skillIndex+1)%allowed.length;
-  const i=allowed[nextPos];
-  b.skillIndex=nextPos;
+  const selection=chooseBossDirectorSkill(room),i=selection.skill;
   const now=Date.now();
   const profile={
-    0:{telegraphMs:880,endMs:2550,vfx:'night_pool'},
-    1:{telegraphMs:1250,endMs:3500,vfx:'moon_shatter'},
-    2:{telegraphMs:1450,endMs:4650,vfx:'three_am'},
-    3:{telegraphMs:1280,endMs:2350,vfx:'teleport_kick'},
-    4:{telegraphMs:1800,endMs:7400,vfx:'eternal_night'}
-  }[i]||{telegraphMs:880,endMs:2550,vfx:'night_pool'};
+    0:{telegraphMs:880,endMs:2550,exposeMs:680,vfx:'night_pool'},
+    1:{telegraphMs:1250,endMs:3500,exposeMs:900,vfx:'moon_shatter'},
+    2:{telegraphMs:1450,endMs:4650,exposeMs:1000,vfx:'three_am'},
+    3:{telegraphMs:1280,endMs:2350,exposeMs:720,vfx:'teleport_kick'},
+    4:{telegraphMs:1800,endMs:7400,exposeMs:1200,vfx:'eternal_night'}
+  }[i]||{telegraphMs:880,endMs:2550,exposeMs:680,vfx:'night_pool'};
   const {telegraphMs,endMs}=profile;
   const targetRole=i===3?(b.phase%2?'hero':'princess'):null;
   const cast={
     id:s.nextCast++,i,startAt:now,telegraphMs,warningAt:now+Math.round(telegraphMs*.56),
     impactAt:now+telegraphMs,releaseAt:now+telegraphMs,endAt:now+endMs,
-    phase:b.phase,targetRole,vfx:profile.vfx
+    phase:b.phase,targetRole,vfx:profile.vfx,exposeMs:profile.exposeMs,
+    patternId:selection.pattern.id,patternName:selection.pattern.name,
+    patternStep:selection.step+1,patternLength:selection.pattern.skills.length
   };
   if(i===3){cast.teleportAt=now+330;cast.kickAt=now+410;cast.radius=2.2}
   s.activeCast=cast;
+  if(selection.isPatternStart)broadcast(room,{type:'event',e:'bossPattern',p:{
+    phase:b.phase,id:selection.pattern.id,name:selection.pattern.name,total:selection.pattern.skills.length,startAt:now
+  }});
   broadcast(room,{type:'event',e:'bossCast',p:cast});
   castDialogue(room,i,b.phase);
 
@@ -981,6 +1032,23 @@ function reset(room){
   for(let i=0;i<5;i++)spawnPickup(room);
   markDirty(room);
 }
+function enterBossPhase(room,next,now){
+  const b=room.state.boss;
+  b.phase=next;b.pendingPhase=0;b.patternIndex=-1;b.patternStep=0;b.patternId='';b.patternName='';
+  b.phaseLockUntil=now+(next===3?1900:1600);b.exposedUntil=0;b.exposedCastId=0;b.exposedHitCount=0;
+  b.skillT=next===3?1.55:1.75;
+  broadcast(room,{type:'event',e:'phase',p:{
+    phase:next,until:b.phaseLockUntil,director:BOSS_COMBAT_DIRECTOR[next]?.name||''
+  }});
+  if(next===2){
+    dialogue(room,'boss','Các ngươi vẫn chưa chịu mệt sao?',2200);
+    scheduleTask(room,340,'dialogue',{speaker:'hero',text:'Khung giờ 3 giờ sáng tới rồi. Tập trung!',duration:1900});
+  }else if(next===3){
+    dialogue(room,'boss','Tình cảm mong manh ấy… ta muốn xem nó chịu được đêm dài bao lâu.',2600);
+    scheduleTask(room,380,'dialogue',{speaker:'princess',text:'Boss nói nhiều ghê. Đánh thôi!',duration:1800});
+  }
+  markDirty(room);
+}
 function startMatch(room){
   reset(room);room.state.started=true;room.state.paused=false;room.state.pauseRole=null;room.state.manualPause=false;room.state.manualPauseRole=null;room.state.pauseStartedAt=0;
   // V10.19 keeps movement, attacks, boss AI and timers locked for the complete
@@ -1011,8 +1079,17 @@ function tick(room,dt){
   processTasks(room,now);
   processPendingHits(room,now);
   if(s.activeCast && now>s.activeCast.endAt+120){
+    const finishedCast=s.activeCast;
     s.activeCast=null;
-    if(s.boss.skillT<.65)s.boss.skillT=.65;
+    const exposeMs=Math.max(0,Number(finishedCast.exposeMs)||0);
+    if(exposeMs){
+      s.boss.exposedUntil=now+exposeMs;s.boss.exposedCastId=finishedCast.id;s.boss.exposedHitCount=0;
+      broadcast(room,{type:'event',e:'bossExposed',p:{
+        castId:finishedCast.id,skill:finishedCast.i,until:s.boss.exposedUntil,
+        multiplier:BOSS_EXPOSE_DAMAGE_MULTIPLIER,patternName:finishedCast.patternName||''
+      }});
+    }
+    if(s.boss.skillT<exposeMs/1000+.45)s.boss.skillT=exposeMs/1000+.45;
     markDirty(room);
   }
 
@@ -1056,22 +1133,16 @@ function tick(room,dt){
   // Boss dodge/teleport can move after the player loop. Resolve once more so
   // the authoritative hitbox can never land on top of either player.
   resolvePlayerBossOverlap(H,b);resolvePlayerBossOverlap(P,b);
-  const ratio=b.hp/b.max,next=ratio>.66?1:ratio>.33?2:3;
-  if(next!==b.phase){
-    b.phase=next;b.phaseLockUntil=now+(next===3?2500:2200);broadcast(room,{type:'event',e:'phase',p:{phase:next,until:b.phaseLockUntil}});
-    if(next===2){
-      dialogue(room,'boss','Các ngươi vẫn chưa chịu mệt sao?',2200);
-      scheduleTask(room,340,'dialogue',{speaker:'hero',text:'Khung giờ 3 giờ sáng tới rồi. Tập trung!',duration:1900});
-    }else if(next===3){
-      dialogue(room,'boss','Tình cảm mong manh ấy… ta muốn xem nó chịu được đêm dài bao lâu.',2600);
-      scheduleTask(room,380,'dialogue',{speaker:'princess',text:'Boss nói nhiều ghê. Đánh thôi!',duration:1800});
+  if(b.hp>0){
+    const ratio=b.hp/b.max,targetPhase=ratio>BOSS_PHASE_THRESHOLDS[1]?1:ratio>BOSS_PHASE_THRESHOLDS[2]?2:3;
+    if(targetPhase>b.phase&&!b.pendingPhase)b.pendingPhase=b.phase+1;
+    if(b.pendingPhase&&!s.activeCast&&!b.evade&&now>=(b.phaseLockUntil||0))enterBossPhase(room,b.pendingPhase,now);
+    tryBossEvade(room,now);
+    b.skillT-=dt;
+    if(b.skillT<=0&&!s.activeCast&&!b.evade&&!b.pendingPhase&&now>=(b.phaseLockUntil||0)){
+      b.skillT=BOSS_COMBAT_DIRECTOR[b.phase]?.cooldown||4.0;
+      bossSkill(room);
     }
-  }
-  tryBossEvade(room,now);
-  b.skillT-=dt;
-  if(b.skillT<=0&&!s.activeCast&&!b.evade&&now>=(b.phaseLockUntil||0)){
-    b.skillT=b.phase===1?4.0:b.phase===2?3.35:3.05;
-    bossSkill(room);
   }
 
   if(s.summons?.length){
@@ -1206,7 +1277,8 @@ app.get('/healthz',(_req,res)=>res.json({
     tickHz:TICK_HZ,
     snapshotHz:SNAPSHOT_HZ,
     renderOptimization:'V10.16.2-eclipse-waltz-plus-virtual-upper-body-halo',
-    combatFeel:'v10.20-soft-lock-three-hit-finisher-role-sword-waves',
+    combatFeel:'v10.21-three-phase-boss-combat-director-punish-windows',
+    bossDirector:{thresholds:[70,35],exposedDamageMultiplier:BOSS_EXPOSE_DAMAGE_MULTIPLIER},
     rewindMs:MAX_REWIND_MS,
     hitConfirmMs:HIT_CONFIRM_DELAY_MS,
     adaptiveInterpolationMs:[80,100,140]
@@ -1457,5 +1529,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.20 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.21 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
 })();

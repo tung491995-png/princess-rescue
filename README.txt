@@ -1,4 +1,13 @@
-PRINCESS RESCUE 3D — V10.20 COMBAT FEEL UPGRADE
+PRINCESS RESCUE 3D — V10.21 BOSS PHASE & COMBAT DIRECTOR
+
+V10.21 BOSS PHASE & COMBAT DIRECTOR
+====================================
+- Replaces the rotating boss skill list with authored pattern decks for three HP phases: 100–70%, 70–35% and below 35%.
+- Prevents immediate skill repetition across pattern and phase boundaries.
+- Defers phase transitions until the active cast finishes, then gives the transition a short server-authoritative invulnerability lock.
+- Adds readable counterattack windows after every completed boss skill; attacks during that window deal 1.30x damage.
+- Shows the active pattern and a live CƠ HỘI PHẢN CÔNG timer in the boss HUD.
+- Preserves V10.20 player combat, movement separation, Pause/Exit, cinematic camera and all existing assets.
 
 V10.20 COMBAT FEEL UPGRADE
 ============================

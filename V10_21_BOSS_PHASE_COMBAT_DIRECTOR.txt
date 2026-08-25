@@ -1,0 +1,49 @@
+PRINCESS RESCUE V10.21 — BOSS PHASE & COMBAT DIRECTOR
+=====================================================
+
+Baseline: V10.20 Combat Feel Upgrade
+
+MỤC TIÊU
+--------
+Biến trận boss từ danh sách skill quay vòng thành một trận đánh ba phase có nhịp,
+có chuỗi đòn được biên soạn và có thời điểm phản công rõ ràng.
+
+PHASE & PATTERN
+---------------
+Phase I · 100–70% HP
+- CRESCENT LESSON: Quick Cast → Teleport Spin Kick
+- ROYAL CIRCLE: AOE → Teleport Spin Kick
+
+Phase II · 70–35% HP
+- BLINK BARRAGE: Teleport Spin Kick → Quick Cast → AOE
+- SLEEPLESS CLOCK: 03:00 → Teleport Spin Kick → AOE
+
+Phase III · dưới 35% HP
+- ECLIPSE HUNT: Teleport Spin Kick → Quick Cast → Ultimate
+- FINAL WALTZ: AOE → 03:00 → Teleport Spin Kick → Ultimate
+
+QUY TẮC COMBAT DIRECTOR
+-----------------------
+- Không lặp cùng một skill hai lần liên tiếp.
+- Chỉ chuyển phase sau khi cast hiện tại kết thúc.
+- Chuyển phase có khóa bất tử ngắn phía server để pose/VFX không chồng với damage.
+- Sau mỗi skill, boss lộ sơ hở trong 0,68–1,20 giây tùy độ nặng của đòn.
+- Đòn đánh trúng trong cửa sổ này gây 1,30 lần sát thương.
+- HUD hiển thị pattern mới và thanh CƠ HỘI PHẢN CÔNG theo thời gian thực.
+
+GIỮ NGUYÊN
+----------
+- Soft lock, combo kiếm ba nhát và finisher V10.20.
+- Skill kiếm khí riêng của Hero và Princess.
+- Khoảng cách boss/player 1,02 m, dash reconciliation và input mobile.
+- Boss Tripo, orb, halo, 19 animation, intro camera.
+- Pause, Exit Match, solo combat test và debug ZIP/JPG.
+
+KIỂM THỬ
+--------
+- Node/server và toàn bộ inline browser script: PASS.
+- Ba bộ phase, danh sách skill hợp lệ, không lặp skill: PASS.
+- Mốc HP 70%/35%, phase lock và sát thương phản công x1.30: PASS.
+- V10.19.4 movement, dash, boss separation: PASS.
+- V10.20 combo/finisher/skill Hero/Princess: PASS.
+- Full npm regression suite: PASS.

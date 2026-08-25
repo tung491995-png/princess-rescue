@@ -13,10 +13,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.20.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(!['10.20.0','10.21.0'].includes(pkg.version))throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.20'",
+  pkg.version==='10.21.0'?'<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>':'<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
+  pkg.version==='10.21.0'?"window.PrincessBlackBox?.init?.({version:'10.21'":"window.PrincessBlackBox?.init?.({version:'10.20'",
   'id="combatLock"',
   'id="comboFeedback"',
   'function combatLockCandidates(s)',
