@@ -11,10 +11,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.19.3')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.20.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.19.3 — Cinematic Occlusion &amp; VFX Readability</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.19.3'",
+  '<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.20'",
   'id="hostAssetGate"','id="guestAssetGate"','function setAssetLoadProgress(value,label,state=',
   "setAssetLoadProgress(32,'Đang tải boss Tripo 1K')",
   "setAssetLoadProgress(72,'Boss đã sẵn sàng · đang gắn orb/halo')",
@@ -37,10 +37,12 @@ if(!desktopBlock.includes('mobile_1k.glb')||desktopBlock.includes('mobile_2k.glb
 
 for(const fragment of [
   'if(p.atkCd>0)return{accepted:false',
-  'p.atkCd=.32',
+  'p.atkCd=[.27,.30,.40][combo]',
   'if(p.skillCd>0)return{accepted:false',
   'p.skillCd=2.8',
-  'if(p.down||p.dash>0||p.stamina<22)return',
+  "if(p.down)return{accepted:false,reason:'DOWN'}",
+  "if(p.dash>0)return{accepted:false,reason:'DASH_ACTIVE'}",
+  "if(p.stamina<22)return{accepted:false,reason:'STAMINA'}",
   "if(isCombatTest(room))",
   'p.hp=100;p.down=false'
 ])if(!server.includes(fragment))throw new Error(`Server-authoritative combat guard missing: ${fragment}`);

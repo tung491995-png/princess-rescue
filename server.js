@@ -45,6 +45,8 @@ const MAX_REWIND_MS = 220;
 const MAX_PROJECTILE_FAST_FORWARD_MS = 150;
 const HIT_CONFIRM_DELAY_MS = 90;
 const DASH_IFRAME_MS = 340;
+const INPUT_STALE_MS = 500;
+const PLAYER_BOSS_MIN_GAP = 1.02;
 const TEST_FAST_BOSS = process.env.BOSS_TEST_FAST === '1';
 const TEST_BOSS_SKILL = /^\d+$/.test(process.env.BOSS_TEST_SKILL || '') ? Number(process.env.BOSS_TEST_SKILL) : null;
 const TEST_BOSS_DODGE = /^(3|12)$/.test(process.env.BOSS_TEST_DODGE || '') ? process.env.BOSS_TEST_DODGE : null;
@@ -92,6 +94,7 @@ function player(role){
     atkCd:0,skillCd:0,combo:0,comboUntil:0,
     input:{x:0,y:0},ack:0,
     lastDashTs:0,
+    lastInputAt:0,
     score:0,perfect:0,saves:0
   };
 }
@@ -168,6 +171,8 @@ function deserializeRoom(raw){
   room.state.boss.phaseLockUntil ||= 0;
   room.state.players.hero.lastDashTs ||= 0;
   room.state.players.princess.lastDashTs ||= 0;
+  room.state.players.hero.lastInputAt ||= 0;
+  room.state.players.princess.lastInputAt ||= 0;
 
   // A process restart drops all sockets. Freeze a running match until both sessions resume.
   if(room.state.started){
@@ -359,6 +364,11 @@ function beginRoomPause(room,role,{manual=false}={}){
   if(!s.paused)s.pauseStartedAt=now;
   s.paused=true;s.pauseRole=role;
   if(manual){s.manualPause=true;s.manualPauseRole=role}
+  // Never resume with a direction that was held before Pause/disconnect.
+  for(const player of Object.values(s.players||{})){
+    if(!player?.input)continue;
+    player.input.x=0;player.input.y=0;player.lastInputAt=now;
+  }
   markDirty(room);
 }
 function resumeRoomPause(room){
@@ -392,6 +402,26 @@ function norm(x,z){
 function d2(ax,az,bx,bz){
   const dx=ax-bx,dz=az-bz;
   return dx*dx+dz*dz;
+}
+function resolvePlayerBossOverlap(player,boss,minGap=PLAYER_BOSS_MIN_GAP){
+  let dx=player.x-boss.x,dz=player.z-boss.z;
+  let distance=Math.hypot(dx,dz);
+  if(distance>=minGap)return false;
+  if(distance<.0001){
+    // If teleport/dash placed both centers on the same point, recover in the
+    // direction opposite the player's current facing instead of choosing a
+    // random axis that can change between snapshots.
+    dx=-Math.sin(player.rot||0);dz=-Math.cos(player.rot||0);distance=1;
+  }
+  const nx=dx/distance,nz=dz/distance;
+  player.x=boss.x+nx*minGap;player.z=boss.z+nz*minGap;
+  if(player.dash>0){
+    // Remove only the component travelling into the boss. The tangential
+    // component remains, so a dash slides around the boss instead of sticking.
+    const outwardVelocity=player.vx*nx+player.vz*nz;
+    if(outwardVelocity<0){player.vx-=outwardVelocity*nx;player.vz-=outwardVelocity*nz}
+  }
+  return true;
 }
 function clampActionTs(ts){
   const now=Date.now();
@@ -549,7 +579,8 @@ function hitBoss(room,pr){
   const dmg=pr.dmg*weak*bonus;
   b.hp-=dmg;owner.score+=dmg;
   broadcast(room,{type:'event',e:'combatHit',p:{
-    target:'boss',owner:pr.owner,aid:pr.aid||null,kind:pr.kind||'projectile',dmg:Math.round(dmg),ts:Date.now()
+    target:'boss',owner:pr.owner,aid:pr.aid||null,kind:pr.kind||'projectile',dmg:Math.round(dmg),
+    combo:Number(pr.combo)||0,finisher:pr.finisher===true,x:b.x,z:b.z,ts:Date.now()
   }});
   markDirty(room);
 }
@@ -578,12 +609,13 @@ function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
   // Only the Skill action creates ranged projectiles.
   if(!skill){
     if(p.atkCd>0)return{accepted:false,projectiles:[],reason:'COOLDOWN'};
-    p.atkCd=.32;
     const comboNow=Date.now();
     p.combo=comboNow<=(p.comboUntil||0)?((p.combo||0)+1)%3:0;
-    p.comboUntil=comboNow+720;
-    const combo=p.combo,reach=combo===2?2.85:2.62;
-    const damageScale=[1.08,1.16,1.32][combo];
+    p.comboUntil=comboNow+880;
+    const combo=p.combo,finisher=combo===2;
+    p.atkCd=[.27,.30,.40][combo];
+    const reach=[2.70,2.78,3.02][combo];
+    const damageScale=[1.06,1.18,1.48][combo];
     let hit=false,targetType='air',hitX=shooter.x+dx*reach,hitZ=shooter.z+dz*reach;
 
     let nearestSummon=null,nearestSummonDistance=Infinity;
@@ -605,53 +637,60 @@ function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
       }
     }else if(bossDistance<=reach&&bossCanBeHit(b,actionTs)){
       hit=true;targetType='boss';hitX=target.x;hitZ=target.z;
-      hitBoss(room,{owner:role,aid,food:p.food,dmg:f.dmg*damageScale,kind:'sword'});
-      s.trust=Math.min(100,s.trust+(combo===2?2:1));
+      hitBoss(room,{owner:role,aid,food:p.food,dmg:f.dmg*damageScale,kind:'sword',combo,finisher});
+      s.trust=Math.min(100,s.trust+(finisher?3:1));
     }
     broadcast(room,{type:'event',e:'swordSlash',p:{
-      role,aid,combo,hit,target:targetType,x:shooter.x,z:shooter.z,targetX:hitX,targetZ:hitZ,startAt:actionTs
+      role,aid,combo,finisher,hit,target:targetType,x:shooter.x,z:shooter.z,
+      targetX:hitX,targetZ:hitZ,startAt:actionTs
     }});
     markDirty(room);
-    return{accepted:true,projectiles:[],melee:true,hit,combo,target:targetType};
+    return{accepted:true,projectiles:[],melee:true,hit,combo,finisher,target:targetType};
   }
 
   if(p.skillCd>0)return{accepted:false,projectiles:[],reason:'COOLDOWN'};
   p.skillCd=2.8;
-  const base=Math.atan2(dz,dx),n=5;
+  const skillProfile=role==='hero'
+    ?{kind:'starWave',style:'STELLAR_CRESCENT',count:3,spread:.065,speed:12.4,damage:1.72}
+    :{kind:'roseWave',style:'ROSE_FAN',count:5,spread:.115,speed:11.2,damage:1.46};
+  const base=Math.atan2(dz,dx),n=skillProfile.count;
   const latencyMs=Math.max(0,Date.now()-actionTs);
   const spawned=[];
 
   for(let i=0;i<n;i++){
-    const a=base+(i-(n-1)/2)*.12;
+    const a=base+(i-(n-1)/2)*skillProfile.spread;
     const pr={
-      id:s.nextProj++,aid,owner:role,enemy:false,kind:'royalBolt',food:p.food,
+      id:s.nextProj++,aid,owner:role,enemy:false,kind:skillProfile.kind,food:p.food,
       x:shooter.x,z:shooter.z,y:1.28,
-      vx:Math.cos(a)*10.8,vz:Math.sin(a)*10.8,
-      dmg:f.dmg*1.45,t:3
+      vx:Math.cos(a)*skillProfile.speed,vz:Math.sin(a)*skillProfile.speed,
+      dmg:f.dmg*skillProfile.damage,t:3
     };
     fastForwardPlayerProjectile(room,pr,latencyMs);
     if(pr.t>0){
       s.projectiles.push(pr);
-      spawned.push({id:pr.id,x:pr.x,y:pr.y,z:pr.z,vx:pr.vx,vz:pr.vz,food:pr.food,aid});
+      spawned.push({id:pr.id,x:pr.x,y:pr.y,z:pr.z,vx:pr.vx,vz:pr.vz,food:pr.food,aid,kind:pr.kind});
     }
   }
 
   s.trust=Math.min(100,s.trust+4);
-  broadcast(room,{type:'event',e:'banner',p:{msg:`✦ ${role==='hero'?'KIẾM KHÍ TINH QUANG':'HOÀNG GIA TINH VŨ'}`}});
-  broadcast(room,{type:'event',e:'actionAnim',p:{role,a:'skill',aid,startAt:actionTs}});
+  broadcast(room,{type:'event',e:'banner',p:{msg:`✦ ${role==='hero'?'TINH NGUYỆT TRẢM':'HOÀNG GIA HOA VŨ'}`}});
+  broadcast(room,{type:'event',e:'actionAnim',p:{role,a:'skill',aid,style:skillProfile.style,startAt:actionTs}});
   markDirty(room);
-  return{accepted:true,projectiles:spawned};
+  return{accepted:true,projectiles:spawned,style:skillProfile.style};
 }
-function dash(room,role,actionTs=Date.now()){
+function dash(room,role,actionTs=Date.now(),aid=null){
   const p=room.state.players[role];
-  if(p.down||p.dash>0||p.stamina<22)return;
+  if(p.down)return{accepted:false,reason:'DOWN'};
+  if(p.dash>0)return{accepted:false,reason:'DASH_ACTIVE'};
+  if(p.stamina<22)return{accepted:false,reason:'STAMINA'};
   actionTs=clampActionTs(actionTs);
   let x=p.input.x,z=p.input.y;
   if(Math.hypot(x,z)<.1){x=Math.sin(p.rot);z=Math.cos(p.rot);}
   [x,z]=norm(x,z);
   p.stamina-=22;p.vx=x*13;p.vz=z*13;p.dash=.25;p.inv=.34;p.lastDashTs=actionTs;
-  broadcast(room,{type:'event',e:'dash',p:{role,x,z}});
+  broadcast(room,{type:'event',e:'dash',p:{role,x,z,aid}});
   markDirty(room);
+  return{accepted:true,reason:''};
 }
 function hurt(room,role,n){
   const p=room.state.players[role];
@@ -996,6 +1035,9 @@ function tick(room,dt){
       continue;
     }
 
+    if(p.lastInputAt&&now-p.lastInputAt>INPUT_STALE_MS){
+      p.input.x=0;p.input.y=0;
+    }
     if(p.dash>0){
       p.dash-=dt;p.x+=p.vx*dt;p.z+=p.vz*dt;p.vx*=.91;p.vz*=.91;
     }else{
@@ -1006,10 +1048,14 @@ function tick(room,dt){
     }
     const r=Math.hypot(p.x,p.z);
     if(r>8.1){p.x*=8.1/r;p.z*=8.1/r;}
+    resolvePlayerBossOverlap(p,b);
   }
 
   b.lastElT=Math.max(0,b.lastElT-dt);
   updateBossEvade(room,now);
+  // Boss dodge/teleport can move after the player loop. Resolve once more so
+  // the authoritative hitbox can never land on top of either player.
+  resolvePlayerBossOverlap(H,b);resolvePlayerBossOverlap(P,b);
   const ratio=b.hp/b.max,next=ratio>.66?1:ratio>.33?2:3;
   if(next!==b.phase){
     b.phase=next;b.phaseLockUntil=now+(next===3?2500:2200);broadcast(room,{type:'event',e:'phase',p:{phase:next,until:b.phaseLockUntil}});
@@ -1160,7 +1206,7 @@ app.get('/healthz',(_req,res)=>res.json({
     tickHz:TICK_HZ,
     snapshotHz:SNAPSHOT_HZ,
     renderOptimization:'V10.16.2-eclipse-waltz-plus-virtual-upper-body-halo',
-    combatFeel:'orb-halo-state-machine-two-tier-hit-authoritative-spirit-orb',
+    combatFeel:'v10.20-soft-lock-three-hit-finisher-role-sword-waves',
     rewindMs:MAX_REWIND_MS,
     hitConfirmMs:HIT_CONFIRM_DELAY_MS,
     adaptiveInterpolationMs:[80,100,140]
@@ -1314,6 +1360,7 @@ wss.on('connection',(ws,req)=>{
 
     if(m.type==='input'&&room.state.started&&!room.state.paused){
       const p=room.state.players[role];
+      p.lastInputAt=Date.now();
       if(room.state.introUntil&&Date.now()<room.state.introUntil){
         p.input.x=0;p.input.y=0;p.ack=Math.max(p.ack,Number(m.seq)||0);
         return;
@@ -1333,9 +1380,10 @@ wss.on('connection',(ws,req)=>{
       }
       if(m.a==='attack'||m.a==='skill'){
         const result=spawnShot(room,role,m.a==='skill',actionTs,aid);
-        send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,melee:!!result.melee,hit:!!result.hit,combo:result.combo,target:result.target,serverTs:Date.now(),reason:result.reason||''});
+        send(ws,{type:'actionAck',a:m.a,aid,accepted:result.accepted,projectiles:result.projectiles,melee:!!result.melee,hit:!!result.hit,combo:result.combo,finisher:!!result.finisher,target:result.target,style:result.style||'',serverTs:Date.now(),reason:result.reason||''});
       }else if(m.a==='dash'){
-        dash(room,role,actionTs);
+        const result=dash(room,role,actionTs,aid);
+        send(ws,{type:'actionAck',a:'dash',aid,accepted:result.accepted,projectiles:[],serverTs:Date.now(),reason:result.reason||''});
       }else if(m.a==='duo'){
         royal(room);
       }
@@ -1409,5 +1457,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.19.3 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.20 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
 })();

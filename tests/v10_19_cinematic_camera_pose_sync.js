@@ -11,10 +11,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.19.3')throw new Error(`Wrong V10.19.3 package version: ${pkg.version}`);
+if(pkg.version!=='10.20.0')throw new Error(`Wrong V10.20 package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.19.3 — Cinematic Occlusion &amp; VFX Readability</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.19.3'",
+  '<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.20'",
   'const BOSS_INTRO_FULL_MS=8600',
   'const V10192_CAMERA_KEYS=Object.freeze([',
   'function v10192CameraTangent(keys,index,property)',
@@ -33,7 +33,7 @@ for(const fragment of [
   'rec.active.time=v1019IntroSourceTime(',
   'animation:introCardV95 var(--boss-intro-duration,8.6s)',
   "el.style.setProperty('--boss-intro-duration',`${bossIntroV9Duration}ms`)"
-])if(!html.includes(fragment))throw new Error(`V10.19.3 cinematic fragment missing: ${fragment}`);
+])if(!html.includes(fragment))throw new Error(`V10.19.4 cinematic fragment missing: ${fragment}`);
 
 for(const fragment of [
   'const BOSS_INTRO_MS = 9000',
@@ -43,7 +43,7 @@ for(const fragment of [
 
 const cameraStart=html.indexOf('function updateCam(dt){');
 const cameraIntroEnd=html.indexOf(' cameraZoom+=',cameraStart);
-if(cameraStart<0||cameraIntroEnd<0)throw new Error('V10.19.3 camera block is missing');
+if(cameraStart<0||cameraIntroEnd<0)throw new Error('V10.19.4 camera block is missing');
 const camera=html.slice(cameraStart,cameraIntroEnd);
 for(const fragment of [
   'const ms=v1019IntroTimelineMs()',
@@ -75,4 +75,4 @@ const left=(H(keys[0].v,keys[1].v,(keys[1].v-keys[0].v)/400,tangent,1,400)-H(key
 const right=(H(keys[1].v,keys[2].v,tangent,(keys[2].v-keys[1].v)/1700,eps,1700)-H(keys[1].v,keys[2].v,tangent,(keys[2].v-keys[1].v)/1700,0,1700))/(eps*1700);
 if(Math.abs(left-right)>1e-5)throw new Error(`Camera velocity is discontinuous at cue: ${left} vs ${right}`);
 
-console.log('V10.19.3 CINEMATIC CAMERA SYNC PASS · V10.19.2 C1 path preserved · rig target · 850 ms exit');
+console.log('V10.19.4 CINEMATIC CAMERA SYNC PASS · V10.19.2 C1 path preserved · rig target · 850 ms exit');

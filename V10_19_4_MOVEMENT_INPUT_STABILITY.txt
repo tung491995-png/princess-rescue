@@ -1,0 +1,22 @@
+PRINCESS RESCUE V10.19.4 — MOVEMENT & INPUT STABILITY
+
+Scope
+-----
+Fixes player control becoming sticky when the player attacks, dashes and changes
+direction while standing close to the boss. No camera, intro, VFX, balance or
+asset changes are included.
+
+Repairs
+-------
+- Hit-stop no longer pauses locomotion prediction.
+- A locally predicted dash is not restarted by the server echo.
+- Dash snapshots do not replay walking input or pull the player backward.
+- Server and client enforce a 1.02 m boss/player gap and preserve tangential slide.
+- Mobile joystick ownership cannot be stolen by a second touch pointer.
+- Pause/disconnect clears stale direction; the server clears stale input after 500 ms.
+- Debug log detects overlap, dash prediction divergence and movement stalls.
+
+Validation target
+-----------------
+Move into the boss, hold a direction, attack repeatedly, dash through the boss,
+change direction, Pause, Resume and move again on both desktop and iPhone.

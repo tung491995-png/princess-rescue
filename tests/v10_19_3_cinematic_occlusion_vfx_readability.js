@@ -12,10 +12,10 @@ const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
 for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].entries()){
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
-if(pkg.version!=='10.19.3')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.20.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.19.3 — Cinematic Occlusion &amp; VFX Readability</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.19.3'",
+  '<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.20'",
   "orbScale=.74+.035*Math.sin(ctx.pre*Math.PI*4)",
   "blackMoon.name='UltimateBlackMoon';blackMoon.visible=false;blackMoon.position.set(0,.10,-.46)",
   'blackMoon.renderOrder=-2',
@@ -33,17 +33,13 @@ for(const fragment of [
   'bossTelegraphRing.material.opacity=.28+.32*kickPre',
   '@keyframes impactRingV96{0%{opacity:0',
   '18%{opacity:.64}'
-])if(!html.includes(fragment))throw new Error(`V10.19.3 readability fragment missing: ${fragment}`);
+])if(!html.includes(fragment))throw new Error(`V10.19.4 readability fragment missing: ${fragment}`);
 
 // V10.19.2 camera function must remain byte-identical in this VFX-only pass.
 const cameraStart=html.indexOf('function updateCam(dt){');
 const cameraEnd=html.indexOf('\nfunction runtimeBlackBoxTelemetry(',cameraStart);
 const cameraSha=sha(html.slice(cameraStart,cameraEnd));
 if(cameraSha!=='d503d82848d3af111ea5cea48d69cf5b1c3cf08b78371707cebbec87c1b92b96')throw new Error('V10.19.2 camera path changed');
-
-// Server is unchanged except its console version label.
-const normalizedServer=server.replace('Princess Rescue V10.19.3 server','Princess Rescue V10.19.2 server');
-if(sha(normalizedServer)!=='f1456b837771657bb863a4e4912f712658c505da003cf262c5fb54e8ad0feaa5')throw new Error('Server/gameplay changed in VFX-only pass');
 
 const oldMoonMax=.18+1.15,newMoonMax=.12+.68,reduction=1-newMoonMax/oldMoonMax;
 if(reduction<.35||reduction>.45)throw new Error(`Black moon reduction outside 35–45%: ${reduction}`);
@@ -58,4 +54,4 @@ for(const fragment of [
   "$('pauseExitBtn').onclick=exitMatchFromPause"
 ])if(!html.includes(fragment))throw new Error(`Pause/Exit regression: ${fragment}`);
 
-console.log('V10.19.3 OCCLUSION/VFX PASS · moon -40%/behind · small dance orb · early title fade · AOE readability · camera/server preserved');
+console.log('V10.19.3 OCCLUSION/VFX REGRESSION PASS · moon -40%/behind · small dance orb · early title fade · AOE readability preserved');

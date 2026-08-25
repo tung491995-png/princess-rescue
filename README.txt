@@ -1,4 +1,25 @@
-PRINCESS RESCUE 3D — V10.19.3 CINEMATIC OCCLUSION & VFX READABILITY
+PRINCESS RESCUE 3D — V10.20 COMBAT FEEL UPGRADE
+
+V10.20 COMBAT FEEL UPGRADE
+============================
+- Adds a stable soft lock-on reticle with hysteresis so it does not jump between nearly equal targets.
+- Gives the three sword strikes distinct timings, reach and damage, ending in a stronger third-hit finisher.
+- Adds role-colored combo confirmation and finisher feedback without allocating per-frame WebGL objects.
+- Hero skill becomes three focused Stellar Crescent sword waves.
+- Princess skill becomes a five-projectile Rose Fan spread.
+- Keeps the existing server authority, action prediction/reconciliation and pooled mobile projectile renderer.
+- Preserves every V10.19.4 movement, collision, Pause/Exit, intro camera and debug fix.
+
+V10.19.4 MOVEMENT & INPUT STABILITY
+====================================
+- Keeps local movement prediction active during 60–80 ms combat hit-stop.
+- Deduplicates the locally predicted dash and its authoritative server echo.
+- Stops normal input replay from pulling a player backward during an active dash.
+- Adds authoritative boss/player minimum separation with tangential dash sliding.
+- Protects the mobile joystick from a second pointer replacing the movement finger.
+- Clears stale movement on Pause/disconnect and after 500 ms without input heartbeat.
+- Adds debug detection for boss overlap, dash divergence and input-not-moving.
+- Preserves V10.19.3 cinematic camera, occlusion-safe VFX, Pause/Exit and assets.
 
 V10.19.3 CINEMATIC OCCLUSION & VFX READABILITY
 ===============================================

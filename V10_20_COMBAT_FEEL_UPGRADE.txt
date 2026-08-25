@@ -1,0 +1,20 @@
+PRINCESS RESCUE V10.20 — COMBAT FEEL UPGRADE
+
+PLAYER COMBAT
+- Soft lock-on chooses the boss or nearest summon and keeps the current target
+  inside a hysteresis band, preventing reticle flicker.
+- Three sword attacks now have distinct cadence, reach and damage.
+- The third strike is an authoritative finisher with stronger trail, hit-stop,
+  damage number, lock confirmation and battle-chat callout.
+- The short input buffer and every V10.19.4 movement/collision safeguard remain.
+
+ROLE SKILLS
+- Hero — Tinh Nguyệt Trảm / Stellar Crescent: three fast, focused sword waves.
+- Princess — Hoàng Gia Hoa Vũ / Rose Fan: five sword waves in a wider fan.
+- Both remain server authoritative and reuse the pooled instanced projectile and
+  trail renderer so mobile GPU and garbage-collection cost stay bounded.
+
+REGRESSION LOCKS
+- Boss model, halo, orb, 19-animation map and ROOT XZ are unchanged.
+- Intro camera, cinematic VFX, Pause/Exit and debug ZIP format are unchanged.
+- Boss/player minimum separation and tangential dash sliding remain 1.02 m.
