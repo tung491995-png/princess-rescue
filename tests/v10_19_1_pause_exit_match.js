@@ -9,7 +9,7 @@ const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].entries()){
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
-if(pkg.version!=='10.19.1')throw new Error(`Wrong V10.19.1 package version: ${pkg.version}`);
+if(pkg.version!=='10.19.3')throw new Error(`Wrong V10.19.3 package version: ${pkg.version}`);
 
 for(const fragment of [
   'id="pauseGameBtn"',

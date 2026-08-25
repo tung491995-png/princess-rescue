@@ -1,4 +1,23 @@
-PRINCESS RESCUE 3D — V10.19.1 PAUSE & EXIT MATCH
+PRINCESS RESCUE 3D — V10.19.3 CINEMATIC OCCLUSION & VFX READABILITY
+
+V10.19.3 CINEMATIC OCCLUSION & VFX READABILITY
+===============================================
+- Keeps the V10.19.2 C1 camera spline and 850 ms gameplay exit blend unchanged.
+- Reduces the dance orb to 74% scale and lowers its additive aura.
+- Creates the black moon only for Intro Finale/Ultimate, about 40% smaller and farther behind the boss.
+- Reduces intro sigil, crescent, halo runes and Ultimate tether opacity.
+- Fades the boss title completely before camera pullback begins.
+- Reduces combat AOE/rune/impact-ring opacity by roughly 35–40%.
+- Preserves Pause + Exit Match, combat, balance, ROOT XZ and all source assets.
+
+V10.19.2 CINEMATIC CAMERA POLISH
+=================================
+- Replaces nine stop/start intro-camera segments with one C1-continuous Hermite path.
+- Keeps deliberate Queen/Finale holds while removing micro-stops between orbit cues.
+- Close-up framing now prioritizes the boss face, crown, head, shoulders and upper torso.
+- Camera aim follows the real chest/head bones through a damped rig-aware target.
+- Pose transitions can no longer snap the camera target; crown-safe framing is preserved.
+- Pause + Exit Match, combat, balance, server state and all unrelated assets are unchanged (server console label only was versioned).
 
 V10.19.1 PAUSE & EXIT MATCH
 =============================

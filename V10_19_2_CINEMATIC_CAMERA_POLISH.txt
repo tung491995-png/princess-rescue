@@ -1,0 +1,30 @@
+PRINCESS RESCUE V10.19.2 — CINEMATIC CAMERA POLISH
+
+NGUYÊN NHÂN ĐÃ XÁC ĐỊNH
+- Camera V10.19.1 dùng smootherstep riêng cho từng mốc timeline. Vận tốc vì thế
+  giảm về 0 rồi khởi động lại tại mỗi cue, tạo cảm giác lia camera bị nấc dù
+  video vẫn chạy đều 30 FPS.
+- Close-up nhìn vào Y cố định 2.48–2.82 thay vì bám rig. Khi clip nâng đầu hoặc
+  đổi pose, khung hình trôi xuống váy/hạ thân và có thể cắt tóc hoặc vương miện.
+
+THAY ĐỔI V10.19.2
+- Thay chuỗi chín đoạn stop/start bằng đường cong cubic Hermite liên tục C1.
+- Chỉ giữ điểm dừng có chủ đích ở Queen Hold và Finale Hold.
+- Dance close-up tiến gần hơn, ưu tiên mặt, toàn bộ đầu, vai và thân trên.
+- Target lấy trực tiếp từ xương Chest + Head của model Tripo, có clamp an toàn.
+- Target dùng damping theo delta-time để nối pose mềm, không snap theo xương.
+- Finale dùng một pullback dài duy nhất để nối sang camera gameplay.
+- Không dùng full-body correction phản ứng trong intro nên không còn hai hệ
+  camera kéo–đẩy nhau.
+
+PHẠM VI ĐƯỢC GIỮ NGUYÊN
+- Pause + Exit Match V10.19.1.
+- Logic server, combat, hitbox, HP, Boss AI, ROOT XZ, orb, halo và toàn bộ asset
+  (chỉ cập nhật nhãn version trong một dòng console server).
+- Tổng timeline 8.6 giây và server intro lock 9 giây.
+
+KIỂM TRA
+- Parse toàn bộ JavaScript nhúng trong index.html.
+- Kiểm tra C1 camera path, rig-aware look target và upper-body safe frame.
+- Chuẩn hóa nhãn version rồi kiểm tra server.js khớp SHA-256 baseline V10.19.1.
+- Chạy lại regression Pause/Exit, lobby, startup, combat và debug recorder.

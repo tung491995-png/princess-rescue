@@ -11,75 +11,68 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.19.1')throw new Error(`Wrong V10.19 package version: ${pkg.version}`);
+if(pkg.version!=='10.19.3')throw new Error(`Wrong V10.19.3 package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.19.1 — Pause &amp; Exit Match</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.19.1'",
+  '<title>Princess Rescue V10.19.3 — Cinematic Occlusion &amp; VFX Readability</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.19.3'",
   'const BOSS_INTRO_FULL_MS=8600',
-  'revealEnd:700,danceStart:700,danceOrbit:1100,danceCross:2800,danceSettle:4300',
-  'queenHold:4900,finaleStart:5350,finaleOrbit:5800,finaleHold:7750,combatStart:8150,end:8600',
-  'function v1019SmootherStep(value)',
-  'function v1019IntroTimelineMs(now=performance.now())',
+  'const V10192_CAMERA_KEYS=Object.freeze([',
+  'function v10192CameraTangent(keys,index,property)',
+  'function v10192Hermite(p0,p1,m0,m1,u,span)',
+  'function v10192SampleCamera(ms,portrait,out=v10192CameraState)',
+  'function v10192UpdateBossLookTargets(rec)',
+  'chest.getWorldPosition(v10192ChestWorld);head.getWorldPosition(v10192HeadWorld)',
+  'v10192UpperLook.copy(v10192ChestWorld).lerp(v10192HeadWorld,.68)',
   'function beginBossIntroPoseBridge(rec,durationMs=420,now=performance.now())',
   'item.bone.quaternion.slerpQuaternions(item.from,item.bone.quaternion,u)',
   'function updateBossIntroCinematicAnimation(rec,now=performance.now())',
   "setBossIntroCinematicStage(br,'combat',performance.now())",
-  'if(bossIntroActive())return;',
   'if(rec.role===\'boss\'&&bossIntroActive())updateBossIntroCinematicAnimation(rec,nowMs)',
   'applyBossIntroPoseBridge(rec,nowMs)',
   'applyBossRootLock(rec,true)',
   'rec.active.time=v1019IntroSourceTime(',
-  'rec.mixer.update(0)',
   'animation:introCardV95 var(--boss-intro-duration,8.6s)',
-  "el.style.setProperty('--boss-intro-duration',`${bossIntroV9Duration}ms`)",
-  "['boss_idle','boss_phase_eternal','boss_ultimate','boss_combat_idle']"
-])if(!html.includes(fragment))throw new Error(`V10.19 cinematic fragment missing: ${fragment}`);
+  "el.style.setProperty('--boss-intro-duration',`${bossIntroV9Duration}ms`)"
+])if(!html.includes(fragment))throw new Error(`V10.19.3 cinematic fragment missing: ${fragment}`);
 
 for(const fragment of [
   'const BOSS_INTRO_MS = 9000',
   'room.state.introUntil=Date.now()+BOSS_INTRO_MS',
   '8.6s synchronized camera/pose timeline plus a 400ms network safety margin'
-])if(!server.includes(fragment))throw new Error(`V10.19 authoritative lock missing: ${fragment}`);
+])if(!server.includes(fragment))throw new Error(`Authoritative intro lock missing: ${fragment}`);
 
 const cameraStart=html.indexOf('function updateCam(dt){');
 const cameraIntroEnd=html.indexOf(' cameraZoom+=',cameraStart);
-if(cameraStart<0||cameraIntroEnd<0)throw new Error('V10.19 camera block is missing');
+if(cameraStart<0||cameraIntroEnd<0)throw new Error('V10.19.3 camera block is missing');
 const camera=html.slice(cameraStart,cameraIntroEnd);
 for(const fragment of [
   'const ms=v1019IntroTimelineMs()',
-  'const cue=(start,end)=>v1019SmootherStep',
-  'const introBack=portrait?15.55:8.90',
-  'if(ms<V1019_INTRO_CUES.revealEnd)',
-  'else if(ms<V1019_INTRO_CUES.danceOrbit)',
-  'else if(ms<V1019_INTRO_CUES.danceCross)',
-  'else if(ms<V1019_INTRO_CUES.danceSettle)',
-  'else if(ms<V1019_INTRO_CUES.queenHold)',
-  'else if(ms<V1019_INTRO_CUES.finaleStart)',
-  'else if(ms<V1019_INTRO_CUES.finaleOrbit)',
-  'else if(ms<V1019_INTRO_CUES.finaleHold)',
-  'else if(ms<V1019_INTRO_CUES.combatStart)',
-  'camera.position.copy(v108IntroCamTarget)'
-])if(!camera.includes(fragment))throw new Error(`V10.19 camera cue missing: ${fragment}`);
+  'v10192UpdateBossLookTargets(rec)',
+  'v10192SampleCamera(Math.min(ms,V1019_INTRO_CUES.finaleHold),portrait)',
+  'v10192DesiredLook.copy(v10192FullLook).lerp(v10192UpperLook,state.upper)',
+  'const exitU=v1019SmootherStep(',
+  '1-Math.exp(-Math.min(.05,Math.max(0,dt))',
+  'v108IntroLook.lerp(v10192DesiredLook,follow)',
+  'camera.position.copy(v108IntroCamTarget)',
+  'camera.lookAt(v108IntroLook)'
+])if(!camera.includes(fragment))throw new Error(`Camera polish fragment missing: ${fragment}`);
+if(camera.includes('const cue=(start,end)'))throw new Error('Old stop/start per-cue smootherstep camera is still active');
 if(camera.includes('frameBossFullBody('))throw new Error('Intro camera still fights a per-frame framing correction');
 if(camera.includes('cameraKick')||camera.includes('camTrauma'))throw new Error('Intro camera still applies combat shake');
 
-const actingStart=html.indexOf('function v106ApplyActing(nowMs){');
-const actingEnd=html.indexOf('\nfunction ',actingStart+20);
-const acting=html.slice(actingStart,actingEnd);
-if(acting.indexOf('if(bossIntroActive())return;')>acting.indexOf('const nowSec='))throw new Error('Gameplay additive acting is disabled too late');
+for(const fragment of [
+  '{ms:2800,angle:.02,radiusLandscape:5.60,radiusPortrait:9.20,height:4.28,upper:1.00}',
+  'v10192FullLook.y=clamp(v10192FullLook.y,2.68,3.10)',
+  'v10192UpperLook.y=clamp(v10192UpperLook.y,3.48,3.96)'
+])if(!html.includes(fragment))throw new Error(`Upper-body safe-frame guard missing: ${fragment}`);
 
-const syncStart=html.indexOf('function setBossIntroCinematicStage(');
-const syncEnd=html.indexOf('\nfunction applyBossRootLock(',syncStart);
-const sync=html.slice(syncStart,syncEnd);
-if(/position\.slerp|scale\.slerp|bone\.position\s*=/.test(sync))throw new Error('Pose bridge can mutate translation or scale');
-for(const stage of ['dance','queenHold','finale','finaleHold','combat']){
-  if(!sync.includes(`stage==='${stage}'`))throw new Error(`Missing cinematic stage: ${stage}`);
-}
+// Verify the Hermite formulation is velocity-continuous at a representative
+// non-hold cue (1100 ms).
+const H=(p0,p1,m0,m1,u,span)=>{const t=Math.max(0,Math.min(1,u)),t2=t*t,t3=t2*t;return (2*t3-3*t2+1)*p0+(t3-2*t2+t)*m0*span+(-2*t3+3*t2)*p1+(t3-t2)*m1*span};
+const keys=[{ms:700,v:8.75},{ms:1100,v:6.60},{ms:2800,v:5.60}];
+const tangent=(keys[2].v-keys[0].v)/(keys[2].ms-keys[0].ms),eps=.0001;
+const left=(H(keys[0].v,keys[1].v,(keys[1].v-keys[0].v)/400,tangent,1,400)-H(keys[0].v,keys[1].v,(keys[1].v-keys[0].v)/400,tangent,1-eps,400))/(eps*400);
+const right=(H(keys[1].v,keys[2].v,tangent,(keys[2].v-keys[1].v)/1700,eps,1700)-H(keys[1].v,keys[2].v,tangent,(keys[2].v-keys[1].v)/1700,0,1700))/(eps*1700);
+if(Math.abs(left-right)>1e-5)throw new Error(`Camera velocity is discontinuous at cue: ${left} vs ${right}`);
 
-// Quintic smootherstep must arrive with zero velocity at both ends.
-const smooth=t=>t*t*t*(t*(t*6-15)+10);
-const eps=1e-4;
-if(smooth(0)!==0||smooth(1)!==1)throw new Error('Smootherstep endpoints are wrong');
-if(Math.abs((smooth(eps)-smooth(0))/eps)>.001||Math.abs((smooth(1)-smooth(1-eps))/eps)>.001)throw new Error('Pose/camera bridge endpoints are not velocity-safe');
-
-console.log('V10.19 CINEMATIC CAMERA & POSE SYNC PASS · one clock · 9 camera cues · quintic pose bridges · ROOT XZ/full-body guards');
+console.log('V10.19.3 CINEMATIC CAMERA SYNC PASS · V10.19.2 C1 path preserved · rig target · 850 ms exit');

@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.19.1 — Pause &amp; Exit Match</title>
+<title>Princess Rescue V10.19.3 — Cinematic Occlusion &amp; VFX Readability</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -115,12 +115,12 @@ body.envPhase3 #bossPortraitWrap{box-shadow:0 0 18px rgba(219,75,204,.32),inset 
 #bossIntroV9 .introBar.bottom{bottom:0;transform-origin:bottom}
 #bossIntroV9.show .introBar{transform:scaleY(1)}
 #bossIntroV9 .introVeil{position:absolute;inset:0;background:radial-gradient(circle at 52% 48%,transparent 16%,rgba(7,3,20,.17) 42%,rgba(1,1,7,.62) 100%);opacity:0;animation:introVeilV95 var(--boss-intro-duration,8.6s) ease both;will-change:opacity}
-#bossIntroV9 .sig{position:absolute;left:50%;top:45%;width:min(47vw,420px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.58);border:1px solid rgba(227,218,255,.28);box-shadow:0 0 52px rgba(172,127,255,.24),0 0 130px rgba(91,58,180,.26),inset 0 0 70px rgba(204,181,255,.09);opacity:0;will-change:transform,opacity}
+#bossIntroV9 .sig{position:absolute;left:50%;top:45%;width:min(43vw,380px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.58);border:1px solid rgba(227,218,255,.17);box-shadow:0 0 42px rgba(172,127,255,.14),0 0 100px rgba(91,58,180,.15),inset 0 0 55px rgba(204,181,255,.055);opacity:0;will-change:transform,opacity}
 #bossIntroV9.show .sig{animation:introSigV95 var(--boss-intro-duration,8.6s) cubic-bezier(.16,.8,.22,1) both}
-#bossIntroV9 .sig:before,#bossIntroV9 .sig:after{content:"";position:absolute;border-radius:50%;inset:13%;border:1px dashed rgba(238,231,255,.27)}
+#bossIntroV9 .sig:before,#bossIntroV9 .sig:after{content:"";position:absolute;border-radius:50%;inset:13%;border:1px dashed rgba(238,231,255,.16)}
 #bossIntroV9 .sig:before{animation:bossSigSpin 9s linear infinite}
-#bossIntroV9 .sig:after{inset:28%;border-style:solid;border-color:rgba(165,121,255,.30);box-shadow:0 0 30px rgba(178,143,255,.18);animation:bossSigSpinRev 7s linear infinite}
-#bossIntroV9 .moonCrescent{position:absolute;left:50%;top:45%;width:min(26vw,235px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.68);background:radial-gradient(circle at 37% 36%,#fffdec 0 18%,#dcd4ff 46%,#7768bd 74%,#332750 100%);box-shadow:0 0 45px rgba(221,209,255,.48),0 0 105px rgba(125,83,220,.32);opacity:0}
+#bossIntroV9 .sig:after{inset:28%;border-style:solid;border-color:rgba(165,121,255,.18);box-shadow:0 0 24px rgba(178,143,255,.10);animation:bossSigSpinRev 7s linear infinite}
+#bossIntroV9 .moonCrescent{position:absolute;left:50%;top:45%;width:min(21vw,190px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.68);background:radial-gradient(circle at 37% 36%,#fffdec 0 18%,#dcd4ff 46%,#7768bd 74%,#332750 100%);box-shadow:0 0 32px rgba(221,209,255,.28),0 0 75px rgba(125,83,220,.18);opacity:0}
 #bossIntroV9 .moonCrescent:after{content:"";position:absolute;width:82%;height:82%;border-radius:50%;left:30%;top:5%;background:#070718}
 #bossIntroV9.show .moonCrescent{animation:introMoonV95 var(--boss-intro-duration,8.6s) ease both}
 #bossIntroV9 .introCard{position:absolute;left:50%;bottom:13%;width:min(92vw,860px);transform:translateX(-50%) translateY(14px);text-align:center;text-shadow:0 4px 20px #000;opacity:0;will-change:transform,opacity}
@@ -135,20 +135,20 @@ body.bossIntroLock #hud,body.bossIntroLock #bossHud,body.bossIntroLock #phase,bo
 @keyframes bossSigSpin{to{transform:rotate(360deg)}}
 @keyframes bossSigSpinRev{to{transform:rotate(-360deg)}}
 @keyframes introVeilV95{0%{opacity:0}5%{opacity:1}90%{opacity:1}100%{opacity:0}}
-@keyframes introSigV95{0%{opacity:0;transform:translate(-50%,-50%) scale(.42) rotate(-20deg)}9%{opacity:.82}66%{opacity:.46;transform:translate(-50%,-50%) scale(1.02) rotate(12deg)}86%{opacity:.78;transform:translate(-50%,-50%) scale(1.12) rotate(20deg)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.28) rotate(28deg)}}
-@keyframes introMoonV95{0%{opacity:0;transform:translate(-50%,-50%) scale(.50)}8%{opacity:.74}64%{opacity:.34;transform:translate(-50%,-50%) scale(.96)}84%{opacity:.68;transform:translate(-50%,-50%) scale(1.06)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.22)}}
-@keyframes introCardV95{0%,54%{opacity:0;transform:translateX(-50%) translateY(18px)}60%,92%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-5px)}}
+@keyframes introSigV95{0%{opacity:0;transform:translate(-50%,-50%) scale(.42) rotate(-20deg)}9%{opacity:.48}66%{opacity:.25;transform:translate(-50%,-50%) scale(1.02) rotate(12deg)}86%{opacity:.42;transform:translate(-50%,-50%) scale(1.12) rotate(20deg)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.28) rotate(28deg)}}
+@keyframes introMoonV95{0%{opacity:0;transform:translate(-50%,-50%) scale(.50)}8%{opacity:.40}64%{opacity:.18;transform:translate(-50%,-50%) scale(.96)}84%{opacity:.34;transform:translate(-50%,-50%) scale(1.06)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.22)}}
+@keyframes introCardV95{0%,54%{opacity:0;transform:translateX(-50%) translateY(18px)}60%,78%{opacity:1;transform:translateX(-50%) translateY(0)}86%,100%{opacity:0;transform:translateX(-50%) translateY(-5px)}}
 @keyframes introChipV95{0%,61%{opacity:0;transform:scale(.88)}68%,93%{opacity:1;transform:scale(1)}100%{opacity:0}}
 @media (pointer:coarse){
- #bossIntroV9 .sig{width:min(58vw,380px);top:43%}
- #bossIntroV9 .moonCrescent{width:min(31vw,205px);top:43%}
+ #bossIntroV9 .sig{width:min(47vw,330px);top:43%}
+ #bossIntroV9 .moonCrescent{width:min(25vw,165px);top:43%}
  #bossIntroV9 .introCard{bottom:12%}
  #bossIntroV9 .title{font-size:clamp(30px,6.2vw,52px)}
 }
 @media (max-height:500px) and (orientation:landscape){
  #bossIntroV9 .introBar{height:11%}
- #bossIntroV9 .sig{width:min(35vw,225px);top:42%}
- #bossIntroV9 .moonCrescent{width:min(20vw,128px);top:42%}
+ #bossIntroV9 .sig{width:min(30vw,195px);top:42%}
+ #bossIntroV9 .moonCrescent{width:min(16vw,104px);top:42%}
  #bossIntroV9 .introCard{bottom:11%}
  #bossIntroV9 .kicker{font-size:7px;letter-spacing:3px}
  #bossIntroV9 .title{font-size:28px;margin-top:2px}
@@ -304,7 +304,7 @@ body.gameManualPaused #ctl1,body.gameManualPaused #ctl2,body.gameManualPaused #d
 /* V9.6 — pooled screen-space combat presentation. */
 #combatImpactFx{position:fixed;z-index:52;inset:0;pointer-events:none;opacity:0;overflow:hidden}
 #combatImpactFx.play{animation:impactRootV96 var(--dur,.42s) ease-out both}
-#combatImpactFx .impactRing{position:absolute;left:50%;top:52%;width:min(42vw,390px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.22);border:2px solid rgba(225,214,255,.90);box-shadow:0 0 18px rgba(255,255,255,.55),0 0 58px var(--fxColor,rgba(159,111,255,.55));opacity:0}
+#combatImpactFx .impactRing{position:absolute;left:50%;top:52%;width:min(42vw,390px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.22);border:2px solid rgba(225,214,255,.56);box-shadow:0 0 14px rgba(255,255,255,.34),0 0 46px var(--fxColor,rgba(159,111,255,.36));opacity:0}
 #combatImpactFx.play .impactRing{animation:impactRingV96 var(--dur,.42s) cubic-bezier(.15,.75,.2,1) both}
 #combatImpactFx .impactSlash{position:absolute;left:50%;top:50%;width:120vw;height:7px;border-radius:999px;background:linear-gradient(90deg,transparent,var(--fxColor,#c5b0ff) 22%,#fff 50%,var(--fxColor,#c5b0ff) 78%,transparent);filter:blur(1px);transform:translate(-50%,-50%) rotate(var(--slashRot,-12deg)) scaleX(.05);opacity:0}
 #combatImpactFx.slash.play .impactSlash{animation:impactSlashV96 .32s ease-out both}
@@ -314,8 +314,8 @@ body.gameManualPaused #ctl1,body.gameManualPaused #ctl2,body.gameManualPaused #d
 #combatImpactFx.split.play .impactSplit{animation:impactSplitV96 .30s ease-out both}
 #combatImpactFx.dark .impactEdge{box-shadow:inset 0 0 0 2px rgba(171,115,255,.10),inset 0 0 145px rgba(23,7,42,.82)}
 #combatImpactFx.dark .impactRing{border-color:rgba(133,89,202,.76);box-shadow:0 0 20px rgba(160,102,244,.32),0 0 76px rgba(29,7,52,.84)}
-@keyframes impactRootV96{0%{opacity:0}8%{opacity:1}72%{opacity:.86}100%{opacity:0}}
-@keyframes impactRingV96{0%{opacity:0;transform:translate(-50%,-50%) scale(.18)}18%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(2.2)}}
+@keyframes impactRootV96{0%{opacity:0}8%{opacity:.70}72%{opacity:.58}100%{opacity:0}}
+@keyframes impactRingV96{0%{opacity:0;transform:translate(-50%,-50%) scale(.18)}18%{opacity:.64}100%{opacity:0;transform:translate(-50%,-50%) scale(2.2)}}
 @keyframes impactSlashV96{0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--slashRot,-12deg)) scaleX(.04)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) rotate(var(--slashRot,-12deg)) scaleX(1)}}
 @keyframes impactEdgeV96{0%{opacity:0}16%{opacity:1}100%{opacity:0}}
 @keyframes impactSplitV96{0%{opacity:0;transform:translateX(-10px)}24%{opacity:1}58%{opacity:.55;transform:translateX(8px)}100%{opacity:0;transform:translateX(0)}}
@@ -639,7 +639,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái CHÉM · Chuột phải / SHIFT NÉ · SPACE / E KIẾM KHÍ</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.19.1 PAUSE + EXIT</span></h1><p style="margin-top:7px">Camera bám timeline animation, nối pose mượt và luôn giữ trọn boss Tripo, orb cùng halo.</p><div class="logoMoon"></div><div class="badges"><span class="badge">8.6s authored intro</span><span class="badge">Smooth pose bridge</span><span class="badge">ROOT XZ / Halo / Orb</span><span class="badge">Full-body camera</span><span class="badge">JPG riêng · 1280px</span><span class="badge">Buffered sword combo</span><span class="badge">Server-authoritative combat</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.19.3 VFX READABILITY</span></h1><p style="margin-top:7px">Giữ trọn silhouette boss trong cinematic, giảm vòng sáng che nhân vật và giữ camera V10.19.2.</p><div class="logoMoon"></div><div class="badges"><span class="badge">8.6s authored intro</span><span class="badge">C1 camera spline</span><span class="badge">Upper-body close-up</span><span class="badge">Occlusion-safe VFX</span><span class="badge">Smaller black moon</span><span class="badge">JPG riêng · 1280px</span><span class="badge">Buffered sword combo</span><span class="badge">Pause + Exit</span><span class="badge">Server-authoritative combat</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Kiếm tinh quang · combo cận chiến.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Kiếm hoa hồng · kiếm khí tầm xa.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><div id="hostAssetGate" class="assetGate"><div class="assetGateTop"><span id="hostAssetLabel">Kết nối máy chủ</span><span id="hostAssetPct">0%</span></div><div class="assetGateTrack"><div id="hostAssetFill" class="assetGateFill"></div></div></div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div id="guestAssetGate" class="assetGate"><div class="assetGateTop"><span id="guestAssetLabel">Kết nối máy chủ</span><span id="guestAssetPct">0%</span></div><div class="assetGateTrack"><div id="guestAssetFill" class="assetGateFill"></div></div></div><div class="logoMoon"></div></div></div>
@@ -757,6 +757,20 @@ const V1019_INTRO_CUES=Object.freeze({
  revealEnd:700,danceStart:700,danceOrbit:1100,danceCross:2800,danceSettle:4300,
  queenHold:4900,finaleStart:5350,finaleOrbit:5800,finaleHold:7750,combatStart:8150,end:8600
 });
+// V10.19.2 — one C1-continuous Hermite path replaces the old chain of nine
+// smootherstep segments. Shared tangents preserve velocity through authored
+// cues; only the queen and finale holds deliberately settle to zero speed.
+const V10192_CAMERA_KEYS=Object.freeze([
+ {ms:0,angle:-.42,radiusLandscape:9.55,radiusPortrait:15.95,height:3.95,upper:.15},
+ {ms:700,angle:-.34,radiusLandscape:8.75,radiusPortrait:14.60,height:4.08,upper:.30},
+ {ms:1100,angle:-.30,radiusLandscape:6.60,radiusPortrait:10.80,height:4.22,upper:.92},
+ {ms:2800,angle:.02,radiusLandscape:5.60,radiusPortrait:9.20,height:4.28,upper:1.00},
+ {ms:4300,angle:.34,radiusLandscape:6.25,radiusPortrait:10.30,height:4.20,upper:.88},
+ {ms:4900,angle:.06,radiusLandscape:7.40,radiusPortrait:12.40,height:4.12,upper:.58,hold:true},
+ {ms:5350,angle:.06,radiusLandscape:7.40,radiusPortrait:12.40,height:4.12,upper:.58,hold:true},
+ {ms:5800,angle:0,radiusLandscape:6.90,radiusPortrait:11.70,height:4.12,upper:.68},
+ {ms:7750,angle:-.025,radiusLandscape:7.80,radiusPortrait:13.30,height:4.02,upper:.48,hold:true}
+]);
 const V1019_DANCE_SOURCE=Object.freeze({start:.55,hold:4.54,end:4.78});
 const V1019_FINALE_SOURCE=Object.freeze({start:.10,hold:2.56,end:2.80});
 const animationLab={active:false,index:18,speed:1,loop:true,rootLock:true,paused:false,view:0,action:null};
@@ -845,6 +859,10 @@ let bossArmamentBufferPromise=null;
 let desktopBoss2KPrefetchStarted=false,desktopBoss2KPrefetchTimer=null;
 let bossAssetReadyStatus={hero:false,princess:false},lobbyPeerJoined=false,hostStartPending=false,combatTestMode=false;
 const v108IntroAnchor=new THREE.Vector3(),v108IntroCamTarget=new THREE.Vector3(),v108IntroLookTarget=new THREE.Vector3(),v108IntroLook=new THREE.Vector3();
+const v10192HeadWorld=new THREE.Vector3(),v10192ChestWorld=new THREE.Vector3();
+const v10192FullLook=new THREE.Vector3(),v10192UpperLook=new THREE.Vector3(),v10192DesiredLook=new THREE.Vector3(),v10192ExitLook=new THREE.Vector3();
+const v10192CameraState={angle:0,radius:0,height:0,upper:0};
+let v10192LookReady=false;
 // V10.17.1 — the cinematic owns a fixed viewport and a deterministic camera.
 // Mobile browser chrome may emit several resize events while the address bar
 // collapses; applying them one-by-one visibly resizes the whole intro canvas.
@@ -868,7 +886,7 @@ const visualAudit={
  stage:'idle',checks:0,issues:[],clipResults:[],transitionResults:[],vfxResults:[],startedAt:0,finishedAt:0
 };
 window.__bossVisualAudit=visualAudit;
-const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.19.1',enabled:true})||null;
+const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.19.3',enabled:true})||null;
 window.__runtimeBlackBox=bugRecorder;
 const bugRuntime={lastSampleAt:0,lastCamera:null,bossIdentity:'',bossUrl:'',introScale:null,introViewport:null,lastCastId:null,moveProbe:null,webglLost:false};
 let ignoredExternalRuntimeErrors=0;
@@ -1954,7 +1972,7 @@ function initCombatInstances(){
        if(uKind>1.5&&uKind<2.5) art+=ticks*.66+ring2*.32;
        if(uKind>2.5&&uKind<3.5) art+=cres*.82;
        if(uKind>3.5) art+=ring2*.52+spokes*.34+ticks*.42;
-       float alpha=sat(art)*(.18+.68*uPre)*fade*pulse;
+       float alpha=sat(art)*(.11+.43*uPre)*fade*pulse;
        if(alpha<.018)discard;
        vec3 col=mix(uColor,vec3(1.0),sat(art-1.0)*.25);
        gl_FragColor=vec4(col,alpha);
@@ -2418,6 +2436,44 @@ function playBossPresentationSegment(name,overrides={}){
 }
 function v1019SmootherStep(value){
  const t=clamp(value,0,1);return t*t*t*(t*(t*6-15)+10);
+}
+function v10192CameraTangent(keys,index,property){
+ const key=keys[index];if(key?.hold)return 0;
+ if(index<=0){const next=keys[1];return (next[property]-key[property])/Math.max(1,next.ms-key.ms)}
+ if(index>=keys.length-1){const prev=keys[index-1];return (key[property]-prev[property])/Math.max(1,key.ms-prev.ms)}
+ const prev=keys[index-1],next=keys[index+1];
+ return (next[property]-prev[property])/Math.max(1,next.ms-prev.ms);
+}
+function v10192Hermite(p0,p1,m0,m1,u,span){
+ const t=clamp(u,0,1),t2=t*t,t3=t2*t;
+ return (2*t3-3*t2+1)*p0+(t3-2*t2+t)*m0*span+(-2*t3+3*t2)*p1+(t3-t2)*m1*span;
+}
+function v10192SampleCamera(ms,portrait,out=v10192CameraState){
+ const keys=V10192_CAMERA_KEYS,last=keys.length-1;
+ let index=0;
+ while(index<last-1&&ms>=keys[index+1].ms)index++;
+ const a=keys[index],b=keys[Math.min(last,index+1)],span=Math.max(1,b.ms-a.ms),u=clamp((ms-a.ms)/span,0,1);
+ const sample=property=>v10192Hermite(a[property],b[property],v10192CameraTangent(keys,index,property),v10192CameraTangent(keys,Math.min(last,index+1),property),u,span);
+ out.angle=sample('angle');out.radius=sample(portrait?'radiusPortrait':'radiusLandscape');out.height=sample('height');out.upper=clamp(sample('upper'),0,1);
+ return out;
+}
+function v10192UpdateBossLookTargets(rec){
+ const bx=v108IntroAnchor.x,bz=v108IntroAnchor.z;
+ v10192FullLook.set(bx,2.86,bz);v10192UpperLook.set(bx,3.72,bz);
+ const chest=rec?.actingBones?.chest,head=rec?.actingBones?.head;
+ if(chest&&head){
+   rec.model?.updateMatrixWorld?.(true);
+   chest.getWorldPosition(v10192ChestWorld);head.getWorldPosition(v10192HeadWorld);
+   // Full framing stays near the sternum; close framing weights the face/head.
+   // Small X/Z clamps reject hair/pose noise while still following real acting.
+   v10192FullLook.copy(v10192ChestWorld).lerp(v10192HeadWorld,.30);v10192FullLook.y-=.52;
+   v10192UpperLook.copy(v10192ChestWorld).lerp(v10192HeadWorld,.68);v10192UpperLook.y+=.12;
+   for(const target of [v10192FullLook,v10192UpperLook]){
+     target.x=clamp(target.x,bx-.34,bx+.34);target.z=clamp(target.z,bz-.28,bz+.28);
+   }
+   v10192FullLook.y=clamp(v10192FullLook.y,2.68,3.10);
+   v10192UpperLook.y=clamp(v10192UpperLook.y,3.48,3.96);
+ }
 }
 function v1019IntroTimelineMs(now=performance.now()){
  if(!bossIntroV9Start)return 0;
@@ -2988,8 +3044,10 @@ function createBossArmamentStateFx(arm){
  const runeA=new THREE.Mesh(new THREE.TorusGeometry(1.55,.027,6,48),additive(0xdac6ff,.0));
  const runeB=new THREE.Mesh(new THREE.TorusGeometry(1.26,.018,5,42),additive(0x8f58d5,.0));
  haloRunes.add(runeA,runeB);arm.haloRoot.add(haloRunes);
- const blackMoon=new THREE.Mesh(new THREE.SphereGeometry(.72,20,14),new THREE.MeshBasicMaterial({color:0x08000f,transparent:true,opacity:0,depthWrite:false}));
- blackMoon.name='UltimateBlackMoon';blackMoon.visible=false;blackMoon.position.z=.08;arm.haloRoot.add(blackMoon);
+ const blackMoon=new THREE.Mesh(new THREE.SphereGeometry(.72,20,14),new THREE.MeshBasicMaterial({color:0x08000f,transparent:true,opacity:0,depthWrite:false,depthTest:true}));
+ // Keep the moon clearly behind the body: haloRoot already follows the upper
+ // back, and negative local Z extends farther along the calibrated back axis.
+ blackMoon.name='UltimateBlackMoon';blackMoon.visible=false;blackMoon.position.set(0,.10,-.46);blackMoon.renderOrder=-2;arm.haloRoot.add(blackMoon);
  const marker=new THREE.Mesh(new THREE.TorusGeometry(1.18,.052,6,48),additive(0xc8a8ff,.0));
  marker.name='SpinKickOrbLandingMarker';marker.rotation.x=Math.PI/2;marker.visible=false;marker.frustumCulled=false;scene.add(marker);
  const tetherGeometry=new THREE.BufferGeometry();
@@ -3132,18 +3190,19 @@ function updateBossArmamentStateFx(arm,state,ctx,dt,now){
  }else if(state==='hitHeavy'){
    fx.shield.visible=true;fx.shield.scale.setScalar(.9+2.2*p);fx.shield.material.opacity=.72*(1-p);haloJolt=Math.sin(p*Math.PI*3)*.20*(1-p);updateBossArmamentShards(arm,p,false);
  }else if(state==='introWaltz'){
-   fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.88+.10*Math.sin(ctx.pre*Math.PI));fx.haloRunes.rotation.z+=dt*.72;
-   fx.runeA.material.opacity=.10+.18*ctx.pre;fx.runeB.material.opacity=.07+.14*ctx.pre;fx.runeB.rotation.z-=dt*.54;
+   fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.82+.07*Math.sin(ctx.pre*Math.PI));fx.haloRunes.rotation.z+=dt*.72;
+   fx.runeA.material.opacity=.06+.11*ctx.pre;fx.runeB.material.opacity=.04+.08*ctx.pre;fx.runeB.rotation.z-=dt*.54;
  }else if(state==='aoe'){
    fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.76+.48*bossArmamentEase(pre));fx.haloRunes.rotation.z+=dt*(1.5+pre*2.8);
-   fx.runeA.material.opacity=(.16+.60*pre)*(1-after*.72);fx.runeB.material.opacity=(.10+.46*pre)*(1-after*.78);fx.runeB.rotation.z-=dt*2.4;
+   fx.runeA.material.opacity=(.10+.36*pre)*(1-after*.72);fx.runeB.material.opacity=(.06+.28*pre)*(1-after*.78);fx.runeB.rotation.z-=dt*2.4;
  }else if(state==='spinKick'){
    const impact=bossArmamentEase(pre);fx.marker.visible=true;fx.marker.position.set(boss.position.x,.075,boss.position.z);fx.marker.scale.setScalar(.72+1.55*impact+.22*pulse);fx.marker.material.opacity=(.28+.58*impact)*(1-after);fx.marker.rotation.z+=dt*3.4;
  }else if(state==='ultimate'||state==='introFinale'){
    const link=bossArmamentEase(clamp((pre-.18)/.72,0,1));fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.9+.42*link);fx.haloRunes.rotation.z+=dt*(1.2+link*3.1);
-   fx.runeA.material.opacity=.20+.58*link;fx.runeB.material.opacity=.14+.44*link;fx.runeB.rotation.z-=dt*2.1;
-   fx.blackMoon.visible=true;fx.blackMoon.scale.setScalar(.18+1.15*link);fx.blackMoon.material.opacity=.10+.82*link;
-   fx.tether.visible=link>.04;fx.tether.material.opacity=.22+.72*link;
+   fx.runeA.material.opacity=.12+.35*link;fx.runeB.material.opacity=.08+.27*link;fx.runeB.rotation.z-=dt*2.1;
+   // 0.80 max versus the old 1.33: about 40% smaller, with lower opacity.
+   fx.blackMoon.visible=true;fx.blackMoon.scale.setScalar(.12+.68*link);fx.blackMoon.material.opacity=.08+.54*link;
+   fx.tether.visible=link>.04;fx.tether.material.opacity=.14+.40*link;
    const attr=fx.tether.geometry.attributes.position.array;attr[0]=arm.orbRoot.position.x;attr[1]=arm.orbRoot.position.y;attr[2]=arm.orbRoot.position.z;attr[3]=arm.haloRoot.position.x;attr[4]=arm.haloRoot.position.y;attr[5]=arm.haloRoot.position.z+.08;fx.tether.geometry.attributes.position.needsUpdate=true;
  }else if(state==='death'){
    updateBossArmamentShards(arm,p,true);haloJolt=p*.48;
@@ -3224,10 +3283,10 @@ function updateBossArmament(dt=0,now=performance.now()){
  let orbScale=1,haloScale=1,orbSpin=state==='idle'?.72:state==='combat'?1.85:2.7,haloSpin=state==='idle'?.014:state==='combat'?.038:.11,energy=state==='idle'?.34:.58;
  if(state==='introWaltz'){
    bossArmamentOrbTarget.y+=.10+.08*Math.sin(ctx.pre*Math.PI*3);bossArmamentOrbTarget.addScaledVector(bossArmamentAim,.035);
-   orbScale=1+.07*Math.sin(ctx.pre*Math.PI*4);haloScale=1+.045*Math.sin(ctx.pre*Math.PI);orbSpin=2.35;haloSpin=.13;energy=.88;
+   orbScale=.74+.035*Math.sin(ctx.pre*Math.PI*4);haloScale=.92+.025*Math.sin(ctx.pre*Math.PI);orbSpin=2.35;haloSpin=.13;energy=.58;
  }else if(state==='introFinale'){
    const link=bossArmamentEase(ctx.pre);bossArmamentOrbTarget.lerp(bossArmamentHaloTarget,.72*link);bossArmamentOrbTarget.z+=.08*link;
-   orbScale=1+.76*link;haloScale=1+.16*link;orbSpin=2.1+link*3.6;haloSpin=.31;energy=1.28;
+   orbScale=.82+.40*link;haloScale=.94+.08*link;orbSpin=2.1+link*3.6;haloSpin=.31;energy=1.05;
  }else if(state==='quick'){
    const charge=bossArmamentEase(ctx.pre),release=ctx.after<.18?Math.sin(clamp(ctx.after/.18,0,1)*Math.PI):0;
    bossArmamentOrbTarget.y+=.18*charge;bossArmamentOrbTarget.addScaledVector(bossArmamentAim,.10);orbScale=.98-.34*charge+.48*release;orbSpin=4.8;haloSpin=.10;energy=1.08;
@@ -3262,7 +3321,10 @@ function updateBossArmament(dt=0,now=performance.now()){
  bossArmamentHaloTilt=lerp(bossArmamentHaloTilt,bossArmamentHaloTiltTarget,immediate?1:1-Math.exp(-Math.max(0,dt)*10));
  arm.orbRoot.scale.setScalar(orbScale);arm.haloRoot.scale.setScalar(haloScale);arm.haloRoot.rotation.y=boss.rotation.y;arm.haloRoot.rotation.z=haloJolt+bossArmamentHaloTilt;
  arm.orbModel.rotation.y+=Math.max(0,dt)*orbSpin;arm.orbModel.rotation.z=Math.sin(now*.0018)*.055;arm.haloModel.rotation.z+=Math.max(0,dt)*haloSpin;
- if(arm.orbAura){arm.orbAura.group.rotation.y=state==='combat'?Math.atan2(bossArmamentAim.x,bossArmamentAim.z)-boss.rotation.y:0;arm.orbAura.a.rotation.z+=Math.max(0,dt)*(orbSpin*1.45);arm.orbAura.b.rotation.x+=Math.max(0,dt)*(orbSpin*.92);arm.orbAura.matA.opacity=.28+.34*energy+.10*pulse;arm.orbAura.matB.opacity=.14+.25*energy+.08*(1-pulse)}
+ if(arm.orbAura){
+   const readability=state==='introWaltz'?.66:state==='introFinale'?.76:state==='aoe'?.70:1;
+   arm.orbAura.group.rotation.y=state==='combat'?Math.atan2(bossArmamentAim.x,bossArmamentAim.z)-boss.rotation.y:0;arm.orbAura.a.rotation.z+=Math.max(0,dt)*(orbSpin*1.45);arm.orbAura.b.rotation.x+=Math.max(0,dt)*(orbSpin*.92);arm.orbAura.matA.opacity=(.28+.34*energy+.10*pulse)*readability;arm.orbAura.matB.opacity=(.14+.25*energy+.08*(1-pulse))*readability;
+ }
  arm.orbModel.traverse(o=>{const mats=Array.isArray(o.material)?o.material:[o.material];for(const mat of mats)if(mat?.emissive)mat.emissiveIntensity=.28+.50*energy+.13*pulse});
  arm.orbSocketDistance=arm.orbRoot.position.distanceTo(bossArmamentOrbTarget);arm.orbHandDistance=arm.orbRoot.position.distanceTo(bossArmamentHandWorld);arm.haloFollowDistance=arm.haloRoot.position.distanceTo(bossArmamentHaloTarget);
 }
@@ -4709,18 +4771,19 @@ function playBossIntroV9(wait=0){
  el.style.setProperty('--boss-intro-duration',`${bossIntroV9Duration}ms`);
  v108IntroAnchor.set(boss.position.x,.1,boss.position.z);
  boss.position.copy(v108IntroAnchor);
- v108IntroLook.copy(v108IntroAnchor).setY(3.0);
+ v108IntroLook.copy(v108IntroAnchor).setY(3.05);
+ v10192LookReady=false;
 
  // The selected render scale, viewport and root transform stay unchanged for
  // the full cinematic. Camera trauma/hit-stop from any stale event is cleared.
  camTrauma=0;camShakePhase=0;cameraKick=0;hitStopUntil=0;bossHitPulseUntil=0;
  const introPortrait=(camera.aspect||innerWidth/innerHeight)<.82;
- const introBack=introPortrait?15.55:8.90,firstAngle=-.42,firstRadius=introBack+.65;
+ const firstAngle=-.42,firstRadius=introPortrait?15.95:9.55;
  // Entering a cinematic is an authored cut, not a gameplay camera anomaly.
  // Reset the black-box comparison before applying the first shot.
  bugRuntime.lastCamera=null;
- camera.position.set(v108IntroAnchor.x+Math.sin(firstAngle)*firstRadius,3.88,v108IntroAnchor.z+Math.cos(firstAngle)*firstRadius);
- v108IntroLook.set(v108IntroAnchor.x,2.48,v108IntroAnchor.z);camera.lookAt(v108IntroLook);
+ camera.position.set(v108IntroAnchor.x+Math.sin(firstAngle)*firstRadius,3.95,v108IntroAnchor.z+Math.cos(firstAngle)*firstRadius);
+ v108IntroLook.set(v108IntroAnchor.x,3.05,v108IntroAnchor.z);camera.lookAt(v108IntroLook);
 
  lockBossIntroUI(true);
  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
@@ -5261,12 +5324,12 @@ function updateBossCastVisual(){
    bossTelegraphRune.material.uniforms.uAfter.value=after;
    bossTelegraphRune.material.uniforms.uKind.value=c.i;
  }
- bossTelegraphRing.material.opacity=now<c.impactAt?(mobileDevice?.42:.25)+(mobileDevice?.58:.65)*pre:(mobileDevice?.88:.72)*(1-after);
+ bossTelegraphRing.material.opacity=now<c.impactAt?(mobileDevice?.26:.16)+(mobileDevice?.36:.40)*pre:(mobileDevice?.55:.45)*(1-after);
  bossTelegraphRing.scale.setScalar((mobileDevice?1.16:1)*(1+.9*pre+.25*Math.sin(performance.now()*.018)));
  if(bossTelegraphRing2)bossTelegraphRing2.visible=c.i===4||(now>=warningAt&&now<c.impactAt);
  if(bossTelegraphRing2?.visible){
    bossTelegraphRing2.position.set(boss.position.x,.07,boss.position.z);
-   bossTelegraphRing2.material.opacity=(c.i===4?.20:.12)+(c.i===4?.42:.32)*pre;
+   bossTelegraphRing2.material.opacity=(c.i===4?.12:.07)+(c.i===4?.27:.20)*pre;
    bossTelegraphRing2.material.opacity*=1-after;
    bossTelegraphRing2.scale.setScalar((c.i===4?1:.84)+(c.i===4?.35:.48)*pre);
  }
@@ -5282,14 +5345,14 @@ function updateBossCastVisual(){
    if(bossTelegraphRune)bossTelegraphRune.material.uniforms.uColor.value.setHex(0xe4dcff);
    if(bossTelegraphMoon){
      bossTelegraphMoon.visible=true;bossTelegraphMoon.position.set(boss.position.x,5.0,boss.position.z);
-     bossTelegraphMoon.material.opacity=(mobileDevice?.42:.25)+(mobileDevice?.58:.70)*pre;bossTelegraphMoon.scale.setScalar((mobileDevice?1.18:1)*(.65+.55*pre));
+     bossTelegraphMoon.material.opacity=(mobileDevice?.26:.16)+(mobileDevice?.36:.40)*pre;bossTelegraphMoon.scale.setScalar((mobileDevice?1.12:.96)*(.58+.42*pre));
    }
    if(bossMoonCracks3D){
      bossMoonCracks3D.visible=true;bossMoonCracks3D.position.copy(bossTelegraphMoon?.position||boss.position);
      bossMoonCracks3D.position.z+=.73;bossMoonCracks3D.rotation.z=pre*.12;
-     bossMoonCracks3D.scale.setScalar(.75+.9*pre);bossMoonCracks3D.material.opacity=.18+.82*pre;
+     bossMoonCracks3D.scale.setScalar(.70+.72*pre);bossMoonCracks3D.material.opacity=.12+.48*pre;
    }
-   $('dreamCracks').style.opacity=.20+.64*pre;
+   $('dreamCracks').style.opacity=.12+.38*pre;
  }else if(c.i===2){
    bossTelegraphRing.material.color.setHex(0x8e74e8);
    if(bossTelegraphRune)bossTelegraphRune.material.uniforms.uColor.value.setHex(0x8d72e6);
@@ -5310,7 +5373,7 @@ function updateBossCastVisual(){
      if(bossTelegraphCone)bossTelegraphCone.visible=false;
      const kickPre=clamp((now-(c.kickAt||c.teleportAt))/Math.max(1,c.impactAt-(c.kickAt||c.teleportAt)),0,1);
      bossTelegraphRing.scale.setScalar(1.38+1.02*kickPre);
-     bossTelegraphRing.material.opacity=.44+.50*kickPre;
+     bossTelegraphRing.material.opacity=.28+.32*kickPre;
    }
  }else{
    bossTelegraphRing.material.color.setHex(0x7040a9);
@@ -5906,55 +5969,41 @@ function updateCam(dt){
  if(!A||!B)return;
  if(bossIntroActive()&&boss){
    const ms=v1019IntroTimelineMs();
-   const cue=(start,end)=>v1019SmootherStep((ms-start)/Math.max(1,end-start));
    const bx=v108IntroAnchor.x,bz=v108IntroAnchor.z;
    const portrait=(camera.aspect||innerWidth/innerHeight)<.82;
-   // A portrait phone needs a larger radius than landscape because horizontal
-   // FOV is much narrower. These fixed radii already contain the 4.45 m rig,
-   // crown and halo, so no animated per-frame framing correction is required.
-   const introBack=portrait?15.55:8.90;
-   let px,py,pz,lx=bx,ly=2.48,lz=bz,angle=-.42,radius=introBack+.65;
+   const rec=rigRuntime.records.boss;
+   v10192UpdateBossLookTargets(rec);
 
-   if(ms<V1019_INTRO_CUES.revealEnd){
-     const u=cue(0,V1019_INTRO_CUES.revealEnd);
-     angle=lerp(-.42,-.34,u);radius=lerp(introBack+.65,introBack+.15,u);py=lerp(3.88,4.10,u);ly=lerp(2.48,2.62,u);
-   }else if(ms<V1019_INTRO_CUES.danceOrbit){
-     const u=cue(V1019_INTRO_CUES.danceStart,V1019_INTRO_CUES.danceOrbit);
-     angle=lerp(-.34,-.30,u);radius=lerp(introBack+.15,introBack,u);py=lerp(4.10,4.18,u);ly=lerp(2.62,2.66,u);
-   }else if(ms<V1019_INTRO_CUES.danceCross){
-     const u=cue(V1019_INTRO_CUES.danceOrbit,V1019_INTRO_CUES.danceCross);
-     angle=lerp(-.30,.02,u);radius=lerp(introBack,introBack-.08,u);py=lerp(4.18,4.08,u);ly=lerp(2.66,2.60,u);
-   }else if(ms<V1019_INTRO_CUES.danceSettle){
-     const u=cue(V1019_INTRO_CUES.danceCross,V1019_INTRO_CUES.danceSettle);
-     angle=lerp(.02,.34,u);radius=lerp(introBack-.08,introBack+.02,u);py=lerp(4.08,4.20,u);ly=lerp(2.60,2.62,u);
-   }else if(ms<V1019_INTRO_CUES.queenHold){
-     const u=cue(V1019_INTRO_CUES.danceSettle,V1019_INTRO_CUES.queenHold);
-     angle=lerp(.34,.06,u);radius=lerp(introBack+.02,introBack,u);py=lerp(4.20,4.12,u);ly=lerp(2.62,2.70,u);
-   }else if(ms<V1019_INTRO_CUES.finaleStart){
-     angle=.06;radius=introBack;py=4.12;ly=2.70;
-   }else if(ms<V1019_INTRO_CUES.finaleOrbit){
-     const u=cue(V1019_INTRO_CUES.finaleStart,V1019_INTRO_CUES.finaleOrbit);
-     angle=lerp(.06,0,u);radius=lerp(introBack,introBack-(portrait?.03:.08),u);py=lerp(4.12,4.02,u);ly=lerp(2.70,2.76,u);
-   }else if(ms<V1019_INTRO_CUES.finaleHold){
-     const u=cue(V1019_INTRO_CUES.finaleOrbit,V1019_INTRO_CUES.finaleHold);
-     angle=lerp(0,-.025,u);radius=lerp(introBack-(portrait?.03:.08),introBack-(portrait?.05:.20),u);py=lerp(4.02,3.92,u);ly=lerp(2.76,2.82,u);
-   }else if(ms<V1019_INTRO_CUES.combatStart){
-     const u=cue(V1019_INTRO_CUES.finaleHold,V1019_INTRO_CUES.combatStart);
-     angle=-.025;radius=lerp(introBack-(portrait?.05:.20),introBack+.10,u);py=lerp(3.92,4.05,u);ly=lerp(2.82,2.80,u);
-   }else{
-     const u=cue(V1019_INTRO_CUES.combatStart,V1019_INTRO_CUES.end);
+   // Continuous orbit/close-up path. Unlike the old per-cue smootherstep
+   // chain, velocity does not collapse to zero at every timeline marker.
+   const state=v10192SampleCamera(Math.min(ms,V1019_INTRO_CUES.finaleHold),portrait);
+   const startX=bx+Math.sin(state.angle)*state.radius,startZ=bz+Math.cos(state.angle)*state.radius;
+   v108IntroCamTarget.set(startX,state.height,startZ);
+   v10192DesiredLook.copy(v10192FullLook).lerp(v10192UpperLook,state.upper);
+
+   // The finale is the only authored camera settle. One long quintic pullback
+   // then connects it to gameplay without introducing intermediate stops.
+   if(ms>=V1019_INTRO_CUES.finaleHold){
+     const exitU=v1019SmootherStep((ms-V1019_INTRO_CUES.finaleHold)/Math.max(1,V1019_INTRO_CUES.end-V1019_INTRO_CUES.finaleHold));
      const finalY=portrait?8.75:7.95,finalBack=portrait?17.2:14.5;
-     px=lerp(bx+Math.sin(-.025)*(introBack+.10),v107CamFocusX,u);
-     py=lerp(4.05,finalY,u);
-     pz=lerp(bz+Math.cos(-.025)*(introBack+.10),v107CamFocusZ+finalBack,u);
-     lx=lerp(bx,v107CamFocusX,u);ly=lerp(2.80,2.30,u);lz=lerp(bz,v107CamFocusZ,u);
+     v108IntroCamTarget.x=lerp(startX,v107CamFocusX,exitU);
+     v108IntroCamTarget.y=lerp(state.height,finalY,exitU);
+     v108IntroCamTarget.z=lerp(startZ,v107CamFocusZ+finalBack,exitU);
+     v10192ExitLook.set(v107CamFocusX,2.30,v107CamFocusZ);
+     v10192DesiredLook.lerp(v10192ExitLook,exitU);
    }
-   if(ms<V1019_INTRO_CUES.combatStart){px=bx+Math.sin(angle)*radius;pz=bz+Math.cos(angle)*radius}
-   v108IntroCamTarget.set(px,py,pz);v108IntroLookTarget.set(lx,ly,lz);
-   // Deterministic cinematic pose: the previous camera lerp pulled inward and
-   // frameBossFullBody pushed outward on the same frame, producing oscillation.
+
+   // Follow real chest/head motion with frame-rate-independent damping. This
+   // keeps crown, face, shoulders and upper torso in the safe frame while a
+   // pose changes, but filters the single-frame bone noise that caused snaps.
+   const follow=1-Math.exp(-Math.min(.05,Math.max(0,dt))*(ms>=V1019_INTRO_CUES.finaleHold?9.0:state.upper>.72?7.4:6.2));
+   if(!v10192LookReady){v108IntroLook.copy(v10192DesiredLook);v10192LookReady=true}
+   else v108IntroLook.lerp(v10192DesiredLook,follow);
+   v108IntroLookTarget.copy(v108IntroLook);
+
+   // The path is already safe-framed, so no reactive full-body correction is
+   // allowed to push against it and create a camera oscillation.
    camera.position.copy(v108IntroCamTarget);
-   v108IntroLook.copy(v108IntroLookTarget);
    camera.lookAt(v108IntroLook);
    return;
  }

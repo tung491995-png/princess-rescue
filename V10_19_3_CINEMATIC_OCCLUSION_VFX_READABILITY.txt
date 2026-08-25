@@ -1,0 +1,26 @@
+PRINCESS RESCUE V10.19.3 — CINEMATIC OCCLUSION & VFX READABILITY
+
+PHẠM VI
+- Baseline duy nhất: V10.19.2 Cinematic Camera Polish.
+- Không thay camera spline, timeline 8.6 giây, animation, gameplay hoặc asset.
+
+CINEMATIC
+- Orb trong đoạn múa giảm còn khoảng 74% và aura giảm 34%.
+- Black moon chỉ bật ở Intro Finale/Ultimate.
+- Black moon giảm từ scale tối đa 1.33 xuống 0.80, nhỏ hơn khoảng 40%.
+- Black moon đặt xa hơn sau lưng boss bằng local Z -0.46 và depth test.
+- Halo rune, tether, sigil và crescent giảm opacity để silhouette dễ đọc.
+- Title hiện từ 60–78%, biến mất hoàn toàn ở 86% timeline.
+- Camera pullback bắt đầu ở khoảng 90.1%, nên title tắt trước khoảng 350 ms.
+- Giữ nguyên pullback 850 ms của V10.19.2.
+
+COMBAT READABILITY
+- Vòng telegraph chính giảm tối đa còn 0.62 trên mobile và 0.56 trên desktop.
+- Vòng phụ, moon-crack, rune shader và spin-kick ring giảm khoảng 35–40%.
+- Impact ring giảm opacity đỉnh còn 0.64 và giảm bloom trắng.
+- Không đổi thời gian báo hiệu, phạm vi, hitbox hoặc sát thương.
+
+HỒI QUY
+- Camera V10.19.2 được kiểm tra byte-identical bằng SHA-256.
+- Logic server V10.19.2 được kiểm tra SHA-256 sau khi chuẩn hóa nhãn version.
+- Pause + Exit Match, lobby, startup, combat và debug recorder tiếp tục được test.

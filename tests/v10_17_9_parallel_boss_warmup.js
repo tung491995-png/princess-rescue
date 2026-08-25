@@ -18,8 +18,8 @@ function readGlbJson(file){
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.19.1 — Pause &amp; Exit Match</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.19.1'",
+  '<title>Princess Rescue V10.19.3 — Cinematic Occlusion &amp; VFX Readability</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.19.3'",
   'function fetchGlbBuffer(url,timeoutMs)',
   'function parseGlbBuffer(loader,buffer,timeoutMs)',
   'function prefetchBossArmamentBuffers()',
