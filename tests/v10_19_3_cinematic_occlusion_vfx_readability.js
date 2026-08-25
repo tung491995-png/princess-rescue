@@ -12,10 +12,10 @@ const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
 for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].entries()){
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
-if(pkg.version!=='10.22.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.23.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.22'",
+  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23'",
   "orbScale=.74+.035*Math.sin(ctx.pre*Math.PI*4)",
   "blackMoon.name='UltimateBlackMoon';blackMoon.visible=false;blackMoon.position.set(0,.10,-.46)",
   'blackMoon.renderOrder=-2',

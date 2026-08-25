@@ -1,12 +1,12 @@
 {
-  "name": "princess-rescue-v10-22-player-combat-animation-skill-vfx",
-  "version": "10.22.0",
+  "name": "princess-rescue-v10-23-boss-combat-intelligence-combo-overhaul",
+  "version": "10.23.0",
   "private": true,
   "type": "commonjs",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "test": "node tests/v10_17_3_debug_smoke.js && node tests/v10_17_6_combat_test_lab.js && node tests/v10_17_7_debug_repair.js && node tests/v10_17_8_lobby_connection_first.js && node tests/v10_17_9_parallel_boss_warmup.js && node tests/v10_17_9_1_desktop_1k_startup.js && node tests/v10_18_core_combat_stability.js && node tests/v10_19_cinematic_camera_pose_sync.js && node tests/v10_19_1_pause_exit_match.js && node tests/v10_19_2_cinematic_camera_polish.js && node tests/v10_19_3_cinematic_occlusion_vfx_readability.js && node tests/v10_19_4_movement_input_stability.js && node tests/v10_20_combat_feel_upgrade.js && node tests/v10_21_boss_phase_combat_director.js && node tests/v10_22_player_combat_animation_skill_vfx.js"
+    "test": "node tests/v10_17_3_debug_smoke.js && node tests/v10_17_6_combat_test_lab.js && node tests/v10_17_7_debug_repair.js && node tests/v10_17_8_lobby_connection_first.js && node tests/v10_17_9_parallel_boss_warmup.js && node tests/v10_17_9_1_desktop_1k_startup.js && node tests/v10_18_core_combat_stability.js && node tests/v10_19_cinematic_camera_pose_sync.js && node tests/v10_19_1_pause_exit_match.js && node tests/v10_19_2_cinematic_camera_polish.js && node tests/v10_19_3_cinematic_occlusion_vfx_readability.js && node tests/v10_19_4_movement_input_stability.js && node tests/v10_20_combat_feel_upgrade.js && node tests/v10_21_boss_phase_combat_director.js && node tests/v10_22_player_combat_animation_skill_vfx.js && node tests/v10_23_boss_combat_intelligence_combo_overhaul.js"
   },
   "dependencies": {
     "express": "^4.21.2",

@@ -1,0 +1,19 @@
+PRINCESS RESCUE V10.23 — BOSS COMBAT INTELLIGENCE & COMBO OVERHAUL
+
+CORE RULES
+- Super Armor: normal hits show damage, spark and orb-shield response but never play the boss Hit clip.
+- Poise: 100 maximum. Critical Break requires both a Critical Hit and depleted Poise.
+- Critical: body 1.5%; readable weak points are approximately 9–11%; damage multiplier 1.75.
+- Stagger: Critical Hit 190 ms; Critical Break 950 ms; break resistance 5.2 seconds.
+- Perfect Dodge: opens a 900 ms counter window.
+
+COMBO CONTENT
+- 12 normal combat sequences.
+- 3 signature sequences.
+- Eternal Eclipse: one four-movement multi-phase Ultimate.
+- Combo choice uses distance, HP phase, player action memory, cooldowns and attack history.
+
+REGRESSION GUARANTEES
+- Boss HP remains 2200; difficulty comes from behavior, not artificial health.
+- V10.22 player combat animation and skill VFX remain intact.
+- Movement stability, Pause/Exit, intro camera and asset loading remain intact.

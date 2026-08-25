@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050616">
-<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>
+<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>
 <style>
 :root{--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);--sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -46,6 +46,7 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 #bossFill{position:relative;background:linear-gradient(90deg,#5a38aa 0%,#9d72e3 38%,#e8d4ff 69%,#d65489 100%);box-shadow:0 0 10px rgba(151,95,231,.45);transition:width .12s linear}
 #bossFill:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(118deg,transparent 0 18px,rgba(255,255,255,.12) 19px,transparent 20px 33px);opacity:.65}
 #bossHpText{width:28px;font-size:6.5px;font-weight:1000;text-align:right;color:#d9ceee}
+#bossPoiseRow{display:flex;align-items:center;gap:5px;margin-top:2px;height:5px}#bossPoiseLabel{width:27px;font-size:5.4px;font-weight:1000;letter-spacing:.45px;color:#d9c58a}#bossPoiseTrack{position:relative;flex:1;height:3px;border-radius:99px;background:#ffffff12;overflow:hidden}#bossPoiseFill{height:100%;width:100%;transform-origin:left center;background:linear-gradient(90deg,#8e6a30,#ffe493,#fff7d4);box-shadow:0 0 7px #ffd978;transition:transform .10s linear}#bossPoiseState{width:34px;text-align:right;font-size:5.2px;font-weight:1000;color:#b9abc9}
 #bossSkillStrip{display:flex;gap:3px;margin-top:4px;height:18px}
 .bossSkillIcon{position:relative;width:18px;height:18px;border-radius:5px;overflow:hidden;border:1px solid rgba(222,205,255,.19);background:#0b0a17;opacity:.46;transform:scale(.94);transition:opacity .14s,transform .14s,border-color .14s,box-shadow .14s}
 .bossSkillIcon img{display:block;width:100%;height:100%}
@@ -56,6 +57,8 @@ input{width:min(330px,84vw);padding:13px 15px;border-radius:16px;border:1px soli
 #bossCastUi.impact{border-color:rgba(255,216,239,.38);box-shadow:0 0 14px rgba(214,88,153,.16)}
 #bossExposeUi{position:absolute;left:62px;right:8px;top:calc(100% + 4px);height:29px;display:flex;align-items:center;gap:7px;padding:4px 8px;border-radius:4px 12px 4px 12px;border:1px solid rgba(255,224,137,.42);background:linear-gradient(95deg,rgba(22,14,25,.94),rgba(76,48,32,.88));box-shadow:0 0 18px rgba(255,207,105,.17);opacity:0;transform:translateY(-4px) scale(.97);transition:opacity .12s,transform .12s;overflow:hidden}
 #bossExposeUi.show{opacity:1;transform:translateY(0) scale(1)}#bossExposeLabel{font-size:7px;font-weight:1000;letter-spacing:.65px;color:#fff0b1;white-space:nowrap}#bossExposeTrack{height:4px;flex:1;border-radius:99px;background:#ffffff16;overflow:hidden}#bossExposeFill{height:100%;width:100%;background:linear-gradient(90deg,#ffef9b,#ffbf56,#f47c89);box-shadow:0 0 8px #ffd76a;transform-origin:left center}#bossExposeMult{font-size:6.5px;font-weight:1000;color:#ffe39b}
+#bossExposeUi.fake{border-color:#c294ff66;background:linear-gradient(95deg,rgba(20,12,38,.95),rgba(68,31,91,.90));box-shadow:0 0 20px #9a5cff29}#bossExposeUi.fake #bossExposeLabel{color:#e5d0ff}#bossExposeUi.fake #bossExposeFill{background:linear-gradient(90deg,#7b4bad,#d4b0ff,#7b4bad)}
+#bossComboUi{position:fixed;z-index:23;left:50%;top:calc(73px + var(--st));transform:translateX(-50%) translateY(-5px);min-width:210px;max-width:48vw;padding:3px 10px;border:1px solid #d8b9ff29;border-radius:999px;background:#070718d9;text-align:center;font-size:6.5px;font-weight:1000;letter-spacing:.75px;color:#d9c8f4;opacity:0;transition:.15s;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#bossComboUi.show{opacity:.92;transform:translateX(-50%) translateY(0)}#bossComboUi.signature{color:#ffe5a0;border-color:#ffe09255;box-shadow:0 0 14px #d9a24b28}#bossComboUi.ultimate{color:#ffb9ed;border-color:#ff72cf66;box-shadow:0 0 20px #b331a63d}
 #bossCastIcon{width:29px;height:29px;border-radius:8px;border:1px solid #ffffff21;background:#090815}
 #bossCastInfo{min-width:0;padding-top:2px}
 #bossCastName{font-size:7.5px;font-weight:1000;letter-spacing:.25px;color:#e8deff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -105,7 +108,7 @@ body.envPhase3 #bossPortraitWrap{box-shadow:0 0 18px rgba(219,75,204,.32),inset 
 #netBadge{position:fixed;z-index:22;right:calc(10px + var(--sr));top:calc(76px + var(--st));padding:5px 9px;border-radius:999px;background:#03050dbb;border:1px solid #ffffff1d;font-size:9px;font-weight:900;pointer-events:none}
 #combatTestBadge{position:fixed;z-index:23;right:calc(10px + var(--sr));top:calc(105px + var(--st));padding:6px 10px;border-radius:999px;background:#07150ee8;border:1px solid #70ffab80;color:#9dffc5;font-size:8px;font-weight:1000;letter-spacing:.06em;box-shadow:0 0 18px #42ff8b24;pointer-events:none}
 #banner{position:fixed;z-index:45;left:50%;top:17%;transform:translateX(-50%) scale(.94);padding:10px 15px;border-radius:17px;background:#050611e8;border:1px solid #ffffff28;box-shadow:0 15px 48px #000a;font-size:12px;font-weight:1000;opacity:0;transition:.15s;pointer-events:none;white-space:nowrap}#banner.show{opacity:1;transform:translateX(-50%) scale(1)}
-#damageLayer{position:fixed;z-index:51;inset:0;pointer-events:none;overflow:hidden}.damageNumber{position:absolute;left:0;top:0;min-width:32px;text-align:center;font-family:Georgia,ui-serif,serif;font-size:18px;font-weight:1000;color:#7bddff;text-shadow:0 2px 3px #050511,0 0 8px currentColor;opacity:0;transform:translate(-50%,-50%);will-change:transform,opacity}.damageNumber.princess{color:#ff91d7}.damageNumber.heavy{font-size:25px;color:#ffe19a}.damageNumber.show{animation:damageFloatV1018 .72s cubic-bezier(.16,.78,.24,1) both}@keyframes damageFloatV1018{0%{opacity:0;transform:translate(-50%,-42%) scale(.58)}16%{opacity:1;transform:translate(-50%,-58%) scale(1.16)}66%{opacity:1;transform:translate(calc(-50% + var(--drift,0px)),-112%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--drift,0px)),-160%) scale(.92)}}
+#damageLayer{position:fixed;z-index:51;inset:0;pointer-events:none;overflow:hidden}.damageNumber{position:absolute;left:0;top:0;min-width:32px;text-align:center;font-family:Georgia,ui-serif,serif;font-size:18px;font-weight:1000;color:#7bddff;text-shadow:0 2px 3px #050511,0 0 8px currentColor;opacity:0;transform:translate(-50%,-50%);will-change:transform,opacity}.damageNumber.princess{color:#ff91d7}.damageNumber.heavy{font-size:25px;color:#ffe19a}.damageNumber.critical{font-size:22px;color:#fff0a8}.damageNumber.break{font-size:27px;color:#fff5b7}.damageNumber.show{animation:damageFloatV1018 .72s cubic-bezier(.16,.78,.24,1) both}@keyframes damageFloatV1018{0%{opacity:0;transform:translate(-50%,-42%) scale(.58)}16%{opacity:1;transform:translate(-50%,-58%) scale(1.16)}66%{opacity:1;transform:translate(calc(-50% + var(--drift,0px)),-112%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--drift,0px)),-160%) scale(.92)}}#bossHud.criticalBreak #bossHudFrame{animation:bossCriticalBreakV1023 .72s ease-out}@keyframes bossCriticalBreakV1023{0%{filter:brightness(2.2);transform:scale(.96)}24%{filter:brightness(1.45);transform:scale(1.035)}100%{filter:brightness(1);transform:scale(1)}}#combatLock.weak{--lockColor:#ffe38a;--lockBorder:rgba(255,227,138,.92);--lockGlow:rgba(255,199,73,.72);--lockFaint:rgba(255,211,95,.26)}
 #combatLock{--lockColor:#79dcff;--lockBorder:rgba(121,220,255,.68);--lockGlow:rgba(121,220,255,.48);--lockFaint:rgba(121,220,255,.18);position:fixed;z-index:28;left:0;top:0;width:56px;height:56px;transform:translate(-50%,-50%) scale(.82);border-radius:50%;border:1px solid var(--lockBorder);box-shadow:0 0 13px var(--lockGlow),inset 0 0 12px var(--lockFaint);opacity:0;transition:opacity .12s,transform .16s;pointer-events:none;will-change:left,top,transform,opacity}
 #combatLock.show{opacity:.92;transform:translate(-50%,-50%) scale(1)}#combatLock.princess{--lockColor:#ff92d4;--lockBorder:rgba(255,146,212,.68);--lockGlow:rgba(255,146,212,.48);--lockFaint:rgba(255,146,212,.18)}#combatLock.hit{animation:combatLockHitV1020 .24s ease-out}
 #combatLock:before,#combatLock:after{content:"";position:absolute;left:50%;top:50%;width:72%;height:72%;border:2px solid var(--lockColor);transform:translate(-50%,-50%) rotate(45deg);clip-path:polygon(0 0,28% 0,28% 7%,7% 7%,7% 28%,0 28%,0 0,72% 0,100% 0,100% 28%,93% 28%,93% 7%,72% 7%)}
@@ -614,6 +617,7 @@ body.bossIntroLock #battleChat{opacity:.12}
     <div id="bossHpShell"><div class="bar"><div id="bossFill" class="fill"></div></div></div>
     <div id="bossHpText">100%</div>
    </div>
+   <div id="bossPoiseRow"><span id="bossPoiseLabel">POISE</span><span id="bossPoiseTrack"><span id="bossPoiseFill"></span></span><span id="bossPoiseState">ARMOR</span></div>
    <div id="bossSkillStrip">
     <span class="bossSkillIcon" data-bskill="0"><img src="/assets/ui/ma_vuong/night_spread.svg" alt=""></span>
     <span class="bossSkillIcon" data-bskill="1"><img src="/assets/ui/ma_vuong/dream_shatter.svg" alt=""></span>
@@ -632,6 +636,7 @@ body.bossIntroLock #battleChat{opacity:.12}
  </div>
  <div id="bossExposeUi" aria-hidden="true"><span id="bossExposeLabel">CƠ HỘI PHẢN CÔNG</span><span id="bossExposeTrack"><span id="bossExposeFill"></span></span><span id="bossExposeMult">DMG ×1.30</span></div>
 </div>
+<div id="bossComboUi" aria-hidden="true">COMBO 1/3 · LUNAR PROBE</div>
 <div id="phase" class="hidden">PHASE I · MOON QUEEN</div><div id="trustHud" class="hidden">ROYAL TRUST <span id="trustText">0%</span><div class="bar small"><div id="trustFill" class="fill"></div></div></div>
 <div id="netBadge" class="hidden">● CONNECTING</div><div id="combatTestBadge" class="hidden">🧪 COMBAT TEST · PLAYER HP 100% · ONLY BOSS TAKES DAMAGE</div><div id="banner"></div><div id="favorite"></div>
 <div id="dialogue"><div id="dialogueSpeaker">BOSS</div><div id="dialogueText"></div></div>
@@ -652,7 +657,7 @@ body.bossIntroLock #battleChat{opacity:.12}
 <div id="desktopHint" class="hidden"><b>PC:</b> WASD / mũi tên · Chuột trái CHÉM · Chuột phải / SHIFT NÉ · SPACE / E KIẾM KHÍ</div>
 <div id="duoWrap"><button id="duoBtn">ROYAL<br>DUO</button></div>
 
-<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.22 PLAYER COMBAT</span></h1><p style="margin-top:7px">Nhát chém khớp hit · dash có afterimage · Hero/Princess có skill VFX riêng.</p><div class="logoMoon"></div><div class="badges"><span class="badge">Server-timed sword impact</span><span class="badge">3 distinct slash arcs</span><span class="badge">Dash afterimage pool</span><span class="badge">Player hit reaction</span><span class="badge">Hero · Stellar Crescent</span><span class="badge">Princess · Rose Bloom</span><span class="badge">3 authored boss phases</span><span class="badge">Punish window · x1.30</span><span class="badge">Soft target lock</span><span class="badge">Buffered sword combo</span><span class="badge">Boss collision slide</span><span class="badge">JPG riêng · 1280px</span><span class="badge">Pause + Exit</span><span class="badge">Server-authoritative combat</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tinh Nguyệt Trảm · ba kiếm khí hội tụ.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Hoàng Gia Hoa Vũ · năm kiếm khí tỏa quạt.</small></button></div></div></div>
+<div id="home" class="screen"><div class="panel"><h1>PRINCESS RESCUE <span style="color:#e9cc79">V10.23 ELITE BOSS AI</span></h1><p style="margin-top:7px">Poise · weak-point critical · 12 combo · adaptive punish · multi-phase Ultimate.</p><div class="logoMoon"></div><div class="badges"><span class="badge">12 combat combos</span><span class="badge">3 signature sequences</span><span class="badge">1 four-phase Ultimate</span><span class="badge">Super Armor · Poise</span><span class="badge">Weak-point critical</span><span class="badge">Critical Break</span><span class="badge">Attack Memory</span><span class="badge">Adaptive punish</span><span class="badge">Fake opening · delay</span><span class="badge">Buffered sword combo</span><span class="badge">JPG riêng · 1280px</span><span class="badge">Pause + Exit</span><span class="badge">Server-authoritative combat</span></div><button id="fullVisualQaOpen" class="primary">🧪 CHECK 19 ANIMATION</button><button id="animationLabOpen" class="ghost">🎬 MỞ BOSS ANIMATION LAB</button><button id="createCombatTest" class="ghost">🛡️ SOLO COMBAT TEST — BẤT TỬ</button><div class="roleBtns"><button id="createRoom" class="role"><b>⚔️ TẠO PHÒNG — HERO</b><small>Tinh Nguyệt Trảm · ba kiếm khí hội tụ.</small></button><button id="joinRoom" class="role"><b>👑 VÀO PHÒNG — PRINCESS</b><small>Hoàng Gia Hoa VŨ · năm kiếm khí tỏa quạt.</small></button></div></div></div>
 <div id="hostLobby" class="screen hidden"><div class="panel"><h2>PHÒNG CỦA HERO ⚔️</h2><div id="roomCode" class="roomCode">------</div><div id="inviteLink" class="linkBox"></div><button id="copyInvite" class="primary">COPY LINK MỜI</button><div id="hostStatus" class="status warn">Đang kết nối server…</div><div id="hostAssetGate" class="assetGate"><div class="assetGateTop"><span id="hostAssetLabel">Kết nối máy chủ</span><span id="hostAssetPct">0%</span></div><div class="assetGateTrack"><div id="hostAssetFill" class="assetGateFill"></div></div></div><button id="hostStart" class="primary hidden">BẮT ĐẦU TRẬN</button><button id="hostCancel" class="ghost">RỜI PHÒNG</button></div></div>
 <div id="joinLobby" class="screen hidden"><div class="panel"><h2>PRINCESS VÀO PHÒNG 👑</h2><p style="margin:7px 0 14px">Nhập mã 6 ký tự Hero gửi.</p><input id="roomInput" maxlength="6" placeholder="ABC123" autocomplete="off"><div><button id="joinGo" class="primary">KẾT NỐI</button><button id="joinCancel" class="ghost">QUAY LẠI</button></div><div id="joinStatus" class="status warn">Chưa kết nối.</div></div></div>
 <div id="guestWait" class="screen hidden"><div class="panel"><h2>ĐÃ VÀO PHÒNG 👑</h2><div class="status ok">● SERVER CONNECTED — đang chờ Hero bắt đầu…</div><div id="guestAssetGate" class="assetGate"><div class="assetGateTop"><span id="guestAssetLabel">Kết nối máy chủ</span><span id="guestAssetPct">0%</span></div><div class="assetGateTrack"><div id="guestAssetFill" class="assetGateFill"></div></div></div><div class="logoMoon"></div></div></div>
@@ -821,6 +826,9 @@ let combatLockTargetKey='',combatLockLastTarget=null,comboFeedbackTimer=null,com
 let lastRigBossHitAt=0;
 const playerSkillFxAids=new Set();
 let bossExposedUntil=0,bossExposeStartedAt=0,bossExposeDuration=0,bossPatternName='';
+let bossComboRuntime={id:'',comboId:'',name:'',tier:'normal',step:0,total:0,estimatedEndAt:0};
+let bossWeakPointRuntime={point:'',label:'',until:0,chance:0};
+let bossStaggerUntil=0,bossStaggerResistUntil=0,bossCriticalFreezeToken=0,bossFakeOpeningUntil=0;
 
 // V9.6 presentation state.
 let camTrauma=0,camTraumaDecay=3.0,camShakePhase=0;
@@ -904,7 +912,7 @@ const visualAudit={
  stage:'idle',checks:0,issues:[],clipResults:[],transitionResults:[],vfxResults:[],startedAt:0,finishedAt:0
 };
 window.__bossVisualAudit=visualAudit;
-const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.22',enabled:true})||null;
+const bugRecorder=window.PrincessBlackBox?.init?.({version:'10.23',enabled:true})||null;
 window.__runtimeBlackBox=bugRecorder;
 const bugRuntime={lastSampleAt:0,lastCamera:null,bossIdentity:'',bossUrl:'',introScale:null,introViewport:null,lastCastId:null,moveProbe:null,webglLost:false};
 let ignoredExternalRuntimeErrors=0;
@@ -3555,11 +3563,35 @@ function clearBossSkillUi(){
 }
 function updateBossExposeUi(now=serverNow()){
  const el=$('bossExposeUi'),fill=$('bossExposeFill');if(!el||!fill)return;
+ if(now<bossFakeOpeningUntil){
+   const duration=Math.max(1,bossFakeOpeningUntil-now);
+   el.classList.add('show','fake');$('bossExposeLabel').textContent='BẪY · GIẢ VỜ SƠ HỞ';$('bossExposeMult').textContent='DELAYED';fill.style.transform=`scaleX(${clamp(duration/900,0,1).toFixed(3)})`;return;
+ }
+ el.classList.remove('fake');$('bossExposeLabel').textContent='CƠ HỘI PHẢN CÔNG';$('bossExposeMult').textContent='DMG ×1.30';
  const remaining=bossExposedUntil-now;
  if(remaining<=0){el.classList.remove('show');return}
  const duration=Math.max(1,bossExposeDuration||bossExposedUntil-bossExposeStartedAt);
  fill.style.transform=`scaleX(${clamp(remaining/duration,0,1).toFixed(3)})`;
  el.classList.add('show');
+}
+function updateBossComboUi(){
+ const el=$('bossComboUi');if(!el)return;
+ if(!bossComboRuntime.id){el.classList.remove('show','signature','ultimate');return}
+ const prefix=bossComboRuntime.tier==='ultimate'?'ULTIMATE':bossComboRuntime.tier==='signature'?'SIGNATURE':'COMBO';
+ el.textContent=`${prefix} ${Math.max(1,bossComboRuntime.step)}/${Math.max(1,bossComboRuntime.total)} · ${bossComboRuntime.name}`;
+ el.classList.toggle('signature',bossComboRuntime.tier==='signature');el.classList.toggle('ultimate',bossComboRuntime.tier==='ultimate');el.classList.add('show');
+}
+function freezeBossPoseForCritical(duration=190){
+ const br=rigRuntime.records.boss,action=br?.active;if(!action)return;
+ const token=++bossCriticalFreezeToken;action.paused=true;
+ setTimeout(()=>{if(token===bossCriticalFreezeToken&&br.active===action&&serverNow()>=bossStaggerUntil)action.paused=false},duration);
+}
+function presentBossCriticalBreak(p={}){
+ bossCriticalFreezeToken++;bossStaggerUntil=Math.max(bossStaggerUntil,Number(p.staggerUntil)||serverNow()+950);bossStaggerResistUntil=Math.max(bossStaggerResistUntil,Number(p.resistUntil)||0);
+ const hud=$('bossHud');hud?.classList.remove('criticalBreak');void hud?.offsetWidth;hud?.classList.add('criticalBreak');setTimeout(()=>hud?.classList.remove('criticalBreak'),760);
+ playImpactScreenFx('split','#fff0a0',620);flash('#fff2bd',mobileDevice?.32:.22,82);addCameraTrauma(mobileDevice?.22:.16,3.2);setVignette(.30);
+ playRigAnimation('boss','boss_hit',{fade:.025,once:true,speed:.82,segmentStart:.45,segmentEnd:1.55,returnState:'boss_combat_idle'});
+ setTimeout(()=>setVignette(.12),960);banner('✦ CRITICAL BREAK · POISE SHATTERED');
 }
 function setBossSkillUi(i){
  const sk=BOSS_UI_SKILLS[i]||BOSS_UI_SKILLS[0];
@@ -3613,7 +3645,7 @@ function updateRigLocomotion(sa,sb){
    else if(!combatAnim[who]?.type)playRigAnimation(who,moving?'run':'idle',{fade:.14});
  }
  const br=rigRuntime.records.boss;
- if(br?.ready&&!bossCastVisual.cast&&!br.activeSegment&&!bossIntroActive()&&serverNow()>=(br.actionLockUntil||0)){
+ if(br?.ready&&!bossCastVisual.cast&&!bossComboRuntime.id&&!br.activeSegment&&!bossIntroActive()&&serverNow()>=bossStaggerUntil&&serverNow()>=(br.actionLockUntil||0)){
    playRigAnimation('boss','boss_combat_idle',{fade:.18,speed:bossV10Phase===3?1.04:.96});
  }
 }
@@ -4766,7 +4798,7 @@ function clearDynamic(){
  $('threeAmArtFx')?.classList.remove('show');$('eternalArtFx')?.classList.remove('show');
  if(A?.userData?.combatFxRoot?.parent)A.userData.combatFxRoot.removeFromParent();if(B?.userData?.combatFxRoot?.parent)B.userData.combatFxRoot.removeFromParent();
  if(A?.parent)scene.remove(A);if(B?.parent)scene.remove(B);if(boss?.parent)scene.remove(boss);
- predictedShots=[];predictedSwordAids.clear();playerSkillFxAids.clear();predictedDashAid='';pred.dashT=0;pred.dashVX=0;pred.dashVZ=0;bossOrbProjectileStarts.clear();bossOrbReleasePulseUntil=0;bossArmamentWeaponFlightUntil=0;bossArmamentHit={kind:'',start:0,until:0,dmg:0};hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};bossExposedUntil=0;bossExposeStartedAt=0;bossExposeDuration=0;bossPatternName='';$('bossExposeUi')?.classList.remove('show');
+ predictedShots=[];predictedSwordAids.clear();playerSkillFxAids.clear();predictedDashAid='';pred.dashT=0;pred.dashVX=0;pred.dashVZ=0;bossOrbProjectileStarts.clear();bossOrbReleasePulseUntil=0;bossArmamentWeaponFlightUntil=0;bossArmamentHit={kind:'',start:0,until:0,dmg:0};hitStopUntil=0;bossHitPulseUntil=0;bossCastVisual={cast:null,impactShown:false,kickShown:false,teleportShown:false,warningShown:false};bossExposedUntil=0;bossExposeStartedAt=0;bossExposeDuration=0;bossPatternName='';bossComboRuntime={id:'',comboId:'',name:'',tier:'normal',step:0,total:0,estimatedEndAt:0};bossWeakPointRuntime={point:'',label:'',until:0,chance:0};bossStaggerUntil=0;bossStaggerResistUntil=0;bossFakeOpeningUntil=0;$('bossExposeUi')?.classList.remove('show','fake');$('bossComboUi')?.classList.remove('show','signature','ultimate');
  camTrauma=0;bossSocketFxUntil=0;if(bossSocketFx)bossSocketFx.visible=false;
  deathCinematicStart=0;deathCinematicUntil=0;deathCinematicStats=null;deathCinematicResultShown=false;
  if(bossV10Art?.root?.parent)bossV10Art.root.parent.remove(bossV10Art.root);
@@ -5046,7 +5078,7 @@ function queueBufferedAttack(delayMs){
  if(attackBufferTimer)return;
  attackBufferTimer=setTimeout(()=>{attackBufferTimer=null;triggerPlayerAction('attack',true)},clamp(delayMs,18,190));
 }
-function spawnDamageNumber(dmg,owner='hero',heavy=false){
+function spawnDamageNumber(dmg,owner='hero',heavy=false,critical=false,criticalBreak=false){
  if(!boss||!camera||!Number.isFinite(Number(dmg)))return;
  let el=damageNumberPool.find(item=>!item.classList.contains('show'));
  if(!el&&damageNumberPool.length<18){el=document.createElement('div');el.className='damageNumber';$('damageLayer')?.appendChild(el);damageNumberPool.push(el)}
@@ -5055,8 +5087,8 @@ function spawnDamageNumber(dmg,owner='hero',heavy=false){
  damageNumberWorld.set(boss.position.x,boss.position.y+3.05,boss.position.z).project(camera);
  if(damageNumberWorld.z<-1||damageNumberWorld.z>1)return;
  const x=(damageNumberWorld.x*.5+.5)*innerWidth,y=(-damageNumberWorld.y*.5+.5)*innerHeight;
- el.className=`damageNumber ${owner==='princess'?'princess':''} ${heavy?'heavy':''}`.trim();
- el.textContent=heavy?`✦ ${Math.round(dmg)}`:String(Math.round(dmg));el.style.left=x+'px';el.style.top=y+'px';el.style.setProperty('--drift',`${((actionId%5)-2)*7}px`);
+ el.className=`damageNumber ${owner==='princess'?'princess':''} ${heavy?'heavy':''} ${critical?'critical':''} ${criticalBreak?'break':''}`.trim();
+ el.textContent=criticalBreak?`BREAK ✦ ${Math.round(dmg)}`:critical?`CRIT ${Math.round(dmg)}`:heavy?`✦ ${Math.round(dmg)}`:String(Math.round(dmg));el.style.left=x+'px';el.style.top=y+'px';el.style.setProperty('--drift',`${((actionId%5)-2)*7}px`);
  void el.offsetWidth;el.classList.add('show');clearTimeout(el._hideTimer);el._hideTimer=setTimeout(()=>el.classList.remove('show'),760);
 }
 function combatLockCandidates(s){
@@ -5092,7 +5124,7 @@ function updateCombatLockHud(){
  combatLockProjection.set(target.x,target.y,target.z).project(camera);
  if(combatLockProjection.z<-1||combatLockProjection.z>1||Math.abs(combatLockProjection.x)>1.08||Math.abs(combatLockProjection.y)>1.08){el.classList.remove('show');return}
  el.style.left=`${(combatLockProjection.x*.5+.5)*innerWidth}px`;el.style.top=`${(-combatLockProjection.y*.5+.5)*innerHeight}px`;
- el.classList.toggle('princess',role==='princess');el.classList.add('show');
+ el.classList.toggle('princess',role==='princess');el.classList.toggle('weak',target.type==='boss'&&bossWeakPointRuntime.until>serverNow());el.classList.add('show');
 }
 function pulseCombatLock(finisher=false){
  const el=$('combatLock');if(!el?.classList.contains('show'))return;
@@ -5615,7 +5647,7 @@ function hideBossCastVisual(){
  const br=rigRuntime.records.boss;
  // The intro finale intentionally reuses boss_ultimate as a cropped authored
  // segment. A null combat cast must never cancel that cinematic action.
- if(br?.ready&&!bossIntroActive()&&!br.activeSegment&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test(br.activeState||'')){
+ if(br?.ready&&!bossIntroActive()&&!br.activeSegment&&!bossComboRuntime.id&&serverNow()>=bossStaggerUntil&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test(br.activeState||'')){
    if(br.active)br.active.paused=false;
    playRigAnimation('boss','boss_combat_idle',{fade:br.activeState==='boss_teleport'?.13:.24,speed:bossV10Phase===3?1.04:.96});
  }
@@ -6046,12 +6078,41 @@ function updateUI(s){
  {
    const bossPct=Math.max(0,s.boss.hp/s.boss.max*100);
    $('bossFill').style.width=bossPct+'%';$('bossHpText').textContent=Math.ceil(bossPct)+'%';updateBossUiPhase(s.boss.phase);
+   const poiseMax=Math.max(1,Number(s.boss.poiseMax)||100),poise=clamp(Number(s.boss.poise)||0,0,poiseMax),poisePct=poise/poiseMax;
+   if($('bossPoiseFill'))$('bossPoiseFill').style.transform=`scaleX(${poisePct.toFixed(3)})`;
+   bossStaggerUntil=Math.max(bossStaggerUntil,Number(s.boss.staggerUntil)||0);bossStaggerResistUntil=Math.max(bossStaggerResistUntil,Number(s.boss.staggerResistUntil)||0);
+   if($('bossPoiseState'))$('bossPoiseState').textContent=serverNow()<bossStaggerUntil?'BROKEN':serverNow()<bossStaggerResistUntil?'RESIST':poisePct<.3?'LOW':'ARMOR';
+   const weakCandidates=[
+    {point:'orb',label:'ORB ĐANG CAST',until:Number(s.boss.orbWeakUntil)||0,chance:.10},
+    {point:'back',label:'LƯNG SAU TELEPORT',until:Number(s.boss.backWeakUntil)||0,chance:.09},
+    {point:'upper',label:'THÂN TRÊN SAU HEAVY MISS',until:Number(s.boss.upperWeakUntil)||0,chance:.11}
+   ].filter(item=>item.until>serverNow()).sort((a,b)=>b.until-a.until);
+   if(weakCandidates[0])bossWeakPointRuntime=weakCandidates[0];else if(serverNow()>=bossWeakPointRuntime.until)bossWeakPointRuntime={point:'',label:'',until:0,chance:0};
+   if(s.combo){bossComboRuntime={id:s.combo.id||s.combo.comboId||'',comboId:s.combo.comboId||'',name:s.combo.name||'BOSS COMBO',tier:s.combo.tier||'normal',step:s.combo.step||1,total:s.combo.total||1,estimatedEndAt:s.combo.estimatedEndAt||0}}else if(!bossCastVisual.cast)bossComboRuntime={id:'',comboId:'',name:'',tier:'normal',step:0,total:0,estimatedEndAt:0};
+   updateBossComboUi();
    if((s.boss.exposedUntil||0)>bossExposedUntil){bossExposedUntil=s.boss.exposedUntil;bossExposeStartedAt=serverNow();bossExposeDuration=Math.max(1,bossExposedUntil-bossExposeStartedAt)}
  }
  updateBossV10Phase(s.boss.phase);updateBossV103Phase(s.boss.phase);updateBossV104Phase(s.boss.phase);updateEnvironmentV10Phase(s.boss.phase);$('trustText').textContent=Math.round(s.trust)+'%';$('trustFill').style.width=s.trust+'%';$('duoWrap').style.display=s.trust>=100?'block':'none';
 }
 function playEvent(e,p){
  if(e==='banner')banner(p.msg);
+ if(e==='bossComboStart'){
+   bossComboRuntime={id:p.id||'',comboId:p.comboId||'',name:p.name||'BOSS COMBO',tier:p.tier||'normal',step:0,total:p.total||1,estimatedEndAt:p.estimatedEndAt||0};
+   updateBossComboUi();banner(`${p.tier==='ultimate'?'🌑':p.tier==='signature'?'♛':'☾'} ${bossComboRuntime.name} · ${bossComboRuntime.total} ACTIONS`);
+ }
+ if(e==='bossComboStep'){
+   bossComboRuntime={...bossComboRuntime,id:p.id||bossComboRuntime.id,comboId:p.comboId||bossComboRuntime.comboId,name:p.name||bossComboRuntime.name,tier:p.tier||bossComboRuntime.tier,step:p.step||1,total:p.total||bossComboRuntime.total||1};updateBossComboUi();
+ }
+ if(e==='bossComboLink'){pulseBossSocketFx(p.tier==='signature'?0xffd68d:0xb99cff,p.tier==='ultimate'?1.10:.52)}
+ if(e==='bossComboEnd'||e==='bossComboInterrupted'){bossComboRuntime={id:'',comboId:'',name:'',tier:'normal',step:0,total:0,estimatedEndAt:0};updateBossComboUi();if(e==='bossComboInterrupted')banner('✦ COMBO INTERRUPTED');}
+ if(e==='bossFakeOpening'){bossFakeOpeningUntil=Number(p.until)||serverNow()+900;updateBossExposeUi();}
+ if(e==='bossWeakPoint'){
+   bossWeakPointRuntime={point:p.point||'',label:p.label||String(p.point||'WEAK POINT').toUpperCase(),until:Number(p.until)||serverNow()+800,chance:Number(p.chance)||.10};
+   banner(`◇ WEAK POINT · ${bossWeakPointRuntime.label}`);pulseCombatLock(true);
+ }
+ if(e==='bossUltimatePhase'){
+   const phase=Number(p.phase)||1;banner(`🌑 ETERNAL ECLIPSE · MOVEMENT ${phase}/4`);setVignette(.16+phase*.055);pulseBossSocketFx(phase===4?0xff71c8:0xbf91ff,.85+phase*.12);
+ }
  if(e==='bossPattern'){
    bossPatternName=p.name||'';
    banner(`☾ ${bossPatternName} · ${p.total||1} NHỊP`);
@@ -6066,7 +6127,7 @@ function playEvent(e,p){
    setBossCast(p);
    {
      const ap=bossCastAnimProfile(p.i);
-     playRigAnimation('boss',ap.state,{fade:ap.fade,once:true,speed:ap.speed});
+     playRigAnimation('boss',ap.state,{fade:p.chain?Math.min(.055,ap.fade):ap.fade,once:true,speed:p.chain?ap.speed*1.08:ap.speed});
    }
    const names=['🌙 BÓNG ĐÊM LAN RA','💠 GIẤC MƠ VỠ','🕒 BA GIỜ SÁNG','🌀 ẢO ẢNH LUÂN VŨ','🌑 VĨNH DẠ — ĐÊM KHÔNG KẾT THÚC'];
    banner(names[p.i]||'BOSS CAST');
@@ -6108,7 +6169,8 @@ function playEvent(e,p){
  }
  if(e==='combatHit'){
    if(p.target==='boss'){
-     const heavy=!!p.finisher||(p.dmg||0)>=22;spawnDamageNumber(p.dmg||0,p.owner,heavy);
+     const critical=!!p.critical,criticalBreak=!!p.criticalBreak,heavy=critical||!!p.finisher||(p.dmg||0)>=22;
+     spawnDamageNumber(p.dmg||0,p.owner,heavy,critical,criticalBreak);
      if(p.exposed&&p.owner===role){
        const punish=$('comboFeedback');punish.textContent='PHẢN CÔNG ×1.30';punish.classList.add('show','hit','finisher');
        const token=++comboFeedbackToken;clearTimeout(comboFeedbackTimer);comboFeedbackTimer=setTimeout(()=>{if(token===comboFeedbackToken)punish.classList.remove('show')},720);
@@ -6116,7 +6178,7 @@ function playEvent(e,p){
      }
      if(p.kind==='sword'){
        const swordColor=p.owner==='hero'?'#7bddff':'#ff91d7';
-       playImpactScreenFx(p.finisher?'split':'slash',swordColor,p.finisher?390:300);
+       playImpactScreenFx(criticalBreak?'split':p.finisher?'split':'slash',critical?'#fff0a8':swordColor,criticalBreak?560:critical?350:p.finisher?390:300);
        if(p.owner===role)flash(swordColor,mobileDevice?.20:.13,40);
      }else if((p.kind==='starWave'||p.kind==='roseWave')&&!skillImpactAids.has(p.aid)){
        skillImpactAids.add(p.aid);setTimeout(()=>skillImpactAids.delete(p.aid),900);
@@ -6124,19 +6186,10 @@ function playEvent(e,p){
        playImpactScreenFx('pulse',skillColor,340);addCameraTrauma(p.owner===role ? .075 : .035,4.4);
        if(p.owner===role)flash(skillColor,mobileDevice?.16:.10,36);
      }
-     triggerBossArmamentHit(heavy?'heavy':'light',p.dmg||0);
-     pulseBossSocketFx(heavy?0xffd895:0xd5c0ff,clamp((p.dmg||8)/14,.65,1.35));
-     if(heavy){
-       triggerHitStop(p.owner,p.dmg||10);startBossV106Hit(p.dmg||8);v104ImpactMaterialPulse('perfect');
-       hitStopUntil=Math.max(hitStopUntil,performance.now()+clamp(58+(p.dmg||0)*.65,60,80));
-     }else bossHitPulseUntil=Math.max(bossHitPulseUntil,performance.now()+80);
-     addCameraTrauma(heavy?(p.owner===role?(mobileDevice?.13:.10):.065):.025,4.2);
-     // Light hits are absorbed by the orb shield. Only a heavy stagger plays
-     // the strongest recoil slice of clip 09 instead of all 3.625 seconds.
-     if(heavy&&!bossCastVisual.cast&&performance.now()-lastRigBossHitAt>420){
-       lastRigBossHitAt=performance.now();
-       playRigAnimation('boss','boss_hit',{fade:.035,once:true,speed:1.42,segmentStart:.62,segmentEnd:1.48,returnState:'boss_combat_idle'});
-     }
+     triggerBossArmamentHit(critical?'heavy':'light',p.dmg||0);pulseBossSocketFx(critical?0xffd895:0xd5c0ff,clamp((p.dmg||8)/14,.65,1.35));
+     if(criticalBreak){triggerHitStop(p.owner,p.dmg||10);startBossV106Hit(p.dmg||8);v104ImpactMaterialPulse('perfect');presentBossCriticalBreak(p);}
+     else if(critical){hitStopUntil=Math.max(hitStopUntil,performance.now()+clamp(Number(p.hitStopMs)||68,60,80));freezeBossPoseForCritical(Number(p.staggerMs)||190);addCameraTrauma(p.owner===role?(mobileDevice?.12:.09):.055,4.0);banner(`CRITICAL ✦ ${String(p.weakPoint||'BODY').toUpperCase()}`);}
+     else{bossHitPulseUntil=Math.max(bossHitPulseUntil,performance.now()+80);addCameraTrauma(.018,4.8);}
    }
  }
  if(e==='bossTeleportKick'){
@@ -6192,7 +6245,10 @@ function playEvent(e,p){
    flash(p.phase===2?'#c6b2ff':'#ff6b92',p.phase===3?.48:.36,145);
    pulseBossUiPhase(p.phase);banner('BOSS PHASE '+p.phase+' · '+bossUiPhaseName(p.phase))
  }
- if(e==='perfect')banner('PERFECT DASH ⚡');
+ if(e==='perfect'){
+   const until=Number(p.counterUntil)||serverNow()+900;bossWeakPointRuntime={point:'counter',label:'PERFECT DODGE COUNTER',until,chance:.05};
+   banner('PERFECT DODGE ⚡ COUNTER WINDOW');pulseCombatLock(true);appendBattleChat(p.role,'Perfect Dodge—đánh weak point ngay!');
+ }
  if(e==='pickup')banner((p.role==='hero'?'Hero':'Công chúa')+' nhặt '+foods[p.food][1]+'!');
  if(e==='dash'){
    if(p.role===role){

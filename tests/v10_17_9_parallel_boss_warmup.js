@@ -18,8 +18,8 @@ function readGlbJson(file){
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.22'",
+  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23'",
   'function fetchGlbBuffer(url,timeoutMs)',
   'function parseGlbBuffer(loader,buffer,timeoutMs)',
   'function prefetchBossArmamentBuffers()',

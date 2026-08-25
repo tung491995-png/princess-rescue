@@ -13,10 +13,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.22.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.23.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.22'",
+  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23'",
   "let actionId=0,predictedShots=[],predictedSwordAids=new Set(),predictedDashAid=''",
   "const aid=`${role}-dash-${++actionId}`",
   "send({type:'action',a:'dash',aid,st:Date.now()+serverOffset})",

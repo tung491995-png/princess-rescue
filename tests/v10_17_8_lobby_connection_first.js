@@ -6,8 +6,8 @@ const root=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'public','index.html'),'utf8');
 
 for(const fragment of [
-  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.22'",
+  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23'",
   "function scheduleLobbyPrewarm(reason='lobby')",
   "scheduleLobbyPrewarm('created')",
   "scheduleLobbyPrewarm('joined')",

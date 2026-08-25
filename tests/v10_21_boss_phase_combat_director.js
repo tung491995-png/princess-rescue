@@ -12,10 +12,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.22.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.23.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.22'",
+  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23'",
   'id="bossExposeUi"',
   'CƠ HỘI PHẢN CÔNG',
   'function updateBossExposeUi(now=serverNow())',
@@ -37,7 +37,7 @@ for(const fragment of [
   'exposed?BOSS_EXPOSE_DAMAGE_MULTIPLIER:1',
   'function enterBossPhase(room,next,now)',
   'targetPhase=ratio>BOSS_PHASE_THRESHOLDS[1]?1:ratio>BOSS_PHASE_THRESHOLDS[2]?2:3',
-  "combatFeel:'v10.22-server-timed-sword-impact-player-animation-vfx'"
+  "combatFeel:'v10.23-poise-weakpoint-critical-adaptive-combo-ai'"
 ])if(!serverSource.includes(fragment))throw new Error(`V10.21 server feature missing: ${fragment}`);
 
 const directorStart=serverSource.indexOf('const BOSS_COMBAT_DIRECTOR=');
@@ -72,15 +72,17 @@ if(canHitContext.bossCanBeHit({evadeInvUntil:now+1000,phaseLockUntil:0},now))thr
 if(canHitContext.bossCanBeHit({evadeInvUntil:0,phaseLockUntil:now+1000},now))throw new Error('Phase transition invulnerability was lost');
 if(!canHitContext.bossCanBeHit({evadeInvUntil:0,phaseLockUntil:0},now))throw new Error('Boss remained invulnerable outside locks');
 
-const hitStart=serverSource.indexOf('function hitBoss(');
+const hitStart=serverSource.indexOf('function bossWeakPointForHit(');
 const hitEnd=serverSource.indexOf('\nfunction fastForwardPlayerProjectile(',hitStart);
 const hitEvents=[];
 const hitContext={
-  FOODS:[{el:'crispy'}],BOSS_EXPOSE_DAMAGE_MULTIPLIER:1.30,
+  Math:Object.assign(Object.create(Math),{random:()=>1}),FOODS:[{el:'crispy'}],BOSS_EXPOSE_DAMAGE_MULTIPLIER:1.30,
+  BOSS_BODY_CRIT_CHANCE:.015,TEST_BOSS_CRIT:false,BOSS_CRIT_MULTIPLIER:1.75,
+  BOSS_POISE_REGEN_DELAY_MS:2350,BOSS_BREAK_STAGGER_MS:950,BOSS_BREAK_RESIST_MS:5200,BOSS_CRITICAL_STAGGER_MS:190,
   reaction:()=>null,broadcast:(_room,event)=>hitEvents.push(event),markDirty:()=>{}
 };
 vm.runInNewContext(serverSource.slice(hitStart,hitEnd),hitContext,{filename:'v10.21-expose-damage.js'});
-const makeRoom=exposed=>({state:{trust:0,players:{hero:{score:0}},boss:{hp:1000,lastEl:null,lastElT:0,exposedUntil:exposed?Date.now()+5000:0,exposedHitCount:0}}});
+const makeRoom=exposed=>({state:{trust:0,tasks:[],activeCast:null,activeCombo:null,players:{hero:{score:0,counterUntil:0}},boss:{hp:1000,poise:100,poiseMax:100,staggerResistUntil:0,lastEl:null,lastElT:0,exposedUntil:exposed?Date.now()+5000:0,exposedHitCount:0}}});
 const normalRoom=makeRoom(false),exposedRoom=makeRoom(true),projectile={food:0,owner:'hero',dmg:20,kind:'sword'};
 hitContext.hitBoss(normalRoom,projectile);hitContext.hitBoss(exposedRoom,projectile);
 const normalDamage=1000-normalRoom.state.boss.hp,exposedDamage=1000-exposedRoom.state.boss.hp;
@@ -99,7 +101,7 @@ child.stdout.on('data',async chunk=>{
   if(!done&&output.includes('server on')){
     try{
       const health=await fetch(`http://127.0.0.1:${port}/healthz`).then(response=>response.json());
-      if(health.network?.combatFeel!=='v10.22-server-timed-sword-impact-player-animation-vfx')throw new Error(`Health label mismatch: ${JSON.stringify(health)}`);
+      if(health.network?.combatFeel!=='v10.23-poise-weakpoint-critical-adaptive-combo-ai')throw new Error(`Health label mismatch: ${JSON.stringify(health)}`);
       if(health.network?.bossDirector?.thresholds?.join(',')!=='70,35'||health.network?.bossDirector?.exposedDamageMultiplier!==1.3)throw new Error(`Health director metadata mismatch: ${JSON.stringify(health.network?.bossDirector)}`);
       console.log('V10.21 BOSS DIRECTOR PASS · 3 authored phase decks · no immediate repeats · 70/35 thresholds · phase lock · x1.30 punish window · HUD timer');
       stop(0);

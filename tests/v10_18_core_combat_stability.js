@@ -11,10 +11,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.22.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.23.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.22'",
+  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23'",
   'id="hostAssetGate"','id="guestAssetGate"','function setAssetLoadProgress(value,label,state=',
   "setAssetLoadProgress(32,'Đang tải boss Tripo 1K')",
   "setAssetLoadProgress(72,'Boss đã sẵn sàng · đang gắn orb/halo')",
@@ -27,7 +27,7 @@ for(const fragment of [
   "if((me&&(me.skillCd||0)>.06)||now<localActionGate.skillAt)return",
   "if(!m.accepted){predictedSwordAids.delete(aid);localActionGate.attackAt=0}",
   'id="damageLayer"','const damageNumberPool=[]','function spawnDamageNumber(dmg,owner=',
-  'spawnDamageNumber(p.dmg||0,p.owner,heavy)',
+  'spawnDamageNumber(p.dmg||0,p.owner,heavy,critical,criticalBreak)',
   'if(matchResultHandled)return;','matchResultHandled=true;clearBufferedPlayerAction()'
 ])if(!html.includes(fragment))throw new Error(`V10.18 fragment missing: ${fragment}`);
 

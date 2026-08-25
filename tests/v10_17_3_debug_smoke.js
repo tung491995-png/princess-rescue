@@ -12,9 +12,9 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
+  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
   'TẢI DEBUG ZIP','JPG riêng · 1280px','🧪 CHECK 19 ANIMATION',
-  "window.PrincessBlackBox?.init?.({version:'10.22'",
+  "window.PrincessBlackBox?.init?.({version:'10.23'",
   'function runtimeBlackBoxTelemetry(','entities:{','hero:state?.players?.hero','princess:state?.players?.princess',
   "'INTRO_FRAMEBUFFER_CHANGED'","'INTRO_ANIMATION_MISSING'","'BOSS_OUT_OF_CAMERA'","'ROOT_XZ_DRIFT'",
   "'TRIPO_MODEL_HIDDEN'","'PLAYER_INPUT_NOT_MOVING'","'BOSS_TELEGRAPH_VFX_MISSING'","'HUD_ELEMENT_OFFSCREEN'",
@@ -24,7 +24,7 @@ for(const fragment of [
 for(const fragment of [
   'const outlineRoot=rec?.visualAccepted&&rec.model?rec.model:boss;',
   'if(rec?.visualAccepted&&rec.model)setFallback(boss,false,rec.model);',
-  '!bossIntroActive()&&!br.activeSegment&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test',
+  '!bossIntroActive()&&!br.activeSegment&&!bossComboRuntime.id&&serverNow()>=bossStaggerUntil&&/^boss_(quick_cast|aoe|teleport|spin_kick|ultimate)$/.test',
   "const authorizedCameraReframe=bossCastVisual.cast?.i===3||/^boss_(teleport|spin_kick)$/.test",
   'coneExpected=!cast.teleportAt||serverTime<cast.teleportAt',
   'cone:!!bossTelegraphCone?.visible,coneExpected'
@@ -37,6 +37,7 @@ let cleanupTransitions=0,introActive=true;
 const cleanupContext={
   rigRuntime:{records:{boss:{ready:true,activeState:'boss_ultimate',activeSegment:{state:'boss_ultimate'},active:{paused:true}}}},
   bossIntroActive:()=>introActive,
+  bossComboRuntime:{id:''},bossStaggerUntil:0,serverNow:()=>Date.now(),
   bossV10Phase:1,
   playRigAnimation:()=>{cleanupTransitions++},
   bossCastVisual:{cast:null},

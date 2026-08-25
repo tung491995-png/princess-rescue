@@ -11,10 +11,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.22.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(pkg.version!=='10.23.0')throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.22 — Player Combat Animation &amp; Skill VFX</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.22'",
+  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23'",
   'function makePlayerCombatFx(character,roleName)',
   'makePlayerCombatFx(r,role)',
   'for(let i=0;i<5;i++)',
@@ -40,8 +40,8 @@ for(const fragment of [
   "if(task.type==='player_sword_impact')",
   "broadcast(room,{type:'event',e:'playerHit'",
   "broadcast(room,{type:'event',e:'dash',p:{role,x,z,aid,startAt:actionTs}})",
-  "combatFeel:'v10.22-server-timed-sword-impact-player-animation-vfx'"
-])if(!serverSource.includes(fragment))throw new Error(`V10.22 server feature missing: ${fragment}`);
+  "combatFeel:'v10.23-poise-weakpoint-critical-adaptive-combo-ai'"
+])if(!serverSource.includes(fragment))throw new Error(`V10.23 server feature missing: ${fragment}`);
 
 const attackStart=serverSource.indexOf('if(!skill){');
 const attackEnd=serverSource.indexOf('if(p.skillCd>0)',attackStart);

@@ -1,4 +1,15 @@
-PRINCESS RESCUE 3D — V10.22 PLAYER COMBAT ANIMATION & SKILL VFX
+PRINCESS RESCUE 3D — V10.23 BOSS COMBAT INTELLIGENCE & COMBO OVERHAUL
+
+V10.23 BOSS COMBAT INTELLIGENCE & COMBO OVERHAUL
+==================================================
+- Adds server-authoritative Super Armor and a 100-point Poise bar; normal hits never interrupt the boss.
+- Uses rare body criticals and readable weak points on the casting Orb, post-Teleport back and post-miss upper torso.
+- Critical Hit deals 1.75x damage with a micro-stagger; only a simultaneous Poise break causes the 0.95s Critical Break stagger.
+- Adds post-break resistance and delayed Poise regeneration to prevent stun-lock loops.
+- Replaces single random attacks with 12 normal combos, 3 signature sequences and Eternal Eclipse, a four-movement Ultimate.
+- Boss selection considers range, phase, HP, player Dash/Attack/Skill behavior, cooldowns and recent combo history.
+- Supports adaptive punish, fake openings, delayed attacks and phase remix without raising boss HP.
+- Preserves V10.22 player sword animation/VFX, movement stability, Pause/Exit and all cinematic/asset fixes.
 
 V10.22 PLAYER COMBAT ANIMATION & SKILL VFX
 ===========================================
