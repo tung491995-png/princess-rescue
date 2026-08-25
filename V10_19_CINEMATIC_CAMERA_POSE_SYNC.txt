@@ -1,0 +1,50 @@
+PRINCESS RESCUE V10.19 — CINEMATIC CAMERA & POSE SYNCHRONIZATION
+================================================================
+
+Mục tiêu
+--------
+- Khôi phục cảm giác dàn cảnh của V10.5/V9.5 và độ mượt camera của V10.8.
+- Đồng bộ camera, animation boss, orb, halo và UI intro bằng cùng một timeline.
+- Giữ toàn thân boss, vương miện, váy, chân, orb và halo trong khung hình.
+- Giữ nguyên ROOT XZ lock, hitbox, server combat và asset hiện tại của V10.18.
+
+Timeline 8.600 ms
+-----------------
+0000–0700  Reveal thấp 3/4, boss ở Idle 18.
+0700–1100  Pose bridge vào điệu múa, camera bắt đầu orbit.
+1100–2800  Orbit trái sang chính diện theo clip 16.
+2800–4300  Orbit chính diện sang phải, tiếp tục clip 16.
+4300–4900  Camera settle và animation tới queen hold.
+4900–5350  Giữ queen pose để khuôn hình có điểm nhấn.
+5350–5800  Pose bridge sang Ultimate 17, camera vào trục chính.
+5800–7750  Ultimate reveal; orb liên kết halo.
+7750–8150  Giữ climax và pullback nhẹ.
+8150–8600  Pose bridge sang Combat Idle 08 và camera về gameplay.
+
+Kỹ thuật ổn định
+----------------
+- Camera và pose đều lấy mẫu từ performance timestamp tuyệt đối.
+- Quintic smootherstep cho vận tốc bằng 0 ở đầu/cuối mỗi camera cue.
+- Quaternion pose bridge 400–450 ms cho thân, tay, chân và bàn chân.
+- Pose bridge không thay đổi position/scale; ROOT XZ vẫn do lớp khóa cũ quản lý.
+- Gameplay additive acting bị tắt trong intro để không kéo vai/tóc lệch pose.
+- Dynamic resolution, camera trauma, hit-stop và camera kick không chạy trong intro.
+- UI/VFX 2D dùng biến thời lượng chung, kể cả khi client vào muộn và intro bị rút ngắn.
+- Server khóa gameplay 9.000 ms: cinematic 8.600 ms + 400 ms safety margin.
+
+Kiểm tra
+--------
+- Node server syntax: PASS.
+- Inline browser script syntax: PASS.
+- Debug screenshot/black-box smoke: PASS.
+- Solo combat test và bất tử người chơi: PASS.
+- Lobby connection-first / boss warmup / desktop 1K: PASS.
+- V10.18 combat stability regression: PASS.
+- V10.19 camera/pose/root/full-body structural regression: PASS.
+- Eclipse Waltz 19-animation/halo regression: PASS.
+
+Lưu ý kiểm thử thực tế
+---------------------
+Sau khi deploy lên Render, kiểm tra một lần trên iPhone dọc và một lần trên desktop.
+Nếu thấy pose hoặc framing bất thường, bấm Capture và tải DEBUG ZIP để đối chiếu
+timestamp, camera, boss/orb/halo transforms và screenshot đúng thời điểm.

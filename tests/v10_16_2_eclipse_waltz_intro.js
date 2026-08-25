@@ -11,18 +11,20 @@ for (const [index, match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\
 }
 
 for (const fragment of [
-  'const BOSS_INTRO_FULL_MS=10500',
-  "introWaltz:{state:'boss_phase_eternal',start:.55,end:7.10,speed:.90}",
-  "introFinale:{state:'boss_ultimate',start:.10,end:3.24,speed:.92}",
-  "playBossPresentationSegment('introWaltz'",
-  "introAt(.64,()=>playBossPresentationSegment('introFinale'",
-  "return t<.64?'introWaltz':'introFinale'",
+  'const BOSS_INTRO_FULL_MS=8600',
+  'const V1019_INTRO_CUES=Object.freeze({',
+  'queenHold:4900,finaleStart:5350',
+  'const V1019_DANCE_SOURCE=Object.freeze({start:.55,hold:4.54,end:4.78})',
+  'const V1019_FINALE_SOURCE=Object.freeze({start:.10,hold:2.56,end:2.80})',
+  'function updateBossIntroCinematicAnimation(rec,now=performance.now())',
+  "playRigAnimation('boss','boss_phase_eternal'",
+  "playRigAnimation('boss','boss_ultimate'",
   "state==='ultimate'||state==='introFinale'",
   "state==='introWaltz'",
-  'if(t<.12)',
-  'else if(t<.64)',
-  'else if(t<.84)',
-  'animation:introCardV95 10.5s',
+  'if(ms<V1019_INTRO_CUES.revealEnd)',
+  'else if(ms<V1019_INTRO_CUES.finaleHold)',
+  'else if(ms<V1019_INTRO_CUES.combatStart)',
+  'animation:introCardV95 var(--boss-intro-duration,8.6s)',
   'THE ECLIPSE WALTZ',
   'function resolveBossHaloVirtualAnchor(rec,now)',
   'rec.model.updateMatrixWorld(true)',
@@ -35,7 +37,7 @@ for (const fragment of [
 ]) if (!html.includes(fragment)) throw new Error(`V10.16.2 feature missing: ${fragment}`);
 
 for (const fragment of [
-  'const BOSS_INTRO_MS = 11000',
+  'const BOSS_INTRO_MS = 9000',
   'room.state.introUntil=Date.now()+BOSS_INTRO_MS',
   'if(s.introUntil&&now<s.introUntil)return'
 ]) if (!server.includes(fragment)) throw new Error(`Authoritative intro lock missing: ${fragment}`);
@@ -53,11 +55,10 @@ if (!virtualSource.includes('actingBones?.chest') || !virtualSource.includes('ac
 if (/\.add\(armament\.haloRoot\)|\.add\(bossArmament\.haloRoot\)/.test(html)) throw new Error('Halo was parented to the animated rig');
 if (!html.includes('scene.add(armament.haloRoot,armament.orbRoot)')) throw new Error('Halo is not scene-owned');
 
-const waltzDuration = (7.10 - .55) / .90;
-const finaleDuration = (3.24 - .10) / .92;
-const finaleStart = 10.5 * .64;
-if (waltzDuration < 7.2 || waltzDuration > 7.4) throw new Error(`Unexpected waltz duration: ${waltzDuration}`);
-if (finaleStart + finaleDuration > 10.25) throw new Error('Finale cannot finish before the camera return');
+const danceDuration = 4.9 - .7;
+const finaleDuration = 7.75 - 5.35;
+if (Math.abs(danceDuration-4.2) > 1e-9) throw new Error(`Unexpected synchronized dance duration: ${danceDuration}`);
+if (Math.abs(finaleDuration-2.4) > 1e-9) throw new Error(`Unexpected synchronized finale duration: ${finaleDuration}`);
 
 // The halo may follow torso sway but remains clamped well above the feet.
 for (let sample = 0; sample < 128; sample++) {
@@ -80,4 +81,4 @@ const nodeNames = new Set((json?.nodes || []).map(node => node.name));
 if (!nodeNames.has('Spine02') || !nodeNames.has('Head')) throw new Error('Boss GLB lost the virtual halo anchor bones');
 if ((json?.animations || []).length !== 19) throw new Error('Boss animation catalogue changed');
 
-console.log(`V10.16.2 ECLIPSE WALTZ PASS · 10.5s cinematic · clip 16 dance ${waltzDuration.toFixed(2)}s · clip 17 finale ${finaleDuration.toFixed(2)}s · virtual Spine02/Head halo · authoritative 11.0s lock`);
+console.log(`V10.19 ECLIPSE WALTZ PASS · 8.6s synchronized cinematic · clip 16 dance ${danceDuration.toFixed(2)}s · clip 17 finale ${finaleDuration.toFixed(2)}s · virtual Spine02/Head halo · authoritative 9.0s lock`);

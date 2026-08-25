@@ -1,0 +1,24 @@
+PRINCESS RESCUE V10.18 — CORE COMBAT & STABILITY LOCK
+
+Mục tiêu
+- Giữ nguyên boss Tripo 1K và toàn bộ asset V10.17.9.1 đang ổn định.
+- Làm rõ tiến trình tải thay vì để người chơi tưởng game bị treo.
+- Khóa input dự đoán theo cooldown server, tránh animation/đạn giả.
+- Tăng cảm giác trúng đòn mà không tạo thêm tải nặng trên điện thoại.
+- Ngăn xử lý lặp kết quả trận khi reconnect hoặc nhận gói end trùng.
+
+Thay đổi
+1. Asset readiness gate có 5 pha: server, sân đấu 3D, boss, orb/halo và shader.
+2. Đòn chém có input buffer ngắn ở cuối cooldown để nối combo mượt hơn.
+3. Skill và dash kiểm tra cooldown/stamina cục bộ trước khi phát animation.
+4. Action bị server từ chối sẽ dọn prediction và mở lại local gate đúng loại.
+5. Damage number dùng pool tối đa 18 phần tử, không tạo DOM vô hạn.
+6. Kết quả trận có khóa một lần; buffer input được dọn khi rời game, mất focus hoặc kết thúc trận.
+7. Desktop và điện thoại vẫn dùng boss 1K ở critical startup; 2K chỉ cache nền và không swap model.
+
+Kiểm thử yêu cầu
+- node --check server.js
+- Syntax của toàn bộ inline script
+- Toàn bộ test V10.17.x
+- tests/v10_18_core_combat_stability.js
+- ZIP integrity và chạy lại test từ bản giải nén sạch

@@ -5,8 +5,8 @@ const root=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'public','index.html'),'utf8');
 
 for(const fragment of [
-  '<title>Princess Rescue V10.17.9.1 — Desktop 1K Startup</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.17.9.1'",
+  '<title>Princess Rescue V10.19 — Cinematic Camera &amp; Pose Synchronization</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.19.0'",
   "const BOSS_DESKTOP_2K_CACHE_URL='/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.17.2'",
   'function scheduleDesktopBoss2KCache()',
   "fetch(BOSS_DESKTOP_2K_CACHE_URL,{cache:'force-cache'",
@@ -15,7 +15,7 @@ for(const fragment of [
   'swapped:false',
   'desktopBoss2KPrefetchTimer=setTimeout(begin,20000)',
   'scheduleDesktopBoss2KCache()'
-])if(!html.includes(fragment))throw new Error(`V10.17.9.1 desktop 1K fragment missing: ${fragment}`);
+])if(!html.includes(fragment))throw new Error(`Desktop 1K fragment missing: ${fragment}`);
 
 const desktopStart=html.indexOf('desktopUrls:['),desktopEnd=html.indexOf('],',desktopStart);
 const desktopBlock=html.slice(desktopStart,desktopEnd);
@@ -36,4 +36,4 @@ const enterStart=html.indexOf('function enterGameFromState('),enterEnd=html.inde
 const enterBlock=html.slice(enterStart,enterEnd);
 if(enterBlock.indexOf('running=true')>enterBlock.indexOf('scheduleDesktopBoss2KCache()'))throw new Error('2K cache scheduling begins before gameplay starts');
 
-console.log('V10.17.9.1 DESKTOP 1K STARTUP PASS · 1K critical path · delayed low-priority 2K cache · no runtime model swap');
+console.log('DESKTOP 1K STARTUP PASS · 1K critical path · delayed low-priority 2K cache · no runtime model swap');

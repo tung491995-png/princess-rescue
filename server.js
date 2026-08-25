@@ -37,7 +37,7 @@ const SLOT_TTL_MS = 120000;
 const ROOM_TTL_MS = 6 * 60 * 60 * 1000;
 const ROOM_TTL_SEC = Math.ceil(ROOM_TTL_MS / 1000);
 const PERSIST_INTERVAL_MS = 250;
-const BOSS_INTRO_MS = 11000;
+const BOSS_INTRO_MS = 9000;
 
 // Lag compensation.
 const HISTORY_MS = 1000;
@@ -904,8 +904,8 @@ function reset(room){
 }
 function startMatch(room){
   reset(room);room.state.started=true;room.state.paused=false;room.state.pauseRole=null;
-  // V10.16.2 keeps movement, attacks, boss AI and timers locked while both
-  // clients watch the complete 10.5s Eclipse Waltz cinematic.
+  // V10.19 keeps movement, attacks, boss AI and timers locked for the complete
+  // 8.6s synchronized camera/pose timeline plus a 400ms network safety margin.
   room.state.introUntil=Date.now()+BOSS_INTRO_MS;
   markDirty(room);
 

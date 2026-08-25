@@ -18,8 +18,8 @@ function readGlbJson(file){
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.17.9.1 — Desktop 1K Startup</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.17.9.1'",
+  '<title>Princess Rescue V10.19 — Cinematic Camera &amp; Pose Synchronization</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.19.0'",
   'function fetchGlbBuffer(url,timeoutMs)',
   'function parseGlbBuffer(loader,buffer,timeoutMs)',
   'function prefetchBossArmamentBuffers()',
