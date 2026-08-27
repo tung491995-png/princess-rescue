@@ -97,6 +97,7 @@ vm.runInContext(text('public','vendor','three-r128','three.min.js'),browserConte
 vm.runInContext(runtimeSource,browserContext,{filename:'boss-runtime.js'});
 const THREE=browserContext.THREE,Runtime=browserContext.PrincessRescueV1025;
 assert(Runtime?.BossAnimationVariantGenerator&&Object.keys(Runtime.ANIMATION_VARIANT_PROFILES).length===8,'Eight animation variant profiles are not exported');
+assert(runtimeSource.includes('const referenceLength=4.45*.38')&&runtimeSource.includes('?v=10.25-one-eye-fidelity-1'),'One-Eye reference scale or cache key is stale');
 const disposalScene=new THREE.Scene(),disposalStack=new Runtime.BossImpactStack(disposalScene);
 disposalStack.dispose();
 assert(disposalScene.children.length===0,'Impact stack disposal is incompatible with the shipped Three.js runtime');

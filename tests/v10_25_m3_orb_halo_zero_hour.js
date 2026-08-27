@@ -9,6 +9,8 @@ const V1025=require('../lib/v10_25_combat');
 const root=path.resolve(__dirname,'..');
 const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'public','index.html'),'utf8');
+assert(html.includes('const BLACK_MOON_DIAMETER=4.45*1.50')&&html.includes('const BLACK_MOON_CENTER_Y=4.45*.68')&&html.includes('const BLACK_MOON_BACK_DISTANCE=1.35'),'Black Moon reference dimensions are missing');
+assert(html.includes('fx.blackMoon.scale.set(moonScale,moonScale,Math.max(.025,moonScale*.025))'),'Black Moon is not flattened to protect Boss occlusion');
 
 function extractFunction(source,name){
   const marker=`function ${name}(`,start=source.indexOf(marker);assert(start>=0,`Missing function ${name}`);

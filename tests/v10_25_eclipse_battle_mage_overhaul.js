@@ -3,6 +3,7 @@
 const fs=require('fs');
 const path=require('path');
 const vm=require('vm');
+const crypto=require('crypto');
 
 const root=path.resolve(__dirname,'..');
 const read=(...parts)=>fs.readFileSync(path.join(root,...parts));
@@ -21,6 +22,7 @@ assert(pkg.version==='10.25.0',`Expected package 10.25.0, found ${pkg.version}`)
 assert(lock.version===pkg.version&&lock.packages[''].version===pkg.version,'package-lock metadata is stale');
 assert(html.includes('<title>Princess Rescue V10.25 — Eclipse Battle Mage</title>'),'V10.25 title is missing');
 assert(html.includes('/v10_25/boss-runtime.js?v=10.25'),'V10.25 browser runtime is not loaded');
+assert(runtimeSource.includes('?v=10.25-animation-fidelity-1'),'Corrected animation assets are missing a fresh browser cache key');
 new vm.Script(runtimeSource,{filename:'boss-runtime.js'});
 new vm.Script(server,{filename:'server.js'});
 for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].entries()){
@@ -73,12 +75,14 @@ function glbJson(file){
 assert(manifest.version==='10.25','Animation manifest version mismatch');
 assert(manifest.rootMotionPolicy==='REMOVE_XZ_GAMEPLAY_SERVER_TRAJECTORY','Root-motion policy missing');
 assert(manifest.clips.length===28,`Expected 28 curated animation clips, found ${manifest.clips.length}`);
-const animationIds=new Set();
+const animationIds=new Set(),animationHashes=new Map();
 for(const clip of manifest.clips){
   assert(!animationIds.has(clip.id),`Duplicate animation id ${clip.id}`);animationIds.add(clip.id);
   assert(clip.source&&clip.fallback&&Array.isArray(clip.trim),'Animation provenance/fallback metadata missing');
   const file=path.join(root,'public',clip.url.replace(/^\//,''));
   assert(fs.existsSync(file),`Animation file missing: ${clip.url}`);
+  const hash=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+  assert(!animationHashes.has(hash),`Animation asset ${clip.id} duplicates ${animationHashes.get(hash)} despite distinct source provenance`);animationHashes.set(hash,clip.id);
   const gltf=glbJson(file);
   assert((gltf.animations||[]).length>=1,`Animation GLB has no clips: ${clip.id}`);
 }
@@ -105,7 +109,7 @@ const waist=new THREE.Bone();waist.name='Waist';waist.position.y=.5;hip.add(wais
 const spine=new THREE.Bone();spine.name='Spine01';spine.position.y=.4;waist.add(spine);
 const chest=new THREE.Bone();chest.name='Spine02';chest.position.y=.4;spine.add(chest);
 const head=new THREE.Bone();head.name='Head';head.position.y=.8;chest.add(head);
-const arm=new THREE.Bone();arm.name='L_Upperarm';arm.position.set(.35,.3,0);chest.add(arm);
+const arm=new THREE.Bone();arm.name='L_Upperarm';arm.position.set(.35,.3,0);arm.quaternion.setFromEuler(new THREE.Euler(.18,-.31,.09));chest.add(arm);
 for(const [name,x] of [['L_Thigh',-.2],['R_Thigh',.2]]){const thigh=new THREE.Bone();thigh.name=name;thigh.position.set(x,-.45,0);hip.add(thigh);const calf=new THREE.Bone();calf.name=name.replace('Thigh','Calf');calf.position.y=-.55;thigh.add(calf);const foot=new THREE.Bone();foot.name=name.replace('Thigh','Foot');foot.position.y=-.45;calf.add(foot)}
 target.updateMatrixWorld(true);
 const source=new THREE.Group();source.name='MixamoRoot';
@@ -113,20 +117,22 @@ const sourceHip=new THREE.Bone();sourceHip.name='mixamorigHips';sourceHip.positi
 const sourceSpine=new THREE.Bone();sourceSpine.name='mixamorigSpine';sourceSpine.position.y=.55;sourceHip.add(sourceSpine);
 const sourceChest=new THREE.Bone();sourceChest.name='mixamorigSpine2';sourceChest.position.y=.65;sourceSpine.add(sourceChest);
 const sourceHead=new THREE.Bone();sourceHead.name='mixamorigHead';sourceHead.position.y=.7;sourceChest.add(sourceHead);
-const sourceArm=new THREE.Bone();sourceArm.name='mixamorigLeftArm';sourceArm.position.set(.4,.25,0);sourceChest.add(sourceArm);
+const sourceArm=new THREE.Bone();sourceArm.name='mixamorigLeftArm';sourceArm.position.set(.4,.25,0);sourceArm.quaternion.setFromEuler(new THREE.Euler(-.37,.14,.26));sourceChest.add(sourceArm);
 for(const [name,x] of [['mixamorigLeftUpLeg',-.2],['mixamorigRightUpLeg',.2]]){const thigh=new THREE.Bone();thigh.name=name;thigh.position.set(x,-.5,0);sourceHip.add(thigh);const leg=new THREE.Bone();leg.name=name.replace('UpLeg','Leg');leg.position.y=-.55;thigh.add(leg);const foot=new THREE.Bone();foot.name=name.replace('UpLeg','Foot');foot.position.y=-.45;leg.add(foot)}
 source.updateMatrixWorld(true);
-const turn=new THREE.Quaternion().setFromEuler(new THREE.Euler(.35,.2,-.18));
+const worldDelta=new THREE.Quaternion().setFromEuler(new THREE.Euler(.35,.2,-.18)),sourceRest=sourceArm.quaternion.clone(),clipBase=new THREE.Quaternion().setFromEuler(new THREE.Euler(-2.4,.7,1.1)),turn=worldDelta.clone().multiply(clipBase).normalize(),targetRest=arm.quaternion.clone(),expectedTarget=turn.clone().multiply(clipBase.clone().invert()).multiply(targetRest).normalize();
 const sourceClip=new THREE.AnimationClip('SyntheticMixamo',1,[
   new THREE.VectorKeyframeTrack('mixamorigHips.position',[0,1],[0,1,0,5,1.6,4]),
-  new THREE.QuaternionKeyframeTrack('mixamorigLeftArm.quaternion',[0,1],[0,0,0,1,turn.x,turn.y,turn.z,turn.w])
+  new THREE.QuaternionKeyframeTrack('mixamorigLeftArm.quaternion',[0,1],[clipBase.x,clipBase.y,clipBase.z,clipBase.w,turn.x,turn.y,turn.z,turn.w])
 ]);
 const retargeter=new Runtime.BossRetargeter(target,{sampleRate:30});
 const retargeted=retargeter.retargetClip(source,sourceClip,{id:'synthetic',source:'synthetic.fbx',trim:[0,1],category:'TEST'});
 const validation=retargeter.validate(retargeted);
 assert(validation.ok,`Synthetic retarget validation failed: ${validation.errors.join(',')}`);
-assert(retargeted.userData.restPoseCorrected&&retargeted.userData.rootMotionXZRemoved,'Retarget metadata is incomplete');
+assert(retargeted.userData.restPoseCorrected&&retargeted.userData.clipStartNormalized&&retargeted.userData.rootMotionXZRemoved,'Retarget metadata is incomplete');
 assert(retargeted.tracks.some(track=>track.name==='L_Upperarm.quaternion'),'Semantic arm mapping failed');
+const armTrack=retargeted.tracks.find(track=>track.name==='L_Upperarm.quaternion'),retargetedEnd=new THREE.Quaternion().fromArray(armTrack.values,armTrack.values.length-4);
+assert(Math.abs(retargetedEnd.dot(expectedTarget))>.9999,'Clip-start world delta was composed in the wrong frame');
 const hipTrack=retargeted.tracks.find(track=>track.name==='Hip.position');
 assert(hipTrack,'Retargeted hips position track is missing');
 for(let i=0;i<hipTrack.values.length;i+=3){

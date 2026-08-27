@@ -1,6 +1,6 @@
 # V10.25 Long-Term Progress
 
-Last updated: 2026-08-28 01:35 (Asia/Bangkok)
+Last updated: 2026-08-28 02:43 (Asia/Bangkok)
 
 ## Mandatory phase status
 
@@ -69,7 +69,7 @@ Last updated: 2026-08-28 01:35 (Asia/Bangkok)
   - [x] M5 real-WebGL/live multiplayer acceptance: COMPLETED — concrete lobby
     prewarm and One-Eye ring failures repaired; focused regressions, 256-check
     WebGL audit and supported solo network path pass.
-- [~] **Boss Visual Reference Acceptance & Correction: IN PROGRESS.**
+- [x] **Boss Visual Reference Acceptance & Correction: COMPLETED.**
   - [x] Mandatory reference documents read in the requested order.
   - [x] All `images/` references and all five Orb/Halo/One-Eye original idea
     references inspected.
@@ -87,18 +87,25 @@ Last updated: 2026-08-28 01:35 (Asia/Bangkok)
   - [x] Halo/Orb correction: centred prop animation pivot; Halo `0.50H`,
     `0.22 m` behind, center `0.82H`; Orb FOLLOW `.35 m / +.08 m`; directly
     affected tests and real-WebGL four-view audit pass.
-  - [ ] Live pose/clipping views: Idle, Cast, Dodge, Jab Cross, Knee,
-    Uppercut, Sweep, Roundhouse, Flip Kick, Teleport and Heavy Slam.
-  - [ ] Three-actor One-Eye formation visual acceptance; runtime cap stays 3.
-  - [ ] Complete Zero Hour and Black Moon depth/scale acceptance.
-  - [ ] Smallest verified corrections and directly affected regression tests.
-  - [~] Retarget pose quality correction: **IN PROGRESS** — live logical Idle,
-    Cast, Roundhouse, Teleport and Death reveal severe limb/dress folding while
-    the Crown remains correctly attached. Diagnose before further pose matrix.
-- [x] **Current-state Release ZIP recreation: COMPLETED.** The deleted archive
-  was recreated with 175 files / 199 entries, cleanly extracted, hash-compared,
-  M4/M5 checked and launched from the extracted copy. Visual acceptance remains
-  open and resumes from the retarget checkpoint; no completed phase is redone.
+  - [x] Live pose/clipping views: **COMPLETED** — Idle, Cast, Dodge L/R/Back,
+    Jab Cross, Knee, Uppercut, Sweep, Roundhouse, Flip Kick, Teleport/Dash and
+    Heavy Slam checked at action keyframes. Ten byte-identical placeholder GLBs
+    were regenerated from their distinct FBX provenance and reverified live.
+  - [x] Three-actor One-Eye formation visual acceptance: **COMPLETED** — actual
+    GLB normalized to `0.38H`, three reference slots visible from FRONT/BACK,
+    runtime cap remains 3.
+  - [x] Complete Zero Hour and Black Moon depth/scale acceptance: diameter
+    `6.675 m`, center `3.026 m`, depth `1.35 m`, flattened scene-owned VFX;
+    12-Orb array and safe lanes verified together.
+  - [x] Smallest verified corrections and directly affected regression tests.
+  - [x] Retarget pose quality correction: **COMPLETED** — animation-only GLB
+    export/bind offsets are normalized at manifest trim start; source world
+    delta is left-composed onto target rest, endpoint sampling no longer wraps,
+    directly affected regressions and representative real-WebGL poses pass.
+- [x] **Final Release ZIP refresh: COMPLETED.** The post-acceptance archive has
+  one project root, 175 release files, zero excluded artifacts, a clean 175/175
+  extraction hash comparison and a successful extracted `/healthz` + HTTP 200
+  launch smoke. No implementation/QA phase remains unfinished.
 
 ## Specification and assets
 
@@ -149,8 +156,7 @@ Last updated: 2026-08-28 01:35 (Asia/Bangkok)
 - [x] Add complete implementation/asset decision notes.
 - [x] Add `CODEX_HANDOFF.md`.
 - [x] Add this long-term progress checklist.
-- [~] Record final test evidence in both continuity files: M1–M5 evidence is
-  current; release packaging evidence remains.
+- [x] Record final test and packaging evidence in both continuity files.
 
 ## Verification
 

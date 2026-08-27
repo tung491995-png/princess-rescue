@@ -73,10 +73,18 @@
     retargetClip(sourceRoot,sourceClip,definition={}){
       const map=this.mapping(sourceRoot),trim=definition.trim||[0,1],start=Math.max(0,sourceClip.duration*Math.max(0,trim[0]||0)),end=Math.min(sourceClip.duration,sourceClip.duration*Math.min(1,trim[1]??1));
       if(!(end>start+.02))throw new Error(`RETARGET_EMPTY_TRIM:${definition.id||sourceClip.name}`);
-      const mixer=new THREE.AnimationMixer(sourceRoot),action=mixer.clipAction(sourceClip);action.reset().play();
+      const mixer=new THREE.AnimationMixer(sourceRoot),action=mixer.clipAction(sourceClip);action.reset().setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.play();
       const rate=Math.max(20,Number(definition.sampleRate)||this.sampleRate),frameCount=Math.max(2,Math.ceil((end-start)*rate)+1),times=new Float32Array(frameCount),values={};
       for(const role of Object.keys(map.source))values[role]=new Float32Array(frameCount*4);
       const hipValues=map.source.hips&&this.target.hips?new Float32Array(frameCount*3):null;
+      // Mixamo/FBX-derived GLBs often store a neutral node transform that does
+      // not share the basis used by their absolute quaternion tracks. Treating
+      // that static export offset as motion can inject ~180-degree limb flips.
+      // Normalize each clip against its authored pose at the trim boundary and
+      // transfer only the animated delta onto the target rest pose.
+      mixer.setTime(start);sourceRoot.updateMatrixWorld(true);
+      const sourceReference={};
+      for(const [role,rest] of Object.entries(map.source)){const worldQuaternion=new THREE.Quaternion(),worldPosition=new THREE.Vector3();rest.node.getWorldQuaternion(worldQuaternion);rest.node.getWorldPosition(worldPosition);sourceReference[role]={worldQuaternion,worldPosition}}
       const worldAnimated={},previous={},scale=this.targetHeight/Math.max(.001,map.sourceHeight),sourcePosition=new THREE.Vector3(),sourceWorldQ=new THREE.Quaternion();
       const desiredWorld=new THREE.Quaternion(),parentWorld=new THREE.Quaternion(),localQ=new THREE.Quaternion();
       for(let frame=0;frame<frameCount;frame++){
@@ -84,7 +92,10 @@
         for(const role of ROLE_ORDER){
           const sourceRest=map.source[role],targetRest=this.target[role],out=values[role];if(!sourceRest||!targetRest||!out)continue;
           sourceRest.node.getWorldQuaternion(sourceWorldQ);
-          desiredWorld.copy(targetRest.worldQuaternion).multiply(sourceRest.worldQuaternion.clone().invert()).multiply(sourceWorldQ).normalize();
+          // Align the animated source frame through the constant clip-start ->
+          // target-rest mapping. This preserves motion while removing static
+          // source export/bind-axis offsets.
+          desiredWorld.copy(sourceWorldQ).multiply(sourceReference[role].worldQuaternion.clone().invert()).multiply(targetRest.worldQuaternion).normalize();
           if(targetRest.ancestorRole&&worldAnimated[targetRest.ancestorRole])parentWorld.copy(worldAnimated[targetRest.ancestorRole]).multiply(targetRest.parentRelative);
           else parentWorld.copy(targetRest.parentWorldQuaternion);
           localQ.copy(parentWorld).invert().multiply(desiredWorld).normalize();
@@ -94,7 +105,7 @@
           const offset=frame*4;out[offset]=localQ.x;out[offset+1]=localQ.y;out[offset+2]=localQ.z;out[offset+3]=localQ.w;
         }
         if(hipValues){
-          map.source.hips.node.getWorldPosition(sourcePosition);const vertical=Math.max(-.42,Math.min(.78,(sourcePosition.y-map.source.hips.worldPosition.y)*scale));
+          map.source.hips.node.getWorldPosition(sourcePosition);const vertical=Math.max(-.42,Math.min(.78,(sourcePosition.y-sourceReference.hips.worldPosition.y)*scale));
           const offset=frame*3,bind=this.target.hips.localPosition;hipValues[offset]=bind.x;hipValues[offset+1]=bind.y+vertical;hipValues[offset+2]=bind.z;
         }
       }
@@ -102,7 +113,7 @@
       const tracks=[];
       for(const role of ROLE_ORDER){const target=this.target[role],out=values[role];if(target&&out)tracks.push(new THREE.QuaternionKeyframeTrack(`${target.node.name}.quaternion`,times,out))}
       if(hipValues)tracks.push(new THREE.VectorKeyframeTrack(`${this.target.hips.node.name}.position`,times,hipValues));
-      const clip=new THREE.AnimationClip(`V1025_${definition.id||sourceClip.name}`,end-start,tracks);clip.userData={logicalId:definition.id||sourceClip.name,sourceClip:definition.source||sourceClip.name,category:definition.category||'CORE',trim:[start,end],rootMotionXZRemoved:true,restPoseCorrected:true,sampleRate:rate,missingRoles:map.missing};
+      const clip=new THREE.AnimationClip(`V1025_${definition.id||sourceClip.name}`,end-start,tracks);clip.userData={logicalId:definition.id||sourceClip.name,sourceClip:definition.source||sourceClip.name,category:definition.category||'CORE',trim:[start,end],rootMotionXZRemoved:true,restPoseCorrected:true,clipStartNormalized:true,sampleRate:rate,missingRoles:map.missing};
       const validation=this.validate(clip);this.validation.push(validation);if(!validation.ok)throw new Error(`RETARGET_VALIDATION_FAILED:${validation.errors.join(',')}`);
       return clip;
     }
@@ -160,7 +171,7 @@
     async loadOne(id){
       const definition=this.definitions.get(id);if(!definition)return false;this.status.set(id,'loading');
       try{
-        const gltf=await this.loadGltf(`${definition.url}?v=10.25`),source=gltf.scene||gltf.scenes?.[0],sourceClip=gltf.animations?.[0];if(!source||!sourceClip)throw new Error('SOURCE_CLIP_MISSING');
+        const gltf=await this.loadGltf(`${definition.url}?v=10.25-animation-fidelity-1`),source=gltf.scene||gltf.scenes?.[0],sourceClip=gltf.animations?.[0];if(!source||!sourceClip)throw new Error('SOURCE_CLIP_MISSING');
         const clip=this.retargeter.retargetClip(source,sourceClip,definition),action=this.rec.mixer.clipAction(clip);action.userData={logicalId:id,definition};
         this.rec.actions[`v1025_${id}`]=action;
         const upperRoles=['spine','spine1','chest','neck','head','leftShoulder','leftArm','leftForeArm','leftHand','rightShoulder','rightArm','rightForeArm','rightHand'],lowerRoles=['hips','leftUpLeg','leftLeg','leftFoot','rightUpLeg','rightLeg','rightFoot'];
@@ -242,8 +253,8 @@
 
   class OneEyeMobVisuals{
     constructor(loader){this.loader=loader;this.source=null;this.ready=false;this.tmp=new THREE.Vector3();}
-    load(url='/assets/boss_v10_25/mobs/one_eye_mob.glb'){return new Promise((resolve,reject)=>this.loader.load(`${url}?v=10.25`,gltf=>{this.source=gltf.scene||gltf.scenes?.[0];this.prepare(this.source);this.ready=true;resolve(this.source)},undefined,reject))}
-    prepare(model){model.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(model),size=new THREE.Vector3(),center=new THREE.Vector3();box.getSize(size);box.getCenter(center);const scale=1.15/Math.max(.001,size.x,size.y,size.z);model.scale.multiplyScalar(scale);model.position.sub(center.multiplyScalar(scale));model.traverse(node=>{if(!node.isMesh)return;node.castShadow=false;node.receiveShadow=false;node.frustumCulled=false;for(const material of (Array.isArray(node.material)?node.material:[node.material])){if(!material)continue;if(material.map)material.map.encoding=THREE.sRGBEncoding;if(material.emissive){material.emissive.setHex(0x6e21a8);material.emissiveIntensity=.75}}})}
+    load(url='/assets/boss_v10_25/mobs/one_eye_mob.glb'){return new Promise((resolve,reject)=>this.loader.load(`${url}?v=10.25-one-eye-fidelity-1`,gltf=>{this.source=gltf.scene||gltf.scenes?.[0];this.prepare(this.source);this.ready=true;resolve(this.source)},undefined,reject))}
+    prepare(model){model.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(model),size=new THREE.Vector3(),center=new THREE.Vector3();box.getSize(size);box.getCenter(center);const referenceLength=4.45*.38,scale=referenceLength/Math.max(.001,size.x,size.y,size.z);model.scale.multiplyScalar(scale);model.position.sub(center.multiplyScalar(scale));model.traverse(node=>{if(!node.isMesh)return;node.castShadow=false;node.receiveShadow=false;node.frustumCulled=false;for(const material of (Array.isArray(node.material)?node.material:[node.material])){if(!material)continue;if(material.map)material.map.encoding=THREE.sRGBEncoding;if(material.emissive){material.emissive.setHex(0x6e21a8);material.emissiveIntensity=.75}}})}
     install(meshes){if(!this.ready||!this.source)return;for(const root of meshes){if(root.userData.v1025Model)continue;const model=this.source.clone(true),materials=[];model.name='OneEyeMobSourceVisual';model.traverse(node=>{if(!node.isMesh)return;const source=Array.isArray(node.material)?node.material:[node.material],clones=source.map(material=>{const clone=material?.clone?.()||material;if(clone){clone.transparent=true;clone.dithering=true;clone.userData={...(clone.userData||{}),v1025BaseOpacity:clone.opacity??1};materials.push(clone)}return clone});node.material=Array.isArray(node.material)?clones:clones[0]});root.add(model);root.userData.v1025Model=model;root.userData.v1025Materials=materials;if(root.userData.core)root.userData.core.visible=false}}
     update(root,data,now,target,authoritativeNow=Date.now()){
       if(!root||!data)return;const state=data.state||'IDLE_HOVER',phase=Number(data.seed)||data.id||0,pulse=.5+.5*Math.sin(now*.007+phase),charge=state==='CHARGE'?1:state==='GAZE_BEAM'?.92:state==='VOID_BOLT'?.65:state==='LUNGE'?.85:.25,stateStart=Number(data.stateStartedAt)||authoritativeNow,stateEnd=Math.max(stateStart+1,Number(data.stateUntil)||stateStart+1),stateProgress=Math.max(0,Math.min(1,(authoritativeNow-stateStart)/(stateEnd-stateStart))),dissolve=state==='DEATH'||state==='DESPAWN'?1-stateProgress:1;

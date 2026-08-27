@@ -38,12 +38,15 @@ for(const fragment of [
   'function auditV1025Variants(rec)',"['BASE','combat_idle']","['FAST','quick_cast_a']","['HEAVY','heavy_cast']","['MIRROR','roundhouse']",
   "['TELEPORT_ENTRY','dash']","['MAGIC_FINISHER','magic_cast']","['PHASE2','taunt']","['PHASE3','arcane_cyclone']",
   'function auditV1025Assembly()','function auditV1025OneEye()','function auditV1025ZeroHour()',
-  'function installV1025VisualAcceptanceController()',"window.__v1025VisualAcceptance={","samplePose(logical,normalized=.5,variant='BASE')","sampleOneEyeFormation()","sampleZeroHour()",
+  'function installV1025VisualAcceptanceController()',"window.__v1025VisualAcceptance={","samplePose(logical,normalized=.5,variant='BASE')","diagnosePose(logical,normalized=.5,variant='BASE')","diagnoseSourcePose(logical,normalized=.5)","sampleOneEyeFormation()","sampleZeroHour()",
   "const states=['SPAWN','CHARGE','GAZE_BEAM','LUNGE','STAGGER','DEATH','DESPAWN']",
   'Array.from({length:12}',"type:'zero_hour_lane',shape:'lane',safe:true","type:'gaze_beam',shape:'line',safe:false",
   "halo:{state:'COLLAPSE'",'function updateV1025ArenaHazards(','updateV1025ArenaHazards(sb.arenaHazards||[],serverVisualNow,nowVisual)',
   'v1025Summary?.ready!==28','V10.25 M5 AUDIT · PASS'
 ])assert(html.includes(fragment),`M5 WebGL acceptance contract missing: ${fragment}`);
+assert(html.includes('v106ClearLastBoneOffsets();if(bossV106)bossV106.mixerPrepared=false;rec.mixer.stopAllAction()'),'Logical pose QA does not clear inherited V10.6 additive offsets before sampling');
+assert(html.includes("[-.58*H,.73*H,-.60],[.58*H,.73*H,-.60],[-.62*H,.46*H,-.72]"),'Three-actor One-Eye acceptance formation does not use the reference slots');
+assert(html.includes('safeLanes:2,blackMoon:moon?{visible:moon.visible,size:plainVector(size),center:plainVector(center),depth:BLACK_MOON_BACK_DISTANCE}'),'Complete Zero Hour acceptance telemetry is missing');
 
 assert(html.includes('auditV1025Assembly();auditV1025Variants(rec);auditV1025OneEye();auditV1025ZeroHour()'),'M5 audit is not wired into the real WebGL audit');
 assert(html.includes('8 V10.25 variants · One-Eye · Zero Hour'),'M5 audit report does not expose its V10.25 coverage');

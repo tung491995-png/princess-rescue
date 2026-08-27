@@ -877,6 +877,10 @@ const BOSS_HALO_VISUAL_HEIGHT=2.225;
 const BOSS_HALO_BACK_DISTANCE=.22;
 const BOSS_HALO_CENTER_Y=3.649;
 const BOSS_HALO_HOVER_AMPLITUDE=.055;
+const BLACK_MOON_DIAMETER=4.45*1.50;
+const BLACK_MOON_CENTER_Y=4.45*.68;
+const BLACK_MOON_BACK_DISTANCE=1.35;
+const BLACK_MOON_GEOMETRY_DIAMETER=1.44;
 const bossArmamentOrbTarget=new THREE.Vector3(),bossArmamentHaloTarget=new THREE.Vector3(),bossArmamentHandWorld=new THREE.Vector3();
 const bossArmamentHaloChestWorld=new THREE.Vector3(),bossArmamentHaloHeadWorld=new THREE.Vector3(),bossArmamentHaloAnchorWorld=new THREE.Vector3();
 const bossArmamentHaloSpineWorld=new THREE.Vector3(),bossArmamentHaloRightWorld=new THREE.Vector3();
@@ -2973,18 +2977,29 @@ window.__v1025VisualAcceptance={
    if(item.boneParented){const visible=new Set();item.holder.traverse(node=>visible.add(node));rec.model.visible=true;rec.model.traverse(node=>{if(node.isMesh)node.visible=visible.has(node)})}else rec.model.visible=false;for(const entry of v1025AssetAssembler.items)if(entry.holder)entry.holder.visible=entry===item;
    item.holder.visible=true;v1025AssetAssembler.update();return{name:item.holder.name,anchor:item.anchor.name,position:plainVector(item.holder.position)};
   },
-  samplePose(logical,normalized=.5,variant='BASE'){
+ samplePose(logical,normalized=.5,variant='BASE'){
    const rec=rigRuntime.records.boss,state=v1025AnimationLibrary?.stateFor?.(logical,variant),action=rec?.actions?.[state],clip=action?.getClip?.();if(!action||!clip)return null;
    rec.model.visible=true;for(const item of v1025AssetAssembler?.items||[])if(item.holder)item.holder.visible=true;
-   rec.mixer.stopAllAction();action.enabled=true;action.reset().setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.setEffectiveWeight(1).play();action.paused=true;action.time=clip.duration*clamp(Number(normalized)||0,0,1);rec.mixer.update(0);rec.active=action;rec.activeState=state;animationLab.action=action;animationLab.paused=true;v1025AssetAssembler?.update?.();updateBossArmament(.5,performance.now());return{logical,variant,state,time:Number(action.time.toFixed(3)),duration:Number(clip.duration.toFixed(3))};
+   v106ClearLastBoneOffsets();if(bossV106)bossV106.mixerPrepared=false;rec.mixer.stopAllAction();action.enabled=true;action.reset().setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.setEffectiveWeight(1).play();action.paused=true;action.time=clip.duration*clamp(Number(normalized)||0,0,1);rec.mixer.update(0);rec.active=action;rec.activeState=state;animationLab.action=action;animationLab.paused=true;v1025AssetAssembler?.update?.();updateBossArmament(.5,performance.now());return{logical,variant,state,time:Number(action.time.toFixed(3)),duration:Number(clip.duration.toFixed(3))};
+  },
+  diagnosePose(logical,normalized=.5,variant='BASE'){
+   const rec=rigRuntime.records.boss,state=v1025AnimationLibrary?.stateFor?.(logical,variant),clip=rec?.actions?.[state]?.getClip?.(),time=(clip?.duration||0)*clamp(Number(normalized)||0,0,1);if(!clip)return null;
+   const rows=[];for(const [role,rest] of Object.entries(v1025AnimationLibrary.retargeter.target)){const track=clip.tracks.find(item=>item.name===`${rest.node.name}.quaternion`);if(!track)continue;const value=track.createInterpolant().evaluate(time),q=new THREE.Quaternion().fromArray(value),dot=clamp(Math.abs(q.dot(rest.localQuaternion)),-1,1);rows.push({role,degrees:Number((2*Math.acos(dot)*180/Math.PI).toFixed(2))})}rows.sort((a,b)=>b.degrees-a.degrees);return{logical,state,time:Number(time.toFixed(3)),roles:rows};
+  },
+  async diagnoseSourcePose(logical,normalized=.5){
+   const definition=v1025AnimationLibrary?.definitions?.get?.(logical);if(!definition)return null;
+   const gltf=await v1025AnimationLibrary.loadGltf(`${definition.url}?v=10.25-animation-fidelity-1-source-diagnostic`),source=gltf.scene||gltf.scenes?.[0],clip=gltf.animations?.[0];if(!source||!clip)return null;
+   const map=v1025AnimationLibrary.retargeter.mapping(source),mixer=new THREE.AnimationMixer(source),action=mixer.clipAction(clip),trim=definition.trim||[0,1],start=clip.duration*(trim[0]||0),end=clip.duration*(trim[1]??1),time=start+(end-start)*clamp(Number(normalized)||0,0,1);action.reset().setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.play();mixer.setTime(start);source.updateMatrixWorld(true);
+   const reference={};for(const [role,rest] of Object.entries(map.source)){const world=new THREE.Quaternion();rest.node.getWorldQuaternion(world);reference[role]={local:rest.node.quaternion.clone(),world}}
+   mixer.setTime(time);source.updateMatrixWorld(true);const rows=[],world=new THREE.Quaternion();for(const [role,rest] of Object.entries(map.source)){rest.node.getWorldQuaternion(world);const worldDelta=reference[role].world.clone().invert().multiply(world),localDelta=reference[role].local.clone().invert().multiply(rest.node.quaternion),worldDegrees=2*Math.acos(clamp(Math.abs(worldDelta.w),-1,1))*180/Math.PI,localDegrees=2*Math.acos(clamp(Math.abs(localDelta.w),-1,1))*180/Math.PI;rows.push({role,node:rest.node.name,worldDegrees:Number(worldDegrees.toFixed(2)),localDegrees:Number(localDegrees.toFixed(2))})}rows.sort((a,b)=>b.localDegrees-a.localDegrees);action.stop();mixer.stopAllAction();mixer.uncacheRoot(source);return{logical,time:Number(time.toFixed(3)),duration:Number(clip.duration.toFixed(3)),roles:rows};
   },
   sampleOneEyeFormation(){
-   const H=4.45,slots=[[-.58*H,.73*H,-.60],[.58*H,.73*H,-.60],[0,.46*H,-.72]],now=performance.now();v1025MobVisuals?.install?.(summonMeshes);
+   const H=4.45,slots=[[-.58*H,.73*H,-.60],[.58*H,.73*H,-.60],[-.62*H,.46*H,-.72]],now=performance.now();v1025MobVisuals?.install?.(summonMeshes);
    for(let i=0;i<summonMeshes.length;i++){const mesh=summonMeshes[i],slot=slots[i];mesh.visible=true;mesh.position.set(slot[0],slot[1],slot[2]);v1025MobVisuals?.update?.(mesh,{id:800+i,seed:i,state:'IDLE_HOVER',stateStartedAt:0,stateUntil:1},now,null,0)}
-   return slots;
+   return summonMeshes.map((mesh,index)=>{mesh.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(mesh.userData.v1025Model||mesh),size=new THREE.Vector3(),center=new THREE.Vector3();box.getSize(size);box.getCenter(center);return{slot:index,position:plainVector(mesh.position),size:plainVector(size),center:plainVector(center)}});
   },
   sampleZeroHour(){
-   const now=serverNow(),points=Array.from({length:12},(_,slot)=>{const angle=slot/12*Math.PI*2;return{slot,x:Math.cos(angle)*4.8,y:5.8+(slot%3)*.18,z:Math.sin(angle)*4.8,fallAt:now+10000}});animationLab.index=17;playAnimationLabClip(17);updateZeroHourOrbArray({id:990,stage:4,orbArray:points,endAt:now+12000},now,performance.now());return{orbs:points.length};
+   const now=serverNow(),points=Array.from({length:12},(_,slot)=>{const angle=slot/12*Math.PI*2;return{slot,x:Math.cos(angle)*4.8,y:5.8+(slot%3)*.18,z:Math.sin(angle)*4.8,fallAt:now+10000}});animationLab.index=17;playAnimationLabClip(17);if(animationLab.action){animationLab.paused=true;animationLab.action.paused=true;animationLab.action.time=(animationLab.action.getClip()?.duration||1)*.90;rigRuntime.records.boss?.mixer?.update?.(0)}updateZeroHourOrbArray({id:990,stage:4,orbArray:points,endAt:now+12000},now,performance.now());updateV1025ArenaHazards([{type:'zero_hour_lane',shape:'lane',safe:true,x:0,z:0,angle:0,length:12,width:1.15,startAt:now-900,activeAt:now+400,endAt:now+4000},{type:'zero_hour_lane',shape:'lane',safe:true,x:0,z:0,angle:Math.PI*.5,length:12,width:1.15,startAt:now-900,activeAt:now+400,endAt:now+4000}],now,performance.now());updateBossArmament(.5,performance.now());const moon=bossArmament?.stateFx?.blackMoon,box=moon?new THREE.Box3().setFromObject(moon):null,size=new THREE.Vector3(),center=new THREE.Vector3();if(box){box.getSize(size);box.getCenter(center)}return{orbs:points.length,safeLanes:2,blackMoon:moon?{visible:moon.visible,size:plainVector(size),center:plainVector(center),depth:BLACK_MOON_BACK_DISTANCE}:null};
   }
  };
 }
@@ -3333,9 +3348,9 @@ function createBossArmamentStateFx(arm){
  const runeB=new THREE.Mesh(new THREE.TorusGeometry(1.26,.018,5,42),additive(0x8f58d5,.0));
  haloRunes.add(runeA,runeB);arm.haloRoot.add(haloRunes);
  const blackMoon=new THREE.Mesh(new THREE.SphereGeometry(.72,20,14),new THREE.MeshBasicMaterial({color:0x08000f,transparent:true,opacity:0,depthWrite:false,depthTest:true}));
- // Keep the moon clearly behind the body: haloRoot already follows the upper
- // back, and negative local Z extends farther along the calibrated back axis.
- blackMoon.name='UltimateBlackMoon';blackMoon.visible=false;blackMoon.position.set(0,.10,-.46);blackMoon.renderOrder=-2;arm.haloRoot.add(blackMoon);
+ // Keep the Black Moon scene-owned so animated Halo follow/collapse scaling
+ // cannot move it away from the reference center or alter its world diameter.
+ blackMoon.name='UltimateBlackMoon';blackMoon.visible=false;blackMoon.renderOrder=-2;scene.add(blackMoon);
  const marker=new THREE.Mesh(new THREE.TorusGeometry(1.18,.052,6,48),additive(0xc8a8ff,.0));
  marker.name='SpinKickOrbLandingMarker';marker.rotation.x=Math.PI/2;marker.visible=false;marker.frustumCulled=false;scene.add(marker);
  const tetherGeometry=new THREE.BufferGeometry();
@@ -3344,7 +3359,7 @@ function createBossArmamentStateFx(arm){
  tether.name='OrbHaloUltimateTether';tether.visible=false;tether.frustumCulled=false;scene.add(tether);
  const shards=new THREE.InstancedMesh(new THREE.TetrahedronGeometry(.11,0),additive(0xb86dff,.0),12);
  shards.name='OrbHitDeathShards';shards.count=0;shards.visible=false;shards.frustumCulled=false;scene.add(shards);
- arm.extraRoots=[marker,tether,shards];
+ arm.extraRoots=[blackMoon,marker,tether,shards];
  return {shield,haloRunes,runeA,runeB,blackMoon,marker,tether,shards};
 }
 function prewarmBossIntroPrograms(arm){
@@ -3502,8 +3517,8 @@ function updateBossArmamentStateFx(arm,state,ctx,dt,now){
  }else if(state==='ultimate'||state==='introFinale'){
    const link=bossArmamentEase(clamp((pre-.18)/.72,0,1));fx.haloRunes.visible=true;fx.haloRunes.scale.setScalar(.9+.42*link);fx.haloRunes.rotation.z+=dt*(1.2+link*3.1);
    fx.runeA.material.opacity=.12+.35*link;fx.runeB.material.opacity=.08+.27*link;fx.runeB.rotation.z-=dt*2.1;
-   // 0.80 max versus the old 1.33: about 40% smaller, with lower opacity.
-   fx.blackMoon.visible=true;fx.blackMoon.scale.setScalar(.12+.68*link);fx.blackMoon.material.opacity=.08+.54*link;
+   const moonScale=.12+(BLACK_MOON_DIAMETER/BLACK_MOON_GEOMETRY_DIAMETER-.12)*link;
+   fx.blackMoon.visible=true;fx.blackMoon.position.set(boss.position.x-Math.sin(boss.rotation.y)*BLACK_MOON_BACK_DISTANCE,boss.position.y+BLACK_MOON_CENTER_Y,boss.position.z-Math.cos(boss.rotation.y)*BLACK_MOON_BACK_DISTANCE);fx.blackMoon.rotation.y=boss.rotation.y;fx.blackMoon.scale.set(moonScale,moonScale,Math.max(.025,moonScale*.025));fx.blackMoon.material.opacity=.08+.54*link;
    fx.tether.visible=link>.04;fx.tether.material.opacity=.14+.40*link;
    const attr=fx.tether.geometry.attributes.position.array;attr[0]=arm.orbRoot.position.x;attr[1]=arm.orbRoot.position.y;attr[2]=arm.orbRoot.position.z;attr[3]=arm.haloRoot.position.x;attr[4]=arm.haloRoot.position.y;attr[5]=arm.haloRoot.position.z+.08;fx.tether.geometry.attributes.position.needsUpdate=true;
  }else if(state==='death'){

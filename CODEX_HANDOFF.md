@@ -1,7 +1,455 @@
 # Princess Rescue V10.25 — Codex Handoff
 
-Last updated: 2026-08-28 01:35 (Asia/Bangkok)  
-Milestone: current-state Release ZIP recreated; Crown axis fix verified; pose-retarget visual correction remains
+Last updated: 2026-08-28 02:43 (Asia/Bangkok)  
+Milestone: V10.25 visual acceptance and final release packaging complete
+
+## Mandatory checkpoint — final refreshed V10.25 Release ZIP
+
+Status: **COMPLETED — the final archive was rebuilt from the post-acceptance
+repository state, extracted, hash-compared and launched successfully. No
+implementation or QA work remains unfinished.**
+
+Completed phase:
+
+- Rebuilt
+  `D:\Princess_Rescue_V10_24\game\Princess_Rescue_V10_25_ECLIPSE_BATTLE_MAGE_COMPLETE.zip`
+  from the current verified project state with one
+  `Princess_Rescue_V10_25` root.
+- Included all 175 release files, including the reference pack, corrected Crown,
+  retarget runtime, 10 regenerated animation GLBs, One-Eye correction, Black
+  Moon/Zero Hour correction, tests and current checkpoint documents.
+- Excluded `node_modules`, nested ZIPs, VCS/cache/temp/coverage directories,
+  logs, backups, rejects, bytecode and debug-symbol artifacts.
+- Extracted the archive to a fresh directory; all 175 extracted files matched
+  the staged source by SHA-256, with zero missing/mismatched files.
+- Launched extracted `server.js` on `127.0.0.1:31127` using the workspace
+  dependency directory outside the archive. `/healthz` returned `ok:true`,
+  `ram-fallback` and `v10.25-eclipse-battle-mage-zero-hour`; `/` returned HTTP
+  200 and the V10.25 WebGL page.
+
+Exact files created/modified:
+
+- Recreated the Release ZIP at the exact path above.
+- Modified only `CODEX_HANDOFF.md` and `V10_25_PROGRESS.md` for this checkpoint.
+- No production code, scene, combat, network or asset file was changed during
+  packaging.
+
+Architecture decisions:
+
+- Dependencies remain excluded and are installed from lockfiles on a fresh
+  machine; launch verification supplies them externally to test the extracted
+  project without contaminating archive contents.
+- Repository-owned visual references remain release evidence and are included.
+- Final archive is generated only after all visual checkpoints were closed.
+
+Tests passed/failed:
+
+- **PASSED:** one-root archive topology and exclusion scan.
+- **PASSED:** 175 source files / 175 archive files / 175 extracted files.
+- **PASSED:** 175/175 extracted SHA-256 comparison, zero mismatches.
+- **PASSED extracted launch:** `/healthz`, V10.25 network combat-overhaul ID and
+  `/` HTTP 200.
+- **FAILED then resolved:** first launch attempt pointed `NODE_PATH` at the
+  bundled runtime, which does not contain `express`; retry with the workspace
+  `node_modules` outside the ZIP passed. This is not a product/archive failure.
+
+Known issues and risks:
+
+- Fresh systems must install dependencies from the lockfile before launch.
+- Redis is optional; verification intentionally used documented RAM fallback.
+- No implementation, QA, visual acceptance or packaging issue remains open.
+
+Unfinished work:
+
+- None.
+
+Exact next phase:
+
+- **None — V10.25 release is complete.**
+
+Exact commands needed to resume/reverify:
+
+```powershell
+Set-Location 'D:\Princess_Rescue_V10_24\game\Princess_Rescue_V10_25'
+npm install
+npm start
+# Open http://127.0.0.1:3000/ (or the configured PORT).
+```
+
+## Mandatory checkpoint — Zero Hour / Black Moon and final visual acceptance
+
+Status: **COMPLETED — the mandatory Boss Visual Reference Acceptance &
+Correction Pass is closed. Final packaging is now unblocked.**
+
+Completed phase:
+
+- Measured the old ultimate Black Moon implementation: `.72` sphere with peak
+  `.80` scale produced only about `1.15 m` diameter and inherited Halo anchor/
+  collapse transforms, far outside the approved numeric range.
+- Corrected Black Moon to the reference midpoint: diameter `1.50H = 6.675 m`,
+  center `0.68H = 3.026 m`, depth `1.35 m` behind Boss (within the required
+  `1.20–1.50 m`). Flattened existing sphere along local Z to protect Boss
+  occlusion; accepted live thickness is `0.167 m`.
+- Made Black Moon a scene-owned ultimate visual root controlled by the existing
+  state machine, so animated Halo follow/collapse does not change its world
+  center or diameter. No combat/state/network architecture changed.
+- Expanded the acceptance preview to show the complete presentation together:
+  Ultimate Cast pose, Black Moon, Halo/Orb link, 12 suspended Orb slots and two
+  perpendicular safe lanes.
+- Final live telemetry: Black Moon visible, size
+  `[6.675, 6.675, 0.167]`, center `[0, 3.026, -1.35]`, depth `1.35`;
+  12 Orbs; 2 safe lanes.
+- Completed all mandatory final views across this pass: FRONT, LEFT, RIGHT,
+  BACK, close cameras, Cast, melee, Sweep/Roundhouse/Flip Kick, Teleport,
+  One-Eye formation and complete Zero Hour.
+
+Reference files actually read:
+
+- `00_READ_THIS_FIRST_V10_25.md`;
+  `source_docs/BOSS_MASTER_REFERENCE_SPEC_VI.md`;
+  `source_docs/boss_accessory_layout.json`;
+  `source_docs/AI_READ_FIRST.md`; `source_docs/README.md`;
+  `source_docs/PROMPT_NOTES.md`; `REFERENCE_INDEX.json`.
+- All six files under `images/` and all five files under
+  `original_idea_refs/` were inspected.
+- Primary visual authority:
+  `images/01_master_front_back_full_assembly.png`.
+- Numerical constraints used: H `4.45`; Halo `0.50H`, center `0.82H`, depth
+  `.22 m`; Orb FOLLOW `.35 m/+0.08 m`; Crown `0.33 head`; cuffs `0.20 forearm`;
+  One-Eye `0.38H` and reference slots; Black Moon center `0.68H`, depth
+  `1.20–1.50 m`, diameter `1.40–1.60H`. Runtime One-Eye cap remained 3.
+
+Exact files modified:
+
+- `public/index.html` — Black Moon constants, scene-owned placement/flattened
+  scaling, complete Zero Hour acceptance preview/telemetry.
+- `tests/v10_25_m3_orb_halo_zero_hour.js` — Black Moon numerical/occlusion
+  contract.
+- `tests/v10_25_m5_webgl_acceptance_contract.js` — complete presentation
+  telemetry contract.
+- `CODEX_HANDOFF.md` and `V10_25_PROGRESS.md` — checkpoint truth.
+
+Architecture decisions:
+
+- Black Moon is presentation-only and scene-owned. Server-authoritative Zero
+  Hour stages, timings, hazards, damage, snapshot/reconnect and Halo collapse
+  remain unchanged.
+- Existing sphere geometry is retained and flattened rather than rebuilding a
+  new model; depthWrite remains disabled and the moon stays behind Boss.
+- Final priority order was applied: reference fidelity, coherent animation,
+  combat readability, then strict preservation of working gameplay systems.
+
+Tests passed/failed:
+
+- **PASSED:** `tests/v10_25_m3_orb_halo_zero_hour.js`.
+- **PASSED:** `tests/v10_25_m5_webgl_acceptance_contract.js`.
+- **PASSED:** V10.25 overhaul regression after all visual corrections.
+- **PASSED real WebGL:** 256/256 final audit.
+- **PASSED visual:** complete Zero Hour/Black Moon telemetry and screenshot.
+- **FAILED:** none.
+
+Known issues and remaining visual risks:
+
+- The arena's decorative pale moon remains visible behind the translucent Black
+  Moon at some camera angles; it does not alter Black Moon geometry/depth and
+  does not occlude gameplay actors.
+- Extreme long-dress kick poses have unavoidable transient panel self-occlusion,
+  but no detached geometry or persistent clipping.
+- No implementation or QA task remains unfinished. The existing ZIP is stale
+  because it predates these accepted corrections and must be refreshed.
+
+Unfinished work:
+
+- Recreate and verify the final Release ZIP from this exact checkpoint state.
+
+Exact next phase:
+
+- **Final V10.25 release packaging, extraction/hash comparison and extracted
+  launch smoke.**
+
+Exact commands needed to resume:
+
+```powershell
+Set-Location 'D:\Princess_Rescue_V10_24\game\Princess_Rescue_V10_25'
+$nodeExe='C:\Users\NIWA\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'
+& $nodeExe 'tests/v10_25_m3_orb_halo_zero_hour.js'
+& $nodeExe 'tests/v10_25_m4_one_eye_assembly_variants.js'
+& $nodeExe 'tests/v10_25_m5_webgl_acceptance_contract.js'
+# Package one Princess_Rescue_V10_25 root; exclude node_modules, ZIPs,
+# temp/cache/non-release artifacts; extract, hash-compare and launch server.js.
+```
+
+## Mandatory checkpoint — One-Eye three-actor formation
+
+Status: **COMPLETED — reference scale/slots are applied and verified in real
+WebGL while the authoritative max-alive cap remains exactly 3.**
+
+Completed phase:
+
+- Measured the actual prepared `one_eye_mob.glb` instances in WebGL before
+  editing. The old intrinsic normalization target was `1.15 m`, below the
+  numerical `0.38H = 1.691 m` reference length.
+- Set intrinsic model normalization to `4.45 * 0.38`; retained the actual GLB
+  geometry/material and existing state pulse/dissolve behavior.
+- The former acceptance triangle used an invented center-lower slot hidden by
+  the Boss/Orb. Replaced it with three allowed reference positions:
+  `Upper_L (-0.58H, 0.73H, -0.60 m)`,
+  `Upper_R (+0.58H, 0.73H, -0.60 m)` and
+  `Lower_L (-0.62H, 0.46H, -0.72 m)`.
+- Verified all three actors from FRONT and BACK. None occludes Face, Crown or
+  Nocturne Core; upper pair remains balanced and lower actor is readable.
+- Preserved server spawn/orbit/Position/Gaze/Lunge behavior and the hard cap 3;
+  the old four-slot reference was used only as scale/spacing/depth guidance.
+
+Exact files modified:
+
+- `public/v10_25/boss-runtime.js` — `0.38H` One-Eye normalization and fresh
+  One-Eye cache key.
+- `public/index.html` — reference-slot acceptance formation and measured bounds
+  telemetry.
+- `tests/v10_25_m4_one_eye_assembly_variants.js` — reference scale/cache
+  contract; existing authoritative cap-3 assertion retained.
+- `tests/v10_25_m5_webgl_acceptance_contract.js` — three accepted reference
+  slots contract.
+- `CODEX_HANDOFF.md` and `V10_25_PROGRESS.md` — checkpoint truth.
+
+Architecture decisions:
+
+- Actual GLB geometry remains authoritative; no attempt was made to rebuild or
+  independently rescale the eye/head subgeometry from the image.
+- Overall intrinsic visual length follows the numeric reference. Dynamic state
+  pulse can temporarily enlarge the world AABB, which is intentional VFX.
+- Runtime remains three independent server-owned actors, not a four-child Boss
+  accessory hierarchy.
+
+Tests passed/failed:
+
+- **PASSED:** V10.25 overhaul regression.
+- **PASSED:** M4 One-Eye/assembly/variant regression.
+- **PASSED:** M5 WebGL acceptance contract.
+- **PASSED real WebGL:** 256/256 audit after cache-key reload.
+- **PASSED visual:** FRONT and BACK three-actor formation visibility/depth.
+- **FAILED:** none.
+
+Known issues and risks:
+
+- Rotated/pulsing instances report axis-aligned world bounds up to about
+  `1.95 m`; intrinsic unrotated normalization remains the specified `1.691 m`.
+- The supplied model's eye/head proportions are preserved even where they do
+  not exactly equal the old `0.16H` illustration guideline.
+- Zero Hour/Black Moon remains unfinished.
+
+Unfinished work:
+
+- Complete Zero Hour presentation and correct Black Moon depth/scale against
+  `center 0.68H`, `behind 1.20–1.50 m`, `diameter 1.40–1.60H`.
+- Close the overall visual-reference acceptance and decide final packaging.
+
+Exact next phase:
+
+- **Boss Visual Reference Acceptance — complete Zero Hour and Black Moon.**
+
+Exact commands needed to resume:
+
+```powershell
+Set-Location 'D:\Princess_Rescue_V10_24\game\Princess_Rescue_V10_25'
+$nodeExe='C:\Users\NIWA\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'
+& $nodeExe 'tests/v10_25_m4_one_eye_assembly_variants.js'
+& $nodeExe 'tests/v10_25_m5_webgl_acceptance_contract.js'
+# Reuse http://127.0.0.1:3000/?visualaudit=1 and call
+# window.__v1025VisualAcceptance.sampleZeroHour().
+```
+
+## Mandatory checkpoint — required action/view clipping matrix
+
+Status: **COMPLETED — all required action families now use distinct intended
+motion where distinct FBX sources exist, render coherently in real WebGL and
+retain Crown/Orb/Halo attachment behavior.**
+
+Completed phase:
+
+- Inspected keyframes rather than arbitrary midpoints for Idle, Cast, three
+  Dodge directions, Jab Cross, Knee Jab, Uppercut, Leg Sweep, Roundhouse,
+  Flip Kick, Teleport/Dash and Heavy Slam.
+- Found that 10 production GLBs were byte-identical despite the manifest naming
+  10 different FBX sources: `dodge_back`, `dodge_left`, `dodge_right`,
+  `flip_kick`, `floating`, `knee_jab`, `leg_sweep`, `roundhouse`, `taunt` and
+  `uppercut`. The actual source FBXs exist and all have distinct SHA-256 values.
+- Classified the mismatch as `asset selection/conversion`: an old Assimp output
+  had been copied across unrelated logical animation files.
+- Regenerated only those 10 GLBs from their exact manifest-provenance FBXs with
+  `FBX2glTF v0.13.1`, binary GLB and baked 30 FPS animation. Each corrected file
+  has a distinct SHA-256, one animation, 66-node Mixamo hierarchy and 43–53
+  animation channels.
+- Added an asset-uniqueness regression and bumped only the animation cache key
+  to `10.25-animation-fidelity-1`, ensuring existing browsers receive the fixed
+  binaries without changing product/combat version.
+- Repeated the live key-pose matrix. Knee/Uppercut/Sweep/Roundhouse/Flip Kick
+  now show their intended distinct motion; Dodge left/right/back are distinct;
+  no limb detachment or Crown drop occurs.
+
+Exact files created/modified:
+
+- Replaced binary assets:
+  `public/assets/boss_v10_25/animations/dodge_back.glb`,
+  `dodge_left.glb`, `dodge_right.glb`, `flip_kick.glb`, `floating.glb`,
+  `knee_jab.glb`, `leg_sweep.glb`, `roundhouse.glb`, `taunt.glb`,
+  `uppercut.glb`.
+- `public/v10_25/boss-runtime.js` — corrected animation asset cache key.
+- `public/index.html` — matching QA source-diagnostic cache key.
+- `tests/v10_25_eclipse_battle_mage_overhaul.js` — require unique SHA-256 for
+  each distinct manifest animation source and require the corrected cache key.
+- `CODEX_HANDOFF.md` and `V10_25_PROGRESS.md` — checkpoint truth.
+- Conversion staging/tool directories were created outside the project release
+  root and are not production/release artifacts.
+
+Architecture decisions:
+
+- Keep manifest IDs, trims, categories, fallbacks, variants and all authoritative
+  combat timing unchanged; correct only the mismatched binary selection.
+- Bake source animation at 30 FPS to match the retarget sampler contract.
+- Preserve the skinned production dress. Extreme Flip Kick/Sweep poses may
+  naturally self-occlude panels, but no rigid replacement or gameplay redesign
+  is justified.
+
+Tests passed/failed:
+
+- **PASSED:** `node --check public/v10_25/boss-runtime.js`.
+- **PASSED:** V10.25 overhaul regression with 28 unique source GLBs.
+- **PASSED:** M4 One-Eye/assembly/variant regression.
+- **PASSED:** M5 WebGL acceptance contract.
+- **PASSED real WebGL after fresh cache key:** 256/256 audit.
+- **PASSED visual matrix:** Idle, Cast, Dodge L/R/Back, Jab Cross, Knee,
+  Uppercut, Sweep, Roundhouse, Flip Kick, Teleport/Dash and Heavy Slam.
+- **FAILED:** none.
+
+Known issues and risks:
+
+- Wide/inverted kicks cause expected skinned long-dress self-occlusion at peak
+  frames; no detached mesh, head/skull penetration or persistent clipping was
+  observed. This remains a readability risk at very close camera distance.
+- The animation correction happened after the already-delivered recreated ZIP;
+  do not silently overwrite that archive before the final visual pass closes.
+- One-Eye formation and Zero Hour/Black Moon acceptance remain unfinished.
+
+Unfinished work:
+
+- Three-actor One-Eye formation scale, spacing, depth and occlusion acceptance,
+  keeping runtime max alive = 3.
+- Complete Zero Hour and Black Moon depth/scale acceptance.
+- Final visual-reference checkpoint and only then final packaging decision.
+
+Exact next phase:
+
+- **Boss Visual Reference Acceptance — One-Eye three-actor combat formation.**
+
+Exact commands needed to resume:
+
+```powershell
+Set-Location 'D:\Princess_Rescue_V10_24\game\Princess_Rescue_V10_25'
+$nodeExe='C:\Users\NIWA\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'
+& $nodeExe 'tests/v10_25_eclipse_battle_mage_overhaul.js'
+& $nodeExe 'tests/v10_25_m4_one_eye_assembly_variants.js'
+& $nodeExe 'tests/v10_25_m5_webgl_acceptance_contract.js'
+# Reuse http://127.0.0.1:3000/?visualaudit=1 and call
+# window.__v1025VisualAcceptance.sampleOneEyeFormation().
+```
+
+## Mandatory checkpoint — retarget clip-start/world-delta correction
+
+Status: **COMPLETED — the systemic limb/dress folding found during Crown
+verification is corrected and the directly affected tests plus representative
+real-WebGL poses pass. The complete required pose matrix remains unfinished.**
+
+Completed phase:
+
+- Reproduced the deformation independently of Crown, camera, Orb/Halo and V10.6
+  additive offsets. Added QA telemetry and measured target limb deviations up to
+  approximately 179°.
+- Measured source GLBs before retarget and proved that their neutral GLB node
+  transforms do not share the basis of the absolute animation tracks. Static
+  export/bind offsets near 180° were being transferred as authored motion.
+- Normalized every retargeted clip against its authored source pose at the
+  manifest trim boundary, preventing static export-axis offsets from entering
+  the target pose.
+- Corrected quaternion composition to apply source world delta on the left:
+  `sourceCurrentWorld * inverse(sourceStartWorld) * targetRestWorld`. This makes
+  inherited parent motion cancel coherently when target locals are rebuilt.
+- Kept the sampler on `THREE.LoopOnce` with `clampWhenFinished=true`, preventing
+  the last sample from wrapping to frame zero.
+- Rechecked live WebGL after a clean reload: `combat_idle` no longer folds
+  limbs (largest non-hand deviation about 15°); Cast, Roundhouse, Sweep,
+  Flip Kick and Death are coherent, and Crown remains attached to `Head`.
+
+Exact files modified:
+
+- `public/v10_25/boss-runtime.js` — clip-start source reference, left-composed
+  world delta, hip vertical reference and `clipStartNormalized` metadata.
+- `public/index.html` — QA-only additive-offset reset, `diagnosePose()` and
+  `diagnoseSourcePose()` telemetry used for live root-cause verification.
+- `tests/v10_25_eclipse_battle_mage_overhaul.js` — mismatched bind/export-axis,
+  clip-start normalization, endpoint and world-delta composition regression.
+- `tests/v10_25_m5_webgl_acceptance_contract.js` — QA controller contract.
+- `CODEX_HANDOFF.md` and `V10_25_PROGRESS.md` — this mandatory checkpoint.
+
+Architecture decisions:
+
+- Preserve all 28 animation assets, logical animation IDs, variants, masks and
+  server-authoritative timing. Correct the retarget basis once at sampling time;
+  do not replace clips or add arbitrary per-action damping.
+- Treat manifest `trim[0]` as the authored clip reference pose because the
+  animation-only GLB neutral node state is not a reliable bind basis.
+- Preserve target rest pose, root X/Z locking, scale-track exclusion and all
+  existing fallbacks.
+
+Tests passed/failed:
+
+- **PASSED:** `node --check public/v10_25/boss-runtime.js`.
+- **PASSED:** `tests/v10_25_eclipse_battle_mage_overhaul.js`.
+- **PASSED:** `tests/v10_25_m4_one_eye_assembly_variants.js`.
+- **PASSED:** `tests/v10_25_m5_webgl_acceptance_contract.js`.
+- **PASSED real WebGL:** 256/256 audit after final correction reload.
+- **PASSED representative visual checks:** Idle, Cast, Roundhouse, Sweep,
+  Flip Kick and Death; no detached limbs, Crown drop or Halo interaction.
+- **FAILED:** none. An attempted stale filename
+  `tests/v10_25_m4_accessory_acceptance.js` did not exist and therefore was not
+  a product test result; the actual M4 command above passed.
+
+Known issues and risks:
+
+- The full required action/view matrix is not yet complete; Dodge, Jab Cross,
+  Knee, Uppercut, Teleport and Heavy Slam still require live visual inspection.
+- Cast contains a deep authored turn/crouch and should be checked at additional
+  time samples for dress/hair occlusion, although the skeleton is now coherent.
+- One-Eye formation scale/placement and Zero Hour Black Moon depth/scale remain
+  separate unfinished visual-reference tasks.
+- The recreated ZIP predates this later correction and must not be silently
+  overwritten; final packaging remains blocked until visual acceptance closes.
+
+Unfinished work:
+
+- Finish the required pose/clipping matrix in real WebGL, then checkpoint.
+- Verify/correct the three-actor One-Eye formation while keeping max alive = 3.
+- Verify/correct complete Zero Hour and Black Moon numerical depth/scale.
+
+Exact next phase:
+
+- **Boss Visual Reference Acceptance — complete the live action/view clipping
+  matrix, beginning with Dodge, Jab Cross, Knee, Uppercut, Teleport and Heavy
+  Slam; rerun only tests for any correction actually required.**
+
+Exact commands needed to resume:
+
+```powershell
+Set-Location 'D:\Princess_Rescue_V10_24\game\Princess_Rescue_V10_25'
+$nodeExe='C:\Users\NIWA\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'
+& $nodeExe --check 'public/v10_25/boss-runtime.js'
+& $nodeExe 'tests/v10_25_eclipse_battle_mage_overhaul.js'
+& $nodeExe 'tests/v10_25_m4_one_eye_assembly_variants.js'
+& $nodeExe 'tests/v10_25_m5_webgl_acceptance_contract.js'
+# Reuse http://127.0.0.1:3000/?visualaudit=1 and
+# window.__v1025VisualAcceptance.samplePose()/diagnosePose().
+```
 
 ## Mandatory checkpoint — current-state Release ZIP recreation
 
