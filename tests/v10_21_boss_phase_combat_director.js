@@ -12,10 +12,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.23.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(!['10.23.1','10.25.0'].includes(pkg.version))throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.23'",
+  '<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23.1'",
   'id="bossExposeUi"',
   'CƠ HỘI PHẢN CÔNG',
   'function updateBossExposeUi(now=serverNow())',
@@ -79,6 +79,7 @@ const hitContext={
   Math:Object.assign(Object.create(Math),{random:()=>1}),FOODS:[{el:'crispy'}],BOSS_EXPOSE_DAMAGE_MULTIPLIER:1.30,
   BOSS_BODY_CRIT_CHANCE:.015,TEST_BOSS_CRIT:false,BOSS_CRIT_MULTIPLIER:1.75,
   BOSS_POISE_REGEN_DELAY_MS:2350,BOSS_BREAK_STAGGER_MS:950,BOSS_BREAK_RESIST_MS:5200,BOSS_CRITICAL_STAGGER_MS:190,
+  V1025_HIT_STOP_MS:{quick:32,normal:54,heavy:88,critical:120,perfectParry:145},
   reaction:()=>null,broadcast:(_room,event)=>hitEvents.push(event),markDirty:()=>{}
 };
 vm.runInNewContext(serverSource.slice(hitStart,hitEnd),hitContext,{filename:'v10.21-expose-damage.js'});

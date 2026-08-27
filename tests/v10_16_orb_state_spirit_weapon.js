@@ -19,30 +19,30 @@ for (const fragment of [
   'function resolveBossArmamentState(',
   'function updateBossArmamentStateFx(',
   "return ({18:'idle',8:'combat',13:'quick',14:'aoe',12:'teleport',7:'spinKick',17:'ultimate',15:'death',9:'hitHeavy'})",
-  'addScaledVector(bossArmamentOutward,.46)',
-  'bossArmamentOrbTarget.y+=.26',
+  'addScaledVector(bossArmamentOutward,.35)',
+  'bossArmamentOrbTarget.y+=.08',
   "shield.name='OrbHitShieldRipple'",
   "haloRunes.name='HaloStateRunes'",
   "marker.name='SpinKickOrbLandingMarker'",
   "blackMoon.name='UltimateBlackMoon'",
-  'segmentStart:.62,segmentEnd:1.48',
-  "triggerBossArmamentHit(heavy?'heavy':'light'",
-  'clamp(58+(p.dmg||0)*.65,60,80)',
+  'segmentStart:.45,segmentEnd:1.55',
+  "triggerBossArmamentHit(critical?'heavy':'light'",
+  'clamp(Number(p.hitStopMs)||68,60,80)',
   "if(k==='spiritOrb')return 6",
   'SPIRIT WEAPON: a larger, denser moon-orb',
   "if(e==='bossSpiritOrbLaunch')",
   "if(e==='bossSpiritOrbHit')"
 ]) if (!html.includes(fragment)) throw new Error(`V10.16 client feature is missing: ${fragment}`);
 
-const baseSeparation = Math.hypot(.46, .26);
-if (baseSeparation < .52 || baseSeparation > .54) throw new Error(`Orb/palm air gap is not visually clear: ${baseSeparation}`);
+const baseSeparation = Math.hypot(.35, .08);
+if (baseSeparation < .35 || baseSeparation > .37) throw new Error(`Orb FOLLOW offset is outside the master reference: ${baseSeparation}`);
 
 for (const fragment of [
   'function bossSpiritOrb(',
   "kind:'spiritOrb'",
   "scheduleTask(room,telegraphMs+320,'boss_spirit_orb'",
   "if(pr.enemy&&pr.kind==='spiritOrb')",
-  "const hitRadius=pr.kind==='spiritOrb'?.98:.75",
+  "const hitRadius=pr.kind==='spiritOrb'?.98:pr.kind==='orbRecall'?.86:.75",
   "e:'bossSpiritOrbLaunch'",
   "e:'bossSpiritOrbHit'",
   'r:p.targetRole||null'
@@ -69,14 +69,18 @@ const timeout = setTimeout(() => fail(new Error('V10.16 orb state/spirit weapon 
 async function run() {
   const hero = new WebSocket(`ws://127.0.0.1:${port}/ws`);
   const princess = new WebSocket(`ws://127.0.0.1:${port}/ws`);
-  let code = '', requestedStart = false, launch = null, hit = null;
+  let code = '', requestedStart = false;
+  const launches = new Map(), hits = new Map();
   const observed = { hero: new Set(), princess: new Set() };
   const close = () => { try { hero.close(); princess.close(); } catch {} };
   const finish = () => {
-    if (!launch || !hit || !observed.hero.has(launch.id) || !observed.princess.has(launch.id)) return;
-    if (hit.id !== launch.id || hit.role !== launch.targetRole || hit.dmg < 16 || hit.dmg > 20) throw new Error(`Spirit Orb hit mismatch: ${JSON.stringify({launch,hit})}`);
-    console.log(`V10.16 ORB STATE PASS · base palm gap ${baseSeparation.toFixed(3)}m · 8 animation states + two-tier Hit 09 · Spirit Orb ${launch.id} homed into ${hit.role} · both clients synchronized`);
-    clearTimeout(timeout); close(); stop(0);
+    for (const [id, launch] of launches) {
+      const hit = hits.get(id);
+      if (!hit || !observed.hero.has(id) || !observed.princess.has(id)) continue;
+      if (hit.role !== launch.targetRole || hit.dmg < 16 || hit.dmg > 20) throw new Error(`Spirit Orb hit mismatch: ${JSON.stringify({launch,hit})}`);
+      console.log(`V10.16 ORB STATE PASS · base palm gap ${baseSeparation.toFixed(3)}m · 8 animation states + two-tier Hit 09 · Spirit Orb ${launch.id} homed into ${hit.role} · both clients synchronized`);
+      clearTimeout(timeout); close(); stop(0);return;
+    }
   };
   const inspectState = (who, state) => {
     for (const projectile of state?.projectiles || []) {
@@ -97,8 +101,8 @@ async function run() {
     if (message.type === 'bossAssetReady' && message.ready?.hero && message.ready?.princess && !requestedStart) {
       requestedStart = true; hero.send(JSON.stringify({type:'start'}));
     }
-    if (message.type === 'event' && message.e === 'bossSpiritOrbLaunch') { launch = message.p; finish(); }
-    if (message.type === 'event' && message.e === 'bossSpiritOrbHit') { hit = message.p; finish(); }
+    if (message.type === 'event' && message.e === 'bossSpiritOrbLaunch') { launches.set(message.p.id,message.p); finish(); }
+    if (message.type === 'event' && message.e === 'bossSpiritOrbHit') { hits.set(message.p.id,message.p); finish(); }
     if (message.type === 'state') inspectState('hero', message.state);
   });
   princess.on('open', () => { if (code) princess.send(JSON.stringify({type:'join',code})); });

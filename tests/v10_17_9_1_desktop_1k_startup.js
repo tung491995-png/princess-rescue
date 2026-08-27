@@ -5,8 +5,8 @@ const root=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'public','index.html'),'utf8');
 
 for(const fragment of [
-  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.23'",
+  '<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23.1'",
   "const BOSS_DESKTOP_2K_CACHE_URL='/assets/characters/ma_vuong_mat_ngu_mobile_2k.glb?v=10.17.2'",
   'function scheduleDesktopBoss2KCache()',
   "fetch(BOSS_DESKTOP_2K_CACHE_URL,{cache:'force-cache'",

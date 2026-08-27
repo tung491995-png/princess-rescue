@@ -1,0 +1,99 @@
+PRINCESS RESCUE V10.25 — ECLIPSE BATTLE MAGE COMPLETE
+=====================================================
+
+DELIVERY STATUS
+---------------
+Version: 10.25.0
+Combat authority: Node server
+Animation authority: logical server actions mapped to retargeted client clips
+Root motion: animation X/Z removed; controlled server trajectories only
+Fallback: all 19 previously shipped boss clips remain available
+
+ASSET AUDIT AND DECISIONS
+-------------------------
+- Inspected all supplied Boss Animation, Boss Accessories, Boss Weapons and
+  One-Eye archives, including FBX structure, skeleton, mesh and clip metadata.
+- The animation packs use the standard Mixamo hierarchy at 30 FPS. Twenty-eight
+  representative files were converted without authoring changes and catalogued
+  in public/assets/boss_v10_25/animation_manifest.json with source filename,
+  trim range, category and legacy fallback.
+- The production boss rig is Root -> Hip with Waist/Spine01/Spine02 torso,
+  L_/R_ limb naming and a validated skinned body/dress/hair. Retargeting uses
+  semantic role aliases and compensates for unmapped intermediary target bones.
+- Crown, Witch Cuff, Moon Choker and Nocturne Core were static mesh assets. They
+  are attached through controlled scene anchors so they follow their bones but
+  never become accidental Skeleton children or break bind-pose matrices.
+- The supplied long skirt is a static non-skinned mesh. It was deliberately not
+  rigid-bound to the hips because that would fail the no-detachment/no-float
+  acceptance criterion; the proven skinned production dress remains active.
+- The supplied One-Eye asset is a static single-mesh model. It is used as the
+  creature body while procedural eye/tentacle layers provide readable hover,
+  aim, pulse, charge, lunge and death motion.
+
+ANIMATION PIPELINE
+------------------
+- BossRetargeter captures source and target rest-world quaternions before play.
+- Every clip is sampled at 30 FPS after per-clip trim.
+- Target world rotation is composed from target rest, inverse source rest and
+  source animated rotation, then converted back through the actual target
+  parent chain. This avoids direct local-quaternion copying.
+- Only rotations and clamped vertical hips translation are transferred.
+  Horizontal root/hips motion and all scale tracks are excluded.
+- Full-body, upper-body and lower-body masks are registered. Magic aim is a
+  restrained additive chain through hips/spine/chest/neck/head.
+- Representative clips load first; all failures fall back per manifest and are
+  exposed in telemetry rather than blocking the match.
+
+COMBAT PIPELINE
+---------------
+- Logical actions define animation, fallback, category, startup, impact,
+  recovery, blend, aim, layers, Orb/Halo state, effect and server trajectory.
+- Twelve Combo Graph families replace flat random sequencing:
+  Lunar Fang, Witch Hunt, Eclipse Breaker, Phantom Waltz,
+  Crescent Reversal, Gravity Execution, Moonstep Barrage, False Opening,
+  Broken Rhythm, Eclipse Chase, Moon Guillotine and Black Hole Ballet.
+- Branches re-evaluate live context at each node. Weighted selection considers
+  phase, range, recent dodge/perfect-dodge direction, aggression, defense,
+  melee/ranged preference, cooldowns and recent combo history.
+- Movement clips never drive authoritative displacement. Dash, dodge, chase,
+  lunge and teleport positions are computed on the server with bounded arena
+  destinations and replicated as trajectory/teleport events.
+- Perfect Parry uses the existing sword counter window against active melee,
+  forces a designed stagger and uses the strongest 145 ms impact tier. Existing
+  Super Armor, Poise, weak points and Critical Break rules remain intact.
+
+ORB, HALO, MOBS AND ULTIMATE
+----------------------------
+- Orb states: FOLLOW, ORBIT, AUTONOMOUS, CHARGE, PROJECTILE, FREE_FLOAT, TRAP,
+  RECALL and ULTIMATE.
+- Halo states: IDLE, QUICK_CAST, HEAVY_CAST, VORTEX, TELEPORT,
+  PHASE_TRANSITION, ULTIMATE, COLLAPSE and CRITICAL_BREAK.
+- Phase 2/3 support director spawns at most three One-Eye mobs and coordinates
+  their Void Bolt, Gaze Beam and Abyss Lunge choices with the boss action cue.
+- Eternal Eclipse · Zero Hour runs eight authoritative scheduled stages:
+  Time Dilation, Telegraph Field, Phantom Casters, Orb Sky Array,
+  Eclipse Slam, Starfall, Final Collapse and Recovery.
+- Time dilation affects client animation/camera presentation only. Damage,
+  hazards, hit validation and game time remain server-authoritative.
+
+VFX, DEBUG AND RELIABILITY
+--------------------------
+- Impact response combines flash, layered ring, pooled debris, selective light,
+  hit-stop and restrained camera response. Hazards and mobs use bounded pools;
+  phantoms, lights and temporary effects expire and clean up deterministically.
+- Debug telemetry exposes logical/source/retargeted animation, normalized time,
+  blend/layer state, Combo Graph/node/branch, distance, dodge memory, Poise,
+  weak points, Orb/Halo/mob states, AI candidate weights, active hitbox,
+  telegraphs and root-motion policy.
+- V10.23.1 cache recovery, socket watchdog, validated-boss persistence,
+  iPhone animation budget, lobby, Pause/Exit and snapshot sync are preserved.
+
+TEST CONTRACT
+-------------
+- npm test runs the complete inherited V10.17–V10.23.1 suite and the new V10.25
+  regression test.
+- The V10.25 test parses browser/server sources, validates the 12 graphs and
+  logical actions, opens every converted GLB, checks 28 animation clips and all
+  selected accessories/mob, verifies the eight-stage ultimate and executes a
+  synthetic rest-pose retarget with deliberate source X/Z drift to prove finite
+  output and horizontal-root-motion removal.

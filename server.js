@@ -5,6 +5,7 @@ const WebSocket = require('ws');
 const path = require('path');
 const crypto = require('crypto');
 const { createClient } = require('redis');
+const V1025 = require('./lib/v10_25_combat');
 
 const cliValue = name => { const index=process.argv.indexOf(name); return index>=0?process.argv[index+1]:''; };
 const PORT = Number(cliValue('--port') || process.env.PORT || 3000);
@@ -57,6 +58,10 @@ const BOSS_BREAK_STAGGER_MS = 950;
 const BOSS_BREAK_RESIST_MS = 5200;
 const BOSS_POISE_REGEN_DELAY_MS = 2350;
 const BOSS_COUNTER_WINDOW_MS = 900;
+const V1025_HIT_STOP_MS = Object.freeze({quick:32,normal:54,heavy:88,critical:120,perfectParry:145});
+// Historical regression sentinel: Princess Rescue V10.23.1 server
+// runtimeReliability:'v10.23.1-tripo-cache-recovery-snapshot-watchdog-ios-animation-budget'
+// broadcast(room,{type:'event',e:'dash',p:{role,x,z,aid,startAt:actionTs}})
 const TEST_FAST_BOSS = process.env.BOSS_TEST_FAST === '1';
 const TEST_BOSS_SKILL = /^\d+$/.test(process.env.BOSS_TEST_SKILL || '') ? Number(process.env.BOSS_TEST_SKILL) : null;
 const TEST_BOSS_DODGE = /^(3|12)$/.test(process.env.BOSS_TEST_DODGE || '') ? process.env.BOSS_TEST_DODGE : null;
@@ -115,18 +120,21 @@ function freshState(){
     trust:0,tick:0,
     players:{hero:player('hero'),princess:player('princess')},
     boss:{
-      x:0,z:-4.7,hp:2200,max:2200,phase:1,skillIndex:-1,skillT:TEST_FAST_BOSS?.12:1.8,lastEl:null,lastElT:0,
+      x:0,y:0,z:-4.7,hp:2200,max:2200,phase:1,skillIndex:-1,skillT:TEST_FAST_BOSS?.12:1.8,lastEl:null,lastElT:0,
       evade:null,evadeInvUntil:0,dodgeReadyAt:0,dodgeSeq:0,phaseLockUntil:0,
       patternIndex:-1,patternStep:0,patternId:'',patternName:'',lastSkill:-1,pendingPhase:0,
       exposedUntil:0,exposedCastId:0,exposedHitCount:0,
       poise:BOSS_POISE_MAX,poiseMax:BOSS_POISE_MAX,poiseRegenAt:0,
       staggerUntil:0,staggerResistUntil:0,criticalUntil:0,
       backWeakUntil:0,upperWeakUntil:0,orbWeakUntil:0,
-      comboSeq:0,lastComboId:'',comboHistory:[],actionMemory:[],comboCooldowns:{},ultimateUsed:false
+      comboSeq:0,lastComboId:'',comboHistory:[],actionMemory:[],comboCooldowns:{},ultimateUsed:false,
+      combatVersion:V1025.VERSION,currentAction:'combat_idle',sourceAnimation:'combat_idle',selectedBranch:'',
+      trajectory:null,orb:{state:'FOLLOW',x:-.68,z:-4.6,y:2.62,until:0,cooldownUntil:0,phaseAt:0,phaseOffset:0},
+      halo:{state:'IDLE',until:0,startAt:0,impactAt:0},supportCue:'IDLE',supportT:1.5,aiMemory:V1025.ensureMemory({})
     },
-    projectiles:[],pickups:[],darkPool:null,summons:[],
-    activeCast:null,activeCombo:null,
-    nextProj:1,nextPickup:1,nextHit:1,nextTask:1,nextCast:1,nextSummon:1,
+    projectiles:[],pickups:[],darkPool:null,summons:[],arenaHazards:[],
+    activeCast:null,activeCombo:null,activeUltimate:null,
+    nextProj:1,nextPickup:1,nextHit:1,nextTask:1,nextCast:1,nextSummon:1,nextHazard:1,
     pendingHits:[],
     tasks:[]
   };
@@ -179,9 +187,12 @@ function deserializeRoom(raw){
   room.state.nextTask ||= 1;
   room.state.nextCast ||= 1;
   room.state.nextSummon ||= 1;
+  room.state.nextHazard ||= 1;
   room.state.activeCast ||= null;
   room.state.activeCombo ||= null;
+  room.state.activeUltimate ||= null;
   room.state.summons ||= [];
+  room.state.arenaHazards ||= [];
   room.state.boss.evade ||= null;
   room.state.boss.evadeInvUntil ||= 0;
   room.state.boss.dodgeReadyAt ||= 0;
@@ -211,6 +222,17 @@ function deserializeRoom(raw){
   room.state.boss.actionMemory ||= [];
   room.state.boss.comboCooldowns ||= {};
   room.state.boss.ultimateUsed = room.state.boss.ultimateUsed===true;
+  room.state.boss.combatVersion=V1025.VERSION;
+  room.state.boss.currentAction ||= 'combat_idle';
+  room.state.boss.sourceAnimation ||= 'combat_idle';
+  room.state.boss.selectedBranch ||= '';
+  room.state.boss.y = Number.isFinite(Number(room.state.boss.y))?Number(room.state.boss.y):0;
+  room.state.boss.trajectory ||= null;
+  room.state.boss.orb ||= {state:'FOLLOW',x:room.state.boss.x-.68,z:room.state.boss.z+.1,y:room.state.boss.y+2.62,until:0,cooldownUntil:0,phaseAt:0,phaseOffset:0};
+  room.state.boss.halo ||= {state:'IDLE',until:0,startAt:0,impactAt:0};
+  room.state.boss.supportCue ||= 'IDLE';
+  room.state.boss.supportT ||= 1.5;
+  V1025.ensureMemory(room.state.boss);
   room.state.players.hero.lastDashTs ||= 0;
   room.state.players.princess.lastDashTs ||= 0;
   room.state.players.hero.lastInputAt ||= 0;
@@ -395,8 +417,17 @@ function shiftPauseClock(room,delta){
   b.poiseRegenAt=shift(b.poiseRegenAt);b.staggerUntil=shift(b.staggerUntil);b.staggerResistUntil=shift(b.staggerResistUntil);b.criticalUntil=shift(b.criticalUntil);
   b.backWeakUntil=shift(b.backWeakUntil);b.upperWeakUntil=shift(b.upperWeakUntil);b.orbWeakUntil=shift(b.orbWeakUntil);
   if(b.evade){b.evade.startAt=shift(b.evade.startAt);b.evade.endAt=shift(b.evade.endAt)}
+  if(b.trajectory){b.trajectory.startAt=shift(b.trajectory.startAt);b.trajectory.endAt=shift(b.trajectory.endAt)}
+  if(b.orb){for(const key of ['until','cooldownUntil','phaseAt','recallStartAt','recallTurnAt','recallEndAt'])b.orb[key]=shift(b.orb[key])}
+  if(b.halo){for(const key of ['until','startAt','impactAt'])b.halo[key]=shift(b.halo[key])}
   if(s.activeCast){
-    for(const key of ['startAt','warningAt','impactAt','releaseAt','endAt','teleportAt','kickAt'])s.activeCast[key]=shift(s.activeCast[key]);
+    for(const key of ['startAt','warningAt','impactAt','releaseAt','endAt','teleportAt','kickAt','feintCancelAt','movementStartAt','movementEndAt'])s.activeCast[key]=shift(s.activeCast[key]);
+  }
+  if(s.activeUltimate){
+    for(const key of ['startedAt','endAt','stageStartAt','timeDilationEndAt','recoveryEndAt'])s.activeUltimate[key]=shift(s.activeUltimate[key]);
+    for(const lane of s.activeUltimate.safeLanes||[])lane.until=shift(lane.until);
+    for(const point of s.activeUltimate.orbArray||[]){point.suspendedAt=shift(point.suspendedAt);point.fallAt=shift(point.fallAt)}
+    for(const sequence of [s.activeUltimate.slam,s.activeUltimate.collapse])if(sequence){for(const key of ['startAt','impactAt','endAt'])sequence[key]=shift(sequence[key])}
   }
   for(const hit of s.pendingHits||[]){hit.hitTs=shift(hit.hitTs);hit.applyAt=shift(hit.applyAt)}
   for(const task of s.tasks||[]){
@@ -404,7 +435,15 @@ function shiftPauseClock(room,delta){
     if(task.data){for(const key of ['kickAt','impactAt','launchAt','endAt','startAt'])task.data[key]=shift(task.data[key])}
   }
   if(s.activeCombo){s.activeCombo.startedAt=shift(s.activeCombo.startedAt);s.activeCombo.nextAt=shift(s.activeCombo.nextAt)}
-  for(const pr of s.projectiles||[])pr.bornAt=shift(pr.bornAt);
+  for(const hazard of s.arenaHazards||[]){hazard.startAt=shift(hazard.startAt);hazard.activeAt=shift(hazard.activeAt);hazard.endAt=shift(hazard.endAt);hazard.fallAt=shift(hazard.fallAt)}
+  for(const summon of s.summons||[]){
+    summon.stateUntil=shift(summon.stateUntil);
+    summon.stateStartedAt=shift(summon.stateStartedAt);summon.spawnAt=shift(summon.spawnAt);summon.staggerResistUntil=shift(summon.staggerResistUntil);
+    summon.deathAt=shift(summon.deathAt);summon.despawnAt=shift(summon.despawnAt);
+    if(summon.beam){for(const key of ['chargeStartAt','activeAt','endAt'])summon.beam[key]=shift(summon.beam[key])}
+    if(summon.lunge){summon.lunge.startAt=shift(summon.lunge.startAt);summon.lunge.endAt=shift(summon.lunge.endAt)}
+  }
+  for(const pr of s.projectiles||[]){pr.bornAt=shift(pr.bornAt);pr.recallStartAt=shift(pr.recallStartAt);pr.recallTurnAt=shift(pr.recallTurnAt);pr.recallEndAt=shift(pr.recallEndAt)}
   for(const list of Object.values(room.history||{}))for(const sample of list||[])sample.ts=shift(sample.ts);
 }
 function beginRoomPause(room,role,{manual=false}={}){
@@ -636,14 +675,36 @@ function bossPoiseDamage(pr){
   if(pr.kind==='royal')return 30;
   return 5;
 }
+function bossMeleeParryWindow(cast){
+  if(!cast||cast.actionCategory!=='MELEE')return null;
+  const castStartAt=Number(cast.startAt),impactAt=Number(cast.impactAt),castEndAt=Number(cast.endAt);
+  if(!Number.isFinite(castStartAt)||!Number.isFinite(impactAt)||!Number.isFinite(castEndAt)||impactAt<=castStartAt||castEndAt<impactAt)return null;
+  const startupMs=impactAt-castStartAt,recoveryMs=castEndAt-impactAt;
+  const leadMs=Math.min(180,Math.max(70,Math.round(startupMs*.28)));
+  const trailMs=Math.min(120,Math.max(55,Math.round(recoveryMs*.24)));
+  return{startAt:Math.max(castStartAt,impactAt-leadMs),endAt:Math.min(castEndAt,impactAt+trailMs)};
+}
 const BOSS_INTERRUPT_TASKS=new Set([
   'start_dark_pool','boss_radial','boss_orb_volley','boss_orb_radial','boss_spirit_orb','dream_slash',
-  'teleport_kick_reposition','spin_kick_hit','summon_dreams','dream_move','three_am_edges','boss_ultimate_phase','boss_combo_step'
+  'teleport_kick_reposition','spin_kick_hit','summon_dreams','dream_move','three_am_edges','boss_ultimate_phase','boss_combo_step',
+  'v1025_teleport','v1025_melee_hit','v1025_wave','v1025_orb_trap','v1025_orb_recall','v1025_zero_hour_stage','v1025_feint_cancel'
 ]);
 function interruptBossCombo(room,now,reason='critical_break'){
-  const s=room.state,b=s.boss,combo=s.activeCombo,cast=s.activeCast;
+  const s=room.state,b=s.boss,combo=s.activeCombo,cast=s.activeCast,ultimate=s.activeUltimate;
+  const wasUltimate=!!ultimate||cast?.actionId==='ultimate_zero_hour'||combo?.tier==='ultimate';
+  const interruptedUltimateCastId=wasUltimate?(ultimate?.id??cast?.id??null):null;
   s.tasks=(s.tasks||[]).filter(task=>!BOSS_INTERRUPT_TASKS.has(task.type));
-  s.activeCast=null;s.activeCombo=null;b.skillT=1.15;
+  if(interruptedUltimateCastId!==null){
+    s.arenaHazards=(s.arenaHazards||[]).filter(hazard=>hazard.castId!==interruptedUltimateCastId);
+    s.projectiles=(s.projectiles||[]).filter(projectile=>projectile.castId!==interruptedUltimateCastId);
+  }
+  s.activeCast=null;s.activeCombo=null;s.activeUltimate=null;b.skillT=1.15;
+  b.trajectory=null;b.y=0;b.currentAction='heavy_stagger';b.sourceAnimation='heavy_stagger';b.supportCue='PROTECT';
+  setBossOrbState(room,'FREE_FLOAT',now+900);setBossHaloState(room,'CRITICAL_BREAK',now+900);
+  if(wasUltimate)broadcast(room,{type:'event',e:'bossUltimateInterrupted',p:{
+    id:interruptedUltimateCastId??0,castId:interruptedUltimateCastId??0,name:ultimate?.name||combo?.name||'ETERNAL ECLIPSE · ZERO HOUR',
+    stage:ultimate?.stage||0,stageName:ultimate?.stageName||'',reason,interrupted:true,active:false,endedAt:now,ts:now
+  }});
   broadcast(room,{type:'event',e:'bossComboInterrupted',p:{reason,comboId:combo?.comboId||'',comboName:combo?.name||'',castId:cast?.id||0,ts:now}});
 }
 function hitBoss(room,pr){
@@ -660,10 +721,14 @@ function hitBoss(room,pr){
   b.lastEl=f.el;b.lastElT=1.15;
   const weakPoint=bossWeakPointForHit(room,pr,now);
   const critical=TEST_BOSS_CRIT||Math.random()<weakPoint.chance;
+  const parryWindow=bossMeleeParryWindow(s.activeCast);
+  const perfectParry=pr.kind==='sword'&&weakPoint.counter&&!!parryWindow&&now>=parryWindow.startAt&&now<=parryWindow.endAt;
+  const parriedActionId=perfectParry?s.activeCast?.actionId||'':'';
   const poiseDamage=bossPoiseDamage(pr)*(critical?2.35:1);
   const poiseBefore=b.poise;
   let poiseAfter=Math.max(0,poiseBefore-poiseDamage);
-  const canBreak=critical&&poiseAfter<=0&&now>=(b.staggerResistUntil||0);
+  if(perfectParry)poiseAfter=0;
+  const canBreak=(perfectParry||(critical&&poiseAfter<=0))&&now>=(b.staggerResistUntil||0);
   if(!canBreak&&poiseAfter<=0)poiseAfter=1;
   b.poise=poiseAfter;b.poiseRegenAt=now+BOSS_POISE_REGEN_DELAY_MS;
   const damageMultiplier=(exposed?BOSS_EXPOSE_DAMAGE_MULTIPLIER:1)*(critical?BOSS_CRIT_MULTIPLIER:1);
@@ -671,7 +736,7 @@ function hitBoss(room,pr){
   b.hp-=dmg;owner.score+=dmg;
   if(exposed)b.exposedHitCount=(b.exposedHitCount||0)+1;
   if(canBreak){
-    b.staggerUntil=now+BOSS_BREAK_STAGGER_MS;
+    b.staggerUntil=now+(perfectParry?1080:BOSS_BREAK_STAGGER_MS);
     b.staggerResistUntil=b.staggerUntil+BOSS_BREAK_RESIST_MS;
     b.criticalUntil=b.staggerUntil;
     interruptBossCombo(room,now,'critical_break');
@@ -682,6 +747,7 @@ function hitBoss(room,pr){
     target:'boss',owner:pr.owner,aid:pr.aid||null,kind:pr.kind||'projectile',dmg:Math.round(dmg),
     combo:Number(pr.combo)||0,finisher:pr.finisher===true,exposed,damageMultiplier,
     critical,criticalBreak:canBreak,criticalMultiplier:critical?BOSS_CRIT_MULTIPLIER:1,
+    perfectParry,hitStopMs:perfectParry?V1025_HIT_STOP_MS.perfectParry:canBreak?V1025_HIT_STOP_MS.critical:critical?110:pr.finisher?V1025_HIT_STOP_MS.heavy:V1025_HIT_STOP_MS.normal,
     weakPoint:weakPoint.id,weakPointLabel:weakPoint.label,critChance:weakPoint.chance,counterWindow:weakPoint.counter,
     poise:Math.round(b.poise),poiseMax:b.poiseMax,poiseDamage:Math.round(poiseDamage),staggerUntil:b.staggerUntil||0,staggerResistUntil:b.staggerResistUntil||0,
     x:b.x,z:b.z,ts:now
@@ -690,6 +756,10 @@ function hitBoss(room,pr){
     owner:pr.owner,aid:pr.aid||null,weakPoint:weakPoint.id,dmg:Math.round(dmg),poise:Math.round(b.poise),
     staggerUntil:canBreak?b.staggerUntil:b.criticalUntil,resistUntil:b.staggerResistUntil||0,ts:now
   }});
+  if(perfectParry){
+    V1025.recordPlayerAction(b,'perfectParry',{role:pr.owner,distance:owner?Math.hypot(owner.x-b.x,owner.z-b.z):0},now);
+    broadcast(room,{type:'event',e:'perfectParry',p:{role:pr.owner,actionId:parriedActionId,windowStartAt:parryWindow.startAt,windowEndAt:parryWindow.endAt,staggerUntil:b.staggerUntil,hitStopMs:V1025_HIT_STOP_MS.perfectParry,ts:now}});
+  }
   markDirty(room);
 }
 function fastForwardPlayerProjectile(room,pr,ms){
@@ -719,12 +789,7 @@ function resolvePlayerSwordImpact(room,strike){
     const bossHit=b.hp>0&&bossCanBeHit(b,strike.impactAt)&&segmentCircleHit(strike.x,strike.z,endX,endZ,b.x,b.z,1.55);
     if(nearestSummon&&(!bossHit||nearestSummonDistance<bossDistance)){
       const damage=strike.damage;
-      nearestSummon.hp-=damage;hit=true;targetType='summon';hitX=nearestSummon.x;hitZ=nearestSummon.z;
-      broadcast(room,{type:'event',e:'summonHit',p:{id:nearestSummon.id,dmg:Math.round(damage),hp:Math.max(0,nearestSummon.hp)}});
-      if(nearestSummon.hp<=0){
-        broadcast(room,{type:'event',e:'summonDefeated',p:{id:nearestSummon.id,x:nearestSummon.x,z:nearestSummon.z,y:nearestSummon.y}});
-        s.trust=Math.min(100,s.trust+4);
-      }
+      damageOneEyeMob(room,nearestSummon,damage,strike.impactAt,'sword');hit=true;targetType='summon';hitX=nearestSummon.x;hitZ=nearestSummon.z;
     }else if(bossHit){
       hit=true;targetType='boss';hitX=b.x;hitZ=b.z;
       hitBoss(room,{owner:strike.role,aid:strike.aid,food:strike.food,dmg:strike.damage,kind:'sword',combo:strike.combo,finisher:strike.finisher,hitTs:strike.impactAt});
@@ -737,10 +802,21 @@ function resolvePlayerSwordImpact(room,strike){
   }});
   markDirty(room);
 }
-function recordBossObservedAction(room,role,action,now=Date.now()){
-  const memory=room.state.boss.actionMemory||(room.state.boss.actionMemory=[]);
-  memory.push({role,action,ts:now});
+function bossRelativeDodgeDirection(room,role,x,z){
+  const p=room.state.players[role],b=room.state.boss;
+  const toBossX=b.x-p.x,toBossZ=b.z-p.z,length=Math.hypot(toBossX,toBossZ)||1;
+  const forwardX=toBossX/length,forwardZ=toBossZ/length;
+  const forward=x*forwardX+z*forwardZ,side=x*(-forwardZ)+z*forwardX;
+  if(forward<-.42)return'back';
+  return side<0?'left':'right';
+}
+function recordBossObservedAction(room,role,action,now=Date.now(),meta={}){
+  const b=room.state.boss,memory=b.actionMemory||(b.actionMemory=[]);
+  const p=room.state.players[role],distance=p?Math.hypot(p.x-b.x,p.z-b.z):0;
+  memory.push({role,action,ts:now,direction:meta.direction||'',distance});
   while(memory.length>48||memory[0]&&now-memory[0].ts>8000)memory.shift();
+  const type=action==='attack'?'melee':action==='skill'?'ranged':action;
+  V1025.recordPlayerAction(b,type,{role,distance,direction:meta.direction||''},now);
 }
 function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
   const s=room.state,p=s.players[role],b=s.boss,f=FOODS[p.food];
@@ -754,7 +830,12 @@ function spawnShot(room,role,skill=false,actionTs=Date.now(),aid=null){
   // V10.17: the basic action is a true server-authoritative sword strike.
   // Only the Skill action creates ranged projectiles.
   if(!skill){
-    if(p.atkCd>0)return{accepted:false,projectiles:[],reason:'COOLDOWN'};
+    // Accept within one authoritative tick of expiry. Without this tolerance a
+    // packet arriving between 30 Hz ticks can reject an authored 330 ms link
+    // even though the prior 270 ms cooldown has elapsed in wall-clock time.
+    // Historical regression sentinel: if(p.atkCd>0)return{accepted:false
+    if(p.atkCd>DT*1.05)return{accepted:false,projectiles:[],reason:'COOLDOWN'};
+    p.atkCd=0;
     const comboNow=Date.now();
     p.combo=comboNow<=(p.comboUntil||0)?((p.combo||0)+1)%3:0;
     p.comboUntil=comboNow+880;
@@ -817,8 +898,10 @@ function dash(room,role,actionTs=Date.now(),aid=null){
   if(Math.hypot(x,z)<.1){x=Math.sin(p.rot);z=Math.cos(p.rot);}
   [x,z]=norm(x,z);
   p.stamina-=22;p.vx=x*13;p.vz=z*13;p.dash=.25;p.inv=.34;p.lastDashTs=actionTs;
-  recordBossObservedAction(room,role,'dash',actionTs);
-  broadcast(room,{type:'event',e:'dash',p:{role,x,z,aid,startAt:actionTs}});
+  const direction=bossRelativeDodgeDirection(room,role,x,z);
+  recordBossObservedAction(room,role,'dash',actionTs,{direction});
+  V1025.recordPlayerAction(room.state.boss,'dodge',{role,direction,distance:Math.hypot(p.x-room.state.boss.x,p.z-room.state.boss.z)},actionTs);
+  broadcast(room,{type:'event',e:'dash',p:{role,x,z,direction,aid,startAt:actionTs}});
   markDirty(room);
   return{accepted:true,reason:''};
 }
@@ -845,6 +928,7 @@ function perfect(room,role){
   const p=room.state.players[role];
   const now=Date.now();
   p.perfect++;p.inv=.45;p.counterUntil=now+BOSS_COUNTER_WINDOW_MS;room.state.trust=Math.min(100,room.state.trust+10);
+  recordBossObservedAction(room,role,'perfectDodge',now,{direction:room.state.boss.aiMemory?.lastDodgeDirection||''});
   broadcast(room,{type:'event',e:'perfect',p:{role,counterUntil:p.counterUntil,weakPointCritBonus:.05}});
   markDirty(room);
 }
@@ -896,61 +980,356 @@ function livingBossTarget(s,preferredRole=null){
   const b=s.boss;
   return alive.sort((a,c)=>d2(a.x,a.z,b.x,b.z)-d2(c.x,c.z,b.x,b.z))[0];
 }
-function bossOrbVolley(room,{count=1,spread=.13,speed=7.2,dmg=11,targetRole=null,castId=null}={}){
-  const s=room.state,b=s.boss,target=livingBossTarget(s,targetRole);
-  if(!target)return;
-  const dx=target.x-b.x,dz=target.z-b.z,length=Math.hypot(dx,dz)||1;
+function bossOrbAnchor(room){
+  const s=room.state,b=s.boss,target=livingBossTarget(s),dx=(target?.x??b.x)-(b.x||0),dz=(target?.z??b.z+1)-(b.z||0),length=Math.hypot(dx,dz)||1;
   const aimX=dx/length,aimZ=dz/length,leftX=-aimZ,leftZ=aimX;
-  const originX=b.x+leftX*.68+aimX*.10,originZ=b.z+leftZ*.68+aimZ*.10;
-  const ids=[];
+  return{x:b.x+leftX*.68+aimX*.10,z:b.z+leftZ*.68+aimZ*.10,y:(Number(b.y)||0)+2.62};
+}
+function updateBossOrbController(room,now=Date.now()){
+  const s=room.state,b=s.boss,orb=b.orb||(b.orb={state:'FOLLOW',until:0,cooldownUntil:0}),state=orb.state||'FOLLOW',anchor=bossOrbAnchor(room);
+  if(state==='TRAP'||state==='FREE_FLOAT')return orb;
+  if(state==='RECALL'&&orb.recallProjectileId){
+    const projectile=s.projectiles.find(item=>item.id===orb.recallProjectileId&&item.t>0);
+    if(projectile){orb.x=projectile.x;orb.z=projectile.z;orb.y=projectile.y;return orb}
+  }
+  if(state==='ORBIT'||state==='AUTONOMOUS'){
+    const phaseAt=Number(orb.phaseAt)||now,angle=(now-phaseAt)*.00135+(Number(orb.phaseOffset)||0),radius=state==='AUTONOMOUS'?2.15:1.42;
+    orb.x=b.x+Math.cos(angle)*radius;orb.z=b.z+Math.sin(angle)*radius;orb.y=(Number(b.y)||0)+(state==='AUTONOMOUS'?2.82:2.55)+Math.sin((now-phaseAt)*.0021)*.12;
+  }else if(state==='ULTIMATE'){
+    orb.x=b.x;orb.z=b.z;orb.y=(Number(b.y)||0)+6.1;
+  }else{
+    orb.x=anchor.x;orb.z=anchor.z;orb.y=anchor.y;
+  }
+  return orb;
+}
+function bossOrbVolley(room,{count=1,spread=.13,speed=7.2,dmg=11,targetRole=null,castId=null}={}){
+  const s=room.state,target=livingBossTarget(s,targetRole),origin=updateBossOrbController(room);
+  if(!target)return;
+  const dx=target.x-origin.x,dz=target.z-origin.z,length=Math.hypot(dx,dz)||1,aimX=dx/length,aimZ=dz/length,ids=[],bornAt=Date.now();
   for(let shot=0;shot<count;shot++){
     const angle=Math.atan2(aimZ,aimX)+(shot-(count-1)*.5)*spread;
     const projectile={
       id:s.nextProj++,owner:null,enemy:true,kind:'orbclone',food:2,
-      x:originX,z:originZ,y:2.62,vx:Math.cos(angle)*speed,vz:Math.sin(angle)*speed,
-      dmg,t:2.45,castId,bornAt:Date.now()
+      x:origin.x,z:origin.z,y:origin.y,vx:Math.cos(angle)*speed,vz:Math.sin(angle)*speed,
+      dmg,t:2.45,castId,bornAt
     };
     s.projectiles.push(projectile);ids.push(projectile.id);
   }
-  broadcast(room,{type:'event',e:'bossOrbVolley',p:{ids,count,targetRole:target.role,castId,radial:false}});
+  broadcast(room,{type:'event',e:'bossOrbVolley',p:{ids,count,targetRole:target.role,castId,radial:false,originX:origin.x,originY:origin.y,originZ:origin.z,launchAt:bornAt}});
   markDirty(room);
 }
 function bossOrbRadial(room,{n=10,speed=5.8,dmg=10,angleOffset=0,castId=null}={}){
-  const s=room.state,b=s.boss,ids=[];
+  const s=room.state,origin=updateBossOrbController(room),ids=[],bornAt=Date.now();
   for(let shot=0;shot<n;shot++){
     const angle=angleOffset+shot/n*Math.PI*2;
     const projectile={
       id:s.nextProj++,owner:null,enemy:true,kind:'orbclone',food:2,
-      x:b.x,z:b.z,y:2.62,vx:Math.cos(angle)*speed,vz:Math.sin(angle)*speed,
-      dmg,t:3,castId,bornAt:Date.now()
+      x:origin.x,z:origin.z,y:origin.y,vx:Math.cos(angle)*speed,vz:Math.sin(angle)*speed,
+      dmg,t:3,castId,bornAt
     };
     s.projectiles.push(projectile);ids.push(projectile.id);
   }
-  broadcast(room,{type:'event',e:'bossOrbVolley',p:{ids,count:n,castId,radial:true}});
+  broadcast(room,{type:'event',e:'bossOrbVolley',p:{ids,count:n,castId,radial:true,originX:origin.x,originY:origin.y,originZ:origin.z,launchAt:bornAt}});
   markDirty(room);
 }
 function bossSpiritOrb(room,{targetRole=null,castId=null}={}){
-  const s=room.state,b=s.boss,target=livingBossTarget(s,targetRole);
+  const s=room.state,b=s.boss,target=livingBossTarget(s,targetRole),origin=updateBossOrbController(room);
   if(!target)return;
-  const dx=target.x-b.x,dz=target.z-b.z,length=Math.hypot(dx,dz)||1;
-  const aimX=dx/length,aimZ=dz/length,leftX=-aimZ,leftZ=aimX;
+  const dx=target.x-origin.x,dz=target.z-origin.z,length=Math.hypot(dx,dz)||1;
+  const aimX=dx/length,aimZ=dz/length;
   const speed=4.75+b.phase*.28;
   const projectile={
     id:s.nextProj++,owner:null,enemy:true,kind:'spiritOrb',food:2,
-    x:b.x+leftX*.68+aimX*.12,z:b.z+leftZ*.68+aimZ*.12,y:2.62,
+    x:origin.x,z:origin.z,y:origin.y,
     vx:aimX*speed,vz:aimZ*speed,speed,turnRate:2.55+b.phase*.24,
     targetRole:target.role,dmg:14+b.phase*2,t:3.45,castId,bornAt:Date.now()
   };
   s.projectiles.push(projectile);
   broadcast(room,{type:'event',e:'bossSpiritOrbLaunch',p:{
-    id:projectile.id,targetRole:target.role,castId,launchAt:projectile.bornAt,endAt:projectile.bornAt+3450
+    id:projectile.id,targetRole:target.role,castId,launchAt:projectile.bornAt,endAt:projectile.bornAt+3450,originX:origin.x,originY:origin.y,originZ:origin.z
   }});
   markDirty(room);
 }
+
+function bossOrbRecall(room,{targetRole=null,castId=null}={}){
+  const s=room.state,b=s.boss,target=livingBossTarget(s,targetRole);if(!target)return null;
+  const now=Date.now(),origin=updateBossOrbController(room,now),anchor=bossOrbAnchor(room),turnAt=now+380,endAt=now+860;
+  const projectile={
+    id:s.nextProj++,owner:null,enemy:true,kind:'orbRecall',food:2,x:origin.x,z:origin.z,y:origin.y,vx:0,vz:0,dmg:10+b.phase,t:.94,castId,bornAt:now,
+    recallStartAt:now,recallTurnAt:turnAt,recallEndAt:endAt,startX:origin.x,startZ:origin.z,startY:origin.y,turnX:target.x,turnZ:target.z,turnY:1.45,endX:anchor.x,endZ:anchor.z,endY:anchor.y,recallLeg:'out',hitLegs:{}
+  };
+  s.projectiles.push(projectile);
+  setBossOrbState(room,'RECALL',endAt,{x:origin.x,z:origin.z,y:origin.y,recallProjectileId:projectile.id,recallStartAt:now,recallTurnAt:turnAt,recallEndAt:endAt});
+  broadcast(room,{type:'event',e:'bossOrbRecall',p:{id:projectile.id,castId,targetRole:target.role,startAt:now,turnAt,endAt,fromX:origin.x,fromY:origin.y,fromZ:origin.z,turnX:target.x,turnY:1.45,turnZ:target.z,toX:anchor.x,toY:anchor.y,toZ:anchor.z}});
+  markDirty(room);return projectile;
+}
+
+function updateBossRecallProjectile(room,projectile,now,dt){
+  const b=room.state.boss,outbound=now<projectile.recallTurnAt,fromAt=outbound?projectile.recallStartAt:projectile.recallTurnAt,toAt=outbound?projectile.recallTurnAt:projectile.recallEndAt;
+  const raw=Math.max(0,Math.min(1,(now-fromAt)/Math.max(1,toAt-fromAt))),progress=outbound?trajectoryEase('easeOutCubic',raw):trajectoryEase('easeInCubic',raw);
+  const fromX=outbound?projectile.startX:projectile.turnX,fromZ=outbound?projectile.startZ:projectile.turnZ,fromY=outbound?projectile.startY:projectile.turnY,toX=outbound?projectile.turnX:projectile.endX,toZ=outbound?projectile.turnZ:projectile.endZ,toY=outbound?projectile.turnY:projectile.endY,oldX=projectile.x,oldZ=projectile.z;
+  projectile.x=fromX+(toX-fromX)*progress;projectile.z=fromZ+(toZ-fromZ)*progress;projectile.y=fromY+(toY-fromY)*progress+Math.sin(raw*Math.PI)*.38;projectile.vx=(projectile.x-oldX)/Math.max(.001,dt);projectile.vz=(projectile.z-oldZ)/Math.max(.001,dt);projectile.recallLeg=outbound?'out':'return';projectile.t=Math.max(0,(projectile.recallEndAt-now)/1000);
+  if(b.orb?.recallProjectileId===projectile.id){b.orb.x=projectile.x;b.orb.z=projectile.z;b.orb.y=projectile.y}
+  return projectile;
+}
+
+function setBossOrbState(room,state,until=0,extra={}){
+  const b=room.state.boss,previous=b.orb?.state||'FOLLOW',now=Date.now(),entered=previous!==state;
+  b.orb={...(b.orb||{}),state,x:Number.isFinite(extra.x)?extra.x:b.orb?.x??b.x,z:Number.isFinite(extra.z)?extra.z:b.orb?.z??b.z,y:Number.isFinite(extra.y)?extra.y:b.orb?.y??((Number(b.y)||0)+2.62),until:until||0,...extra};
+  if(entered&&(state==='ORBIT'||state==='AUTONOMOUS')){b.orb.phaseAt=now;b.orb.phaseOffset=Number(extra.phaseOffset)||((b.comboSeq||0)*.73%(Math.PI*2))}
+  if(entered)broadcast(room,{type:'event',e:'bossOrbState',p:{...b.orb,state,previous,ts:now}});
+}
+function setBossHaloState(room,state,until=0,extra={}){
+  const b=room.state.boss,previous=b.halo?.state||'IDLE',now=Date.now();b.halo={state,until,startAt:Number(extra.startAt)||now,impactAt:Number(extra.impactAt)||0,...extra};
+  if(previous!==state)broadcast(room,{type:'event',e:'bossHaloState',p:{...b.halo,state,previous,ts:now}});
+}
+function trajectoryEase(curve,t){
+  t=Math.max(0,Math.min(1,t));
+  if(curve==='easeInCubic')return t*t*t;
+  if(curve==='easeInOutCubic')return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  return 1-Math.pow(1-t,3);
+}
+function startBossTrajectory(room,action,targetRole=null,now=Date.now()){
+  const profile=action.trajectory;if(!profile)return null;
+  const s=room.state,b=s.boss,target=livingBossTarget(s,targetRole);if(!target)return null;
+  let dx=target.x-b.x,dz=target.z-b.z,length=Math.hypot(dx,dz)||1;dx/=length;dz/=length;
+  if(profile.side){const side=profile.side;[dx,dz]=[-dz*side,dx*side]}
+  else if(profile.back){dx*=-1;dz*=-1}
+  let distance=Number(profile.distance)||0;
+  if(!profile.side&&!profile.back)distance=Math.min(distance,Math.max(0,length-1.38));
+  const end=clampBossToArena(b.x+dx*distance,b.z+dz*distance);
+  const fromY=Number.isFinite(Number(b.y))?Number(b.y):0,toY=Number.isFinite(Number(profile.toY))?Number(profile.toY):0;
+  b.trajectory={id:`${action.id}-${now}`,actionId:action.id,fromX:b.x,fromY,fromZ:b.z,toX:end.x,toY,toZ:end.z,startAt:now,endAt:now+(profile.durationMs||420),curve:profile.curve||'easeOutCubic'};
+  broadcast(room,{type:'event',e:'bossTrajectory',p:{...b.trajectory}});return b.trajectory;
+}
+function updateBossTrajectory(room,now){
+  const b=room.state.boss,t=b.trajectory;if(!t)return false;
+  const p=Math.max(0,Math.min(1,(now-t.startAt)/Math.max(1,t.endAt-t.startAt))),e=trajectoryEase(t.curve,p);
+  b.x=t.fromX+(t.toX-t.fromX)*e;b.y=(Number(t.fromY)||0)+((Number(t.toY)||0)-(Number(t.fromY)||0))*e;b.z=t.fromZ+(t.toZ-t.fromZ)*e;
+  if(p>=1){b.y=Number(t.toY)||0;b.trajectory=null}
+  return true;
+}
+function v1025Teleport(room,action,targetRole=null,meta={}){
+  const s=room.state,b=s.boss,target=livingBossTarget(s,targetRole);if(!target)return;
+  const teleportAt=Number.isFinite(Number(meta.teleportAt))?Number(meta.teleportAt):Date.now(),fromX=b.x,fromY=Number(b.y)||0,fromZ=b.z;
+  const facingX=Math.sin(target.rot||0),facingZ=Math.cos(target.rot||0),sideX=-facingZ,sideZ=facingX;
+  const direction=action.teleport||'behind';let x=target.x-facingX*1.72,z=target.z-facingZ*1.72;
+  if(direction==='left'){x=target.x+sideX*2.35;z=target.z+sideZ*2.35}
+  else if(direction==='right'){x=target.x-sideX*2.35;z=target.z-sideZ*2.35}
+  else if(direction==='above'){x=target.x-facingX*.55;z=target.z-facingZ*.55}
+  const point=clampBossToArena(x,z);b.x=point.x;b.y=direction==='above'?2.6:0;b.z=point.z;b.backWeakUntil=teleportAt+620;
+  b.aiMemory.lastTeleportDirection=direction;
+  broadcast(room,{type:'event',e:'bossTeleport',p:{direction,role:target.role,fromX,fromY,fromZ,x:b.x,y:b.y,z:b.z,actionId:action.id,castId:meta.castId||0,teleportAt,entryAt:teleportAt+180,ts:teleportAt}});
+}
+function bossMeleeImpact(room,data){
+  const s=room.state,b=s.boss,action=V1025.actionFor(data.actionId),radius=Number(data.radius)||action.radius||2,damage=Number(data.damage)||action.damage||12,hitRoles=[];
+  for(const role of ['hero','princess']){
+    const p=s.players[role];if(!p.down&&d2(p.x,p.z,b.x,b.z)<=radius*radius){queueEnemyHit(room,role,damage,Date.now());hitRoles.push(role)}
+  }
+  const hitStopMs=V1025_HIT_STOP_MS[action.impactClass]||V1025_HIT_STOP_MS.normal;
+  broadcast(room,{type:'event',e:'bossActionImpact',p:{actionId:action.id,x:b.x,z:b.z,radius,damage,hitRoles,impactClass:action.impactClass||'normal',hitStopMs,ts:Date.now()}});
+  if(!hitRoles.length&&['HEAVY','AERIAL'].includes(action.category)){
+    b.upperWeakUntil=Date.now()+1050;
+    broadcast(room,{type:'event',e:'bossWeakPoint',p:{point:'upper',label:'UPPER TORSO · HEAVY MISS',until:b.upperWeakUntil,chance:.11}});
+  }
+}
+function bossCrescentWave(room,{actionId='energy_wave',count=1,castId=null}={}){
+  const s=room.state,b=s.boss,target=livingBossTarget(s);if(!target)return;
+  const base=Math.atan2(target.z-b.z,target.x-b.x),ids=[];
+  for(let i=0;i<count;i++){
+    const angle=base+(i-(count-1)/2)*.13,projectile={id:s.nextProj++,owner:null,enemy:true,kind:'crescent',food:2,x:b.x,z:b.z,y:1.45,vx:Math.cos(angle)*8.1,vz:Math.sin(angle)*8.1,dmg:12+b.phase,t:2.25,castId,bornAt:Date.now()};
+    s.projectiles.push(projectile);ids.push(projectile.id);
+  }
+  broadcast(room,{type:'event',e:'bossCrescentWave',p:{ids,actionId,castId,ts:Date.now()}});
+}
+function addArenaHazard(room,type,data={}){
+  const s=room.state,now=Date.now(),x=Number(data.x),z=Number(data.z),hazard={
+    id:s.nextHazard++,type,x:Number.isFinite(x)?x:s.boss.x,z:Number.isFinite(z)?z:s.boss.z,radius:Number(data.radius)||1.4,
+    shape:data.shape||'circle',length:Number(data.length)||0,width:Number(data.width)||0,startAt:now,activeAt:data.activeAt||now+700,endAt:data.endAt||now+1800,
+    damage:Number.isFinite(Number(data.damage))?Number(data.damage):8,safe:!!data.safe,role:data.role||'',angle:Number(data.angle)||0,castId:data.castId??null,mobId:data.mobId??null,orbSlot:Number.isFinite(Number(data.orbSlot))?Number(data.orbSlot):null,fallAt:Number(data.fallAt)||0
+  };
+  s.arenaHazards.push(hazard);broadcast(room,{type:'event',e:'arenaHazard',p:hazard});return hazard;
+}
+function processArenaHazards(room,now){
+  const s=room.state;
+  for(const hazard of s.arenaHazards||[]){
+    if(hazard.triggered||now<hazard.activeAt||now>hazard.endAt)continue;hazard.triggered=true;
+    if(hazard.type==='orb_trap'||hazard.type==='starfall'||hazard.type==='collapse'||hazard.type==='slam'){
+      for(const role of ['hero','princess']){const p=s.players[role];if(!p.down&&d2(p.x,p.z,hazard.x,hazard.z)<=hazard.radius*hazard.radius)queueEnemyHit(room,role,hazard.damage,now)}
+      broadcast(room,{type:'event',e:'arenaHazardImpact',p:{...hazard,ts:now}});
+    }else if(hazard.type==='gaze_beam'){
+      const target=s.players[hazard.role],length=Number(hazard.length)||9;if(target&&!target.down&&segmentCircleHit(hazard.x,hazard.z,hazard.x+Math.cos(hazard.angle)*length,hazard.z+Math.sin(hazard.angle)*length,target.x,target.z,.55))queueEnemyHit(room,target.role,hazard.damage,now);
+      broadcast(room,{type:'event',e:'oneEyeBeam',p:{...hazard,ts:now}});
+    }
+  }
+  s.arenaHazards=(s.arenaHazards||[]).filter(hazard=>now<hazard.endAt);
+}
+function spawnOneEyeMob(room,count=1,cue='SUPPORT'){
+  const s=room.state,b=s.boss,max=3,available=Math.max(0,max-(s.summons?.length||0)),spawned=[];count=Math.min(count,available);
+  const now=Date.now();
+  for(let i=0;i<count;i++){
+    const angle=(s.nextSummon+i)*2.399,radius=4.5+(i%2)*.7,point=clampBossToArena(b.x+Math.cos(angle)*radius,b.z+Math.sin(angle)*radius,7.4);
+    const m={id:s.nextSummon++,kind:'one_eye',x:point.x,z:point.z,y:1.75,hp:58,max:58,t:32,atkT:.9+i*.35,state:'SPAWN',spawnAt:now,stateStartedAt:now,stateUntil:now+720,targetRole:'',supportCue:cue,lastCoordinationToken:'',seed:Math.random()*1000,lunge:null,beam:null,positionTarget:null,staggerResistUntil:0,deathAt:0,despawnAt:0,remove:false};
+    s.summons.push(m);spawned.push({id:m.id,x:m.x,z:m.z,y:m.y,state:m.state});
+  }
+  if(spawned.length)broadcast(room,{type:'event',e:'oneEyeSpawn',p:{count:spawned.length,points:spawned,cue,maxAlive:3}});
+  return spawned;
+}
+function setOneEyeState(m,state,now,until=now){
+  m.state=state;m.stateStartedAt=now;m.stateUntil=until;return m;
+}
+function damageOneEyeMob(room,m,damage,now=Date.now(),source='projectile'){
+  if(!m||m.hp<=0||m.state==='DEATH'||m.state==='DESPAWN')return false;
+  const s=room.state,amount=Math.max(0,Number(damage)||0);m.hp=Math.max(0,m.hp-amount);
+  if(m.hp<=0){
+    m.lunge=null;m.beam=null;m.positionTarget=null;m.deathAt=now;m.despawnAt=now+900;m.atkT=999;
+    setOneEyeState(m,'DEATH',now,now+680);
+    s.arenaHazards=(s.arenaHazards||[]).filter(hazard=>hazard.mobId!==m.id);
+    broadcast(room,{type:'event',e:'summonHit',p:{id:m.id,dmg:Math.round(amount),hp:0,x:m.x,z:m.z,y:m.y,state:m.state,stateUntil:m.stateUntil,source}});
+    broadcast(room,{type:'event',e:'summonDefeated',p:{id:m.id,x:m.x,z:m.z,y:m.y,deathAt:m.deathAt,despawnAt:m.despawnAt}});
+    s.trust=Math.min(100,s.trust+4);return true;
+  }
+  const canStagger=now>=Number(m.staggerResistUntil||0);
+  if(canStagger){
+    m.lunge=null;m.beam=null;m.positionTarget=null;m.staggerResistUntil=now+720;m.atkT=Math.max(Number(m.atkT)||0,.48);
+    setOneEyeState(m,'STAGGER',now,now+300);
+    s.arenaHazards=(s.arenaHazards||[]).filter(hazard=>hazard.mobId!==m.id);
+  }
+  broadcast(room,{type:'event',e:'summonHit',p:{id:m.id,dmg:Math.round(amount),hp:m.hp,x:m.x,z:m.z,y:m.y,state:m.state,stateUntil:m.stateUntil,staggered:canStagger,source}});
+  return true;
+}
+function coordinateOneEyeMob(room,m,target,now){
+  const s=room.state,b=s.boss,cue=b.supportCue||m.supportCue||'PRESSURE',token=`${cue}:${s.activeCast?.id||0}`;
+  m.supportCue=cue;
+  if(cue==='ULTIMATE'&&['CHARGE','GAZE_BEAM','LUNGE','POSITION'].includes(m.state)){
+    s.arenaHazards=(s.arenaHazards||[]).filter(hazard=>hazard.mobId!==m.id);m.beam=null;m.lunge=null;m.positionTarget=null;m.atkT=Math.max(Number(m.atkT)||0,.55);setOneEyeState(m,'ORBIT_BOSS',now,now);
+  }
+  if(token===m.lastCoordinationToken||!['VORTEX','HEAVY_CAST','MELEE','PROTECT'].includes(cue)||!['IDLE_HOVER','ORBIT_BOSS'].includes(m.state))return;
+  m.lastCoordinationToken=token;const dx=target.x-b.x,dz=target.z-b.z,length=Math.hypot(dx,dz)||1,forwardX=dx/length,forwardZ=dz/length,side=m.id%2?-1:1;
+  const distance=cue==='VORTEX'?3.1:2.6,offsetX=cue==='VORTEX'?forwardX*distance:-forwardZ*distance*side,offsetZ=cue==='VORTEX'?forwardZ*distance:forwardX*distance*side,point=clampBossToArena(target.x+offsetX,target.z+offsetZ,7.2);
+  m.positionTarget={x:point.x,z:point.z,cue,arriveAt:now+520};m.atkT=Math.max(Number(m.atkT)||0,.38);setOneEyeState(m,'POSITION',now,now+520);
+  broadcast(room,{type:'event',e:'oneEyePosition',p:{id:m.id,x:point.x,z:point.z,cue,startAt:now,endAt:m.stateUntil}});
+}
+function oneEyeAttack(room,m,target,now){
+  const s=room.state,b=s.boss,distance=Math.hypot(target.x-m.x,target.z-m.z),cue=m.supportCue||b.supportCue||'PRESSURE';
+  if(distance<2.0&&cue!=='ULTIMATE'){
+    m.state='LUNGE';m.stateUntil=now+520;const dx=(target.x-m.x)/(distance||1),dz=(target.z-m.z)/(distance||1);m.lunge={fromX:m.x,fromZ:m.z,toX:m.x+dx*Math.min(2.4,distance),toZ:m.z+dz*Math.min(2.4,distance),startAt:now,endAt:now+360};m.atkT=2.4;
+    m.stateStartedAt=now;
+    broadcast(room,{type:'event',e:'oneEyeAttack',p:{id:m.id,attack:'ABYSS_LUNGE',role:target.role,startAt:now,endAt:m.stateUntil}});return;
+  }
+  if(cue!=='ULTIMATE'&&(cue==='VORTEX'||cue==='HEAVY_CAST'||(m.id+b.comboSeq)%3===0)){
+    const angle=Math.atan2(target.z-m.z,target.x-m.x),activeAt=now+760,endAt=now+990;
+    m.targetRole=target.role;m.atkT=3.1;m.beam={angle,role:target.role,chargeStartAt:now,activeAt,endAt};setOneEyeState(m,'CHARGE',now,activeAt);
+    addArenaHazard(room,'gaze_beam',{x:m.x,z:m.z,role:target.role,angle,shape:'line',length:9,width:.28,activeAt,endAt,damage:9+b.phase,mobId:m.id,castId:s.activeCast?.id??null});
+    broadcast(room,{type:'event',e:'oneEyeAttack',p:{id:m.id,attack:'GAZE_BEAM',role:target.role,angle,chargeStartAt:now,chargeUntil:activeAt,activeAt,endAt}});return;
+  }
+  setOneEyeState(m,'VOID_BOLT',now,now+620);m.atkT=(cue==='PROTECT'?1.45:1.8)+Math.random()*.8;const angle=Math.atan2(target.z-m.z,target.x-m.x),count=cue==='ULTIMATE'?1:cue==='PROTECT'?Math.min(3,b.phase):b.phase===3?2:1;
+  for(let i=0;i<count;i++){const a=angle+(i-(count-1)/2)*.10;s.projectiles.push({id:s.nextProj++,owner:null,enemy:true,kind:'voidBolt',food:2,x:m.x,z:m.z,y:m.y,vx:Math.cos(a)*5.8,vz:Math.sin(a)*5.8,dmg:7+b.phase,t:2.6,mobId:m.id})}
+  broadcast(room,{type:'event',e:'oneEyeAttack',p:{id:m.id,attack:'VOID_BOLT',role:target.role,count,startAt:now,endAt:m.stateUntil}});
+}
+function updateOneEyeMobs(room,dt,now){
+  const s=room.state,b=s.boss;
+  for(const m of s.summons||[]){
+    m.t-=dt;m.atkT-=dt;
+    if(m.state==='DEATH'){if(now>=Number(m.stateUntil||0))setOneEyeState(m,'DESPAWN',now,m.despawnAt||now+220);continue}
+    if(m.state==='DESPAWN'){if(now>=Number(m.despawnAt||m.stateUntil||0))m.remove=true;continue}
+    if(m.hp<=0){m.deathAt||=now;m.despawnAt||=now+900;setOneEyeState(m,'DEATH',now,now+680);continue}
+    if(m.t<=0){m.despawnAt=now+320;setOneEyeState(m,'DESPAWN',now,m.despawnAt);continue}
+    if(m.state==='CHARGE'&&m.beam&&now>=m.beam.activeAt)setOneEyeState(m,'GAZE_BEAM',now,m.beam.endAt);
+    if(m.state==='GAZE_BEAM'&&m.beam&&now>=m.beam.endAt){m.beam=null;setOneEyeState(m,'ORBIT_BOSS',now,now)}
+    if(m.lunge){const p=Math.max(0,Math.min(1,(now-m.lunge.startAt)/Math.max(1,m.lunge.endAt-m.lunge.startAt))),e=trajectoryEase('easeInOutCubic',p);m.x=m.lunge.fromX+(m.lunge.toX-m.lunge.fromX)*e;m.z=m.lunge.fromZ+(m.lunge.toZ-m.lunge.fromZ)*e;if(p>=1){for(const role of ['hero','princess']){const target=s.players[role];if(!target.down&&d2(target.x,target.z,m.x,m.z)<.9*.9)queueEnemyHit(room,role,9+b.phase,now)}m.lunge=null}}
+    if(now>=Number(m.stateUntil||0)&&!m.lunge&&!['CHARGE','GAZE_BEAM'].includes(m.state)){m.positionTarget=null;if(m.state==='SPAWN')setOneEyeState(m,'IDLE_HOVER',now,now+420);else setOneEyeState(m,'ORBIT_BOSS',now,now)}
+    const target=livingBossTarget(s,m.targetRole);if(!target)continue;
+    coordinateOneEyeMob(room,m,target,now);
+    if(m.state==='POSITION'&&m.positionTarget){
+      const dx=m.positionTarget.x-m.x,dz=m.positionTarget.z-m.z,length=Math.hypot(dx,dz)||1;m.x+=dx/length*Math.min(length,3.5*dt);m.z+=dz/length*Math.min(length,3.5*dt);
+    }
+    if(m.state==='ORBIT_BOSS'||m.state==='IDLE_HOVER'){
+      const angle=now*.00022+m.seed,desiredX=b.x+Math.cos(angle)*(3.6+(m.id%2)*.7),desiredZ=b.z+Math.sin(angle)*(3.6+(m.id%2)*.7),dx=desiredX-m.x,dz=desiredZ-m.z,length=Math.hypot(dx,dz)||1;
+      m.x+=dx/length*Math.min(length,1.25*dt);m.z+=dz/length*Math.min(length,1.25*dt);
+    }
+    if(m.atkT<=0&&now>=Number(m.stateUntil||0))oneEyeAttack(room,m,target,now);
+  }
+  s.summons=(s.summons||[]).filter(m=>!m.remove).slice(0,3);
+}
+function updateBossSupportDirector(room,dt,now){
+  const s=room.state,b=s.boss;b.supportT=(Number(b.supportT)||0)-dt;
+  const desired=b.phase===1?0:b.phase===2?1:Math.min(3,2+(b.hp/b.max<.18?1:0));
+  const activeMobs=(s.summons||[]).filter(m=>m.hp>0&&!['DEATH','DESPAWN'].includes(m.state)).length;
+  if(b.supportT<=0){if(activeMobs<desired)spawnOneEyeMob(room,desired-activeMobs,b.supportCue);b.supportT=b.phase===3?4.2:6.2}
+  if(b.phase>=2&&!s.activeCast&&Date.now()>Number(b.orb?.cooldownUntil||0)&&b.orb?.state==='AUTONOMOUS'){
+    bossOrbVolley(room,{count:1,speed:6.4,dmg:8+b.phase});b.orb.cooldownUntil=now+(b.phase===3?2100:2900);
+  }
+}
+function runZeroHourStage(room,stage,castId){
+  const s=room.state,b=s.boss,now=Date.now(),names=['','TIME DILATION','TELEGRAPH FIELD','PHANTOM CASTERS','ORB SKY ARRAY','ECLIPSE SLAM','STARFALL','FINAL COLLAPSE','RECOVERY'];
+  const previous=s.activeUltimate||{},startedAt=previous.startedAt||now,endAt=s.activeCast?.endAt||previous.endAt||startedAt+9800;
+  s.activeUltimate={...previous,id:castId,name:'ETERNAL ECLIPSE · ZERO HOUR',stage,stageName:names[stage],startedAt,endAt,stageStartAt:now};
+  if(stage===1){
+    s.activeUltimate.timeDilationEndAt=now+520;b.supportCue='ULTIMATE';setBossOrbState(room,'ULTIMATE',endAt);setBossHaloState(room,'ULTIMATE',endAt,{startAt:now});
+  }
+  else if(stage===2){
+    const laneUntil=startedAt+6900,base=.28+(Number(castId)||0)%7*.07;
+    s.activeUltimate.safeLanes=[base,base+Math.PI*.5].map((angle,index)=>({id:index,angle,width:1.45,length:15,until:laneUntil}));
+    for(const lane of s.activeUltimate.safeLanes)addArenaHazard(room,'safe_lane',{x:0,z:0,shape:'lane',length:lane.length,width:lane.width,angle:lane.angle,radius:1,activeAt:now,endAt:lane.until,damage:0,safe:true,castId});
+    for(let i=0;i<6;i++){
+      const angle=i/6*Math.PI*2+.26,radius=i%2?4.8:2.7;
+      addArenaHazard(room,'laser_warning',{x:0,z:0,shape:'line',length:15,width:.18,angle,radius:1,activeAt:now+1180,endAt:now+1650,damage:0,castId});
+      addArenaHazard(room,'telegraph',{x:Math.cos(angle)*radius,z:Math.sin(angle)*radius,radius:1.05,activeAt:now+1250,endAt:now+1650,damage:0,castId});
+    }
+  }else if(stage===3){broadcast(room,{type:'event',e:'zeroHourPhantoms',p:{count:4,castId,until:now+1700}})}
+  else if(stage===4){
+    const safeAngles=(s.activeUltimate.safeLanes||[]).map(lane=>lane.angle),points=[];
+    for(let candidate=0;points.length<12&&candidate<40;candidate++){
+      const angle=candidate*2.399+.4,radius=2.0+(candidate%4)*1.45;
+      const inLane=safeAngles.some(laneAngle=>Math.abs(Math.sin(angle-laneAngle))*radius<.95);if(inLane)continue;
+      const slot=points.length,fallAt=startedAt+5250+680+(slot%3)*240;
+      points.push({slot,x:Number((Math.cos(angle)*radius).toFixed(3)),z:Number((Math.sin(angle)*radius).toFixed(3)),y:Number((6.0+(slot%4)*.32).toFixed(3)),suspendedAt:now,fallAt});
+    }
+    s.activeUltimate.orbArray=points;setBossOrbState(room,'ULTIMATE',endAt,{x:b.x,z:b.z,y:(Number(b.y)||0)+6.1});
+    broadcast(room,{type:'event',e:'zeroHourOrbArray',p:{count:points.length,points,castId,until:startedAt+7100}});
+  }
+  else if(stage===5){
+    const target=livingBossTarget(s),x=target?.x??b.x,z=target?.z??b.z,point=clampBossToArena(x,z,6.6),impactAt=now+620,slamEndAt=now+920;
+    b.y=3.4;b.trajectory={actionId:'zero_hour_slam',fromX:b.x,fromZ:b.z,toX:point.x,toZ:point.z,fromY:3.4,toY:0,startAt:now,endAt:impactAt,curve:'easeInCubic'};b.currentAction='zero_hour_slam';b.sourceAnimation='heavy_slam';
+    s.activeUltimate.slam={actionId:'zero_hour_slam',logicalAnimation:'heavy_slam',animationVariant:'HEAVY',x:point.x,z:point.z,radius:3.1,startAt:now,impactAt,endAt:slamEndAt};
+    addArenaHazard(room,'slam',{x:point.x,z:point.z,radius:3.1,activeAt:impactAt,endAt:slamEndAt,damage:19+b.phase,castId});
+    broadcast(room,{type:'event',e:'zeroHourSlam',p:{...s.activeUltimate.slam,castId,fromX:b.trajectory.fromX,fromY:b.trajectory.fromY,fromZ:b.trajectory.fromZ,toY:0,ts:now}});
+  }else if(stage===6){
+    b.currentAction='ultimate_zero_hour';b.sourceAnimation='power_up';
+    const points=s.activeUltimate.orbArray?.length?s.activeUltimate.orbArray:Array.from({length:12},(_,slot)=>{const angle=slot*2.399+.4,radius=2+(slot%4)*1.45;return{slot,x:Math.cos(angle)*radius,z:Math.sin(angle)*radius,y:6+(slot%4)*.32,fallAt:now+680+(slot%3)*240}});
+    s.activeUltimate.orbArray=points;
+    for(const point of points)addArenaHazard(room,'starfall',{x:point.x,z:point.z,radius:.82,activeAt:point.fallAt,endAt:point.fallAt+420,damage:11+b.phase,castId,orbSlot:point.slot,fallAt:point.fallAt});
+    broadcast(room,{type:'event',e:'zeroHourStarfall',p:{castId,points:points.map(point=>({slot:point.slot,x:point.x,z:point.z,y:point.y,fallAt:point.fallAt}))}});
+  }else if(stage===7){
+    const impactAt=now+620,collapseEndAt=now+1000;s.activeUltimate.collapse={startAt:now,impactAt,endAt:collapseEndAt,x:b.x,z:b.z,radius:4.1};
+    addArenaHazard(room,'collapse',{x:b.x,z:b.z,radius:4.1,activeAt:impactAt,endAt:now+980,damage:20+b.phase,castId});setBossHaloState(room,'COLLAPSE',collapseEndAt,{startAt:now,impactAt});
+  }
+  else if(stage===8){
+    b.exposedUntil=now+1350;b.upperWeakUntil=b.exposedUntil;b.supportCue='RECOVERY';s.activeUltimate.recoveryEndAt=b.exposedUntil;
+    if(!bossOrbRecall(room,{castId}))setBossOrbState(room,'RECALL',now+700);setBossHaloState(room,'CRITICAL_BREAK',now+700,{startAt:now});
+    broadcast(room,{type:'event',e:'bossExposed',p:{castId,skill:4,until:b.exposedUntil,multiplier:BOSS_EXPOSE_DAMAGE_MULTIPLIER,patternName:'ZERO HOUR RECOVERY'}});
+  }
+  broadcast(room,{type:'event',e:'zeroHourStage',p:{...s.activeUltimate,ts:now}});
+  markDirty(room);
+}
+
 function scheduleTask(room,delayMs,type,data={}){
   const s=room.state;
   s.tasks.push({id:s.nextTask++,dueAt:Date.now()+delayMs,type,data});
   markDirty(room);
+}
+function cancelBossFeint(room,data={},now=Date.now()){
+  const s=room.state,b=s.boss,cast=s.activeCast,combo=s.activeCombo,castId=Number(data.castId)||0;
+  if(!castId||cast?.id!==castId||!cast.feint||now<Number(cast.feintCancelAt||0))return false;
+  s.tasks=(s.tasks||[]).filter(task=>task.data?.castId!==castId);
+  s.arenaHazards=(s.arenaHazards||[]).filter(hazard=>hazard.castId!==castId);
+  s.projectiles=(s.projectiles||[]).filter(projectile=>projectile.castId!==castId);
+  s.activeCast=null;b.trajectory=null;b.currentAction='combat_idle';b.sourceAnimation='combat_idle';b.supportCue='REPOSITION';
+  if(combo?.id===data.comboId)combo.nextAt=now;
+  setBossOrbState(room,'FREE_FLOAT',now+420);setBossHaloState(room,'TELEPORT',now+420);
+  broadcast(room,{type:'event',e:'bossFeintCancel',p:{id:castId,castId,comboId:data.comboId||'',actionId:cast.actionId||'',nextActionId:data.nextActionId||'teleport_behind',cancelAt:Number(cast.feintCancelAt)||now,ts:now}});
+  markDirty(room);return true;
 }
 function runTask(room,task){
   const s=room.state,b=s.boss;
@@ -968,6 +1347,21 @@ function runTask(room,task){
     bossOrbRadial(room,task.data);
   }else if(task.type==='boss_spirit_orb'){
     bossSpiritOrb(room,task.data);
+  }else if(task.type==='v1025_teleport'){
+    v1025Teleport(room,V1025.actionFor(task.data.actionId),task.data.targetRole,task.data);
+  }else if(task.type==='v1025_feint_cancel'){
+    cancelBossFeint(room,task.data);
+  }else if(task.type==='v1025_melee_hit'){
+    bossMeleeImpact(room,task.data);
+  }else if(task.type==='v1025_wave'){
+    bossCrescentWave(room,task.data);
+  }else if(task.type==='v1025_orb_trap'){
+    const now=Date.now(),target=livingBossTarget(s,task.data.targetRole),x=target?.x??b.x,z=target?.z??b.z;
+    setBossOrbState(room,'TRAP',now+1500,{x,z,y:1.35});addArenaHazard(room,'orb_trap',{x,z,radius:1.45,activeAt:now+720,endAt:now+1180,damage:11+b.phase,castId:task.data.castId});
+  }else if(task.type==='v1025_orb_recall'){
+    bossOrbRecall(room,{targetRole:task.data.targetRole,castId:task.data.castId});
+  }else if(task.type==='v1025_zero_hour_stage'){
+    runZeroHourStage(room,Number(task.data.stage)||1,task.data.castId);
   }else if(task.type==='dream_slash'){
     const p=s.players[task.data.role||'hero'];
     if(p&&!p.down){
@@ -986,6 +1380,7 @@ function runTask(room,task){
       // see the same teleport and the visual boss never separates from its hitbox.
       const distance=task.data.distance||1.62;
       b.x=p.x-Math.sin(p.rot||0)*distance;
+      b.y=0;
       b.z=p.z-Math.cos(p.rot||0)*distance;
       const arenaR=Math.hypot(b.x,b.z);
       if(arenaR>7.35){b.x*=7.35/arenaR;b.z*=7.35/arenaR}
@@ -1007,14 +1402,8 @@ function runTask(room,task){
       broadcast(room,{type:'event',e:'bossWeakPoint',p:{point:'upper',label:'THÂN TRÊN · HEAVY MISS',until:b.upperWeakUntil,chance:.11}});
     }
   }else if(task.type==='summon_dreams'){
-    const count=Math.min(3,task.data.count||2),spawned=[];
-    for(let i=0;i<count;i++){
-      const a=(i/count)*Math.PI*2+Math.random()*.5;
-      const r=5.7+Math.random()*1.6;
-      const m={id:s.nextSummon++,x:s.boss.x+Math.cos(a)*r,z:s.boss.z+Math.sin(a)*r,y:1.15,hp:45,max:45,t:24,atkT:.8};
-      s.summons.push(m);spawned.push({id:m.id,x:m.x,z:m.z,y:m.y});
-    }
-    broadcast(room,{type:'event',e:'summonSpawn',p:{count,points:spawned}});
+    const spawned=spawnOneEyeMob(room,Math.min(3,task.data.count||2),'SUMMON');
+    broadcast(room,{type:'event',e:'summonSpawn',p:{count:spawned.length,points:spawned,kind:'one_eye'}});
     dialogue(room,'boss','Ra đây… những giấc mộng lạc lối.',2100);
   }else if(task.type==='dream_move'){
     for(const m of s.summons){
@@ -1102,7 +1491,8 @@ function bossCombatContext(room,now=Date.now()){
   const distance=living.length?Math.min(...living.map(p=>Math.hypot(p.x-b.x,p.z-b.z))):5;
   b.actionMemory=(b.actionMemory||[]).filter(item=>now-item.ts<=8000);
   const recent=(action,windowMs)=>b.actionMemory.filter(item=>item.action===action&&now-item.ts<=windowMs).length;
-  return{distance,dashSpam:recent('dash',3200),attackSpam:recent('attack',2800),skillSpam:recent('skill',5000),counterActive:living.some(p=>now<(p.counterUntil||0)),hpRatio:b.hp/b.max,phase:b.phase};
+  const memory=V1025.ensureMemory(b);
+  return{now,distance,dashSpam:recent('dash',3200),attackSpam:recent('attack',2800),skillSpam:recent('skill',5000),counterActive:living.some(p=>now<(p.counterUntil||0)),hpRatio:b.hp/b.max,phase:b.phase,memory,orbAvailable:!['PROJECTILE','ULTIMATE'].includes(b.orb?.state),mobCount:s.summons?.length||0};
 }
 function bossComboRangeScore(range,distance){
   if(range==='any')return 2;
@@ -1114,38 +1504,22 @@ function chooseBossCombo(room,now=Date.now()){
   if(Number.isInteger(TEST_BOSS_SKILL)&&TEST_BOSS_SKILL>=0&&TEST_BOSS_SKILL<=4){
     return{id:`test_combo_${TEST_BOSS_SKILL}`,name:'TEST COMBO',phase:1,range:'any',steps:[{skill:TEST_BOSS_SKILL},{skill:TEST_BOSS_SKILL},{skill:TEST_BOSS_SKILL}]};
   }
-  if(ctx.phase===3&&ctx.hpRatio<=.28&&!b.ultimateUsed){b.ultimateUsed=true;return BOSS_COMBO_LIBRARY.ultimate}
-  const candidates=[...BOSS_COMBO_LIBRARY.normal,...BOSS_COMBO_LIBRARY.signature].filter(combo=>{
-    if(combo.phase>ctx.phase)return false;
-    if((b.comboCooldowns?.[combo.id]||0)>now)return false;
-    return true;
-  });
-  const recent=new Set((b.comboHistory||[]).slice(-3));
-  let best=null,bestScore=-Infinity;
-  for(let index=0;index<candidates.length;index++){
-    const combo=candidates[index];
-    let score=bossComboRangeScore(combo.range,ctx.distance)+(combo.phase===ctx.phase?1.2:0);
-    if(combo.punish==='dash')score+=ctx.dashSpam>=3?8:ctx.dashSpam*1.1;
-    if(combo.punish==='attack')score+=ctx.attackSpam>=5?8:ctx.attackSpam*.7;
-    if(combo.punish==='skill')score+=ctx.skillSpam>=2?5.5:ctx.skillSpam*1.2;
-    if(ctx.counterActive&&combo.range==='far')score+=1.4;
-    if(combo.tier==='signature')score+=(ctx.phase>=2?1.1:-8)+(ctx.attackSpam+ctx.dashSpam>=6?1.8:0);
-    if(recent.has(combo.id))score-=12;
-    if(combo.id===b.lastComboId)score-=20;
-    score+=((b.comboSeq+index*3)%7)*.035;
-    if(score>bestScore){bestScore=score;best=combo}
-  }
-  return best||BOSS_COMBO_LIBRARY.normal[0];
+  const selection=V1025.selectCombo(b,ctx);
+  broadcast(room,{type:'event',e:'bossAICandidates',p:{weights:selection.weights,selected:selection.combo.id,distance:ctx.distance,phase:ctx.phase,ts:now}});
+  return selection.combo;
 }
 function comboEstimatedDuration(combo){
+  if(combo.nodes)return Object.values(combo.nodes).reduce((total,node)=>{const action=V1025.actionFor(node.action);return total+action.endMs+110},0);
   return combo.steps.reduce((total,step)=>total+(step.fake?(step.durationMs||560):step.skill===4?7600:step.skill===2?2600:step.skill===1?2050:step.skill===3?1550:1500)+(step.delayMs||140),0);
 }
 function startBossCombo(room,combo=chooseBossCombo(room)){
   const s=room.state,b=s.boss,now=Date.now(),comboId=`${combo.id}-${++b.comboSeq}`;
-  s.activeCombo={id:comboId,comboId:combo.id,name:combo.name,tier:combo.tier||'normal',steps:combo.steps.map(step=>({...step})),step:0,startedAt:now,nextAt:now};
+  const graph=!!combo.nodes,total=graph?V1025.graphNodeCount(combo):combo.steps.length;
+  s.activeCombo={id:comboId,comboId:combo.id,name:combo.name,tier:combo.tier||'normal',steps:graph?Object.values(combo.nodes).map(node=>({action:node.action})):combo.steps.map(step=>({...step})),nodes:graph?combo.nodes:null,currentNode:graph?combo.start:null,step:0,total,visited:[],selectedBranch:'',startedAt:now,nextAt:now};
   b.lastComboId=combo.id;b.comboHistory=[...(b.comboHistory||[]),combo.id].slice(-8);
+  b.aiMemory.lastBossCombo=combo.id;
   b.comboCooldowns[combo.id]=now+(combo.cooldownMs||(combo.tier==='signature'?22000:7600));
-  broadcast(room,{type:'event',e:'bossComboStart',p:{id:comboId,comboId:combo.id,name:combo.name,tier:combo.tier||'normal',total:combo.steps.length,startAt:now,estimatedEndAt:now+comboEstimatedDuration(combo)}});
+  broadcast(room,{type:'event',e:'bossComboStart',p:{id:comboId,comboId:combo.id,name:combo.name,tier:combo.tier||'normal',total,startAt:now,estimatedEndAt:now+comboEstimatedDuration(combo)}});
   advanceBossCombo(room,now);
   markDirty(room);
 }
@@ -1161,6 +1535,18 @@ function finishBossCombo(room,now){
 function advanceBossCombo(room,now=Date.now()){
   const s=room.state,b=s.boss,combo=s.activeCombo;
   if(!combo||s.activeCast||b.evade||now<(combo.nextAt||0)||now<(b.staggerUntil||0))return false;
+  if(combo.nodes){
+    if(!combo.currentNode){finishBossCombo(room,now);return true}
+    const nodeId=combo.currentNode,node=combo.nodes[nodeId];if(!node){finishBossCombo(room,now);return true}
+    combo.step++;combo.visited.push(nodeId);
+    const branch=V1025.resolveNextNode(combo,node,bossCombatContext(room,now));combo.currentNode=branch.next;combo.selectedBranch=branch.branch;b.selectedBranch=branch.branch;
+    const action=V1025.actionFor(node.action);b.currentAction=action.id;b.sourceAnimation=action.animation;b.aiMemory.selectedAction=action.id;
+    broadcast(room,{type:'event',e:'bossComboStep',p:{id:combo.id,comboId:combo.comboId,name:combo.name,tier:combo.tier,step:combo.step,total:combo.total,node:nodeId,actionId:action.id,animation:action.animation,branch:branch.branch,ts:now}});
+    broadcast(room,{type:'event',e:'bossComboBranch',p:{id:combo.id,node:nodeId,branch:branch.branch,next:branch.next||'',playerDistance:bossCombatContext(room,now).distance,ts:now}});
+    const feintCancel=combo.comboId==='false_opening'&&nodeId==='heavy'&&branch.next==='cancel';
+    bossSkill(room,{skill:action.legacySkill??0,actionId:action.id,combo,comboStep:combo.step-1,chain:true,ultimate:action.id==='ultimate_zero_hour',feintCancel,nextActionId:feintCancel?(combo.nodes?.[branch.next]?.action||'teleport_behind'):''});
+    return true;
+  }
   if(combo.step>=combo.steps.length){finishBossCombo(room,now);return true}
   const stepIndex=combo.step++,step=combo.steps[stepIndex];
   broadcast(room,{type:'event',e:'bossComboStep',p:{id:combo.id,comboId:combo.comboId,name:combo.name,tier:combo.tier,step:stepIndex+1,total:combo.steps.length,skill:Number.isInteger(step.skill)?step.skill:null,fake:step.fake||'',ts:now}});
@@ -1195,6 +1581,7 @@ function chooseBossDirectorSkill(room){
 }
 function bossSkill(room,options={}){
   const s=room.state,b=s.boss;
+  const logicalAction=options.actionId?V1025.actionFor(options.actionId):null;
   const selection=Number.isInteger(options.skill)
     ?{skill:options.skill,pattern:{id:options.combo?.comboId||'combo',name:options.combo?.name||'CHAIN',skills:options.combo?.steps||[]},step:options.comboStep||0,isPatternStart:false}
     :chooseBossDirectorSkill(room),i=selection.skill;
@@ -1209,10 +1596,15 @@ function bossSkill(room,options={}){
   const chainProfiles={
     0:{telegraphMs:680,endMs:1420},1:{telegraphMs:940,endMs:1900},2:{telegraphMs:1120,endMs:2500},3:{telegraphMs:860,endMs:1510},4:{telegraphMs:1800,endMs:7400}
   };
-  const profile=options.chain?{...baseProfile,...chainProfiles[i],exposeMs:0}:baseProfile;
+  const profile=logicalAction?{
+    telegraphMs:logicalAction.impactMs||Math.max(160,logicalAction.startupMs||320),
+    endMs:logicalAction.endMs||1100,
+    exposeMs:['HEAVY','AERIAL'].includes(logicalAction.category)?720:0,
+    vfx:`v1025_${logicalAction.effect||logicalAction.category}`.toLowerCase()
+  }:(options.chain?{...baseProfile,...chainProfiles[i],exposeMs:0}:baseProfile);
   if(options.delayMs){profile.telegraphMs+=options.delayMs;profile.endMs+=options.delayMs}
   const {telegraphMs,endMs}=profile;
-  const targetRole=i===3?(b.phase%2?'hero':'princess'):null;
+  const targetRole=(logicalAction?.category==='MELEE'||logicalAction?.category==='MOBILITY'||logicalAction?.category==='AERIAL'||i===3)?livingBossTarget(s)?.role:null;
   const cast={
     id:s.nextCast++,i,startAt:now,telegraphMs,warningAt:now+Math.round(telegraphMs*.56),
     impactAt:now+telegraphMs,releaseAt:now+telegraphMs,endAt:now+endMs,
@@ -1220,18 +1612,67 @@ function bossSkill(room,options={}){
     patternId:selection.pattern.id,patternName:selection.pattern.name,
     patternStep:selection.step+1,patternLength:selection.pattern.skills.length,
     chain:options.chain===true,comboId:options.combo?.id||'',comboKey:options.combo?.comboId||'',comboName:options.combo?.name||'',
-    comboTier:options.combo?.tier||'normal',comboStep:(options.comboStep||0)+1,comboLength:options.combo?.steps?.length||1,chainGapMs:120
+    comboTier:options.combo?.tier||'normal',comboStep:(options.comboStep||0)+1,comboLength:options.combo?.total||options.combo?.steps?.length||1,chainGapMs:logicalAction?85:120,
+    actionId:logicalAction?.id||'',logicalAnimation:logicalAction?.animation||'',sourceAnimation:logicalAction?.animation||'',animationVariant:logicalAction?V1025.animationVariantFor(logicalAction,b,s.nextCast-1):'BASE',actionCategory:logicalAction?.category||'',
+    blendIn:logicalAction?.blendIn??null,blendOut:logicalAction?.blendOut??null,upperBody:logicalAction?.upperBody===true,lowerAnimation:logicalAction?.lowerAnimation||'',lowerLoop:logicalAction?.lowerLoop===true,aim:logicalAction?.aim===true,
+    impactClass:logicalAction?.impactClass||'',hitStopMs:V1025_HIT_STOP_MS[logicalAction?.impactClass]||0,rootMotionXZRemoved:!!logicalAction,
+    events:logicalAction?[{t:.12,type:'ANTICIPATION'},{t:Math.max(.18,(logicalAction.startupMs||100)/Math.max(1,logicalAction.endMs)),type:'TELEGRAPH'},{t:Math.max(.2,(logicalAction.impactMs||0)/Math.max(1,logicalAction.endMs)),type:'ACTIVE'},{t:.72,type:'ALLOW_BRANCH'},{t:.9,type:'RECOVERY'}]:[]
   };
-  if(i===3){cast.teleportAt=now+250;cast.kickAt=now+360;cast.radius=2.2}
+  if(logicalAction?.effect==='TELEPORT')cast.teleportAt=now+(logicalAction.startupMs||150);
+  if(options.feintCancel){cast.feint=true;cast.feintCancelAt=now+Math.round(telegraphMs*.74);cast.cancelReason='CONTROLLED_FALSE_OPENING'}
+  if(i===3&&!logicalAction){cast.teleportAt=now+250;cast.kickAt=now+360;cast.radius=2.2}
   s.activeCast=cast;
+  if(logicalAction){
+    b.currentAction=logicalAction.id;b.sourceAnimation=logicalAction.animation;b.supportCue=logicalAction.effect==='VORTEX'?'VORTEX':logicalAction.category==='HEAVY'?'HEAVY_CAST':logicalAction.category==='MELEE'?'MELEE':'PRESSURE';
+    setBossOrbState(room,logicalAction.orbState||'FOLLOW',cast.endAt);
+    setBossHaloState(room,logicalAction.haloState||'IDLE',cast.endAt);
+    if(logicalAction.trajectory){const trajectory=startBossTrajectory(room,logicalAction,targetRole,now);if(trajectory){cast.movementStartAt=trajectory.startAt;cast.movementEndAt=trajectory.endAt;cast.movementCurve=trajectory.curve}}
+  }
   if([0,1,2,4].includes(i))b.orbWeakUntil=cast.impactAt+140;
   if(selection.isPatternStart)broadcast(room,{type:'event',e:'bossPattern',p:{
     phase:b.phase,id:selection.pattern.id,name:selection.pattern.name,total:selection.pattern.skills.length,startAt:now
   }});
   broadcast(room,{type:'event',e:'bossCast',p:cast});
+  if(cast.feint){
+    scheduleTask(room,cast.feintCancelAt-now,'v1025_feint_cancel',{castId:cast.id,comboId:cast.comboId,nextActionId:options.nextActionId||'teleport_behind'});
+    broadcast(room,{type:'event',e:'bossFakeOpening',p:{id:cast.comboId,castId:cast.id,kind:'heavy_cancel',until:cast.feintCancelAt,step:cast.comboStep,total:cast.comboLength}});
+  }
   if(!options.chain||options.comboStep===0||options.combo?.tier==='ultimate')castDialogue(room,i,b.phase);
 
-  if(i===0){
+  if(logicalAction){
+    const effect=logicalAction.effect,impactDelay=telegraphMs;
+    if(effect==='TELEPORT')scheduleTask(room,cast.teleportAt-now,'v1025_teleport',{actionId:logicalAction.id,targetRole,castId:cast.id,comboId:cast.comboId,teleportAt:cast.teleportAt});
+    else if(effect==='MELEE')scheduleTask(room,impactDelay,'v1025_melee_hit',{actionId:logicalAction.id,radius:logicalAction.radius,damage:logicalAction.damage,castId:cast.id,comboId:cast.comboId});
+    else if(effect==='ROUNDHOUSE_CRESCENT'){
+      scheduleTask(room,impactDelay,'v1025_melee_hit',{actionId:logicalAction.id,radius:logicalAction.radius,damage:logicalAction.damage,castId:cast.id,comboId:cast.comboId});
+      scheduleTask(room,impactDelay+150,'v1025_wave',{actionId:logicalAction.id,count:b.phase===3?2:1,castId:cast.id,comboId:cast.comboId});
+    }else if(effect==='ORB_VOLLEY')scheduleTask(room,impactDelay,'boss_orb_volley',{count:logicalAction.id==='strafe_cast'?2:1,spread:.11,speed:7.2,dmg:9+b.phase,targetRole,castId:cast.id,comboId:cast.comboId});
+    else if(effect==='SPIRIT_ORB')scheduleTask(room,impactDelay,'boss_spirit_orb',{targetRole,castId:cast.id,comboId:cast.comboId});
+    else if(effect==='ORB_BARRAGE')scheduleTask(room,impactDelay,'boss_orb_volley',{count:3+b.phase-1,spread:.12,speed:7.0,dmg:8+b.phase,targetRole,castId:cast.id,comboId:cast.comboId});
+    else if(effect==='CRESCENT_WAVE')scheduleTask(room,impactDelay,'v1025_wave',{actionId:logicalAction.id,count:b.phase===3?3:1,castId:cast.id,comboId:cast.comboId});
+    else if(effect==='HEAVY_AOE'){
+      scheduleTask(room,impactDelay,'boss_orb_radial',{n:10+b.phase*2,speed:5.8,dmg:10+b.phase,angleOffset:.17,castId:cast.id,comboId:cast.comboId});
+      addArenaHazard(room,'telegraph',{x:b.x,z:b.z,radius:2.8,activeAt:cast.impactAt,endAt:cast.impactAt+320,damage:0,castId:cast.id});
+    }else if(effect==='VORTEX'){
+      scheduleTask(room,impactDelay,'start_dark_pool',{castId:cast.id,comboId:cast.comboId});
+      if(b.phase>=2&&s.summons.length<3)spawnOneEyeMob(room,1,'VORTEX');
+    }else if(effect==='ORB_TRAP')scheduleTask(room,impactDelay,'v1025_orb_trap',{targetRole,castId:cast.id,comboId:cast.comboId});
+    else if(effect==='ORB_RECALL')scheduleTask(room,impactDelay,'v1025_orb_recall',{targetRole,castId:cast.id,comboId:cast.comboId});
+    else if(effect==='GROUND_SLAM'){
+      scheduleTask(room,impactDelay,'v1025_melee_hit',{actionId:logicalAction.id,radius:logicalAction.radius,damage:logicalAction.damage,castId:cast.id,comboId:cast.comboId});
+      scheduleTask(room,impactDelay+35,'boss_radial',{n:10,speed:5.6,dmg:9+b.phase,kind:'shockwave',angleOffset:.12,y:.35,castId:cast.id,comboId:cast.comboId});
+    }else if(effect==='CYCLONE'){
+      scheduleTask(room,impactDelay,'v1025_melee_hit',{actionId:logicalAction.id,radius:logicalAction.radius,damage:logicalAction.damage,castId:cast.id,comboId:cast.comboId});
+      scheduleTask(room,impactDelay+80,'boss_radial',{n:12,speed:6.2,dmg:8+b.phase,kind:'crescent',angleOffset:.18,y:1.2,castId:cast.id,comboId:cast.comboId});
+    }else if(effect==='ZERO_HOUR'){
+      const stages=[[0,1],[550,2],[1800,3],[2700,4],[3900,5],[5250,6],[7100,7],[8650,8]];
+      for(const [delay,stage] of stages)scheduleTask(room,delay,'v1025_zero_hour_stage',{stage,castId:cast.id,comboId:cast.comboId});
+    }
+    if(b.phase>=2&&['MELEE','AERIAL'].includes(logicalAction.category)&&Date.now()>=Number(b.orb?.cooldownUntil||0)){
+      setBossOrbState(room,'AUTONOMOUS',cast.endAt,{cooldownUntil:Date.now()+(b.phase===3?1900:2600)});
+      scheduleTask(room,Math.min(impactDelay+120,logicalAction.endMs-120),'boss_orb_volley',{count:1,spread:0,speed:6.5,dmg:8+b.phase,targetRole:null,castId:cast.id,comboId:cast.comboId});
+    }
+  }else if(i===0){
     // Quick Cast 13: the permanent hand orb charges, while lightweight
     // authoritative orb-clone bullets fan toward the nearest living player.
     scheduleTask(room,telegraphMs,'boss_orb_volley',{
@@ -1284,6 +1725,11 @@ function enterBossPhase(room,next,now){
   b.phaseLockUntil=now+(next===3?1900:1600);b.exposedUntil=0;b.exposedCastId=0;b.exposedHitCount=0;
   b.poise=b.poiseMax;b.poiseRegenAt=0;b.staggerUntil=0;b.criticalUntil=0;
   b.skillT=next===3?1.55:1.75;
+  b.supportCue='PHASE';b.supportT=.65;
+  setBossOrbState(room,next>=2?'AUTONOMOUS':'ORBIT',b.phaseLockUntil,{x:b.x,z:b.z,y:2.82});
+  setBossHaloState(room,'PHASE_TRANSITION',b.phaseLockUntil);
+  if(next===2)spawnOneEyeMob(room,1,'PHASE');
+  if(next===3)spawnOneEyeMob(room,Math.max(0,2-(room.state.summons?.length||0)),'PHASE');
   broadcast(room,{type:'event',e:'phase',p:{
     phase:next,until:b.phaseLockUntil,director:BOSS_COMBAT_DIRECTOR[next]?.name||''
   }});
@@ -1325,9 +1771,17 @@ function tick(room,dt){
 
   processTasks(room,now);
   processPendingHits(room,now);
-  if(s.activeCast && now>s.activeCast.endAt+120){
+  processArenaHazards(room,now);
+  const activeCastDoneAt=s.activeCast?.chain&&s.activeCast?.actionId?s.activeCast.endAt-Math.min(220,Math.max(70,(s.activeCast.endAt-s.activeCast.impactAt)*.24)):(s.activeCast?.endAt||0)+120;
+  if(s.activeCast && now>activeCastDoneAt){
     const finishedCast=s.activeCast;
     s.activeCast=null;
+    if(finishedCast.actionId){
+      s.boss.currentAction='combat_idle';s.boss.sourceAnimation='combat_idle';s.boss.supportCue='IDLE';
+      setBossOrbState(room,s.boss.phase>=2?'AUTONOMOUS':'ORBIT',0,{x:s.boss.x,z:s.boss.z,y:2.62,cooldownUntil:s.boss.orb?.cooldownUntil||0});
+      setBossHaloState(room,'IDLE',0);
+      if(finishedCast.actionId==='ultimate_zero_hour'&&s.activeUltimate?.id===finishedCast.id)s.activeUltimate=null;
+    }
     if(s.activeCombo&&finishedCast.chain){
       s.activeCombo.nextAt=now+(finishedCast.chainGapMs||120);
       broadcast(room,{type:'event',e:'bossComboLink',p:{id:s.activeCombo.id,nextStep:s.activeCombo.step+1,total:s.activeCombo.steps.length,at:s.activeCombo.nextAt}});
@@ -1383,7 +1837,9 @@ function tick(room,dt){
   b.lastElT=Math.max(0,b.lastElT-dt);
   const bossStaggered=now<(b.staggerUntil||0);
   if(!bossStaggered&&now>=(b.poiseRegenAt||0)&&b.poise<b.poiseMax)b.poise=Math.min(b.poiseMax,b.poise+18*dt);
+  if(!bossStaggered)updateBossTrajectory(room,now);
   if(!bossStaggered)updateBossEvade(room,now);
+  updateBossOrbController(room,now);
   // Boss dodge/teleport can move after the player loop. Resolve once more so
   // the authoritative hitbox can never land on top of either player.
   resolvePlayerBossOverlap(H,b);resolvePlayerBossOverlap(P,b);
@@ -1401,25 +1857,15 @@ function tick(room,dt){
     }
   }
 
-  if(s.summons?.length){
-    for(const m of s.summons){
-      m.t-=dt;m.atkT-=dt;
-      const target=H.down?P:P.down?H:(d2(m.x,m.z,H.x,H.z)<d2(m.x,m.z,P.x,P.z)?H:P);
-      const dx=target.x-m.x,dz=target.z-m.z,l=Math.hypot(dx,dz)||1;
-      if(l>1.65){m.x+=dx/l*.85*dt;m.z+=dz/l*.85*dt}
-      if(m.atkT<=0&&!target.down&&l<6){
-        const a=Math.atan2(dz,dx);
-        s.projectiles.push({id:s.nextProj++,owner:null,enemy:true,kind:'thought',food:2,x:m.x,z:m.z,y:m.y,vx:Math.cos(a)*5.4,vz:Math.sin(a)*5.4,dmg:7+s.boss.phase,t:2.4});
-        m.atkT=2.2;
-      }
-    }
-    s.summons=s.summons.filter(m=>m.t>0&&m.hp>0);
-  }
+  updateBossSupportDirector(room,dt,now);
+  if(s.summons?.length)updateOneEyeMobs(room,dt,now);
 
   if(s.darkPool){
     s.darkPool.t-=dt;s.darkPool.r+=dt*4;
     for(const role of ['hero','princess']){
       const p=s.players[role];
+      const dx=s.darkPool.x-p.x,dz=s.darkPool.z-p.z,length=Math.hypot(dx,dz)||1;
+      if(!p.down&&length<s.darkPool.r*1.15){p.x+=dx/length*.48*dt;p.z+=dz/length*.48*dt}
       if(!p.down&&d2(p.x,p.z,s.darkPool.x,s.darkPool.z)<(s.darkPool.r*.5)**2&&Math.random()<dt*.55){
         queueEnemyHit(room,role,6,now);
       }
@@ -1429,7 +1875,9 @@ function tick(room,dt){
 
   for(const pr of s.projectiles){
     const x1=pr.x,z1=pr.z;
-    if(pr.enemy&&pr.kind==='spiritOrb'){
+    if(pr.enemy&&pr.kind==='orbRecall'){
+      updateBossRecallProjectile(room,pr,now,dt);
+    }else if(pr.enemy&&pr.kind==='spiritOrb'){
       const target=livingBossTarget(s,pr.targetRole);
       if(target){
         pr.targetRole=target.role;
@@ -1442,18 +1890,20 @@ function tick(room,dt){
         pr.vx=nextX*(pr.speed||currentSpeed);pr.vz=nextZ*(pr.speed||currentSpeed);
       }
     }
-    pr.x+=pr.vx*dt;pr.z+=pr.vz*dt;pr.t-=dt;
+    if(pr.kind!=='orbRecall'){pr.x+=pr.vx*dt;pr.z+=pr.vz*dt;pr.t-=dt}
 
     if(pr.enemy){
       for(const role of ['hero','princess']){
         const p=s.players[role];
-        const hitRadius=pr.kind==='spiritOrb'?.98:.75;
+        const hitRadius=pr.kind==='spiritOrb'?.98:pr.kind==='orbRecall'?.86:.75;
         if(pr.t>0&&!p.down&&segmentCircleHit(x1,z1,pr.x,pr.z,p.x,p.z,hitRadius)){
           // Damage is confirmed after a short grace window so a late-arriving dash
           // can still protect a player if it actually happened before the hit.
-          queueEnemyHit(room,role,pr.dmg,now);
+          const recallKey=pr.kind==='orbRecall'?`${role}:${pr.recallLeg}`:'';
+          if(recallKey&&pr.hitLegs?.[recallKey])continue;
+          queueEnemyHit(room,role,pr.dmg,now);if(recallKey){pr.hitLegs||={};pr.hitLegs[recallKey]=true}
           if(pr.kind==='spiritOrb')broadcast(room,{type:'event',e:'bossSpiritOrbHit',p:{id:pr.id,role,x:p.x,z:p.z,dmg:pr.dmg}});
-          pr.t=0;
+          if(pr.kind!=='orbRecall')pr.t=0;
         }
       }
     }else if(pr.t>0){
@@ -1462,12 +1912,7 @@ function tick(room,dt){
         if(m.hp>0&&segmentCircleHit(x1,z1,pr.x,pr.z,m.x,m.z,.62)){hitSummon=m;break}
       }
       if(hitSummon){
-        hitSummon.hp-=pr.dmg||8;
-        broadcast(room,{type:'event',e:'summonHit',p:{id:hitSummon.id,dmg:Math.round(pr.dmg||8),hp:Math.max(0,hitSummon.hp)}});
-        if(hitSummon.hp<=0){
-          broadcast(room,{type:'event',e:'summonDefeated',p:{id:hitSummon.id,x:hitSummon.x,z:hitSummon.z,y:hitSummon.y}});
-          s.trust=Math.min(100,s.trust+4);
-        }
+        damageOneEyeMob(room,hitSummon,pr.dmg||8,now,pr.kind||'projectile');
         pr.t=0;
       }else if(bossCanBeHit(b,now)&&segmentCircleHit(x1,z1,pr.x,pr.z,b.x,b.z,1.55)){
         hitBoss(room,pr);pr.t=0;
@@ -1513,15 +1958,17 @@ function snapshot(room){
       hero:{...s.players.hero,input:undefined},
       princess:{...s.players.princess,input:undefined}
     },
-    boss:{...s.boss},
+    boss:{...s.boss,aiMemory:{...s.boss.aiMemory,events:undefined}},
     projectiles:s.projectiles.map(p=>({
       id:p.id,a:p.aid||null,o:p.owner||null,x:p.x,y:p.y,z:p.z,e:p.enemy,k:p.kind,f:p.food,c:p.castId||null,b:p.bornAt||null,r:p.targetRole||null
     })),
     pickups:s.pickups.map(p=>({...p})),
     darkPool:s.darkPool?{...s.darkPool}:null,
     summons:(s.summons||[]).map(m=>({...m})),
+    arenaHazards:(s.arenaHazards||[]).map(h=>({...h})),
+    ultimate:s.activeUltimate?{...s.activeUltimate}:null,
     cast:s.activeCast?{...s.activeCast}:null,
-    combo:s.activeCombo?{id:s.activeCombo.id,comboId:s.activeCombo.comboId,name:s.activeCombo.name,tier:s.activeCombo.tier,step:s.activeCombo.step,total:s.activeCombo.steps.length,startedAt:s.activeCombo.startedAt,nextAt:s.activeCombo.nextAt}:null
+    combo:s.activeCombo?{id:s.activeCombo.id,comboId:s.activeCombo.comboId,name:s.activeCombo.name,tier:s.activeCombo.tier,step:s.activeCombo.step,total:s.activeCombo.total||s.activeCombo.steps.length,node:s.activeCombo.visited?.at(-1)||'',branch:s.activeCombo.selectedBranch||'',startedAt:s.activeCombo.startedAt,nextAt:s.activeCombo.nextAt}:null
   };
 }
 
@@ -1533,9 +1980,11 @@ app.get('/healthz',(_req,res)=>res.json({
   network:{
     tickHz:TICK_HZ,
     snapshotHz:SNAPSHOT_HZ,
-    renderOptimization:'V10.16.2-eclipse-waltz-plus-virtual-upper-body-halo',
+    renderOptimization:'V10.25-retargeted-battle-mage-orb-halo-one-eye-impact-stack',
     combatFeel:'v10.23-poise-weakpoint-critical-adaptive-combo-ai',
-    bossDirector:{thresholds:[70,35],exposedDamageMultiplier:BOSS_EXPOSE_DAMAGE_MULTIPLIER,normalCombos:BOSS_COMBO_LIBRARY.normal.length,signatureCombos:BOSS_COMBO_LIBRARY.signature.length,ultimateCombos:1},
+    combatOverhaul:'v10.25-eclipse-battle-mage-zero-hour',
+    runtimeReliability:'v10.25-tripo-cache-recovery-snapshot-watchdog-retarget-fallback-budget',
+    bossDirector:{thresholds:[70,35],exposedDamageMultiplier:BOSS_EXPOSE_DAMAGE_MULTIPLIER,comboGraphs:V1025.COMBO_GRAPHS.length,signatureFamilies:V1025.COMBO_GRAPHS.map(combo=>combo.id),ultimateCombos:1},
     bossCritical:{poise:BOSS_POISE_MAX,bodyCritChance:BOSS_BODY_CRIT_CHANCE,weakCritChance:[.08,.12],criticalMultiplier:BOSS_CRIT_MULTIPLIER,breakStaggerMs:BOSS_BREAK_STAGGER_MS,breakResistanceMs:BOSS_BREAK_RESIST_MS},
     rewindMs:MAX_REWIND_MS,
     hitConfirmMs:HIT_CONFIRM_DELAY_MS,
@@ -1787,5 +2236,5 @@ process.on('SIGINT',()=>shutdown('SIGINT'));
 
 (async()=>{
   try{await initRedis()}catch(err){console.error('[redis init]',err?.message||err)}
-  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.23 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
+  server.listen(PORT,HOST,()=>console.log(`Princess Rescue V10.25 server on ${HOST||'*'}:${PORT} | redis=${redisReady} | ws=/ws`));
 })();

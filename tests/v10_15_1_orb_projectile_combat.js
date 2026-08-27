@@ -67,8 +67,9 @@ async function run() {
   const close = () => { try { hero.close(); princess.close(); } catch {} };
   const finish = () => {
     if (!cast || !volley || !volley.ids.every(id => observed.hero.has(id) && observed.princess.has(id))) return;
-    if (cast.i !== 0 || cast.releaseAt !== cast.impactAt || cast.telegraphMs !== 880) throw new Error(`Quick Cast timeline changed: ${JSON.stringify(cast)}`);
+    if (cast.i !== 0 || cast.releaseAt !== cast.impactAt || cast.telegraphMs !== 680) throw new Error(`Quick Cast timeline changed: ${JSON.stringify(cast)}`);
     if (volley.radial || volley.count !== 1 || volley.ids.length !== 1 || !['hero','princess'].includes(volley.targetRole)) throw new Error(`Invalid phase-1 orb volley: ${JSON.stringify(volley)}`);
+    if (![volley.originX,volley.originY,volley.originZ,volley.launchAt].every(Number.isFinite)) throw new Error(`Orb volley lost its authoritative controller origin: ${JSON.stringify(volley)}`);
     console.log(`V10.15.1 ORB PROJECTILE PASS · permanent GLB orb untouched · Quick Cast 13 emitted ${volley.count} authoritative GPU orb clone · both clients synchronized · 165ms hand-muzzle blend`);
     clearTimeout(timeout); close(); stop(0);
   };

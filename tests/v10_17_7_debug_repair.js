@@ -7,7 +7,7 @@ const html=fs.readFileSync(path.join(root,'public','index.html'),'utf8');
 const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 
 for(const fragment of [
-  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
+  '<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>',
   'function scheduleBossIntroUiUnlock(minDelay=0)',
   'scheduleBossIntroUiUnlock(finishAt)',
   'bugRuntime.lastCamera=null',

@@ -20,9 +20,9 @@ const backDistance = numberConstant('BOSS_HALO_BACK_DISTANCE');
 const centerY = numberConstant('BOSS_HALO_CENTER_Y');
 const hoverAmplitude = numberConstant('BOSS_HALO_HOVER_AMPLITUDE');
 
-if (visualHeight < 2.6 || visualHeight > 2.9) throw new Error(`Halo visual height is not upper-body sized: ${visualHeight}`);
-if (backDistance < 1.0 || backDistance > 1.25) throw new Error(`Halo is not clearly behind the back: ${backDistance}`);
-if (centerY < 3.62 || centerY > 3.78) throw new Error(`Halo center is outside the head/shoulder socket: ${centerY}`);
+if (Math.abs(visualHeight - 4.45 * .50) > .001) throw new Error(`Halo diameter is not 0.50H: ${visualHeight}`);
+if (Math.abs(backDistance - .22) > .001) throw new Error(`Halo is not 0.22m behind the upper spine: ${backDistance}`);
+if (Math.abs(centerY - 4.45 * .82) > .001) throw new Error(`Halo center is not U=0.82H: ${centerY}`);
 if (hoverAmplitude < .035 || hoverAmplitude > .07) throw new Error(`Halo hover is not restrained: ${hoverAmplitude}`);
 
 for (const fragment of [
@@ -33,6 +33,8 @@ for (const fragment of [
   'function resolveBossHaloVirtualAnchor(',
   'resolveBossHaloVirtualAnchor(rec,now)',
   "if(kind==='halo')",
+  "const visual=new THREE.Group()",
+  "return visual",
   'model.rotation.x+=Math.PI/2',
   'model.rotation.y+=Math.PI/2',
   'by+5.18',
@@ -70,7 +72,7 @@ for (let clip = 0; clip < 19; clip++) {
     }
     const bottom = target.y - boss.y - visualHeight / 2;
     const top = target.y - boss.y + visualHeight / 2;
-    if (bottom < 2.20 || top > 5.20) throw new Error(`Clip ${clip} halo escaped upper-body bounds: ${JSON.stringify({ bottom, top })}`);
+    if (bottom < 2.45 || top > 4.90) throw new Error(`Clip ${clip} halo escaped upper-body bounds: ${JSON.stringify({ bottom, top })}`);
   }
 }
 

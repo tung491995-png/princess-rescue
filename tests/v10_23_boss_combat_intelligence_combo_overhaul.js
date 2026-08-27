@@ -7,14 +7,14 @@ const html=fs.readFileSync(path.join(root,'public','index.html'),'utf8');
 const server=fs.readFileSync(path.join(root,'server.js'),'utf8');
 const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 
-if(pkg.version!=='10.23.0')throw new Error(`Wrong V10.23 package version: ${pkg.version}`);
+if(!['10.23.1','10.25.0'].includes(pkg.version))throw new Error(`Wrong V10.23+ package version: ${pkg.version}`);
 for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].entries()){
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.23'",
+  '<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23.1'",
   'id="bossPoiseFill"','id="bossPoiseState"','id="bossComboUi"',
   'function updateBossComboUi()','function freezeBossPoseForCritical(duration=190)',
   'function presentBossCriticalBreak(p={})',

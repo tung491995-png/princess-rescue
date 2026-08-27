@@ -1,4 +1,58 @@
-PRINCESS RESCUE 3D — V10.23 BOSS COMBAT INTELLIGENCE & COMBO OVERHAUL
+PRINCESS RESCUE 3D — V10.25 ECLIPSE BATTLE MAGE
+
+V10.25 ECLIPSE BATTLE MAGE — COMPLETE BOSS PIPELINE
+=====================================================
+- Rebuilds the boss around 28 curated FBX-derived animation sources, loaded as
+  GLB and retargeted at runtime with rest-pose correction, 30 FPS sampling,
+  finite-quaternion validation, vertical-only hips transfer and hard ROOT X/Z
+  removal. The original 19 boss clips remain automatic runtime fallbacks.
+- Adds a server-authoritative logical action layer and 12 named Combo Graph
+  families with live distance/action/dodge/parry memory, fresh-condition
+  branches, anti-repeat weights, designed cancels and recovery windows.
+- Adds Eternal Eclipse · Zero Hour as an eight-stage ultimate: presentation-only
+  time dilation, arena telegraphs, phantom casters, Orb sky array, slam,
+  starfall, collapse and a punishable recovery.
+- Integrates the supplied Crown, Witch Cuffs, Moon Choker and Nocturne Core as
+  rigid controlled accessories attached to scene-owned bone anchors. The
+  supplied static skirt is not rigid-bound over the validated skinned dress.
+- Expands Orb and Halo into authoritative combat-language state machines and
+  adds up to three One-Eye support mobs using the supplied source mesh, with
+  Void Bolt, Gaze Beam and Abyss Lunge coordination.
+- Adds layered impact flash, ring, debris and dynamic-light responses; Perfect
+  Parry/Critical Break timing; pooled hazards; bounded cleanup; retarget and AI
+  debug telemetry; and presentation-only camera/animation time effects.
+- Preserves V10.23.1 snapshot recovery, two-player synchronization, lobby,
+  Pause/Exit, player controls, HP, Super Armor, Poise and weak-point behavior.
+
+RUN
+===
+1. Install Node.js 20 or newer.
+2. Run: npm install
+3. Run: npm start
+4. Open the URL printed by the server (default http://localhost:3000).
+
+VERIFY
+======
+- Run: npm test
+- The suite includes every inherited V10.17–V10.23.1 regression plus the
+  V10.25 animation/asset/Combo Graph/Zero Hour/root-motion contract test.
+
+Full V10.25 implementation and asset decisions are documented in
+V10_25_ECLIPSE_BATTLE_MAGE_COMPLETE.txt.
+
+PRINCESS RESCUE 3D — V10.23.1 RUNTIME RELIABILITY HOTFIX
+
+V10.23.1 RUNTIME RELIABILITY HOTFIX
+====================================
+- Locks an accepted Tripo body model so a later optional VFX/animation setup error cannot switch it back to the procedural fallback.
+- Retries the primary 1K boss through a clean reload cache key before moving to heavier tiers or the final safe fallback.
+- Detects a WebSocket that still reports OPEN while authoritative snapshots have stopped, then reconnects and resumes the same room/session.
+- Preserves the already validated Tripo model across reconnect instead of reloading or swapping it.
+- Removes 779 redundant scale channels from the 19 runtime animation clips, reducing active mixer work by about one third.
+- Uses an immediate low-cost iPhone tier, faster emergency resolution reduction and a draw-call/triangle budget guard.
+- Caches orb emissive materials instead of traversing the prop tree every rendered frame.
+- Suppresses false camera and bone-scale reports during authored intro/death cinematics while retaining real gameplay diagnostics.
+- Preserves all V10.23 Poise, weak-point critical, Critical Break, 12+3+1 combo AI, Pause/Exit and movement behavior.
 
 V10.23 BOSS COMBAT INTELLIGENCE & COMBO OVERHAUL
 ==================================================

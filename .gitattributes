@@ -1,0 +1,9 @@
+* text=auto
+
+# Binary assets
+*.glb binary
+*.fbx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary

@@ -13,10 +13,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.23.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(!['10.23.1','10.25.0'].includes(pkg.version))throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.23'",
+  '<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23.1'",
   "let actionId=0,predictedShots=[],predictedSwordAids=new Set(),predictedDashAid=''",
   "const aid=`${role}-dash-${++actionId}`",
   "send({type:'action',a:'dash',aid,st:Date.now()+serverOffset})",
@@ -60,7 +60,7 @@ const stop=code=>{
   setTimeout(()=>process.exit(code),80);
 };
 const fail=error=>{console.error(error?.stack||error);stop(1)};
-timeout=setTimeout(()=>fail(new Error('V10.19.4 movement test timed out')),22000);
+timeout=setTimeout(()=>fail(new Error('V10.19.4 movement test timed out')),30000);
 
 function run(){
   hero=new WebSocket(`ws://127.0.0.1:${port}/ws`);

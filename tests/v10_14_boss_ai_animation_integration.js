@@ -176,6 +176,7 @@ async function run() {
   let requestedStart = false;
   let sawCast = false;
   let sawTeleport = false;
+  let teleportRole = '';
   let sawImpact = false;
   let sawEvade = false;
   let sawEvadeSnapshot = false;
@@ -190,7 +191,8 @@ async function run() {
     if (!heroStart || !princessStart) return;
     const state = heroStart;
     const remaining = state.introUntil - Date.now();
-    if (remaining < 10400 || remaining > 11100) throw new Error(`Intro lock mismatch: ${remaining}ms`);
+    // V10.16/V10.19 shortened and then locked the synchronized intro at 9 s.
+    if (remaining < 8600 || remaining > 9300) throw new Error(`Intro lock mismatch: ${remaining}ms`);
     if (state.boss?.hp !== 2200 || state.boss?.max !== 2200) throw new Error('Boss HP mismatch');
     if (!attackScheduled) {
       attackScheduled = true;
@@ -227,15 +229,17 @@ async function run() {
     if (message.type === 'event' && message.e === 'bossCast' && message.p?.i === 3) {
       const c = message.p;
       if (!(c.startAt < c.teleportAt && c.teleportAt < c.kickAt && c.kickAt < c.impactAt && c.impactAt < c.endAt)) throw new Error('Teleport Spin Kick timeline is invalid');
-      if (!(c.startAt < c.warningAt && c.warningAt < c.releaseAt && c.releaseAt === c.impactAt && c.telegraphMs === 1280 && c.vfx === 'teleport_kick')) throw new Error('Synchronized telegraph payload is invalid');
+      // V10.23 runs forced skills through the chained combo profile (860 ms).
+      if (!(c.startAt < c.warningAt && c.warningAt < c.releaseAt && c.releaseAt === c.impactAt && c.telegraphMs === 860 && c.vfx === 'teleport_kick')) throw new Error('Synchronized telegraph payload is invalid');
       sawCast = true; finishIfReady();
     }
     if (message.type === 'event' && message.e === 'bossTeleportKick') {
       if (!Number.isFinite(message.p?.x) || !Number.isFinite(message.p?.z)) throw new Error('Teleport position is invalid');
+      teleportRole = message.p?.role || '';
       sawTeleport = true; finishIfReady();
     }
     if (message.type === 'event' && message.e === 'spinKickImpact') {
-      if (message.p?.radius !== 2.2 || !message.p?.hitRoles?.includes('hero')) throw new Error('Spin Kick server hit validation failed');
+      if (message.p?.radius !== 2.2 || !teleportRole || !message.p?.hitRoles?.includes(teleportRole)) throw new Error('Spin Kick server hit validation failed');
       sawImpact = true; finishIfReady();
     }
   });

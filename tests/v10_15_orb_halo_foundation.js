@@ -156,7 +156,7 @@ for (const fragment of [
   "rec.orbSocket.name='LeftHandOrbSocket'",
   "findRigNode(rec.model,['LeftHand'",
   "scene.add(armament.haloRoot,armament.orbRoot)",
-  'await loadBossArmament(rec)',
+  'await loadBossArmament(rec,armamentBuffers)',
   'updateBossArmament(dt,performance.now())',
   "runVisualPass('boss-armament'",
   "runVisualPass('death-armament'",
@@ -170,7 +170,7 @@ for (const fragment of [
 const loadStart = html.indexOf('async function loadRigAsset(roleName)');
 const loadEnd = html.indexOf('\nfunction loadAllRiggedCharacters', loadStart);
 const loadSource = html.slice(loadStart, loadEnd);
-if (!(loadSource.indexOf('await loadBossArmament(rec)') < loadSource.indexOf('notifyBossAssetReady()'))) {
+if (!(loadSource.indexOf('await loadBossArmament(rec,armamentBuffers)') < loadSource.indexOf('notifyBossAssetReady()'))) {
   throw new Error('Client reports ready before orb/halo finish loading');
 }
 if (html.includes('rec.orbSocket.add(armament.orbRoot)') || html.includes('boss.add(armament.haloRoot)')) {

@@ -1,0 +1,70 @@
+{
+  "schema": "princess-rescue.v10_25.boss-visual-reference.v1",
+  "purpose": "Mandatory pre-release visual-reference acceptance for V10.25 boss",
+  "primary_design_authority": "images/01_master_front_back_full_assembly.png",
+  "secondary_references": [
+    {
+      "path": "images/02_side_depth_and_three_quarter.png",
+      "role": "side depth, three-quarter silhouette, occlusion and spacing"
+    },
+    {
+      "path": "images/03_upper_body_accessory_placement.png",
+      "role": "crown, collar, choker, core, cuffs, Orb and Halo placement"
+    },
+    {
+      "path": "images/04_placement_ratio_map.png",
+      "role": "normalized placement and ratio reference"
+    },
+    {
+      "path": "original_idea_refs/",
+      "role": "shape reference for existing Orb, Halo and One-Eye geometry; do not rebuild geometry"
+    }
+  ],
+  "authority": {
+    "gameplay_architecture": "current V10.25 repository + V10.25 implementation spec",
+    "visual_design": "this reference pack",
+    "geometry": "existing project GLB/model assets"
+  },
+  "runtime_constraints": {
+    "do_not_rebuild_working_systems": true,
+    "one_eye_max_alive": 3,
+    "one_eye_reference_formation_slots": 4,
+    "one_eye_rule": "Reference images may show four composition slots. Do not change the V10.25 runtime max-alive cap from 3 without explicit user approval.",
+    "black_moon": "Ultimate only; not part of base assembly"
+  },
+  "mandatory_views": [
+    "front",
+    "left_side",
+    "right_side",
+    "back",
+    "close_combat_camera",
+    "casting_pose",
+    "melee_pose",
+    "teleport_pose",
+    "zero_hour"
+  ],
+  "visual_check": [
+    "overall silhouette",
+    "body proportions",
+    "hair silhouette",
+    "long dress/skirt",
+    "Witch Mantle",
+    "High Collar",
+    "Crown",
+    "Witch Cuffs",
+    "Moon Choker",
+    "Nocturne Core",
+    "Orb",
+    "Halo",
+    "accessory scale",
+    "accessory rotation",
+    "accessory position",
+    "overlap/clipping",
+    "combat readability"
+  ],
+  "fix_policy": "smallest correct production fix",
+  "checkpoint_files": [
+    "CODEX_HANDOFF.md",
+    "V10_25_PROGRESS.md"
+  ]
+}

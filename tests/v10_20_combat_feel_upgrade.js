@@ -13,10 +13,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(!['10.20.0','10.21.0','10.23.0'].includes(pkg.version))throw new Error(`Wrong package version: ${pkg.version}`);
+if(!['10.20.0','10.21.0','10.23.1','10.25.0'].includes(pkg.version))throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  pkg.version==='10.23.0'?'<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>':pkg.version==='10.21.0'?'<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>':'<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
-  pkg.version==='10.23.0'?"window.PrincessBlackBox?.init?.({version:'10.23'":pkg.version==='10.21.0'?"window.PrincessBlackBox?.init?.({version:'10.21'":"window.PrincessBlackBox?.init?.({version:'10.20'",
+  pkg.version==='10.23.1'?'<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>':pkg.version==='10.21.0'?'<title>Princess Rescue V10.21 — Boss Phase &amp; Combat Director</title>':'<title>Princess Rescue V10.20 — Combat Feel Upgrade</title>',
+  pkg.version==='10.23.1'?"window.PrincessBlackBox?.init?.({version:'10.23.1'":pkg.version==='10.21.0'?"window.PrincessBlackBox?.init?.({version:'10.21'":"window.PrincessBlackBox?.init?.({version:'10.20'",
   'id="combatLock"',
   'id="comboFeedback"',
   'function combatLockCandidates(s)',
@@ -47,7 +47,7 @@ if(/s\.projectiles\.push|vx:|vz:/.test(attackBranch))throw new Error('Basic swor
 const port=32200;
 const child=spawn(process.execPath,['server.js'],{
   cwd:root,
-  env:{...process.env,PORT:String(port),REDIS_URL:'',BOSS_TEST_FAST:'0',BOSS_TEST_SKILL:'',BOSS_TEST_DODGE:''},
+  env:{...process.env,PORT:String(port),REDIS_URL:'',BOSS_TEST_FAST:'0',BOSS_TEST_SKILL:'0',BOSS_TEST_DODGE:''},
   stdio:['ignore','pipe','pipe']
 });
 
@@ -92,8 +92,8 @@ function run(){
     if(comboScheduled)return;comboScheduled=true;clearInterval(approachTimer);
     hero.send(JSON.stringify({type:'input',x:0,y:0,seq:++seq}));
     const fire=(delay,aid)=>setTimeout(()=>hero.send(JSON.stringify({type:'action',a:'attack',aid,st:Date.now()})),delay);
-    fire(0,'v1020-slash-0');fire(330,'v1020-slash-1');fire(690,'v1020-slash-2');
-    setTimeout(()=>hero.send(JSON.stringify({type:'action',a:'skill',aid:'v1020-hero-skill',st:Date.now()})),1250);
+    fire(0,'v1020-slash-0');fire(400,'v1020-slash-1');fire(850,'v1020-slash-2');
+    setTimeout(()=>hero.send(JSON.stringify({type:'action',a:'skill',aid:'v1020-hero-skill',st:Date.now()})),1500);
   };
 
   const startCombat=()=>{

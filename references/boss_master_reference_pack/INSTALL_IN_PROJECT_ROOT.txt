@@ -1,0 +1,11 @@
+V10.25 Boss Master Reference Pack — Ready for Codex
+
+EXTRACT THIS ZIP INTO THE ROOT OF:
+Princess_Rescue_V10_25/
+
+It will create:
+references/boss_master_reference_pack/
+
+Then tell Codex to read:
+references/boss_master_reference_pack/CODEX_VISUAL_ACCEPTANCE_PROMPT.md
+and execute it before final release packaging.

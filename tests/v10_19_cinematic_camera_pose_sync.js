@@ -11,10 +11,10 @@ for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/s
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
 
-if(pkg.version!=='10.23.0')throw new Error(`Wrong V10.23 package version: ${pkg.version}`);
+if(!['10.23.1','10.25.0'].includes(pkg.version))throw new Error(`Wrong V10.23+ package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.23'",
+  '<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23.1'",
   'const BOSS_INTRO_FULL_MS=8600',
   'const V10192_CAMERA_KEYS=Object.freeze([',
   'function v10192CameraTangent(keys,index,property)',

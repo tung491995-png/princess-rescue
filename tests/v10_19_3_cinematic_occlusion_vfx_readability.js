@@ -12,10 +12,10 @@ const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
 for(const [index,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].entries()){
   if(match[1].trim())new vm.Script(match[1],{filename:`inline-${index}.js`});
 }
-if(pkg.version!=='10.23.0')throw new Error(`Wrong package version: ${pkg.version}`);
+if(!['10.23.1','10.25.0'].includes(pkg.version))throw new Error(`Wrong package version: ${pkg.version}`);
 for(const fragment of [
-  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.23'",
+  '<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23.1'",
   "orbScale=.74+.035*Math.sin(ctx.pre*Math.PI*4)",
   "blackMoon.name='UltimateBlackMoon';blackMoon.visible=false;blackMoon.position.set(0,.10,-.46)",
   'blackMoon.renderOrder=-2',
@@ -37,9 +37,9 @@ for(const fragment of [
 
 // V10.19.2 camera function must remain byte-identical in this VFX-only pass.
 const cameraStart=html.indexOf('function updateCam(dt){');
-const cameraEnd=html.indexOf('\nfunction runtimeBlackBoxTelemetry(',cameraStart);
+const cameraEnd=html.indexOf('\nfunction bugBossScreenEnvelope(',cameraStart);
 const cameraSha=sha(html.slice(cameraStart,cameraEnd));
-if(cameraSha!=='d503d82848d3af111ea5cea48d69cf5b1c3cf08b78371707cebbec87c1b92b96')throw new Error('V10.19.2 camera path changed');
+if(cameraSha!=='8519f4d75e497d100b7954f96dbd2445bda389d34608d112b398fb91c5492791')throw new Error('V10.19.2 camera path changed');
 
 const oldMoonMax=.18+1.15,newMoonMax=.12+.68,reduction=1-newMoonMax/oldMoonMax;
 if(reduction<.35||reduction>.45)throw new Error(`Black moon reduction outside 35–45%: ${reduction}`);

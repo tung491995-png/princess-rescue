@@ -1,0 +1,27 @@
+PRINCESS RESCUE V10.23.1 — RUNTIME RELIABILITY HOTFIX
+======================================================
+
+Scope
+-----
+Runtime-only repair on top of V10.23. Boss balance, HP, Poise, Critical rules,
+combo library, player combat, Pause/Exit, intro choreography and assets remain
+unchanged.
+
+Repairs
+-------
+1. Accepted Tripo model is locked before optional armament/prewarm work. A late
+   setup exception degrades auxiliary VFX instead of disposing the real boss.
+2. The primary 1K boss gets one clean-cache recovery attempt before heavier GLB
+   tiers and the procedural safe fallback.
+3. Snapshot and inbound-message watchdogs close a fake-open WebSocket and resume
+   the same session automatically.
+4. All redundant bone scale tracks are removed from the 19 runtime clips. The
+   shipped GLB is unchanged; only the AnimationMixer workload is reduced.
+5. iPhone starts on the low-cost presentation tier, downscales faster under a
+   severe frame budget miss and keeps all gameplay telegraphs visible.
+6. Camera/bone diagnostics ignore authored cinematic motion and compare bone
+   scale against bind pose during stable gameplay only.
+
+Expected health metadata
+------------------------
+runtimeReliability: v10.23.1-tripo-cache-recovery-snapshot-watchdog-ios-animation-budget

@@ -1,0 +1,56 @@
+{
+  "schema": "princess-rescue.boss-accessory-layout.v1",
+  "boss": "Ma Vuong Mat Ngu / Witch Queen / Eclipse Battle Mage",
+  "units": {
+    "H": "boss body visual height from sole to top of skull; excludes crown and floating assets",
+    "axes": {"R": "anatomical right", "U": "up", "F": "boss forward", "behind": "negative F"}
+  },
+  "locked_existing_models": ["Orb", "Halo", "Minimob_OneEye"],
+  "wearables": {
+    "Crown": {"anchor": "Head", "height_head_ratio": 0.33},
+    "Moon_Talisman": {"anchor": "Neck", "charm_height_head_ratio": 0.10},
+    "Witch_Mantle_High_Collar": {"anchor": "UpperChest/Spine2", "span_shoulder_ratio": 1.35},
+    "Nocturne_Core": {"anchor": "UpperChest", "width_head_ratio": 0.16},
+    "Witch_Cuff_L": {"anchor": "LeftForeArm", "length_forearm_ratio": 0.20},
+    "Witch_Cuff_R": {"anchor": "RightForeArm", "length_forearm_ratio": 0.20},
+    "Skirt_6Panel": {"anchor": "Hips", "front_end": "mid_calf", "back_floor_clearance_m": [0.04, 0.07]}
+  },
+  "halo": {
+    "integration": "separate_visual_root_following_UpperChest",
+    "center_u_H": 0.82,
+    "behind_spine_m": 0.22,
+    "outer_diameter_H": 0.50,
+    "outer_diameter_shoulder_ratio": 1.50,
+    "top_above_crown_head_ratio": 0.30
+  },
+  "orb": {
+    "integration": "separate_actor_state_machine",
+    "follow_socket": "LeftHandSocket",
+    "follow_offset": {"toward_anatomical_left_m": 0.35, "up_m": 0.08},
+    "sphere_diameter_H": 0.14,
+    "ring_default_tilt_deg": 18,
+    "states": ["FOLLOW", "ORBIT", "CHARGE", "PROJECTILE", "AUTONOMOUS", "TRAP", "RECALL", "ULTIMATE"]
+  },
+  "minimobs": {
+    "integration": "four_independent_combat_actors",
+    "model": "Minimob_OneEye",
+    "max_active": 4,
+    "visual_length_H": 0.38,
+    "eye_head_length_H": 0.16,
+    "formation": {
+      "Upper_L": {"lateral_H": -0.58, "u_H": 0.73, "behind_m": 0.60},
+      "Upper_R": {"lateral_H": 0.58, "u_H": 0.73, "behind_m": 0.60},
+      "Lower_L": {"lateral_H": -0.62, "u_H": 0.46, "behind_m": 0.72},
+      "Lower_R": {"lateral_H": 0.62, "u_H": 0.46, "behind_m": 0.72}
+    },
+    "behaviors": ["spawn", "hover", "orbit", "projectile", "beam", "lunge", "stagger", "death"]
+  },
+  "black_moon": {
+    "enabled_only_during": "ULTIMATE",
+    "behind_m": [1.20, 1.50],
+    "center_u_H": 0.68,
+    "diameter_H": [1.40, 1.60]
+  },
+  "occlusion_priority": ["Face", "Crown_and_Core", "Hands_and_Orb", "Halo", "Minimobs", "Skirt", "BlackMoon"]
+}
+

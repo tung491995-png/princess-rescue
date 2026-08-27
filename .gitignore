@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build / caches / temp
+dist/
+build/
+.cache/
+cache/
+tmp/
+temp/
+*.tmp
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Local release archives
+*.zip
+*.rar
+*.7z
+
+# Test/runtime artifacts
+coverage/
+screenshots/
+debug-captures/

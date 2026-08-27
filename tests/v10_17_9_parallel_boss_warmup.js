@@ -18,8 +18,8 @@ function readGlbJson(file){
 }
 
 for(const fragment of [
-  '<title>Princess Rescue V10.23 — Boss Combat Intelligence &amp; Combo Overhaul</title>',
-  "window.PrincessBlackBox?.init?.({version:'10.23'",
+  '<title>Princess Rescue V10.23.1 — Runtime Reliability Hotfix</title>',
+  "window.PrincessBlackBox?.init?.({version:'10.23.1'",
   'function fetchGlbBuffer(url,timeoutMs)',
   'function parseGlbBuffer(loader,buffer,timeoutMs)',
   'function prefetchBossArmamentBuffers()',
